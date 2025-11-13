@@ -1,0 +1,110 @@
+# -------------------------------------------------
+# Visual Studio / .NET
+# -------------------------------------------------
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rchive/
+[Bb]in/
+[Oo]bj/
+
+## User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vs/
+*.vscode/
+*.idea/
+
+## NuGet packages
+packages/
+*.nupkg
+# The packages folder can be restored, so ignore it
+# (unless you commit it for a specific reason)
+
+## MSBuild binary and XML logs
+*.pdb
+*.xml
+*.log
+*.cache
+*.tmp
+
+## Publish output (you will generate it in CI)
+publish/
+wwwroot/publish/
+deploy/
+
+## App_data (local DB, logs, etc.)
+App_Data/
+*.mdf
+*.ldf
+
+# -------------------------------------------------
+# ASP.NET Core / MVC specific
+# -------------------------------------------------
+## Web publish profiles
+/Properties/PublishProfiles/
+*.pubxml
+*.pubxml.user
+
+## ASP.NET Scaffolding
+*.csproj.user
+*.csproj.bak
+
+## Local environment files
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# -------------------------------------------------
+# Node / front-end (if you have any)
+# -------------------------------------------------
+node_modules/
+wwwroot/lib/
+wwwroot/dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# -------------------------------------------------
+# OS / Editor files
+# -------------------------------------------------
+.DS_Store
+Thumbs.db
+*.bak
+*.swp
+*~
+
+# -------------------------------------------------
+# Secrets / credentials (never commit!)
+# -------------------------------------------------
+*.pem
+*.key
+*.pfx
+*.cer
+*.config.json
+*.env
+
+# -------------------------------------------------
+# YOUR PROJECT SPECIFIC
+# -------------------------------------------------
+CamV4.PlaywrightTests/
+CamV4.TestResults/
+CamV4.PlaywrightTests.Cache/
+
+# -------------------------------------------------
+# YOUR CUSTOM FOLDERS (relative to repo root)
+# -------------------------------------------------
+# All of these live **inside CamV4**, so we prefix with CamV4/
+CamV4/CustFilesHistory/
+CamV4/DrawingFiles/
+CamV4/Files/
+CamV4/fonts/
+CamV4/img/
+CamV4/IncidentPhoto/
+CamV4/logs/
+CamV4/pricelist/
+CamV4/Properties/
