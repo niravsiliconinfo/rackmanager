@@ -46,10 +46,10 @@ App_Data/
 # ASP.NET Core / MVC specific
 # -------------------------------------------------
 ## Web publish profiles
-/Properties/PublishProfiles/
+CamV4/Properties/PublishProfiles/
 *.pubxml
 *.pubxml.user
-
+Output-Build.txt
 ## ASP.NET Scaffolding
 *.csproj.user
 *.csproj.bak
@@ -108,3 +108,4 @@ CamV4/IncidentPhoto/
 CamV4/logs/
 CamV4/pricelist/
 CamV4/Properties/
+CamV4/Properties/PublishProfiles/
