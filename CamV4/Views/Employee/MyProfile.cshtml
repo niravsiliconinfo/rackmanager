@@ -1,0 +1,169 @@
+﻿@model CamV4.Models.UserEmployeeViewModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@functions{
+    public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    }
+}
+
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg " ng-app="myApp" ng-controller="homeCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index", "Employee")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Employees</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white text-capitalize ps-3 mt-2">Your Profile</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form class="">
+                            <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Employee Name <span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="EmployeeName" id="EmployeeName" ng-model="employeename" ng-init="employeename = '@Model.EmployeeName'">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Email</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="email" class="form-control" name="Email" id="Email" ng-model="email" ng-init="email = '@Model.EmployeeEmail'">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Degree Title</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="titledegree" id="titledegree" ng-model="titledegree" ng-init="titledegree = '@Model.TitleDegrees'">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Address</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="address" id="address" ng-model="address" ng-init="address = '@Model.EmployeeAddress'">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Zip Code</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="pin" id="pin" ng-model="pin" ng-init="pin = '@Model.PinCode'">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Country</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="country" id="drpcountry" class="form-control" ng-model="country" ng-change="GetProvincebyCountryId()" ng-init="country = '@Model.CountryID'">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getAllCountries" value="{{d.CountryID}}">{{d.CountryName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Province</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="province" id="drpprovince" class="form-control" ng-model="province" ng-click="GetProvincebyCountryModelId(country)" ng-init="province = '@Model.ProvinceID'">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getAllProvince" value="{{d.ProvinceID}}">{{d.ProvinceName}}</option>
+                                        </select>
+                                    </div>
+                                    <span class="text-sm text-rose" ng-if="!country">Please select country.</span>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>City</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="city" class="form-control" ng-model="city" ng-init="city = '@Model.CityID'" ng-click="GetCitybyProvinceModelId(province)">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getAllCities" value="{{d.CityID}}">{{d.CityName}}</option>
+                                        </select>
+                                    </div>
+                                    <span class="text-sm text-rose" ng-if="!province">Please select province.</span>
+                                </div>
+                            </div> 
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Phone Number</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <input type="text" class="form-control" name="MobileNo" id="MobileNo" ng-model="mobileNo" ng-init="mobileNo = '@Model.MobileNo'">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Gender</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="radio" name="gender" ng-model='gender' value="0" ng-checked="@Model.Gender == 0" @(Model.Gender == 0 ? "checked='checked'" : "") />&nbsp; Male
+                                        &nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="gender" ng-model='gender' value="1" ng-checked="@Model.Gender == 1" @(Model.Gender == 1 ? "checked='checked'" : "") />&nbsp; Female
+                                        &nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="gender" ng-model='gender' value="2" ng-checked="@Model.Gender == 2" @(Model.Gender == 2 ? "checked='checked'" : "") />&nbsp; Other
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center float-end">
+                                <button type="submit" ng-click="EmpEditMyProfile(@Model.UserID)" class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0">Update Profile</button>
+                                <span style="color:red">{{registermessage}}</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Partial("_FooterLayout")
+</main>

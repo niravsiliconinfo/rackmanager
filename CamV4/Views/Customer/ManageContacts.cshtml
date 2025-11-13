@@ -1,0 +1,109 @@
+﻿@model CamV4.Models.CustAndCustomerLocationViewModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@functions{
+    public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    }
+}
+<script src="~/NgScript/Controller/customerCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg " ng-app="myApp" ng-controller="customerCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index", "Customer")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Customer Location</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mb-0">Customer Locations</h6>
+                                </div>
+                                @*<div class="col-6 text-end">
+                                    <a class="btn bg-gradient-dark mb-0 mx-3" href="@Url.Action("AddCustLocation", "Admin", new { id = Model.CustomerID })"><i class="material-icons text-sm">add</i>&nbsp;&nbsp;Add New Customer Location</a>
+                                </div>*@
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body pb-2">
+                        <div class="table-responsive p-0" ng-if="getCustomerLocationByUserId">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Location ID</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Address</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Country</th>
+                                        <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-repeat="d in getCustomerLocationByUserId | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
+                                    <tr>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.LocationName}}</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.CustomerAddress}}<span ng-if="d.CustomerAddress && d.City">,</span> {{d.City}}</p>
+                                            <p class="text-xs text-secondary mb-0">{{d.Province}}<span ng-if="d.Province && d.PinCode">,</span> {{d.PinCode}} </p>
+                                        </td>
+                                        <td class="align-middle text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">{{d.Country}}</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="@Url.Action("AddLocationContact", "Customer")?id={{d.CustomerLocationID}}" class="tooltip-new">
+                                                <i class="material-icons text-lg">contact_phone</i>
+                                                <span class="tooltiptext">Add Contact</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <nav>
+                                Show <select ng-model="viewby" ng-change="setItemsPerPage(viewby)" style="height:25px">
+                                    <option>5</option>
+                                    <option>10</option>
+                                    <option>20</option>
+                                    <option>30</option>
+                                    <option>40</option>
+                                    <option>50</option>
+                                </select> of {{getCustomerLocationByUserIdcount}} Customer Locations
+                                <pagination total-items="totalgetCustomerLocationByUserId" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
+                                            items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Partial("_FooterLayout")
+</main>
+

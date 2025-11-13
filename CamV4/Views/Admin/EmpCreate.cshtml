@@ -1,0 +1,218 @@
+﻿@*@model CamV4.Models.UserEmployeeViewModel*@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@functions{
+        public string GetAntiForgeryToken()
+        {
+            string cookieToken, formToken;
+            AntiForgery.GetTokens(null, out cookieToken, out formToken);
+            return cookieToken + ":" + formToken;
+        }
+    }
+@*<script src="~/Scripts/ui-bootstrap-tpls-0.11.0.js"></script>*@
+<script src="~/NgScript/Controller/employeeCtrl.js"></script>
+<main class="main-content2 position-relative max-height-vh-100 h-100" ng-app="myApp" ng-controller="employeeCtrl" ngNativeValidate>    
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageEmployee", "Admin")">Manage Employee</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Employees</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white text-capitalize ps-3 mt-2">Create Employee</h6>
+                            <h8 class="text-white text-sm" style="float: left; padding-left: 1rem !important;"><span class="error">*</span> is Mandatory Field(s).</h8>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form class="">
+                            <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>User Name <span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" id="username" ng-model="username" name="username" required>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Employee Name <span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="EmployeeName" id="EmployeeName" ng-model="employeename" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Email</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="email" class="form-control" name="Email" id="Email" ng-model="email">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Phone Number</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="MobileNo" id="MobileNo" ng-model="mobileNo">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Degree Title <span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" required name="titledegree" id="titledegree" ng-model="titledegree">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Address</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="address" id="address" ng-model="address">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Zip Code</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="pin" id="pin" ng-model="pin" maxlength="8">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Country</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="country" id="drpcountry" class="form-control" ng-model="country" ng-change="GetProvincebyCountryId()">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getAllCountries" value="{{d.CountryID}}">{{d.CountryName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Province</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="province" id="drpprovince" class="form-control" ng-model="province" ng-change="GetCitybyProvinceId()">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getProvincebyCountryId" value="{{d.ProvinceID}}">{{d.ProvinceName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>City</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="city" class="form-control" ng-model="city">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getCitybyProvinceId" value="{{d.CityID}}">{{d.CityName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>User Type <span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="usertype" class="form-control" ng-model="usertype">
+                                            <option value="">-- Select --</option>
+                                            <option value="1">Admin</option>
+                                            <option value="2">Employee</option>
+                                            <option value="3">Technician</option>
+                                            <option value="4">Customer</option>
+                                            <option value="5">Sales</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Gender</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        Male &nbsp;<input type="radio" name="gender" ng-model='gender' value="0" />
+                                        &nbsp;&nbsp;&nbsp;
+                                        Female  &nbsp;<input type="radio" name="gender" ng-model='gender' value="1" />
+                                        &nbsp;&nbsp;&nbsp;
+                                        Other  &nbsp;<input type="radio" name="gender" ng-model='gender' value="2" />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Password <span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="password" class="form-control" name="Password" id="Password" ng-model="password">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Is Stamping Engineer?<span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="isstampingengineer" class="form-control" ng-model="isstampingengineer">
+                                            <option value="0">-- Select --</option>
+                                            <option value="1">Yes</option>
+                                            <option value="0">No</option>                                            
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center float-end">
+                                <button type="submit" ng-click="AddUserEmployee()" class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0">Add Employee</button>
+                                <span style="color:red"> {{registermessage}}</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                @Html.Partial("_FooterLayout")
+            </div>
+        </div>
+    </div>
+</main>

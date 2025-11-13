@@ -1,0 +1,80 @@
+﻿@model CamV4.Models.CustomerViewModel
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@functions{
+    public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    }
+}
+<script src="~/NgScript/Controller/customerCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg " ng-app="myApp" ng-controller="customerCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageCustomer", "Admin")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Customers</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white text-capitalize ps-3 mt-2">Delete Company</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form class="">
+                            <div class="input-group input-group-outline mb-3">
+                                <div class="text-dark">Company Name</div> : @Model.CustomerName
+                            </div>
+                            <div class="input-group input-group-outline mb-3">
+                                <div class="text-dark">Company Address</div> : @Model.CustomerAddress
+                            </div>
+                            <div class="input-group input-group-outline mb-3">
+                                <div class="text-dark">City</div> : @Model.CityID
+                            </div>
+                            <div class="input-group input-group-outline mb-3">
+                                <div class="text-dark">Province</div> : @Model.ProvinceID
+                            </div>
+                            <div class="input-group input-group-outline mb-3">
+                                <div class="text-dark">Country</div> : @Model.Country
+                            </div>
+                            <div class="input-group input-group-outline mb-3">
+                                <div class="text-dark">Zip Code</div> : @Model.PinCode
+                            </div>
+                            <div class="text-center float-end">
+                                <button type="submit" ng-click="RemoveCustomer(@Model.CustomerID)" class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0">Delete Company</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Partial("_FooterLayout")
+</main>

@@ -1,0 +1,20 @@
+[
+  {
+    "outputFileName": "Scripts/angular-animate.min.js",
+    "inputFiles": [
+      "Scripts/angular-animate.js"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/angular-aria.min.js",
+    "inputFiles": [
+      "Scripts/angular-aria.js"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/angular-base64-upload.min.js",
+    "inputFiles": [
+      "Scripts/angular-base64-upload.js"
+    ]
+  }
+]

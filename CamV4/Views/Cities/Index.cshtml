@@ -1,0 +1,158 @@
+﻿@{ Layout = "~/Views/Shared/_AdminLayout.cshtml"; }
+@functions { public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    } }
+<script src="~/Scripts/ui-bootstrap-tpls-0.11.0.js"></script>
+<script src="~/NgScript/Controller/cityCtrl.js"></script>
+<script src="~/NgScript/Controller/deficiencyCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg" ng-app="myApp" ng-controller="cityCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index", "Admin")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Cities</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                    <div class="input-group input-group-outline">
+                        <input type="search" class="form-control" placeholder="Type here..." ng-model="search" id="example-search-input">
+                    </div>
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid py-4">
+        <!-- Add/Edit City Form -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mb-0">{{ city.CityID ? 'Edit City' : 'Add City' }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <input type="hidden" ng-model="antiForgeryToken" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+
+                            <div class="row">
+                                <div class="col-sm-2"><span>City Name <span class="error">*</span></span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" ng-model="city.CityName" required />
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2"><span>Province <span class="error">*</span></span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select class="form-control" ng-model="city.ProvinceID" required
+                                                ng-options="p.ProvinceID as p.ProvinceName for p in provinces">
+                                            <option value="">--Select Province--</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-sm-6 text-start">
+                                    <span class="text-danger">{{ validationMessage }}</span>
+                                </div>
+                                <div class="col-sm-6 text-end">
+                                    <button type="submit" ng-click="saveCity()" class="btn btn-md bg-gradient-info btn-lg w-100 mb-0">
+                                        {{ city.CityID ? "Update City" : "Add City" }}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <br />
+                <!-- City Listing -->
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white text-capitalize ps-3 mb-0">Cities</h6>
+                        </div>
+                    </div>
+                    <div class="card-body pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">City Name</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Province</th>
+                                        <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="c in getAllCities | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
+                                        <td>
+                                            <h6 class="mb-0 text-sm">{{ c.CityName }}</h6>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{ c.ProvinceName }}</p>
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="javascript:void(0)" ng-click="editCity(c)">
+                                                <i class="material-icons text-sm">edit</i>
+                                            </a>
+                                            <a href="javascript:void(0)" ng-click="deleteCity(c.CityID)">
+                                                <i class="material-icons text-sm text-danger">delete</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!-- Pagination -->
+                            <nav>
+                                Show <select ng-model="viewby" ng-change="setItemsPerPage(viewby)" style="height:25px">
+                                    <option>5</option>
+                                    <option>10</option>
+                                    <option>20</option>
+                                    <option>30</option>
+                                    <option>40</option>
+                                    <option>50</option>
+                                    <option>100</option>
+                                </select> of {{getAllCitiescount}} Cities
+                                <pagination total-items="totalgetAllCities" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
+                                            items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.Partial("_FooterLayout")
+    </div>
+</main>
+
+

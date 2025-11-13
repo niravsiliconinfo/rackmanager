@@ -1,0 +1,173 @@
+﻿@model CamV4.Models.ComponentPropertyType
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@functions{
+    public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    }
+}
+<script src="~/NgScript/Controller/componentCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 " ng-app="myApp" ng-controller="componentCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageComponentPropertyType", "Admin")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Component Property Type</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <!--Component Property Type-->
+                <div class="card my-4" ng-show="ShowAddComponentPropertyTypeBox">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white text-capitalize ps-3 mt-2">Create Component Property Type</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form class="">
+                            <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Component</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="ComponentId" class="form-control" required ng-model="componentId">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getAllComponent" value="{{d.ComponentId}}">{{d.ComponentName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Name</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" required name="ComponentPropertyTypeName" id="ComponentPropertyTypeName" ng-model="componentPropertyTypeName">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Description</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" required name="ComponentPropertyTypeDesctiption" id="ComponentPropertyTypeDesctiption" ng-model="componentPropertyTypeDesctiption">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center float-sm-start" style="display:none;">
+                                <button type="submit" id="SessionAddComponentPropertyTypeClickId" ng-click="SessionAddComponentPropertyTypeClick()">Add Component Property Type</button>
+                            </div>
+                            <div class="text-center float-end">
+                                <button type="submit" ng-click="SaveComponentPropertyType()" class="btn btn-lg bg-gradient-info btn-lg w-100 mt-3 mb-0">Save Component Property Type</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!--Component Property Value-->
+                <div class="card my-4" ng-show="ShowAddComponentPropertyValueBox">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white text-capitalize ps-3 mt-2">Create Component Property Value </h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form class="">
+                            <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Component Property Value</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="ComponentPropertyValue" id="ComponentPropertyValue" ng-model="componentPropertyValue">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center float-end">
+                                <button type="submit" ng-click="SaveComponentPropertyValues()" class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0">Save Component Property Value</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <br />
+
+                <!--Component Property Value table-->
+                <div class="card my-4" >
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mb-0">Component Property Value</h6>
+                                </div>
+                                <div class="col-6 text-end" ng-click="SessionAddComponentPropertyValueClick()">
+                                    <a class="btn bg-gradient-dark mb-0 mx-3" href=""><i class="material-icons text-sm">add</i>&nbsp;&nbsp;Add New Component Property Value </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body pb-2">
+                        <div class="table-responsive p-0" ng-if="getComponentPropertyValueAdd">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Component Property Values</th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-repeat="d in getComponentPropertyValueAdd | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
+                                    <tr>
+                                        <td class="align-middle text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">{{d.ComponentPropertyValue}}</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <nav>
+                                Show <select ng-model="viewby" ng-change="setItemsPerPage(viewby)" style="height:25px">
+                                    <option>5</option>
+                                    <option>10</option>
+                                    <option>20</option>
+                                    <option>30</option>
+                                    <option>40</option>
+                                    <option>50</option>
+                                </select> of {{getComponentPropertyValueAddcount}} Component Property Values
+                                <pagination total-items="totalgetComponentPropertyValueAdd" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
+                                            items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                @Html.Partial("_FooterLayout")
+            </div>
+        </div>
+    </div>
+</main>

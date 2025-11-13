@@ -1,0 +1,52 @@
+﻿@model CamV4.Models.LoginViewModel
+@{
+    ViewBag.Title = "Rack Manager - Rack Management Tool - cam|industrial";    
+}
+<div class="main-content  mt-0">
+    <div class="page-header align-items-start min-vh-100" style="background-image: url('../../Content/V2/images/CAM_RackApp_CoverImg.webp');">
+        <span class="mask bg-gradient-dark opacity-6"></span>
+        <div class="container my-auto">
+            <div class="row">
+                <div class="col-lg-4 col-md-8 col-12 mx-auto">
+                    <div class="card-blue z-index-0 fadeIn3 fadeInBottom">
+                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="p-3">
+                                <img src="~/Content/V2/images/logos/rack-manager-logo.png" class="img-fluid" alt="main_logo">
+                                @*<img src="~/Content/V2/images/logos/rack-manager-logo.png" class="img-fluid" alt="main_logo">*@
+                                @*<img src="~/Content/V2/images/logos/CamLogo.png" class="img-fluid" alt="main_logo">*@
+                                @*<h4 class="text-white font-weight-bolder text-center mt-2 mb-0">Sign in</h4>*@
+                            </div>
+                        </div>
+                        <div class="card-body" style="background-color:#003DA6">
+                            @using (Html.BeginForm())
+                            {
+                                @Html.AntiForgeryToken()
+                                <form role="form" action="@Url.Action("Login", "Account")" method="post" class="text-start">
+                                    <div class="input-group input-group-outline my-3">
+                                        @*<label class="form-label">Email</label>*@
+                                        <input type="text" id="UserName" name="UserName" placeholder="User Name" class="form-control text-white">
+                                    </div>
+                                    <div class="input-group input-group-outline mb-3">
+                                        @*<label class="form-label">Password</label>*@
+                                        <input type="password" id="UserPassword" name="UserPassword" placeholder="User Password" class="form-control text-white">
+                                    </div>
+                                    <div class="form-check form-switch d-flex align-items-center mb-3">
+                                        <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe" value="true">
+                                        <input type="hidden" id="rememberMe" value="false" name="isActive">
+                                        <label class="form-check-label mb-0 ms-2" for="rememberMe">Remember me</label>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn border-yellow text-yellow w-100 my-4 mb-2">Sign in</button>
+                                    </div>
+                                    <span class="text-yellow">Version 4.39</span>
+                                    <input type="hidden" value="true" id="Active" name="Active" />
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

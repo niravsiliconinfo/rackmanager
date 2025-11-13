@@ -1,0 +1,311 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@functions{
+    public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    }
+}
+<script src="~/NgScript/Controller/customerCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg " ng-app="myApp" ng-controller="customerCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageCustomer", "Admin")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Customer Contact</li>
+                </ol>
+                <div class="float-sm-start">
+                    <a href="@Url.Action("EditCustomer", "Admin")?id=@Session["CustomerId"]">
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
+                    <span class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</span>
+                </div>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4" ng-show="AddContactShow">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mt-2">Add Contact</h6>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <h6 class="text-white text-capitalize ps-3 mt-2 mx-3">@ViewData["CustName"]</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form class="">
+                            <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+                            @*<div class="row">
+                                    <div class="col-sm-2">
+                                        <span>User Name</span>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <input type="text" class="form-control" name="UserName" id="UserName" ng-model="userName">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <span>User Password</span>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <input type="password" class="form-control" name="UserPassword" id="UserPassword" ng-model="userPassword">
+                                        </div>
+                                    </div>
+                                </div>*@
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Contact Name <span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="ContactName" id="ContactName" ng-model="contactName" required>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Contact Email(User Name) <span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="ContactEmail" id="ContactEmail" ng-model="contactEmail" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Contact Phone</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="ContactPhone" id="ContactPhone" ng-model="contactPhone">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Password <span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="password" class="form-control" name="Password" id="Password" ng-model="userPassword" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Location ID<span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3 scroller">
+                                        <ul class="navbar-nav form-control">
+                                            <li ng-repeat="f in getCustomerLocationByCustomerId" required>
+                                                <label for="chkCustomerLocationEdit_{{f.CustomerLocationID}}">
+                                                    <input id="chkCustomerLocationEdit_{{f.CustomerLocationID}}" type="checkbox" ng-model="f.selected" />
+                                                    @*{{f.LocationName}}({{f.City}})*@
+                                                    {{ f.LocationName }}{{ f.City ? ' (' + f.City + ')' : '' }}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="text-center float-end">
+                                        <span style="color:red">{{validationShow}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="text-center float-end">
+                                        <button type="submit" ng-click="SaveLocationContact(@ViewData["CustD"])" class="btn btn-md bg-gradient-info btn-lg w-100 mb-0">Save Contact</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card my-4" ng-show="EditContactShow">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white text-capitalize ps-3 mt-2">Edit Contact</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form class="">
+                            <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Contact Name *</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="contactnameInEdit" id="contactnameInEdit" ng-model="contactnameInEdit" ng-value="contactnameInEdit">                                                                               
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Contact Email(Username) *</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="contactEmailInEdit" id="contactEmailInEdit" ng-model="contactEmailInEdit" ng-value="contactEmailInEdit">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Contact Phone</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="contactPhoneInEdit" id="contactPhoneInEdit" ng-model="contactPhoneInEdit" ng-value="contactPhoneInEdit">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Password</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="password" class="form-control" name="userPasswordInEdit" id="userPasswordInEdit" ng-model="userPasswordInEdit" ng-value="userPasswordInEdit">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Location ID<span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3 scroller">
+                                        <ul class="navbar-nav form-control">
+                                            <li ng-repeat="f in getCustomerLocationByCustomerId">
+                                                <label for="chkCustomerLocationEdit_{{f.CustomerLocationID}}">
+                                                    <input id="chkCustomerLocationEdit_{{f.CustomerLocationID}}" type="checkbox" ng-model="f.selected" />
+                                                    @*{{f.LocationName}}({{f.City}})*@
+                                                    {{ f.LocationName }}{{ f.City ? ' (' + f.City + ')' : '' }}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="text-center float-end">
+                                        <span style="color:red">{{validationShow}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="text-center float-end">
+                                        <input type="hidden" class="form-control" name="useridEdit" id="useridEdit" ng-model="useridEdit" ng-value="useridEdit">
+                                        <input type="hidden" class="form-control" name="locationContactIdInEdit" id="locationContactIdInEdit" ng-model="locationContactIdInEdit" ng-value="locationContactIdInEdit">
+                                        <input type="hidden" class="form-control" name="customerid" id="customerid" ng-model="customerid" ng-value="customerid">
+                                        <button type="submit" ng-click="EditLocationContact(locationContactIdInEdit)" class="btn btn-md bg-gradient-info btn-lg w-100 mb-0">Update Contact</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <br />
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mb-0">Location Contact/Users</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body pb-2">
+                        <div class="table-responsive p-0" ng-if="GetContactByLocationId">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Contact Name</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Email/Contact Phone</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Location ID(City)</th>
+                                        @*<th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Customer</th>*@
+                                        <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-repeat="d in GetContactByLocationId | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-0 text-sm">{{d.ContactName}}</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs text-secondary mb-0">{{d.ContactEmail}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.ContactPhone}}</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.LinkedLocationNames}}</p>
+                                        </td>
+                                        @*<td>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.Customer}}</p>
+                                        </td>*@
+                                        <td class="align-middle">
+                                            <!-- Edit -->
+                                            <a href="javascript:void(0)" ng-click="EditContactClick(d.LocationContactId)">
+                                                <i class="material-icons text-sm">edit</i>
+                                            </a>
+                                            <!-- Delete -->
+                                            <!--<a href="javascript:void(0)" ng-click="DeleteContactClick(d.LocationContactId)">
+                                                <i class="material-icons text-sm">delete</i>
+                                            </a>-->
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <nav>
+                                Show <select ng-model="viewby" ng-change="setItemsPerPage(viewby)" style="height:25px">
+                                    <option>5</option>
+                                    <option>10</option>
+                                    <option>20</option>
+                                    <option>30</option>
+                                    <option>40</option>
+                                    <option>50</option>
+                                </select> of {{GetContactByLocationIdcount}} Location Contact
+                                <pagination total-items="totalGetContactByLocationId" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
+                                            items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
+                            </nav>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Partial("_FooterLayout")
+</main>
+
+

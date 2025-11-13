@@ -1,0 +1,966 @@
+﻿@model CamV4.Models.AdminDashboardGraphViewModel
+@{
+    ViewBag.Title = "Rack Manager - Rack Management Tool - cam|industrial";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<main class="main-content position-relative max-height-vh-100 h-100 " ng-controller="homeCtrl">
+    <!-- Navbar -->
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Home</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Dashboard</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                    <div class="input-group input-group-outline">
+                        <select class="form-control" id="selectedYear" name="year" onchange="ChartDataByYear(this.value)">
+                            @*<option value  disabled>-- Select Year --</option> ng-options="year.value as year.label for year in years" ng-model="year"*@
+                        </select>
+                    </div>
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                            </div>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_InspectionsDue.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="InspectionDueCount">@Model.InspectionDueCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Inspections Due</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_InProgress.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="InProgressCount">@Model.InProgressCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">In Progress</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_SentForApproval.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="SentforApprovalCount">@Model.SentforApprovalCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Sent for Approval</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_ReportComplete.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="ApprovedCompletedCount">@Model.ApprovedCompletedCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Report Complete</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_QuotationRequested.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="QuotationRequestedCount">@Model.QuotationRequestedCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Quotation Requested</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_AwaitingApproval.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="AwaitingApprovalCount">@Model.AwaitingApprovalCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Awaiting Approval</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_QuotationApproved.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="QuotationApprovedCount">@Model.QuotationApprovedCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Quotation Approved</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_RepairCompleted.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="RepairCompletedCount">@Model.RepairCompletedCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Repair Completed</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_Finished.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="InspectionFinishedCount">@Model.InspectionFinishedCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Finished</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/icon5.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0">@Model.DashboardActiveCompanyCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Total Company</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/employee.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0">@Model.DashboardActiveUserCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Number of Employee</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>                    
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/icon3.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0">@Model.DashboardActiveInventoryCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Inventory</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>                    
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-lg-4 col-md-6 mt-4 mb-4">
+                <div class="card z-index-2 ">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                        <div class="bg-gradient-light shadow-info py-3 pe-1">
+                            <div class="chart">
+                                @*<canvas id="chart-bars" class="chart-canvas" height="170"></canvas>*@
+                                <canvas id="pie-chart" width="800" height="450"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="mb-0 ">Inspection Status</h6>
+                        <hr class="dark horizontal">
+                        <div class="d-flex ">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-6 mt-4 mb-4">
+                <div class="card z-index-2  ">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                        <div class="bg-gradient-secondary shadow-secondary py-3 pe-1">
+                            <div class="chart">
+                                <canvas id="chart-line" class="chart-canvas" height="170"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6 class="mb-0 "> Inspections Done by Employee  </h6>
+                                <hr class="dark horizontal my-0">
+                                <p class="text-sm mb-0 text-capitalize">
+                                    Admin <span class="text-dark text-sm font-weight-bolder">@Model.DashboardActiveUserAdminCount</span> |
+                                    Employees <span class="text-dark text-sm font-weight-bolder">@Model.DashboardActiveUserEmployeeCount</span>
+                                </p>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+                <hr class="dark horizontal">
+                <div class="card z-index-2 ">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                        <div class="bg-gradient-info shadow-info py-3 pe-1">
+                            <div class="chart">
+                                <canvas id="chart-line-tasks" class="chart-canvas" height="170"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="mb-0 ">Approved Inspections</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mt-4 mb-3">
+
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <div class="row">
+                            <div class="col-lg-6 col-7">
+                                <h6>Recent Inspection</h6>
+                            </div>
+                            <div class="col-lg-6 col-5 my-auto text-end">
+                                @*<div class="dropdown float-lg-end pe-4">
+                                        <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa fa-ellipsis-v text-secondary"></i>
+                                        </a>
+                                        <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                            <li><a class="dropdown-item" href="javascript:;">Action</a></li>
+                                            <li><a class="dropdown-item" href="javascript:;">Another action</a></li>
+                                            <li><a class="dropdown-item" href="javascript:;">Something else here</a></li>
+                                        </ul>
+                                    </div>*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body px-0 pb-2">
+                        <div class="table-responsive">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder">Company</th>
+                                        <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder">Location and Area</th>
+                                        <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder">Done By</th>
+                                        <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder">Started On</th>
+                                        <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder">Download</th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-repeat="d in getRecentInspectionAdminDashboard">
+                                    <tr ng-click="InspectionsheetClick(d.InspectionId)">
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div>
+                                                    <img ng-src="{{d.CustomerLogo}}" class="avatar avatar-sm me-3 border-radius-lg" alt="{{d.CustomerLogo}}">
+                                                </div>
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-0 text-sm">{{d.Customer}}</h6>
+                                                    @*<h7 class="mb-0 text-sm">{{d.InspectionDocumentNo}}</h7>*@
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <p class="text-xs font-weight-bold mb-0">{{d.CustomerLocation}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.CustomerArea}}</p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <p class="text-xs font-weight-bold mb-0">{{d.Employee}}</p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-xs font-weight-bold">{{d.InspectionStartedOn| date:'dd MMM yyyy'}}</span>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <i class="material-icons text-sm my-auto me-1">download</i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100">
+                    <div class="card-header pb-0">
+                        <h6>Inspection Due</h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="timeline timeline-one-side" ng-repeat="d in getAllDueInspectionAdminDashboard">
+                            <div class="timeline-block mb-3">
+                                <span class="timeline-step">
+                                    <i class="material-icons text-success text-gradient">notifications</i>
+                                </span>
+                                <div class="timeline-content">
+                                    <h6 class="text-dark text-sm font-weight-bold mb-0">{{d.Customer}}</h6>
+                                    @*<h7 class="text-dark text-sm font-weight-bold mb-0">{{d.InspectionDocumentNo}}</h7>*@
+                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.Employee}}</p>
+                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.CustomerLocation}}</p>
+                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.InspectionDate | date: dd-MMM-yyyy}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="footer py-4  ">
+                <div class="container-fluid">
+                    <div class="row align-items-center justify-content-lg-between">
+                        <div class="col-lg-6 mb-lg-0 mb-4">
+                            <div class="copyright text-center text-sm text-muted text-lg-start">
+                                ©
+                                <script>
+                                    document.write(new Date().getFullYear())
+                                </script>
+                                <a href="https://camindustrial.net/" class="font-weight-bold" target="_blank">Cam Industrial -- Version 4.39</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</main>
+
+<!--   Core JS Files   -->
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>*@
+<script src="~/assets/js/core/popper.min.js"></script>
+<script src="~/assets/js/core/bootstrap.min.js"></script>
+<script src="~/assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="~/assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="~/assets/js/plugins/chartjs.min.js"></script>
+
+<script>
+
+    var dataList = [];
+    var lableList = [];
+    var colorList = [];
+
+    //var strDemo = "Approved &amp; Completed";
+    //console.log('XXXXXXXXXXX', strDemo);
+
+    //strDemo = strDemo.replace('&amp;', '&');
+    //console.log('YYYYYYYYY', strDemo);
+
+    @foreach (var dataInput in Model.Pie.ToList())
+    {
+        //var modifiedLabel = dataInput.InspectionStatusName.Replace("&amp;", " & ");
+        @:dataList.push("@dataInput.cnt");
+        @:lableList.push("@dataInput.InspectionStatusName");
+        @:colorList.push("@dataInput.InspectionStatusColor");
+    }
+    //console.log('YYYYYYYYY', lableList);
+    $.each(lableList, function (index, value) {
+        lableList[index] = value.replace('&amp;', '&');
+        console.log('in loop', lableList[index]); // Check the updated value
+    });
+
+    //setTimeout(
+    //    $.each(lableList, function (index, value) {
+    //        value = value.replace('&amp;', '&');
+    //        console.log('in loopp', value);
+    //    })
+    //    , 10000);
+    //setup block
+    const data = {
+        labels: lableList,
+        datasets: [{
+            label: "Inspections",
+            backgroundColor: colorList,
+            data: dataList
+        }
+        ]
+    }
+    // config block
+    const config = {
+        type: 'pie',
+        data,
+        options: {
+            title: {
+                display: true,
+                text: ''
+            }
+        }
+    };
+
+    //init block (render)
+    let myChart = new Chart(
+        document.getElementById("pie-chart"),
+        config
+    );
+
+    var dataListApproved = [];
+        var lableListApproved = [];
+        @foreach (var dataInput in Model.LineApproved.ToList())
+        {
+
+            @:dataListApproved.push("@dataInput.iCount");
+            @:lableListApproved.push("@dataInput.iMonth");
+        }
+
+    const appconfig = {
+        type: "line",
+        data: {
+            labels: lableListApproved,
+            datasets: [{
+                label: "Approved",
+                tension: 0,
+                borderWidth: 0,
+                pointRadius: 5,
+                pointBackgroundColor: "rgba(255, 255, 255, .8)",
+                pointBorderColor: "transparent",
+                borderColor: "rgba(255, 255, 255, .8)",
+                borderWidth: 4,
+                backgroundColor: "transparent",
+                fill: true,
+                data: dataListApproved,
+                maxBarThickness: 6
+
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            scales: {
+                y: {
+                    grid: {
+                        drawBorder: false,
+                        display: true,
+                        drawOnChartArea: true,
+                        drawTicks: false,
+                        borderDash: [5, 5],
+                        color: 'rgba(255, 255, 255, .2)'
+                    },
+                    ticks: {
+                        display: true,
+                        padding: 10,
+                        color: '#f8f9fa',
+                        font: {
+                            size: 14,
+                            weight: 300,
+                            family: "Roboto",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        color: '#f8f9fa',
+                        padding: 10,
+                        font: {
+                            size: 14,
+                            weight: 300,
+                            family: "Roboto",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+            },
+        },
+    }
+
+    let appChart = new Chart(
+        document.getElementById("chart-line-tasks"),
+        appconfig
+    );
+
+     var dataListDone = [];
+        var lableListDone = [];
+        @foreach (var dataInput in Model.LineDone.ToList())
+        {
+            @:dataListDone.push("@dataInput.cnt");
+            @:lableListDone.push("@dataInput.EmployeeName");
+        }
+
+    const doneconfig = {
+        type: "line",
+        data: {
+            labels: lableListDone,
+            datasets: [{
+                label: "Employee Inspection",
+                tension: 0,
+                borderWidth: 0,
+                pointRadius: 5,
+                pointBackgroundColor: "rgba(255, 255, 255, .8)",
+                pointBorderColor: "transparent",
+                borderColor: "rgba(255, 255, 255, .8)",
+                borderColor: "rgba(255, 255, 255, .8)",
+                borderWidth: 4,
+                backgroundColor: "transparent",
+                fill: true,
+                data: dataListDone,
+                maxBarThickness: 6
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            scales: {
+                y: {
+                    grid: {
+                        drawBorder: false,
+                        display: true,
+                        drawOnChartArea: true,
+                        drawTicks: false,
+                        borderDash: [5, 5],
+                        color: 'rgba(255, 255, 255, .2)'
+                    },
+                    ticks: {
+                        display: true,
+                        color: '#f8f9fa',
+                        padding: 10,
+                        font: {
+                            size: 14,
+                            weight: 300,
+                            family: "Roboto",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        color: '#f8f9fa',
+                        padding: 10,
+                        font: {
+                            size: 14,
+                            weight: 300,
+                            family: "Roboto",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+            },
+        },
+    }
+
+    let doneChart = new Chart(
+        document.getElementById("chart-line"),
+        doneconfig
+    );
+
+    async function ChartDataByYear(year) {
+      
+        try {
+            // Fetch all data in parallel
+           
+            const [
+                inspectionData,
+                approvedInspectionData,
+                doneEmpInspectionData,
+                dashboardData
+            ] = await Promise.all([
+                jQuery.ajax({ type: "GET", url: '/api/pageview/getInspectionCountGraphByYear', data: { year }, contentType: "application/json; charset-utf-8" }),
+                jQuery.ajax({ type: "GET", url: '/api/pageview/getApprovedInspectionCountByYear', data: { year }, contentType: "application/json; charset-utf-8" }),
+                jQuery.ajax({ type: "GET", url: '/api/pageview/getDoneEmpInspectionCountByYear', data: { year }, contentType: "application/json; charset-utf-8" }),
+                jQuery.ajax({ type: "GET", url: '/api/pageview/getDashboardCountByYear', data: { year }, contentType: "application/json; charset-utf-8" })
+            ]);
+            console.log("ChartDataByYear", year, inspectionData, approvedInspectionData, doneEmpInspectionData, dashboardData);
+            // Update Inspection Count Graph Chart
+            const dataList = inspectionData.map(element => element.cnt);
+            const labelList = inspectionData.map(element => element.InspectionStatusName);
+            const colorList = inspectionData.map(element => element.InspectionStatusColor);
+
+            myChart.config.data.labels = labelList;
+            myChart.config.data.datasets[0].data = dataList;
+            myChart.config.data.datasets[0].backgroundColor = colorList;
+            myChart.update();
+
+            // Update Approved Inspection Chart
+            const dataListApproved = approvedInspectionData.map(element => element.iCount);
+            const labelListApproved = approvedInspectionData.map(element => element.iMonth);
+
+            appChart.config.data.labels = labelListApproved;
+            appChart.config.data.datasets[0].data = dataListApproved;
+            appChart.update();
+
+            // Update Done Employee Inspection Chart
+            const dataListDone = doneEmpInspectionData.map(element => element.cnt);
+            const labelListDone = doneEmpInspectionData.map(element => element.EmployeeName);
+
+            doneChart.config.data.labels = labelListDone;
+            doneChart.config.data.datasets[0].data = dataListDone;
+            doneChart.update();
+
+            // Update Dashboard Metrics
+            $('#InspectionDueCount').html(dashboardData.InspectionDueCount);
+            $('#InProgressCount').html(dashboardData.InProgressCount);
+            $('#SentforApprovalCount').html(dashboardData.SentforApprovalCount);
+            $('#ApprovedCompletedCount').html(dashboardData.ApprovedCompletedCount);
+            $('#QuotationRequestedCount').html(dashboardData.QuotationRequestedCount);
+            $('#AwaitingApprovalCount').html(dashboardData.AwaitingApprovalCount);
+            $('#QuotationApprovedCount').html(dashboardData.QuotationApprovedCount);
+            $('#RepairCompletedCount').html(dashboardData.RepairCompletedCount);
+            $('#InspectionFinishedCount').html(dashboardData.InspectionFinishedCount);
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            alert("An error occurred while fetching data.");
+        }
+    }
+
+
+    //function ChartDataByYear(value) {        
+    //    //var year = value.replace('number:', '');
+    //    var year = value;
+    //    jQuery.ajax({
+    //        type: "GET",
+    //        url: '/api/pageview/getInspectionCountGraphByYear',
+    //        data: { year: year },
+    //        contentType: "application/json; charset-utf-8",
+    //        success: function (response) {
+    //            dataList = response.map(element => element.cnt);
+    //            lableList = response.map(element => element.InspectionStatusName);
+    //            colorList = response.map(element => element.InspectionStatusColor);
+
+    //            myChart.destroy();
+    //            //let newStr = lableList.replace(/&amp;/g, '&');
+    //            //console.log('newStr-----',newStr);
+    //            myChart.config.data.labels = lableList;
+    //            myChart.config.data.datasets[0].data = dataList;
+    //            myChart.config.data.datasets[0].backgroundColor = colorList;
+
+    //            myChart = new Chart(
+    //                document.getElementById("pie-chart"),
+    //                config
+    //            );
+    //            console.log('dddkmkkkkkkk--', config);
+    //             //myChart.update();
+    //        },
+    //        failure: function (msg) {
+    //            alert(msg);
+    //        }
+    //    });
+
+    //    jQuery.ajax({
+    //        type: "GET",
+    //        url: '/api/pageview/getApprovedInspectionCountByYear',
+    //        data: { year: year },
+    //        contentType: "application/json; charset-utf-8",
+    //        success: function (response) {
+    //            dataListApproved = response.map(element => element.iCount);
+    //            lableListApproved = response.map(element => element.iMonth);
+
+    //            appChart.destroy();
+    //            appChart.config.data.labels = lableListApproved;
+    //            appChart.config.data.datasets[0].data = dataListApproved;
+
+    //            appChart = new Chart(
+    //                document.getElementById("chart-line-tasks"),
+    //                appconfig
+    //            );
+    //             //myChart.update();
+    //        },
+    //        failure: function (msg) {
+    //            alert(msg);
+    //        }
+    //    });
+
+    //    jQuery.ajax({
+    //        type: "GET",
+    //        url: '/api/pageview/getDoneEmpInspectionCountByYear',
+    //        data: { year: year },
+    //        contentType: "application/json; charset-utf-8",
+    //        success: function (response) {
+    //            dataListDone = response.map(element => element.cnt);
+    //            lableListDone = response.map(element => element.EmployeeName);
+
+    //            doneChart.destroy();
+    //            doneChart.config.data.labels = lableListDone;
+    //            doneChart.config.data.datasets[0].data = dataListDone;
+
+    //            doneChart = new Chart(
+    //                document.getElementById("chart-line"),
+    //                doneconfig
+    //            );
+    //            //myChart.update();
+    //        },
+    //        failure: function (msg) {
+    //            alert(msg);
+    //        }
+    //    });
+
+    //    jQuery.ajax({
+    //        type: "GET",
+    //        url: '/api/pageview/getDashboardCountByYear',
+    //        data: { year: year },
+    //        contentType: "application/json; charset-utf-8",
+    //        success: function (response) {
+    //            console.log('lllll', response);
+    //          // document.getElementById('inProgressId').value = response;
+    //           // $scope.getAllInProgressInspectioncount = response;
+    //            $('#InspectionDueCount').html(response.InspectionDueCount);
+    //            $('#InProgressCount').html(response.InProgressCount);
+    //            $('#SentforApprovalCount').html(response.SentforApprovalCount);
+    //            $('#ApprovedCompletedCount').html(response.ApprovedCompletedCount);
+    //            $('#QuotationRequestedCount').html(response.QuotationRequestedCount);
+    //            $('#AwaitingApprovalCount').html(response.AwaitingApprovalCount);
+    //            $('#QuotationApprovedCount').html(response.QuotationApprovedCount);
+    //            $('#RepairCompletedCount').html(response.RepairCompletedCount);
+    //            $('#InspectionFinishedCount').html(response.InspectionFinishedCount);
+    //        },
+    //        failure: function (msg) {
+    //            alert(msg);
+    //        }
+    //    });
+    //}
+
+</script>
+<script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+        var options = {
+            damping: '0.5'
+        }
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+</script>
+<!-- Github buttons -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+<script src="~/assets/js/material-dashboard.min.js?v=3.0.2"></script>
+
+@*//var ctx = document.getElementById("chart-bars").getContext("2d");
+
+    //new Chart(ctx, {
+    //    type: "bar",
+    //    data: {
+    //        labels: ["M", "T", "W", "T", "F", "S", "S"],
+    //        datasets: [{
+    //            label: "Sales",
+    //            tension: 0.4,
+    //            borderWidth: 0,
+    //            borderRadius: 4,
+    //            borderSkipped: false,
+    //            backgroundColor: "rgba(255, 255, 255, .8)",
+    //            data: [50, 20, 10, 22, 50, 10, 40],
+    //            maxBarThickness: 6
+    //        },],
+    //    },
+    //    options: {
+    //        responsive: true,
+    //        maintainAspectRatio: false,
+    //        plugins: {
+    //            legend: {
+    //                display: false,
+    //            }
+    //        },
+    //        interaction: {
+    //            intersect: false,
+    //            mode: 'index',
+    //        },
+    //        scales: {
+    //            y: {
+    //                grid: {
+    //                    drawBorder: false,
+    //                    display: true,
+    //                    drawOnChartArea: true,
+    //                    drawTicks: false,
+    //                    borderDash: [5, 5],
+    //                    color: 'rgba(255, 255, 255, .2)'
+    //                },
+    //                ticks: {
+    //                    suggestedMin: 0,
+    //                    suggestedMax: 500,
+    //                    beginAtZero: true,
+    //                    padding: 10,
+    //                    font: {
+    //                        size: 14,
+    //                        weight: 300,
+    //                        family: "Roboto",
+    //                        style: 'normal',
+    //                        lineHeight: 2
+    //                    },
+    //                    color: "#fff"
+    //                },
+    //            },
+    //            x: {
+    //                grid: {
+    //                    drawBorder: false,
+    //                    display: true,
+    //                    drawOnChartArea: true,
+    //                    drawTicks: false,
+    //                    borderDash: [5, 5],
+    //                    color: 'rgba(255, 255, 255, .2)'
+    //                },
+    //                ticks: {
+    //                    display: true,
+    //                    color: '#f8f9fa',
+    //                    padding: 10,
+    //                    font: {
+    //                        size: 14,
+    //                        weight: 300,
+    //                        family: "Roboto",
+    //                        style: 'normal',
+    //                        lineHeight: 2
+    //                    },
+    //                }
+    //            },
+    //        },
+    //    },
+    //});*@

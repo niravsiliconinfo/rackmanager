@@ -1,0 +1,365 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@functions{
+    public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    }
+}
+@{
+    var userType = Session["LoggedInUserType"].ToString();
+}
+<script src="~/NgScript/Controller/inspectionCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100" ng-app="myApp" ng-controller="inspectionCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageInspection", "Admin")">Back(Inspection Listing)</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Inspection</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mt-2">Preview Inspection Sheet - {{getInspectionDetailsForSheet.InspectionDocumentNo}} For Quotation</h6>
+                                </div>
+                                <div class="col-6 text-end">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body" id="inspectionsheet">
+                        <form class="">
+                            <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Inspection Number :</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        {{getInspectionDetailsForSheet.InspectionDocumentNo}}
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Type :</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        {{getInspectionDetailsForSheet.InspectionType}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Done By :</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        {{getInspectionDetailsForSheet.Employee}}
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Customer Name :</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        {{getInspectionDetailsForSheet.Customer}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Inspection Date :</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        {{getInspectionDetailsForSheet.InspectionDate| date:'MMMM dd, yyyy'}}
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Report Date :</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        {{getInspectionDetailsForSheet.Reportdate| date:'MMMM dd, yyyy'}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Location ID :</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        {{getInspectionDetailsForSheet.CustomerLocation}}
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Area Name :</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        {{getInspectionDetailsForSheet.CustomerArea}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Facilities Area :</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <ol>
+                                        <li ng-repeat="area in facilitiesAreasList">
+                                            {{area}}
+                                        </li>
+                                    </ol>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Process Overview :</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <ol>
+                                        <li ng-repeat="overview in processOverviewList">
+                                            {{overview}}
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>CAD Documents :</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        {{getInspectionDetailsForSheet.CADDocuments}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="text-center">
+                                    <button type="submit" ng-click="GenerateQuotationFromCustomer(getInspectionDetailsForSheet.InspectionId)" class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0">Request Quotation</button>
+                                </div>
+                            </div>
+                        </form>
+                        <!--Index Page-->
+                        <section style="width: 100%; background: white; box-shadow: 0 .5mm 2mm rgba(0,0,0,.3); margin: 5mm auto; padding: 5mm; box-sizing: border-box; height: 29.7cm;">
+                            <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" _ngcontent-c10="" style="display: table; height: 100%;">
+                                <tbody _ngcontent-c10="">
+                                    <tr _ngcontent-c10="">
+                                        <td _ngcontent-c10="" align="center" valign="top" class="" style="border: 5px solid #0070c0;padding: 2px;width:21cm;">
+                                            <div style="border: 1px solid #0070c0; padding: 20px; height: 28.4cm;">
+                                                <div>
+                                                    <div style="text-align: center;"><img src="~/Content/V2/images/logos/CamLogo.png" style="width:300px;"></div>
+                                                    <div style='font-size: 35px;text-decoration: underline;text-transform: uppercase;'>RACKING INSPECTION REPORT</div>
+                                                </div>
+                                                <div class="" style="padding-top: 50px;font-size: 26px;line-height: 40px;">
+                                                    <div class="name">{{getInspectionDetailsForSheet.Customer}}</div>
+                                                    <div class="name" style="font-size: 14px;">{{getInspectionDetailsForSheet.CustomerArea}} {{getInspectionDetailsForSheet.CustomerLocation}}</div>
+                                                    <div class="name" style="font-size: 14px;">{{getInspectionDetailsForSheet.custModel.CustomerAddress}}</div>
+                                                    <div class="customer-logo"><img src="{{getInspectionDetailsForSheet.custModel.CustomerLogo}}" style="width: 200px;height: auto;"></div>
+                                                </div>
+
+                                                <div><img src="~/Content/V2/images/mid-logo.jpg" style="width: 300px;margin: 0px 0px;"></div>
+                                                <div class="">
+                                                    <div style="float: left;text-align: left;color: #005aab;font-weight: bold;line-height: 30px;">
+                                                        <p style="margin: 0px;">Inspection & Report By</p>
+                                                        <p style="margin: 0px;">{{getInspectionDetailsForSheet.Employee}}, {{getInspectionDetailsForSheet.empModel.TitleDegrees}}</p>
+                                                        <p style="margin: 0px;">{{getInspectionDetailsForSheet.empModel.EmployeeEmail}}</p>
+                                                        <p style="color: #999;margin: 0px;">{{getInspectionDetailsForSheet.empModel.MobileNo}}</p>
+                                                    </div>
+                                                    <div style="float: right;text-align: left;color: #005aab;font-weight: bold;line-height: 30px;">
+                                                        <p style="margin: 0px;">Inspection Date:{{getInspectionDetailsForSheet.InspectionDate| date:'MMMM dd, yyyy'}}</p>
+                                                        <p style="margin: 0px;">Report Date:{{getInspectionDetailsForSheet.Reportdate| date:'MMMM dd, yyyy'}}</p>
+                                                    </div>
+                                                    <div style="clear: both"></div>
+                                                </div>
+                                                <div style="margin: 30px 0px 20px 0px;">
+                                                    <div style="margin: 0px auto;float: none;">
+                                                        <img src="~/Content/V2/images/footer-logo.jpg" style="width: 70%;">
+                                                    </div>
+                                                    <div style="clear: both"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <!--Racking Inspection Deficiency List Started-->
+                        <section style="width:100%;background: white; box-shadow: 0 .5mm 2mm rgba(0,0,0,.3); margin: 5mm auto; padding: 5mm; box-sizing: border-box;">
+                            <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" _ngcontent-c10="" style="display: table; height: 100%;">
+                                <tbody _ngcontent-c10="">
+                                    <tr _ngcontent-c10="">
+                                        <td _ngcontent-c10="" valign="top" style="border: 5px solid #0070c0;padding: 2px;">
+                                            <div style="border: 1px solid #0070c0; padding: 20px;">
+                                                <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" _ngcontent-c10="" style="border-collapse: collapse;color:#000000;">
+                                                    <tbody _ngcontent-c10="">
+                                                        <tr _ngcontent-c10="">
+                                                            <td _ngcontent-c10="" align="center" valign="top" class="">
+                                                                <table width="100%" border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
+                                                                    <tr>
+                                                                        <td colspan="6" style="font-size:14px;font-weight:600;text-align:center;padding:2px;background:#79addd;border-width: 1px;">RACKING INSPECTION DEFICIENCY LIST</td>
+                                                                        <td rowspan="4" style="width:150px;border-width: 1px;"><img src='../Content/V2/images/table-logo.png' style="width:90%;padding:2px"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Client</td>
+                                                                        <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.Customer}}</td>
+                                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Document Number</td>
+                                                                        <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.InspectionDocumentNo}}</td>
+                                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Type of Racking</td>
+                                                                        <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.InspectionType}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Location/ Address</td>
+                                                                        <td style="padding:2px;border-width: 1px;"> {{getInspectionDetailsForSheet.CustomerFullAddress}}</td>
+                                                                        <!--{{getInspectionDetailsForSheet.CustomerArea}}, {{getInspectionDetailsForSheet.CustomerLocation}}, {{getInspectionDetailsForSheet.custModel.CustomerAddress}}-->
+                                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Date of Inspection</td>
+                                                                        <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.InspectionDate| date:'MMMM dd, yyyy'}}</td>
+                                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Total Inspection Deficiencies</td>
+                                                                        <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.iDefModel.length}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Contact</td>
+                                                                        <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.ListCustomerLocationContacts[0].ContactName}}</td>
+                                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Inspected By</td>
+                                                                        <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.Employee}}</td>
+                                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Action Required</td>
+                                                                        <td style="padding:2px;border-width: 1px;">Yes</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                        <tr _ngcontent-c10="">
+                                                            <td _ngcontent-c10="" align="center" valign="top" class="">
+                                                                <table width="100%" border="1" cellspacing="0" cellpadding="0">
+                                                                    <tr>
+                                                                        <td colspan="5" bgcolor="#79ADDD" style="padding:2px;border-width: 1px;text-align: center">Racking Classification</td>
+                                                                        <td colspan="2" bgcolor="#79ADDD" style="padding:2px;border-width: 1px;text-align: center">Deficiency Type</td>
+                                                                        <td colspan="3" bgcolor="#79ADDD" style="padding:2px;border-width: 1px;text-align: center">Damage Assessment</td>
+                                                                        <td colspan="2" bgcolor="#79ADDD" style="padding:2px;border-width: 1px;text-align: center">Racking Repair</td>
+                                                                        <td colspan="1" bgcolor="#79ADDD" style="padding:2px;border-width: 1px;text-align: center">Engineer Approval</td>
+                                                                        <td colspan="1" bgcolor="#79ADDD" style="padding:2px;border-width: 1px;text-align: center">Quotation</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="5" bgcolor="#0dffff" style="text-align:center;padding:2px;border-width: 1px;">Location</td>
+                                                                        <td bgcolor="#0ABFFF" style="text-align: center; padding: 2px; border-width: 1px; color:#000000; ">Category</td>
+                                                                        <td bgcolor="#0080FF" style="text-align:center;padding:2px;border-width: 1px;color:#FFFFFF;">Description</td>
+                                                                        <td colspan="3" bgcolor="#0055FF" style="text-align: center; padding: 2px; border-width: 1px; color: #FFFFFF; ">Conclusion</td>
+                                                                        <td colspan="2" bgcolor="#002AFF" style="text-align: center; padding: 2px; border-width: 1px; color: #FFFFFF; ">Action Taken</td>
+                                                                        <td colspan="1" bgcolor="#0000FF" style="text-align: center; padding: 2px; border-width: 1px; color: #FFFFFF; ">Acceptance</td>
+                                                                        <td colspan="1" bgcolor="#0000FF" style="text-align: center; padding: 2px; border-width: 1px; color: #FFFFFF; ">Select</td>
+                                                                    </tr>
+                                                                    <tr bgcolor="#ffffcc">
+                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Item ID :</div></td>
+                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Row Number :</div></td>
+                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Bay ID/ Number :</div></td>
+                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Bay/ Frame Side</div></td>
+                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Beam/ Frame Level</div></td>
+                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">Title</td>
+                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">Title</td>
+                                                                        @*<td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Refer report for more detail</div></td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">monitor</div></td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">replace component</div></td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">repair component</div></td>*@
+                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Proposed Action</div></td>
+                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Severity Index Number</div></td>
+                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Reference Images</div></td>
+                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Status</div></td>
+                                                                        @*<td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Remark</div></td>*@
+                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Repair Images</div></td>
+                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Yes/No</div></td>
+                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;"></div></td>
+                                                                    </tr>
+                                                                    <tbody ng-repeat="d in getInspectionDetailsForSheet.iDefModel">
+                                                                        <tr style="border-width:1px;">
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">{{d.RowNo}}</td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">{{d.CustomerNomenclatureNo}}</td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">{{d.CustomerNomenclatureBayNoID}}</td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">{{d.BayFrameSide}}</td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">{{d.BeamFrameLevel}}</td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">{{d.DeficiencyType}}</td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">{{d.DeficiencyInfo}}</td>
+                                                                            @*<td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_ReferReport == true">✓</td>
+                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_ReferReport == false">✗</td>
+                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Monitor == true">✓</td>
+                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Monitor == false">✗</td>
+                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Replace == true">✓</td>
+                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Replace == false">✗</td>
+                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Repair == true">✓</td>
+                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Repair == false">✗</td>*@
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">{{d.ActionTaken}}</td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;background:#00CC00;color:#000000;" ng-if="d.Severity_IndexNo >= 1 && d.Severity_IndexNo <= 3">{{d.Severity_IndexNo}}</td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;background:#FFFF00;color:#000000;" ng-if="d.Severity_IndexNo >=4 && d.Severity_IndexNo <= 7">{{d.Severity_IndexNo}}</td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;background:#FF0000;color:#000000;" ng-if="d.Severity_IndexNo >=8 && d.Severity_IndexNo <=10">{{d.Severity_IndexNo}}</td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">
+                                                                                <ul class="navbar-nav">
+                                                                                    <li ng-repeat="photo in d.InspectionDeficiencyPhotoViewModel ">
+                                                                                        <label>
+                                                                                            <a target="_blank" href="{{photo.DeficiencyPhoto}}"><img ng-src="{{photo.DeficiencyPhotoThumb}}" class="avatar-xl me-3" alt="{{photo.DeficiencyPhotoThumb}}"></a>
+                                                                                        </label>
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">{{d.InspectionDeficiencyTechnicianStatusText}}</td>
+                                                                            @*<td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">{{d.InspectionDeficiencyTechnicianRemark}}</td>*@
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">
+                                                                                <ul class="navbar-nav">
+                                                                                    <li ng-repeat="photo in d.InspectionDeficiencyPhotoTechnicianViewModel ">
+                                                                                        <label>
+                                                                                            <a target="_blank" href="{{photo.DeficiencyPhoto}}"><img ng-src="{{photo.DeficiencyPhotoThumb}}" class="avatar-xl me-3" alt="{{photo.DeficiencyPhotoThumb}}"></a>
+                                                                                        </label>
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><input id="chkInspectioDeficiecyId_{{d.InspectionDeficiencyId}}" type="checkbox" disabled="disabled" ng-model="d.selected" ng-checked="d.InspectionDeficiencyAdminStatus == 1" /></td>
+                                                                            <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><input id="chkInspectioDeficiecyQuotationId_{{d.InspectionDeficiencyId}}" type="checkbox" ng-model="d.selectedCustomer" ng-checked="d.InspectionDeficiencyDeficiecyQuotationSelected == 1" /></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                    </div>
+                </div>
+                @Html.Partial("_FooterLayout")
+            </div>
+        </div>
+    </div>
+</main>
+
+

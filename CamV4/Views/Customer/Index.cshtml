@@ -1,0 +1,816 @@
+﻿@model CamV4.Models.CustomerDashboardGraphViewModel
+@{
+    ViewBag.Title = "Rack Manager - Rack Management Tool - cam|industrial";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<main class="main-content position-relative max-height-vh-100 h-100 " ng-app="myApp" ng-controller="customerdashboardCtrl">
+    <!-- Navbar -->
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Home</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Dashboard</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                    <div class="input-group input-group-outline">
+                        @*<select class="form-control" id="selectedYear" name="year" ng-model="selectedYear" ng-change="chartDataByYearCustomerAngular()" onchange="ChartDataByYearCustomer(this.value)">
+                                <option value="" disabled>-- Select Year --</option>
+                                <option ng-repeat="year in years" ng-value="year.value">{{ year.label }}</option>
+                            </select>*@
+                        <select class="form-control" id="selectedYearCustomer" name="year" onchange="ChartDataByYearCustomer(this.value);">
+                            @*<option value  disabled>-- Select Year --</option> ng-options="year.value as year.label for year in years" ng-model="year"*@
+                        </select>
+                    </div>
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                            </div>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col mb-3">
+                <div class="card-dashboard">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_InspectionsDue.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="InspectionDueCount">@Model.InspectionDueCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Inspections Due</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card-dashboard">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_InProgress.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="InProgressCount">@Model.InProgressCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">In Progress</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card-dashboard">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_SentForApproval.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="SentforApprovalCount">@Model.SentforApprovalCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Sent for Approval</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card-dashboard">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_ReportComplete.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="ApprovedCompletedCount">@Model.ApprovedCompletedCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Report Complete</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card-dashboard">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_QuotationRequested.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="QuotationRequestedCount">@Model.QuotationRequestedCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Quotation Requested</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card-dashboard">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_AwaitingApproval.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="AwaitingApprovalCount">@Model.AwaitingApprovalCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Awaiting Approval</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card-dashboard">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_QuotationApproved.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="QuotationApprovedCount">@Model.QuotationApprovedCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Quotation Approved</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card-dashboard">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_RepairCompleted.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="RepairCompletedCount">@Model.RepairCompletedCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Repair Completed</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <div class="card-dashboard">
+                    <div class="card-header p-1 pt-2">
+                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_Finished.png" style="height: 64px;width: 64px;" />
+                        </div>
+                        <div class="text-end pt-1">
+                            <h4 class="mb-0" id="InspectionFinishedCount">@Model.InspectionFinishedCount</h4>
+                            <p class="text-sm mb-0 text-capitalize">Finished</p>
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-1">
+                        <p class="text-sm mb-0 text-capitalize">
+                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-lg-4 col-md-6 mt-4 mb-4">
+                <div class="card z-index-2 ">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                        <div class="bg-gradient-light shadow-info py-3 pe-1">
+                            <div class="chart">
+                                @*<canvas id="chart-bars" class="chart-canvas" height="170"></canvas>*@
+                                <canvas id="pie-chart-customer" width="800" height="450"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="mb-0 ">Deficiencies By Severity</h6>
+                        <hr class="dark horizontal">
+                        <div class="d-flex ">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-6 mt-4 mb-4">
+                <div class="col-12">
+                    <div class="card z-index-2">
+                        <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="pt-4 pb-4">
+                                <div class="row">
+                                    <div class="col-6 d-flex align-items-center">
+                                        <h6 class="text-white text-capitalize ps-3 mb-0">Deficiencies Breakdown Based On Categories</h6>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body pb-2">
+                            <div class="table-responsive p-0">
+                                <table class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2 text-left">Deficiency Category</th>
+                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2 text-center">Minor</th>
+                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2 text-center">Intermediate</th>
+                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2 text-center">Major</th>
+                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2 text-center">Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="deficiencyTableBody" ng-repeat="d in getDeficienciesBreakdownCategorieslist">
+                                        <tr>
+                                            <td class="align-middle text-left text-sm">
+                                                <span class="text-secondary text-xs font-weight-bold">{{d.DeficiencyCategoryName}}</span>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                <span class="text-secondary text-xs font-weight-bold">{{d.MinorCnt}}</span>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                <span class="text-secondary text-xs font-weight-bold">{{d.IntermediateCnt}}</span>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                <span class="text-secondary text-xs font-weight-bold">{{d.MajorCnt}}</span>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                <span class="text-secondary text-xs font-weight-bold">{{d.DeficiencyCategoryCount}}</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="dark horizontal">
+                <div class="col-12">
+                    <div class="card z-index-2">
+                        <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="pt-4 pb-4">
+                                <div class="row">
+                                    <div class="col-6 d-flex align-items-center">
+                                        <h6 class="text-white text-capitalize ps-3 mb-0">Deficiencies Trend From Previous Years</h6>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body pb-2">
+                            <canvas id="deficiencyChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="row mb-4">
+                <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+                    <div class="card">
+                        <div class="card-header pb-0">
+                            <div class="row">
+                                <div class="col-lg-6 col-7">
+                                    <h6>Recent Inspection Status</h6>
+                                    @*<p class="text-sm mb-0">
+                                            <i class="fa fa-check text-info" aria-hidden="true"></i>
+                                            <span class="font-weight-bold ms-1">{{}} done</span> this month
+                                        </p>*@
+                                </div>
+                                <div class="col-lg-6 col-5 my-auto text-end">
+                                    @*<div class="dropdown float-lg-end pe-4">
+                                            <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa fa-ellipsis-v text-secondary"></i>
+                                            </a>
+                                            <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                                <li><a class="dropdown-item" href="javascript:;">Action</a></li>
+                                                <li><a class="dropdown-item" href="javascript:;">Another action</a></li>
+                                                <li><a class="dropdown-item" href="javascript:;">Something else here</a></li>
+                                            </ul>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body px-0 pb-2">
+                            <div class="table-responsive">
+                                <table class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Location and Area</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Done By</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Report Date</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody ng-repeat="d in getRecentInspectionbyCustomerId">
+                                        <tr ng-click="InspectionDetailClickByCustomer(d.InspectionId)">
+                                            <td class="align-middle text-center text-sm">
+                                                <p class="text-xs font-weight-bold mb-0">{{d.CustomerLocation}}</p>
+                                                <p class="text-xs font-weight-bold mb-0">{{d.CustomerArea}}</p>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                <p class="text-xs font-weight-bold mb-0">{{d.Employee}}</p>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                <span class="text-xs font-weight-bold">{{d.Reportdate| date:'dd MMM yyyy'}}</span>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                <h6 class="badge badge-sm bg-gradient-finished" ng-show="d.InspectionStatus == 9">Finished</h6>
+                                                <h6 class="badge badge-sm bg-gradient-repaircompleted" ng-show="d.InspectionStatus == 8">Repair Completed</h6>
+                                                <h6 class="badge badge-sm bg-gradient-quotationapproval" ng-show="d.InspectionStatus == 7">Quotation Approved</h6>
+                                                <h6 class="badge badge-sm bg-gradient-quotationawaitingapproval" ng-show="d.InspectionStatus == 6">Awaiting Approval</h6>
+                                                <h6 class="badge badge-sm bg-gradient-requestquotation" ng-show="d.InspectionStatus == 5">Quotation Requested</h6>
+                                                <h6 class="badge badge-sm bg-gradient-completed" ng-show="d.InspectionStatus == 4">Completed</h6>
+                                                <h6 class="badge badge-sm bg-gradient-sendforapproval" ng-show="d.InspectionStatus == 3">Send for Approval</h6>
+                                                <h6 class="badge badge-sm bg-gradient-inprogress" ng-show="d.InspectionStatus == 2">In Progress</h6>
+                                                <h6 class="badge badge-sm bg-gradient-due" ng-show="d.InspectionStatus == 1">Inspection Due</h6>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header pb-0">
+                            <h6>Inspection Due</h6>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="timeline timeline-one-side" ng-repeat="d in getDueInspectionByCustomerId">
+                                <div class="timeline-block mb-3">
+                                    <span class="timeline-step">
+                                        <i class="material-icons text-success text-gradient">notifications</i>
+                                    </span>
+                                    <div class="timeline-content">
+                                        <h6 class="text-dark text-sm font-weight-bold mb-0">{{d.Customer}}</h6>
+                                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.Employee}}</p>
+                                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.CustomerLocation}}</p>
+                                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.InspectionDate | date: dd-MMM-yyyy}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="footer py-4  ">
+            <div class="container-fluid">
+                <div class="row align-items-center justify-content-lg-between">
+                    <div class="col-lg-6 mb-lg-0 mb-4">
+                        <div class="copyright text-center text-sm text-muted text-lg-start">
+                            ©
+                            <script>
+                                document.write(new Date().getFullYear())
+                            </script>
+                            <a href="https://camindustrial.net/" class="font-weight-bold" target="_blank">Cam Industrial</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</main>
+
+<!--   Core JS Files   -->
+<script src="~/assets/js/core/popper.min.js"></script>
+<script src="~/assets/js/core/bootstrap.min.js"></script>
+<script src="~/assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="~/assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="~/assets/js/plugins/chartjs.min.js"></script>
+<script src="~/NgScript/Controller/customerdashboardCtrl.js"></script>
+
+<script>
+    var dataList = [];
+    var lableList = [];
+    var colorList = [];
+     @if (Model.PieCusomter != null)
+     {
+          foreach (var dataInput in Model.PieCusomter.ToList())
+          {
+                var inspectionDeficiencyCnt = dataInput.InspectionDeficiencyCnt ?? 0;  // Default to 0 if null
+                var classifications = dataInput.Classifications ?? "Unknown";  // Default to "Unknown" if null
+                var classificationsColor = dataInput.ClassificationsColor ?? "#FFFFFF";  // Default to white color if null
+
+
+                @:dataList.push("@inspectionDeficiencyCnt");
+                @:lableList.push("@classifications");
+                @:colorList.push("@dataInput.ClassificationsColor");
+          }
+     }
+
+    @*@foreach (var dataInput in Model.Pie.ToList())
+    {
+        //var modifiedLabel = dataInput.InspectionStatusName.Replace("&amp;", " & ");
+        @:dataList.push("@dataInput.cnt");
+        @:lableList.push("@dataInput.InspectionStatusName");
+        @:colorList.push("@dataInput.InspectionStatusColor");
+    }*@
+
+
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+        var options = {
+            damping: '0.5'
+        }
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+
+    const data = {
+        labels: lableList,
+        datasets: [{
+            label: "Inspections",
+            backgroundColor: colorList,
+            data: dataList
+        }
+        ]
+    }
+    // config block
+    const config = {
+        type: 'pie',
+        data,
+        options: {
+            title: {
+                display: true,
+                text: ''
+            }
+        }
+    };
+
+    //init block (render)
+    let myChart = new Chart(
+        document.getElementById("pie-chart-customer"),
+        config
+    );
+
+    function ChartDataByYearCustomer(value) {
+        //pie-chart-customer
+        var year = value.replace('number:', '');
+        //chartDataByYearCustomerAngular();
+        jQuery.ajax({
+            type: "GET",
+            url: '/api/pageview/getDeficienciesbySeverityCustomer',
+            data: { year: year },
+            contentType: "application/json; charset-utf-8",
+            success: function (response) {
+                dataList = response.map(element => element.InspectionDeficiencyCnt);
+                lableList = response.map(element => element.Classifications);
+                colorList = response.map(element => element.ClassificationsColor);
+
+                myChart.destroy();
+                //let newStr = lableList.replace(/&amp;/g, '&');
+                //console.log('newStr-----',newStr);
+                myChart.config.data.labels = lableList;
+                myChart.config.data.datasets[0].data = dataList;
+                myChart.config.data.datasets[0].backgroundColor = colorList;
+
+                myChart = new Chart(
+                    document.getElementById("pie-chart-customer"),
+                    config
+                );
+                console.log('dddkmkkkkkkk--', config);
+                //myChart.update();
+            },
+            failure: function (msg) {
+                alert(msg);
+            }
+
+        });
+
+        jQuery.ajax({
+            type: "GET",
+            url: '/api/pageview/getCustomerDashboardCountByYear',
+            data: { year: year },
+            contentType: "application/json; charset-utf-8",
+            success: function (response) {
+                console.log('lllllsss', response);
+                $('#InspectionDueCount').html(response.InspectionDueCount);
+                $('#InProgressCount').html(response.InProgressCount);
+                $('#SentforApprovalCount').html(response.SentforApprovalCount);
+                $('#ApprovedCompletedCount').html(response.ApprovedCompletedCount);
+                $('#QuotationRequestedCount').html(response.QuotationRequestedCount);
+                $('#AwaitingApprovalCount').html(response.AwaitingApprovalCount);
+                $('#QuotationApprovedCount').html(response.QuotationApprovedCount);
+                $('#RepairCompletedCount').html(response.RepairCompletedCount);
+                $('#InspectionFinishedCount').html(response.InspectionFinishedCount);
+            },
+            failure: function (msg) {
+                alert(msg);
+            }
+        });
+
+        //let deficiencies = [];
+        //jQuery.ajax({
+        //    type: "GET",
+        //    url: '/api/pageview/getDeficienciesBreakdownCategories',
+        //    data: { year: value },
+        //    contentType: "application/json; charset-utf-8",
+        //    success: function (response) {
+        //        console.log(response);
+        //        deficiencies = response;
+        //        const tableBody = document.getElementById('deficiencyTableBody');
+        //        tableBody.innerHTML = '';
+
+        //        deficiencies.forEach(category => {
+        //            const row = document.createElement('tr');
+
+        //            // Create the first cell (Deficiency Category)
+        //            const categoryCell = document.createElement('td');
+        //            categoryCell.classList.add('align-middle', 'text-left', 'text-sm');
+        //            categoryCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryName}</span>`;
+        //            row.appendChild(categoryCell);
+
+        //            // Create the second cell (Count)
+        //            const countCell = document.createElement('td');
+        //            countCell.classList.add('align-middle', 'text-center', 'text-sm');
+        //            countCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryCount}</span>`;
+        //            row.appendChild(countCell);
+
+        //            // Append the row to the table body
+        //            tableBody.appendChild(row);
+        //        });
+        //        //myChart.update();
+        //    },
+        //    failure: function (msg) {
+        //        alert(msg);
+        //    }
+        //});
+
+        //jQuery.ajax({
+        //    type: "GET",
+        //    url: '/api/pageview/getDeficienciesBreakdownCategories',
+        //    data: { year: year },
+        //    contentType: "application/json; charset-utf-8",
+        //    success: function (response) {
+        //        console.log('response------response', response);
+        //        $scope.getDeficienciesBreakdownCategorieslist = response.data;
+        //    },
+        //    failure: function (msg) {
+        //        alert(msg);
+        //    }
+        //});
+    }
+
+    $(document).ready(function () {
+
+        $.ajax({
+            url: '/api/pageview/getDeficienciesTrendFromPreviousYears',
+            type: 'GET',
+            success: function (response) {
+                const years = [...new Set(response.map(item => item.Years))];
+                console.log('Unique Years:', years);
+
+                // Prepare data for Chart.js
+                const data = {
+                    labels: years,
+                    datasets: [
+                        {
+                            label: 'Minor',
+                            data: years.map(year => {
+                                const entry = response.find(item => item.Years == year && item.Classifications === 'Minor');
+                                return entry ? entry.InspectionDeficiencyCnt : 0;
+                            }),
+                            backgroundColor: '#00CC00'
+                        },
+                        {
+                            label: 'Intermediate',
+                            data: years.map(year => {
+                                const entry = response.find(item => item.Years == year && item.Classifications === 'Intermediate');
+                                return entry ? entry.InspectionDeficiencyCnt : 0;
+                            }),
+                            backgroundColor: '#FFFF00'
+                        },
+                        {
+                            label: 'Major',
+                            data: years.map(year => {
+                                const entry = response.find(item => item.Years == year && item.Classifications === 'Major');
+                                return entry ? entry.InspectionDeficiencyCnt : 0;
+                            }),
+                            backgroundColor: '#FF0000'
+                        }
+                    ]
+                };
+
+
+                // Create the chart
+                const ctx = document.getElementById('deficiencyChart').getContext('2d');
+                const deficiencyChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Inspection Deficiency Count'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Years'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            }
+                        },
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            },
+            error: function (error) {
+                console.log("Error fetching data:", error);
+            }
+        });
+
+        //var curryear = new Date().getFullYear();
+        //let deficiencies = [];
+        //const tableBody = document.getElementById('deficiencyTableBody');
+
+        //jQuery.ajax({
+        //    type: "GET",
+        //    url: '/api/pageview/getDeficienciesBreakdownCategories',
+        //    data: { year: curryear },
+        //    contentType: "application/json; charset-utf-8",
+        //    success: function (response) {
+        //        console.log(response);
+        //        deficiencies = response;
+
+        //        tableBody.innerHTML = '';
+
+        //        deficiencies.forEach(category => {
+        //            const row = document.createElement('tr');
+
+        //            // Create the first cell (Deficiency Category)
+        //            const categoryCell = document.createElement('td');
+        //            categoryCell.classList.add('align-middle', 'text-left', 'text-sm');
+        //            categoryCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryName}</span>`;
+        //            row.appendChild(categoryCell);
+
+        //            // Create the second cell (Count)
+        //            const countCell = document.createElement('td');
+        //            countCell.classList.add('align-middle', 'text-center', 'text-sm');
+        //            countCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryCount}</span>`;
+        //            row.appendChild(countCell);
+
+        //            // Append the row to the table body
+        //            tableBody.appendChild(row);
+        //        });
+        //        //myChart.update();
+        //    },
+        //    failure: function (msg) {
+        //        alert(msg);
+        //    }
+        //});
+
+        //$.ajax({
+        //    url: '/api/pageview/getDeficienciesTrendFromPreviousYears',
+        //    type: 'GET',
+        //    success: function (response) {
+        //        // Process the response
+        //        console.log('---------------------On Load -- response -------------------------', response);
+        //        const years = [new Set(response.map(item => item.Years))]; // Unique years
+        //        console.log('---------------------On Load -- Year -------------------------', years);
+        //        const data = {
+        //            labels: years,
+        //            datasets: [
+        //                {
+        //                    label: 'Minor',
+        //                    data: years.map(year => {
+        //                        const entry = response.find(item => item.Years == year && item.Classifications === 'Minor');
+        //                        return entry ? entry.InspectionDeficiencyCnt : 0;
+        //                    }),
+        //                    backgroundColor: '#00CC00'
+        //                },
+        //                {
+        //                    label: 'Intermediate',
+        //                    data: years.map(year => {
+        //                        const entry = response.find(item => item.Years == year && item.Classifications === 'Intermediate');
+        //                        return entry ? entry.InspectionDeficiencyCnt : 0;
+        //                    }),
+        //                    backgroundColor: '#FFFF00'
+        //                },
+        //                {
+        //                    label: 'Major',
+        //                    data: years.map(year => {
+        //                        const entry = response.find(item => item.Years == year && item.Classifications === 'Major');
+        //                        return entry ? entry.InspectionDeficiencyCnt : 0;
+        //                    }),
+        //                    backgroundColor: '#FF0000'
+        //                }
+        //            ]
+        //        };
+
+        //        // Create the chart
+        //        const ctx = document.getElementById('deficiencyChart').getContext('2d');
+        //        const deficiencyChart = new Chart(ctx, {
+        //            type: 'bar',
+        //            data: data,
+        //            options: {
+        //                scales: {
+        //                    y: {
+        //                        beginAtZero: true,
+        //                        title: {
+        //                            display: true,
+        //                            text: 'Inspection Deficiency Count'
+        //                        }
+        //                    },
+        //                    x: {
+        //                        title: {
+        //                            display: true,
+        //                            text: 'Years'
+        //                        }
+        //                    }
+        //                },
+        //                plugins: {
+        //                    legend: {
+        //                        display: true,
+        //                        position: 'top'
+        //                    }
+        //                },
+        //                responsive: true,
+        //                maintainAspectRatio: false
+        //            }
+        //        });
+        //    },
+        //    error: function (error) {
+        //        console.log("Error fetching data:", error);
+        //    }
+        //});
+    });
+</script>
+<script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+        var options = {
+            damping: '0.5'
+        }
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+</script>
+<!-- Github buttons -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+<script src="~/assets/js/material-dashboard.min.js?v=3.0.2"></script>
+

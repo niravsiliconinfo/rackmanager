@@ -1,0 +1,366 @@
+﻿@model CamV4.Models.Customer
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@functions{
+    public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    }
+}
+<script src="~/NgScript/Controller/customerCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 " ng-app="myApp" ng-controller="customerCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageCustomer", "Admin")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Company Location</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4" ng-show="ShowAddCustomer">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white text-capitalize ps-3 mt-2">Create Company</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form class="">
+                            <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Company Name <span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" required name="CustomerName" id="CustomerName" ng-model="customername">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>User Name <span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" required name="UserName" id="UserName" ng-model="userName">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Phone</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control"  name="CustomerPhone" id="CustomerPhone" ng-model="customerPhone">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Email</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control"  name="CustomerEmail" id="CustomerEmail" ng-model="customerEmail">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Website</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control"  name="CustomerWebsite" id="CustomerWebsite" ng-model="customerWebsite">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>NAV Number</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control"  name="CustomerNAVNo" id="CustomerNAVNo" ng-model="customerNAVNo">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Company Address</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <textarea class="form-control"  name="CustomerAddress" id="CustomerAddress" ng-model="customeraddress"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Country</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="country" id="drpcountry" class="form-control" ng-model="country" ng-change="GetProvincebyCountryId()" >
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getAllCountries" value="{{d.CountryID}}">{{d.CountryName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                               
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Province</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="province" id="drpprovince" class="form-control" ng-model="province" ng-change="GetCitybyProvinceId()" >
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getProvincebyCountryId" value="{{d.ProvinceID}}">{{d.ProvinceName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>City</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="city" class="form-control"  ng-model="city">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getCitybyProvinceId" value="{{d.CityID}}">{{d.CityName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Zip Code</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control"  name="pin" id="pin" ng-model="pin" maxlength="8">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Password <span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="password" class="form-control" name="Password" id="Password" ng-model="password" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Company Logo</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    Select files
+                                    <input id="getlogoid" type="file" ng-model="customerlogo" minnum="2" name="file" value="Files" base-sixty-four-input onload="onLoad" maxsize="500" accept="image/*" class="file" />
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Company Contact Name</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="CustomerContactName" id="CustomerContactName" ng-model="customercontactname" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <img ng-src="data:{{customerlogo.filetype}};base64,{{customerlogo.base64}}" style="width:100px;">
+                                </div>
+                                <div class="col-sm-6">
+                                    {{customerlogo.filename}}
+                                </div>
+                            </div>
+                            <div class="text-center float-sm-start" style="display:none;">
+                                <button type="submit" id="SessionAddCustomerInfoClick" ng-click="SessionAddCustomerInfo()" class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0">Add New Company Location</button>
+                            </div>
+                            <div class="text-center float-end">
+                                <button type="submit" ng-click="SaveCustomer()" class="btn btn-lg bg-gradient-info btn-lg w-100 mt-3 mb-0">Save Company</button>
+                                <span style="color:red">{{errorNot}}</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card my-4" ng-show="ShowAddCustLocation">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white text-capitalize ps-3 mt-2">Create Company Location</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form class="">
+                            <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Location ID</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="LocationName" id="LocationName" ng-model="locationname">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Location Address</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="CustomerAddress" id="CustomerAddress" ng-model="customeraddress">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Country</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="country" id="drpcountry" class="form-control" ng-model="country" ng-change="GetProvincebyCountryId()">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getAllCountries" value="{{d.CountryID}}">{{d.CountryName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Province</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="province" id="drpprovince" class="form-control" ng-model="province" ng-change="GetCitybyProvinceId()">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getProvincebyCountryId" value="{{d.ProvinceID}}">{{d.ProvinceName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>City</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="city" class="form-control" ng-model="city">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getCitybyProvinceId" value="{{d.CityID}}">{{d.CityName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Pin</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="pincode" id="pincode" ng-model="pin" maxlength="8">
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="text-center float-sm-start">
+            <a href="@Url.Action("EditCustomer", "Admin", new { id = Session["CustomerId"] })"> Back </a>
+        </div>*@
+                            <div class="text-center float-end">
+                                <button type="submit" ng-click="AddCustLocation()" class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0">Save Company Location</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <br />
+                <div class="card my-4" @*ng-show="ShowCustLocationTable"*@>
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mb-0">Company Locations</h6>
+                                </div>
+                                <div class="col-6 text-end" ng-click="SessionAddCustomerLocClick()">
+                                    <a class="btn bg-gradient-dark mb-0 mx-3" href=""><i class="material-icons text-sm">add</i>&nbsp;&nbsp;Add New Company Location</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body pb-2">
+                        <div class="table-responsive p-0" ng-if="getCustomerLocationByCustomerIdAdd">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Location ID</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Address</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">City</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Province</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Country</th>
+                                        @*<th class="text-secondary opacity-7"></th>*@
+                                    </tr>
+                                </thead>
+                                <tbody ng-repeat="d in getCustomerLocationByCustomerIdAdd | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
+                                    <tr>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.LocationName}}</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.CustomerAddress}}</p>
+                                        </td>
+                                        <td class="align-middle text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">{{d.City}}<span ng-if="d.City && d.PinCode">,</span> {{d.PinCode}}</span>
+                                        </td>
+                                        <td class="align-middle text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">{{d.Province}}</span>
+                                        </td>
+                                        <td class="align-middle text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">{{d.Country}}</span>
+                                        </td>
+                                        <!--<td class="align-middle">
+                                                <a href="@Url.Action("AddCustomerArea", "Admin")?id={{d.CustomerLocationID}}" class="tooltip-new">
+                                                    <i class="material-icons text-sm">add</i>
+                                                    <span class="tooltiptext">Add Area</span>
+                                                </a>
+                                                <a href="@Url.Action("EditCustLocation", "Admin")?id={{d.CustomerLocationID}}">
+                                                    <i class="material-icons text-sm">edit</i>
+                                                </a>
+                                                <a href="@Url.Action("DeleteCustLocation", "Admin")?id={{d.CustomerLocationID}}">
+                                                    <i class="material-icons text-sm">delete</i>
+                                                </a>
+                                            </td>-->
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            <nav>
+                                Show <select ng-model="viewby" ng-change="setItemsPerPage(viewby)" style="height:25px">
+                                    <option>5</option>
+                                    <option>10</option>
+                                    <option>20</option>
+                                    <option>30</option>
+                                    <option>40</option>
+                                    <option>50</option>
+                                </select> of {{getCustomerLocationByCustomerIdAddcount}} Company Locations
+                                <pagination total-items="totalgetCustomerLocationByCustomerIdAdd" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
+                                            items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
+                            </nav>
+                            </div>
+                        </div>
+                    </div>
+                    @Html.Partial("_FooterLayout")
+                </div>
+            </div>
+        </div>
+    </main>

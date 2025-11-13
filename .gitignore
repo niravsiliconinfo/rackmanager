@@ -109,3 +109,9 @@ CamV4/logs/
 CamV4/pricelist/
 CamV4/Properties/
 CamV4/Properties/PublishProfiles/
+
+# -------------------------------------------------
+# LOCAL BUILD JUNK
+# -------------------------------------------------
+Output-Build.txt
+'@ | Out-File -FilePath .gitignore -Encoding UTF8 -Force

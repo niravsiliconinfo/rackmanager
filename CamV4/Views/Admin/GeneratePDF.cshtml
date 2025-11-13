@@ -1,0 +1,201 @@
+﻿
+@{
+    ViewBag.Title = "GeneratePDF";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="~/Scripts/ui-bootstrap-tpls-0.11.0.js"></script>
+@*<script src="~/Scripts/pdfmake/pdfmake.min.js"></script>*@
+@*<script src="~/Scripts/pdfmake/vfs_fonts.js"></script>*@
+<script src="~/Scripts/html2canvas.min.js"></script>
+
+<script type="text/javascript">
+    function getGridHtmlClass() {
+        //$("#btnSubmit").click(function () {
+        var htmlpage = $("#tblCustomers").html();
+
+        //var final = $("#GridHtml").val(htmlpage);
+        return $("#tblCustomers").html();
+        //$("input[name='GridHtml']").val($("#tblCustomers").html());
+        //});
+    };
+</script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100" ng-app="myApp" ng-controller="homeCtrl">
+    @*<input type="hidden" name="GridHtml" id="GridHtml" />*@
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index", "Admin")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Employee</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                    <div class="input-group input-group-outline">
+                        <input type="search" class="form-control" placeholder="Type here..." ng-model="search" id="example-search-input">
+                    </div>
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                            @*<i class="material-icons opacity-10">logout</i>&nbsp;&nbsp;Sign Out*@
+
+                        </a>
+                    </li>
+                    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4" id="tblCustomers">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mb-0">Generate PDF</h6>
+                                </div>
+                                @*<form action="@Url.Action("Export", "Admin", new { GridHtml = getGridHtmlClass()})" method="post">*@
+                                @*<input type="submit" id="btnSubmit" value="Export" ng-click="Export()"/>*@
+                            <div class="col-6 text-end">
+                                <a class="btn bg-gradient-dark mb-0 mx-3" href="@Url.Action("ToPdf", "Admin")?id=82">
+                                    <i class="material-icons text-sm">add</i>&nbsp;&nbsp;Generate PDF
+                                </a>
+                                <a class="btn bg-gradient-dark mb-0 mx-3" href="@Url.Action("SendNotificationToApp", "Admin")">
+                                    <i class="material-icons text-sm">add</i>Send Notification To App
+                                </a>
+                            </div>
+                                @*</form>*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pb-2">
+                        <div class="table-responsive p-0" ng-if="getAllEmployee">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Employee</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Title of Degree</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Address</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Country</th>
+                                        <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-repeat="d in getAllEmployee | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-0 text-sm">{{d.EmployeeName}}</h6>
+                                                    <p class="text-xs text-secondary mb-0">{{d.Email}}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.TitleDegrees}}</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.EmployeeAddress}}, {{d.CityName}}</p>
+                                            <p class="text-xs text-secondary mb-0">{{d.ProvianceName}}, {{d.Pin}} </p>
+                                        </td>
+                                        <td class="align-middle text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">{{d.CountryName}}</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="@Url.Action("EmpEdit", "Admin")?id={{d.UserID}}">
+                                                <i class="material-icons text-sm">edit</i>
+                                            </a>
+                                            <a href="@Url.Action("EmpDelete", "Admin")?id={{d.UserID}}">
+                                                <i class="material-icons text-sm">delete</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <nav>
+                                <pagination total-items="totalemployee" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
+                                            items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
+                                Show <select ng-model="viewby" ng-change="setItemsPerPage(viewby)" style="height:25px">
+                                    <option>5</option>
+                                    <option>10</option>
+                                    <option>20</option>
+                                    <option>30</option>
+                                    <option>40</option>
+                                    <option>50</option>
+                                </select> of {{getAllEmployeecount}} Employee
+
+                            </nav>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-6 d-flex align-items-center">
+                                <h6 class="text-capitalize ps-3 mb-0">
+                                    Select files
+                                    <input id="getpicid" type="file" ng-model="pictures" multiple minnum="2" name="file" value="Files" base-sixty-four-input onload="onLoad" required maxsize="500" accept="image/*" class="file" />
+                                </h6>
+                            </div>
+                            <div class="col-6 text-end">
+                                <a class="btn bg-gradient-dark mb-0 mx-3" href="" ng-click="refreshImageUpload()">
+                                    <i class="material-icons text-lg-center">replay_circle_filled</i>
+                                </a>
+                                <a class="btn bg-gradient-dark mb-0 mx-3" href="" ng-click="saveImages()">
+                                    <i class="material-icons text-sm">add</i>&nbsp;&nbsp;File Upload
+                                </a>
+                            </div>
+                        </div>
+                        <hr />
+                        <table class="table table-bordered table-stripped table-upload">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Preview
+                                    </th>
+                                    <th>
+                                        File Name
+                                    </th>
+                                    <th>
+                                        File Size
+                                    </th>
+                                    <th>
+                                        Handling
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat='p in pictures'>
+                                    <td>
+                                        <img ng-src="data:{{p.filetype}};base64,{{p.base64}}" style="width:100px;">
+                                    </td>
+                                    <td>
+                                        {{p.filename}}
+                                    </td>
+                                    <td dir='ltr'>
+                                        {{(p.filesize/1000)}} KB
+                                    </td>
+                                    <td>
+                                        <button class="btn-trash" ng-click='removeSelectedPic(p.filename)'><i class="fa fa-trash"></i> </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Partial("_FooterLayout")
+</main>

@@ -1,0 +1,200 @@
+﻿
+@{
+    ViewBag.Title = "New Incident Report View - Rack Manager - Rack Management Tool - cam|industrial";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<script src="~/NgScript/Controller/palletRackIncidentCtrl.js"></script>
+<script type="text/javascript">
+    function printDiv(divId) {
+        var printContents = document.getElementById(divId).innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        // Replace body content with only the div's content
+        document.body.innerHTML = printContents;
+
+        // Trigger print
+        window.print();
+
+        // Restore the original body content after print
+        document.body.innerHTML = originalContents;
+
+        // Reload scripts & styles if needed
+        location.reload();
+    }
+</script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100" ng-app="myApp" ng-controller="palletRackIncidentCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index", "Customer")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Incident Report</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                    <div class="input-group input-group-outline">
+                        <input type="search" class="form-control" placeholder="Type here..." ng-model="search" id="example-search-input">
+                    </div>
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mb-0">Incident Reports View</h6>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <a class="btn bg-gradient-dark mb-0 mx-3" onclick="printDiv('PrintArea')">
+                                        <i class="material-icons text-sm">print</i>&nbsp;&nbsp;Print
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mb-0"></h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pb-2" id="PrintArea">
+                        <table style="width:100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 14px; border:1px solid #000;">
+                            <!-- Header -->
+                            <tr>
+                                <td style="width:50%; padding:10px; border:1px solid #000;">                                    
+                                    <img ng-src="{{incident.LogoUrl}}" alt="Customer logo" style="max-height:60px;">
+                                </td>
+                                <td style="text-align:center; color:#e26a0a; font-size:20px; font-weight:bold; border:1px solid #000;">
+                                    <h2> Incident Report</h2>
+                                </td>
+                            </tr>
+
+                            <!-- Intro -->
+                            <tr>
+                                <td colspan="2" style="padding:10px; border:1px solid #000;">
+                                    This incident report is designed to be used by a qualified person/supervisor to identify and document an incident data to generate a request for a formal incident inspection or repair material to comply with Occupational Health and Safety Regulation.
+                                </td>
+                            </tr>
+
+                            <!-- Section Heading -->
+                            <tr style="background-color:#fbe5d6; font-weight:bold; color:#c00000;">
+                                <td colspan="2" style="padding:5px; border:1px solid #000;">Incident Information</td>
+                            </tr>
+
+                            <!-- Business Name -->
+                            <tr>
+                                <td colspan="2" style="padding:5px; border:1px solid #000;">
+                                    <strong>Business name:</strong> {{incident.BusinessName}}
+                                </td>
+                            </tr>
+
+                            <!-- Address -->
+                            <tr>
+                                <td colspan="2" style="padding:5px; border:1px solid #000;">
+                                    <strong>Incident address:</strong> {{incident.Address}}<br>
+                                    <span ng-if="incident.RackType"><strong>Type of rack(s):</strong> {{incident.RackType}}</span>
+                                </td>
+                            </tr>
+
+                            <!-- Location -->
+                            <tr>
+                                <td colspan="2" style="padding:5px; border:1px solid #000;">
+                                    <strong>Location:</strong> {{incident.Location}}
+                                </td>
+                            </tr>
+
+                            <!-- Area / Row / Aisle -->
+                            <tr>
+                                <td colspan="2" style="padding:5px; border:1px solid #000;">
+                                    Area : {{incident.Area}}<br>
+                                    Row : {{incident.Row}}<br>
+                                    Aisle : {{incident.Aisle}}<br>
+                                    Bay : {{incident.Bay}}<br>
+                                    Level : {{incident.Level}}<br>
+                                    Beam location : {{incident.BeamLocation}}<br>
+                                    Frame Side : {{incident.FrameSide}}
+                                </td>
+                            </tr>
+
+                            <!-- Reported By -->
+                            <tr>
+                                <td colspan="2" style="padding:5px; border:1px solid #000;">
+                                    <strong>Reported by:</strong> {{incident.ReportedBy}}
+                                </td>
+                            </tr>
+
+                            <!-- Summary -->
+                            <tr>
+                                <td colspan="2" style="padding:5px; border:1px solid #000;">
+                                    <strong>Incident summary:</strong> {{incident.Summary}}
+                                </td>
+                            </tr>
+
+                            <!-- Photos -->
+                            <tr>
+                                <td colspan="2" style="padding:5px; border:1px solid #000;">
+                                    <strong>Incident photos:</strong><br>
+                                    <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                                        <img ng-repeat="p in incident.Photos"
+                                             ng-src="{{p.IncidentPhotoPath}}"
+                                             style="max-width:150px; max-height:150px; border:1px solid #ccc;">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Footer: Date & Number -->
+                            <tr>
+                                <td style="padding:5px; border:1px solid #000;">
+                                    <strong>Incident date:</strong> {{incident.IncidentDate | date:'MMMM dd, yyyy'}}
+                                </td>
+                                <td style="padding:5px; border:1px solid #000;">
+                                    <strong>Incident number:</strong> {{incident.IncidentNumber}}
+                                </td>
+                            </tr>
+                            <tr>
+                            <tr>
+                                <td style="width:50%; padding:10px; border:1px solid #000;">
+                                    <span>Incident Report</span>
+                                </td>
+                                <td style="text-align:center; color:#e26a0a; font-size:20px; font-weight:bold; border:1px solid #000;">
+                                    <div style="text-align: center;"><img src="~/Content/V2/images/logos/CamLogo.png" style="width: 30%;"></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Partial("_FooterLayout")
+</main>

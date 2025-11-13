@@ -1,0 +1,237 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@functions{
+    public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    }
+}
+<script src="~/NgScript/Controller/inspectionCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg " ng-app="myApp" ng-controller="inspectionCtrl">   
+    <input type="hidden" name="GridHtml" id="GridHtml" />
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageInspection", "Admin")">Dashboard</a></li>                    
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Manage Inspection File </li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                    <div class="input-group input-group-outline">
+                        <input type="search" class="form-control" placeholder="Type here..." ng-model="search" id="example-search-input">
+                    </div>
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mt-2">Add Files</h6>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <h6 class="text-white text-capitalize ps-3 mt-2 mx-3">@ViewData["InspectionDocumentNo"]</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form class="">
+                            <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>File Category</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select type="text" class="form-control" name="FileCategory" id="FileCategory" ng-model="fileCategory">
+                                            <option value="">-- Select --</option>
+                                            @*<option value="Drawings">Drawings</option>*@
+                                            <option value="Inspection Drawings">Inspection Drawings</option>
+                                            <option value="Deficiency Drawings">Deficiency Drawings</option>
+                                            <option value="Shelving Checklist">Shelving Checklist</option>
+                                            <option value="Quotation">Quotation</option>
+                                            <option value="Stamped Report">Stamped Report</option>
+                                            <option value="Capacity Table">Capacity Table</option>
+                                            <option value="Permit Documents">Permit Documents</option>                                            
+                                            <option value="Others">Others</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Select File</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="file" id="file" ng-click="FileUploadMultiple()" name="file" multiple onchange="angular.element(this).scope().setFile(this)" accept=".pdf" class="btn btn-warning" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>File Name</th>
+                                                <th>File Type</th>
+                                                <th>File Size</th>
+                                                @*<th>Delete</th>*@
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="file in fileList">
+                                                <td>{{file.file.name}}</td>
+                                                <td>{{file.file.type}}</td>
+                                                <td>{{file.file.size/1000}} KB</td>
+                                               @* <td ng-click="removeSelectedPic(file.file.name)"> <i class="material-icons text-sm">delete</i></td>*@
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="text-center float-end">
+                                        <button type="submit" ng-click="SaveInspectionFile()" class="btn btn-md bg-gradient-info btn-lg w-100 mb-0">Save Files</button>
+                                        <span style="color:red">{{validationShow}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card my-4" ng-show="EditContactShow">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white text-capitalize ps-3 mt-2">Edit Contact</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form class="">
+                            <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Contact Name</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="ContactName" id="ContactName" ng-model="contactName" ng-value="ContactNameInEditContact">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Contact Email</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="ContactEmail" id="ContactEmail" ng-model="contactEmail" ng-value="ContactEmailInEditContact">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Contact Phone</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" name="ContactPhone" id="ContactPhone" ng-model="contactPhone" ng-value="ContactPhoneInEditContact">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="text-center float-end">
+                                        <button type="submit" ng-click="EditLocationContact(ContactIDInEditContact)" class="btn btn-md bg-gradient-info btn-lg w-100 mb-0">Update Contact</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <br />
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mb-0">Inspection Files Listing</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Category</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">File Name</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">File Path</th>
+                                        @*<th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Customer</th>*@
+                                        <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-repeat="d in getInspectionFileDrawing | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-0 text-sm">{{d.FileCategory}}</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs text-secondary mb-0">{{d.FileDrawingName}}</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.FileDrawingPath}}</p>
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("DeleteInspectionFile", "Admin")?id={{d.InspectionFileDrawingId}}">
+                                                <i class="material-icons text-sm">delete</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                           
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Partial("_FooterLayout")
+</main>
+
+

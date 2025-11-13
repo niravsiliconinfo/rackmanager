@@ -1,0 +1,241 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@functions{
+    public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    }
+}
+@{
+    var userType = Session["LoggedInUserType"].ToString();
+}
+<script src="~/Scripts/ui-bootstrap-tpls-0.11.0.js"></script>
+<script src="~/NgScript/Controller/inspectionCtrl.js"></script>
+<main class="main-content2 position-relative max-height-vh-100 h-100 " ng-app="myApp" ng-controller="inspectionCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    @if (userType == "1")
+                    {
+                        <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageInspectionDue", "Admin")">Dashboard</a></li>
+                    }
+                    else
+                    {
+                        <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageInspection", "Admin")">Dashboard</a></li>
+                    }
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Inspection Due</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white text-capitalize ps-3 mt-2">Create Inspection Due</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form class="">
+                            <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Inspection Type <span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="InspectionType" id="InspectionType" class="form-control" ng-model="inspectionType" required>
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getAllInspectionType" value="{{d.InspectionTypeCode}}">{{d.InspectionTypeName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Customer <span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="CustomerId" id="CustomerId" class="form-control" ng-model="customerId" ng-change="GetCustomerLocationByCustomerIdDrpd(customerId)" required>
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getAllCustomers" value="{{d.CustomerID}}">{{d.CustomerName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Customer Location<span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="CustomerLocationId" id="CustomerLocationId" class="form-control" ng-model="customerLocationId" ng-change="GetAreaByLocationIdDrpd(customerLocationId)" required>
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getCustomerLocationByCustomerIdDrpd" value="{{d.CustomerLocationID}}">{{d.LocationName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Customer Area</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="CustomerAreaId" id="CustomerAreaId" class="form-control" ng-model="customerAreaId">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getAreaDetailsByLocationId" value="{{d.AreaID}}">{{d.AreaName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Assigned Inspector<span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="EmployeeId" id="EmployeeId" class="form-control" ng-model="employeeId" required>
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getAllEmployee" value="{{d.EmployeeID}}">{{d.EmployeeName}}</option>
+                                        </select>
+                                    </div>
+                                    @*<div class="input-group input-group-outline mb-3 scroller">
+                                            <ul class="navbar-nav form-control">
+                                                <li ng-repeat="f in getAllEmployee">
+                                                    <label for="chkManufacturer_{{f.EmployeeID}}">
+                                                        <input id="chkManufacturer_{{f.EmployeeID}}" type="checkbox" ng-model="f.selected" />
+                                                        {{f.EmployeeName}}
+                                                    </label>
+                                                </li>
+                                            </ul>
+                                        </div>*@
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Scheduled Date</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="date" class="form-control" id="InspectionDate" ng-model="inspectionDate" min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                               name="InspectionDate">
+                                    </div>
+                                </div>
+                            </div>                            
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Facilities Areas</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3 scroller">
+                                        <ul class="navbar-nav form-control">
+                                            <li ng-repeat="f in getAllFacilitiesArea">
+                                                <label for="chkManufacturerFA_{{f.FacilitiesAreaId}}">
+                                                    <input id="chkManufacturerFA_{{f.FacilitiesAreaId}}" type="checkbox" ng-model="f.selected" />
+                                                    {{f.FacilitiesAreaName}}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Process Overviews</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3 scroller">
+                                        <ul class="navbar-nav form-control">
+                                            <li ng-repeat="p in getAllProcessOverview">
+                                                <label for="chkManufacturerPO_{{p.ProcessOverviewId}}">
+                                                    <input id="chkManufacturerPO_{{p.ProcessOverviewId}}" type="checkbox" ng-model="p.selected" />
+                                                    {{p.ProcessOverviewDesc}}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Document Title</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <ul class="navbar-nav form-control">
+                                            <li ng-repeat="t in getAllDocumentTitle">
+                                                <label for="chkDocument_{{t.DocumentId}}">
+                                                    <input id="chkDocument_{{t.DocumentId}}" type="checkbox" ng-model="t.selected" />
+                                                    {{t.DocumentTitle1}}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>CAD Document</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <textarea rows="5" cols="60" id="CADDocuments" ng-model="cADDocuments" name="CADDocuments" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="display:none;">
+                                <div class="col-sm-2">
+                                    <span>Inspection Drawing Files</span>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="col-md-12" style="text-align:center;margin-bottom:10px;">
+                                        <input type="file" id="file" ng-click="FileUploadMultiple()" name="file" multiple onchange="angular.element(this).scope().setFile(this)" accept=".pdf" class="btn btn-warning" />
+                                    </div>
+                                    <div class="col-md-12" style="padding-top:10px;">
+                                        <div class="col-md-12">
+                                            <table class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>File Name</th>
+                                                        <th>File Type</th>
+                                                        <th>File Size</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="file in fileList">
+                                                        <td>{{file.file.name}}</td>
+                                                        <td>{{file.file.type}}</td>
+                                                        <td>{{file.file.size}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="text-center float-end">
+                                <button type="submit" ng-click="SaveInspectionDue()" class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0">Add Inspection Due</button>
+                                <span style="color:red">{{errorNot}}</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                @Html.Partial("_FooterLayout")
+            </div>
+        </div>
+    </div>
+</main>
