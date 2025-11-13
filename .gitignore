@@ -99,6 +99,7 @@ CamV4.PlaywrightTests.Cache/
 # YOUR CUSTOM FOLDERS (relative to repo root)
 # -------------------------------------------------
 # All of these live **inside CamV4**, so we prefix with CamV4/
+CamV4/Keys/
 CamV4/CustFilesHistory/
 CamV4/DrawingFiles/
 CamV4/Files/
