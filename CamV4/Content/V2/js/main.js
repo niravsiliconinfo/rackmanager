@@ -1073,61 +1073,61 @@ window.Donald = {};
      */
 //    Donald.initPopups = function () {
 //
-//        Donald.$body
-//            // Register Login Popup
-//            .on('click', 'a.login, .login-link', function (e) {
-//                e.preventDefault();
-//                Donald.popup({
-//                    items: {
-//                        src: $(e.currentTarget).attr('href')
-//                    }
-//                }, 'login');
-//            })
+//       Donald.$body
+//           // Register Login Popup
+//           .on('click', 'a.login, .login-link', function (e) {
+//               e.preventDefault();
+//               Donald.popup({
+//                   items: {
+//                       src: $(e.currentTarget).attr('href')
+//                   }
+//               }, 'login');
+//           })
 //
-//            // Register "Register" Popup
-//            .on('click', '.register-link', function (e) {
-//                e.preventDefault();
-//                Donald.popup({
-//                    items: {
-//                        src: $(e.currentTarget).attr('href')
-//                    },
-//                    callbacks: {
-//                        ajaxContentAdded: function () {
-//                            this.wrap.find('[href="#register"]').click();
-//                        }
-//                    }
-//                }, 'login');
-//            })
+//           // Register "Register" Popup
+//           .on('click', '.register-link', function (e) {
+//               e.preventDefault();
+//               Donald.popup({
+//                   items: {
+//                       src: $(e.currentTarget).attr('href')
+//                   },
+//                   callbacks: {
+//                       ajaxContentAdded: function () {
+//                           this.wrap.find('[href="#register"]').click();
+//                       }
+//                   }
+//               }, 'login');
+//           })
 //
-//            // Register "Play Video" Popup
-//            .on('click', '.btn-iframe', function (e) {
-//                e.preventDefault();
-//                Donald.popup({
-//                    items: {
-//                        src: $(e.currentTarget).attr('href')
-//                    }
-//                }, 'video');
-//            });
+//           // Register "Play Video" Popup
+//           .on('click', '.btn-iframe', function (e) {
+//               e.preventDefault();
+//               Donald.popup({
+//                   items: {
+//                       src: $(e.currentTarget).attr('href')
+//                   }
+//               }, 'video');
+//           });
 //
-//        // Open newsletter Popup after 7.5s in home pages
-//        if (Donald.$body.hasClass('home') && Donald.getCookie('hideNewsletterPopup') !== 'true') {
-//            setTimeout(function () {
-//                Donald.popup({
-//                    items: {
-//                        src: 'ajax/newsletter.html'
-//                    },
-//                    type: 'ajax',
-//                    tLoading: '',
-//                    mainClass: 'mfp-newsletter mfp-flip-popup',
-//                    callbacks: {
-//                        beforeClose: function () {
-//                            // if "do not show" is checked
-//                            $('#hide-newsletter-popup')[0].checked && Donald.setCookie('hideNewsletterPopup', true, 7);
-//                        }
-//                    },
-//                });
-//            }, 7500);
-//        }
+//       // Open newsletter Popup after 7.5s in home pages
+//       if (Donald.$body.hasClass('home') && Donald.getCookie('hideNewsletterPopup') !== 'true') {
+//           setTimeout(function () {
+//               Donald.popup({
+//                   items: {
+//                       src: 'ajax/newsletter.html'
+//                   },
+//                   type: 'ajax',
+//                   tLoading: '',
+//                   mainClass: 'mfp-newsletter mfp-flip-popup',
+//                   callbacks: {
+//                       beforeClose: function () {
+//                           // if "do not show" is checked
+//                           $('#hide-newsletter-popup')[0].checked && Donald.setCookie('hideNewsletterPopup', true, 7);
+//                       }
+//                   },
+//               });
+//           }, 7500);
+//       }
 //    }
 
     /**

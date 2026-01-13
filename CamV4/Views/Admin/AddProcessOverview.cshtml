@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 @functions{
@@ -57,7 +56,17 @@
                                         <textarea type="text" class="form-control" id="ProcessOverviewDesc" ng-model="processOverviewDesc" name="ProcessOverviewDesc"></textarea>
                                     </div>
                                 </div>
-                            </div>
+                                <div class="col-sm-2">
+                                    <span>Is Shelving Checklist?</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        Yes &nbsp;<input type="radio" name="isshelvingchecklist" ng-model="IsShelvingChecklist" value="1" />
+                                        &nbsp;&nbsp;&nbsp;
+                                        No  &nbsp;<input type="radio" name="isshelvingchecklist" ng-model="IsShelvingChecklist" value="0" />                                        
+                                    </div>
+                                </div>
+                                </div>
                             <div class="col-sm-4">
                                 <div class="text-center">
                                     <button type="submit" ng-click="SaveProcessOverview()" class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0">Add Process Overview</button>

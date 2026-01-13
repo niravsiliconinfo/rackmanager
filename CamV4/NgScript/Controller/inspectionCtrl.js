@@ -576,6 +576,13 @@
 
                 console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*************XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', $scope.getInspectionDetailsForSheet);
                 console.log("@@@@@@@@@@@@@@@@--------------------getInspectionDetailsForSheet.iDefModel--------@@@@@@@@@@@@@@", $scope.getInspectionDetailsForSheet.iDefModel);
+                console.log("Shelving CheckLists:", $scope.getInspectionDetailsForSheet.ShelvingCheckLists);
+
+                $scope.hasShelvingChecklists = function () {
+                    return $scope.getInspectionDetailsForSheet &&
+                        $scope.getInspectionDetailsForSheet.ShelvingCheckLists &&
+                        $scope.getInspectionDetailsForSheet.ShelvingCheckLists.length > 0;
+                };
 
                 if ($scope.getInspectionDetailsForSheet.objQuotation != null) {
                     $scope.quotationsalespersonid = $scope.getInspectionDetailsForSheet.objQuotation.QuotationSalesPersonId;
@@ -1261,68 +1268,68 @@
                 //    type: 'POST',
                 //    contentType: 'application/json',
                 //    data: JSON.stringify({
-                //        QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId, // Replace with your actual QuotationId
-                //        QuotationComponentList: itemData // Replace with your actual data
+                //       QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId, // Replace with your actual QuotationId
+                //       QuotationComponentList: itemData // Replace with your actual data
                 //    }),
                 //    success: function (response) {
 
 
 
-                //        //console.log('Remove Quotation Items By Admin Success --', response);
-                //        //$scope.getInspectionDetailsForSheet.objQuotation = response.data;
-                //        ///*$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems = response.data;*/
+                //       //console.log('Remove Quotation Items By Admin Success --', response);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation = response.data;
+                //       ///*$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems = response.data;*/
 
-                //        //let subtotal = 0;
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
-                //        //    subtotal += parseFloat(item.LineTotal);
-                //        //});
+                //       //let subtotal = 0;
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
+                //       //    subtotal += parseFloat(item.LineTotal);
+                //       //});
 
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
 
-                //        //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
-                //        //let GSTVal = parseFloat(subtotal * gstRate);
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (subtotal * gstRate).toFixed(2);
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.Total = (subtotal + GSTVal).toFixed(2);
+                //       //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
+                //       //let GSTVal = parseFloat(subtotal * gstRate);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (subtotal * gstRate).toFixed(2);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.Total = (subtotal + GSTVal).toFixed(2);
 
-                //        //if (!$scope.getInspectionDetailsForSheet.objQuotation) {
-                //        //    $scope.getInspectionDetailsForSheet.objQuotation = {};
-                //        //}
+                //       //if (!$scope.getInspectionDetailsForSheet.objQuotation) {
+                //       //    $scope.getInspectionDetailsForSheet.objQuotation = {};
+                //       //}
 
-                //        //if ($scope.getInspectionDetailsForSheet && $scope.getInspectionDetailsForSheet.objQuotation) {
-                //        //    $scope.getInspectionDetailsForSheet.objQuotation = response.data;
-                //        //} else {
-                //        //    console.error("objQuotation is not defined");
-                //        //}
+                //       //if ($scope.getInspectionDetailsForSheet && $scope.getInspectionDetailsForSheet.objQuotation) {
+                //       //    $scope.getInspectionDetailsForSheet.objQuotation = response.data;
+                //       //} else {
+                //       //    console.error("objQuotation is not defined");
+                //       //}
 
-                //        //let subtotal = 0;
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
-                //        //    subtotal += parseFloat(item.LineTotal);
-                //        //});
+                //       //let subtotal = 0;
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
+                //       //    subtotal += parseFloat(item.LineTotal);
+                //       //});
 
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
 
-                //        //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
-                //        //let GSTVal = parseFloat(subtotal * gstRate);
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (subtotal * gstRate).toFixed(2);
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.Total = (subtotal + GSTVal).toFixed(2);
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems = response;
+                //       //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
+                //       //let GSTVal = parseFloat(subtotal * gstRate);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (subtotal * gstRate).toFixed(2);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.Total = (subtotal + GSTVal).toFixed(2);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems = response;
 
 
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
 
-                //        //    subtotal += parseFloat(item.LineTotal);                            
-                //        //});
+                //       //    subtotal += parseFloat(item.LineTotal);                            
+                //       //});
 
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
-                //        //console.log('xxxxxxx', subtotal);
-                //        //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
-                //        //let GSTVal = parseFloat(subtotal * gstRate);
-                //        ////$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (objQuotation.GSTVal).toFixed(2);
-                //        ////$scope.getInspectionDetailsForSheet.objQuotation.Total = (objQuotation.Total).toFixed(2);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
+                //       //console.log('xxxxxxx', subtotal);
+                //       //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
+                //       //let GSTVal = parseFloat(subtotal * gstRate);
+                //       ////$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (objQuotation.GSTVal).toFixed(2);
+                //       ////$scope.getInspectionDetailsForSheet.objQuotation.Total = (objQuotation.Total).toFixed(2);
 
                 //    },
                 //    error: function (xhr, status, error) {
-                //        console.error('Error:', xhr.responseText || 'An error occurred');
+                //       console.error('Error:', xhr.responseText || 'An error occurred');
                 //    }
                 //});
             }
@@ -1485,6 +1492,7 @@
             var chkQuotationApprovalToCustomer = 0;
             var isalespersonid = 0;
             var chkIsInspectionFinished = 0;
+            var ShelvingChecklist3A = "";
 
             // Get sales person ID if quotation exists
             if ($scope.getInspectionDetailsForSheet.objQuotation != null) {
@@ -1493,6 +1501,10 @@
                     isalespersonid = selectElementSalesPersonId.value || "0";
                 }
             }
+
+            if ($scope.getInspectionDetailsForSheet.ShelvingChecklist3A != "") {
+                ShelvingChecklist3A = $scope.getInspectionDetailsForSheet.ShelvingChecklist3A;
+            } 
 
             // Set inspection finished status
             if ($scope.chkIsInspectionFinished !== undefined) {
@@ -1568,9 +1580,10 @@
                 chkQuotationApprovalToCustomer: chkQuotationApprovalToCustomer,
                 chkedSentEmailtoCustomer: chkedSentEmailtoCustomer,
                 istampingengineerid: istampingengineerid,
-                isalespersonid: isalespersonid
+                isalespersonid: isalespersonid,                
+                ShelvingChecklist3A: ShelvingChecklist3A
             });
-
+           
             // CASE 1: Handle Inspection Finished (Priority)
             if (chkIsInspectionFinished == 9) {
                 console.log("Processing Inspection Finished...");
@@ -1582,6 +1595,7 @@
                     iStampingEngineerId: istampingengineerid,
                     sCheckedDocument: checkedDocument
                 };
+                
 
                 return $http({
                     url: '/api/pageview/SaveUpdateApproveInspectionAdmin',
@@ -1683,9 +1697,10 @@
                 iInspectionStatus: chkInspectionStatus,
                 iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
                 iStampingEngineerId: istampingengineerid,
-                sCheckedDocument: checkedDocument
+                sCheckedDocument: checkedDocument,
+                ShelvingChecklist3A: ShelvingChecklist3A
             };
-
+            
             console.log("Updating inspection with data:", data);
 
             return $http({
@@ -1752,96 +1767,96 @@
         //    var selectedValueSalesPersonId = "";
 
         //    if ($scope.getInspectionDetailsForSheet.objQuotation != null) {
-        //        selectElementSalesPersonId = document.getElementById('QuotationSalesPersonId');
-        //        selectedValueSalesPersonId = selectElementSalesPersonId.value;
+        //       selectElementSalesPersonId = document.getElementById('QuotationSalesPersonId');
+        //       selectedValueSalesPersonId = selectElementSalesPersonId.value;
         //    }
 
         //    if ($scope.chkIsInspectionFinished !== undefined) {
-        //        chkIsInspectionFinished = $scope.chkIsInspectionFinished;
+        //       chkIsInspectionFinished = $scope.chkIsInspectionFinished;
         //    }
         //    else {
-        //        chkIsInspectionFinished = 0;
+        //       chkIsInspectionFinished = 0;
         //    }
 
         //    if ($scope.chkInspectionStatus == 4) {
-        //        chkInspectionStatus = $scope.chkInspectionStatus;
+        //       chkInspectionStatus = $scope.chkInspectionStatus;
         //    }
 
         //    if ($scope.chkSentEmailtoCustomer !== undefined) {
-        //        chkedSentEmailtoCustomer = $scope.chkSentEmailtoCustomer;
+        //       chkedSentEmailtoCustomer = $scope.chkSentEmailtoCustomer;
         //    }
                        
         //    if ($scope.chkQuotationApprovalToCustomer !== undefined) {
-        //        chkQuotationApprovalToCustomer = $scope.chkQuotationApprovalToCustomer;
-        //        chkInspectionStatus = chkQuotationApprovalToCustomer;
+        //       chkQuotationApprovalToCustomer = $scope.chkQuotationApprovalToCustomer;
+        //       chkInspectionStatus = chkQuotationApprovalToCustomer;
         //    }
 
         //    if ($scope.stampingengineerid !== undefined) {
-        //        istampingengineerid = $scope.stampingengineerid;
+        //       istampingengineerid = $scope.stampingengineerid;
         //    }
 
         //    if (selectedValueSalesPersonId !== undefined) {
-        //        isalespersonid = selectedValueSalesPersonId;
+        //       isalespersonid = selectedValueSalesPersonId;
         //    }
 
         //    // Collect the selected Inspection Deficiencies
         //    var checkedIspectionDeficiencyId = '';
         //    if ($scope.getInspectionDetailsForSheet.iDefModel != null) {
-        //        $scope.getInspectionDetailsForSheet.iDefModel.forEach(function (d) {
-        //            if (d.selected) {
-        //                checkedIspectionDeficiencyId += (checkedIspectionDeficiencyId ? "," : "") + d.InspectionDeficiencyId;
-        //            }
-        //        });
+        //       $scope.getInspectionDetailsForSheet.iDefModel.forEach(function (d) {
+        //           if (d.selected) {
+        //               checkedIspectionDeficiencyId += (checkedIspectionDeficiencyId ? "," : "") + d.InspectionDeficiencyId;
+        //           }
+        //       });
         //    }
 
         //    // Collect the selected Documents
         //    var checkedDocument = '';
         //    if ($scope.getAllDocumentTitleInspection != null) {
-        //        $scope.getAllDocumentTitleInspection.forEach(function (t) {
-        //            if (t.selected) {
-        //                checkedDocument += (checkedDocument ? "," : "") + t.DocumentId;
-        //            }
-        //        });
+        //       $scope.getAllDocumentTitleInspection.forEach(function (t) {
+        //           if (t.selected) {
+        //               checkedDocument += (checkedDocument ? "," : "") + t.DocumentId;
+        //           }
+        //       });
         //    }
         //    if (chkIsInspectionFinished > 0) {
-        //        chkInspectionStatus = chkIsInspectionFinished;
+        //       chkInspectionStatus = chkIsInspectionFinished;
         //    }
         //    // Build the data object for API call
         //    var data = {
-        //        inspectionId: id,
-        //        iInspectionStatus: chkInspectionStatus,
-        //        iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
-        //        iStampingEngineerId: istampingengineerid,
-        //        sCheckedDocument: checkedDocument
+        //       inspectionId: id,
+        //       iInspectionStatus: chkInspectionStatus,
+        //       iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
+        //       iStampingEngineerId: istampingengineerid,
+        //       sCheckedDocument: checkedDocument
         //    };
         //    console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-data----------------------------------------', data);
         //    console.log('chkIsInspectionFinished-data----------------------------------------', chkIsInspectionFinished);            
         //    if (chkIsInspectionFinished == 9) {
-        //        // Handle Inspection Finished case
-        //        console.log('Processing Inspection Finished...');
-        //        return $http({
-        //            url: '/api/pageview/SaveUpdateApproveInspectionAdmin',
-        //            method: "POST",
-        //            params: data,
-        //            headers: { "Content-Type": "application/json" }
-        //        }).then(function (response) {
-        //            if (response.data === "Ok") {
-        //                window.location = '/Admin/ManageInspectionNew';
-        //            }
-        //        }, function (error) {
-        //            alert(error);
-        //        });
+        //       // Handle Inspection Finished case
+        //       console.log('Processing Inspection Finished...');
+        //       return $http({
+        //           url: '/api/pageview/SaveUpdateApproveInspectionAdmin',
+        //           method: "POST",
+        //           params: data,
+        //           headers: { "Content-Type": "application/json" }
+        //       }).then(function (response) {
+        //           if (response.data === "Ok") {
+        //               window.location = '/Admin/ManageInspectionNew';
+        //           }
+        //       }, function (error) {
+        //           alert(error);
+        //       });
         //    }
             
             
         //    // Collect Customer Location Contact IDs
         //    var checkedLocationContactId = '';
         //    if ($scope.getInspectionDetailsForSheet.ListCustomerLocationContacts != null) {
-        //        $scope.getInspectionDetailsForSheet.ListCustomerLocationContacts.forEach(function (Contact) {
-        //            if (Contact.selected) {
-        //                checkedLocationContactId += Contact.LocationContactId + ",";
-        //            }
-        //        });
+        //       $scope.getInspectionDetailsForSheet.ListCustomerLocationContacts.forEach(function (Contact) {
+        //           if (Contact.selected) {
+        //               checkedLocationContactId += Contact.LocationContactId + ",";
+        //           }
+        //       });
         //    }
 
         //    // Add promises for API calls
@@ -1850,85 +1865,85 @@
         //    // Handle quotation approval to customer
         //    return;
         //    if (chkQuotationApprovalToCustomer == 6) {
-        //        console.log("Send quotation to customer");
-        //        if ($scope.getInspectionDetailsForSheet.objQuotation != null && $scope.getInspectionDetailsForSheet.objQuotation.QuotationNo != null) {
-        //            var dataQuotation = {
-        //                InspectionId: id,
-        //                QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId,
-        //                YourReference: $scope.getInspectionDetailsForSheet.objQuotation.YourReference,
-        //                ValidTo: $scope.getInspectionDetailsForSheet.objQuotation.ValidTo,
-        //                PaymentTerms: $scope.getInspectionDetailsForSheet.objQuotation.PaymentTerms,
-        //                ShipmentMethod: $scope.getInspectionDetailsForSheet.objQuotation.ShipmentMethod,
-        //                SalesPersonId: isalespersonid,
-        //                GSTPer: $scope.getInspectionDetailsForSheet.objQuotation.GSTPer,
-        //                LabourUnitPrice: $scope.getInspectionDetailsForSheet.objQuotation.LabourUnitPrice,
-        //                TotalLabour: $scope.getInspectionDetailsForSheet.objQuotation.TotalLabour,
-        //                SendEmailForApproval: chkQuotationApprovalToCustomer,
-        //                QuotationSurcharge: $scope.getInspectionDetailsForSheet.objQuotation.QuotationSurcharge,
-        //                QuotationMarkup: $scope.getInspectionDetailsForSheet.objQuotation.QuotationMarkup,
-        //                QuotationNotes: $scope.getInspectionDetailsForSheet.objQuotation.QuotationNotes,
-        //                LocationContactId: checkedLocationContactId
-        //            };
+        //       console.log("Send quotation to customer");
+        //       if ($scope.getInspectionDetailsForSheet.objQuotation != null && $scope.getInspectionDetailsForSheet.objQuotation.QuotationNo != null) {
+        //           var dataQuotation = {
+        //               InspectionId: id,
+        //               QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId,
+        //               YourReference: $scope.getInspectionDetailsForSheet.objQuotation.YourReference,
+        //               ValidTo: $scope.getInspectionDetailsForSheet.objQuotation.ValidTo,
+        //               PaymentTerms: $scope.getInspectionDetailsForSheet.objQuotation.PaymentTerms,
+        //               ShipmentMethod: $scope.getInspectionDetailsForSheet.objQuotation.ShipmentMethod,
+        //               SalesPersonId: isalespersonid,
+        //               GSTPer: $scope.getInspectionDetailsForSheet.objQuotation.GSTPer,
+        //               LabourUnitPrice: $scope.getInspectionDetailsForSheet.objQuotation.LabourUnitPrice,
+        //               TotalLabour: $scope.getInspectionDetailsForSheet.objQuotation.TotalLabour,
+        //               SendEmailForApproval: chkQuotationApprovalToCustomer,
+        //               QuotationSurcharge: $scope.getInspectionDetailsForSheet.objQuotation.QuotationSurcharge,
+        //               QuotationMarkup: $scope.getInspectionDetailsForSheet.objQuotation.QuotationMarkup,
+        //               QuotationNotes: $scope.getInspectionDetailsForSheet.objQuotation.QuotationNotes,
+        //               LocationContactId: checkedLocationContactId
+        //           };
 
-        //            promises.push($http({
-        //                url: '/api/pageview/sendQuotationtoCustomerForApproval',
-        //                method: "POST",
-        //                data: dataQuotation,
-        //                headers: { "Content-Type": "application/json" }
-        //            }).then(function (response) {
-        //                if (response.data === "Ok") {
-        //                    console.log('First API call succeeded');
-        //                } else {
-        //                    console.warn('First API call did not return Ok');
-        //                }
-        //            }).catch(function (error) {
-        //                console.error('Error in first API call', error);
-        //            }));
-        //        }
+        //           promises.push($http({
+        //               url: '/api/pageview/sendQuotationtoCustomerForApproval',
+        //               method: "POST",
+        //               data: dataQuotation,
+        //               headers: { "Content-Type": "application/json" }
+        //           }).then(function (response) {
+        //               if (response.data === "Ok") {
+        //                   console.log('First API call succeeded');
+        //               } else {
+        //                   console.warn('First API call did not return Ok');
+        //               }
+        //           }).catch(function (error) {
+        //               console.error('Error in first API call', error);
+        //           }));
+        //       }
         //    }
 
         //    // Always add the second API call (Save/Update Inspection)
         //    promises.push($http({
-        //        url: '/api/pageview/SaveUpdateApproveInspectionAdmin',
-        //        method: "POST",
-        //        params: data,
-        //        headers: { "Content-Type": "application/json" }
+        //       url: '/api/pageview/SaveUpdateApproveInspectionAdmin',
+        //       method: "POST",
+        //       params: data,
+        //       headers: { "Content-Type": "application/json" }
         //    }).then(function (response) {
-        //        if (response.data === "Ok") {
-        //            if (chkedSentEmailtoCustomer == '1') {
-        //                // Send email to customer if needed
-        //                if (checkedLocationContactId == '') {
-        //                    checkedLocationContactId = '0,0';
-        //                }
-        //                if (checkedLocationContactId !== '') {
-        //                    var config = {
-        //                        InspectionId: id, LocationContactId: checkedLocationContactId, SentToClient: chkedSentEmailtoCustomer
-        //                    };
-        //                    return $http({
-        //                        url: '/Account/SendEmailOfPDF',
-        //                        method: "POST",
-        //                        data: config,
-        //                        headers: {
-        //                            "Content-Type": "application/json",
-        //                            'RequestVerificationToken': $scope.antiForgeryToken
-        //                        }
-        //                    }).then(function (response) {
-        //                        window.location = '/Admin/ManageInspectionNew';
-        //                    }, function (error) {
-        //                        alert(error);
-        //                    });
-        //                }
-        //            } else {
-        //                window.location = '/Admin/ManageInspectionNew';
-        //            }
-        //        }
+        //       if (response.data === "Ok") {
+        //           if (chkedSentEmailtoCustomer == '1') {
+        //               // Send email to customer if needed
+        //               if (checkedLocationContactId == '') {
+        //                   checkedLocationContactId = '0,0';
+        //               }
+        //               if (checkedLocationContactId !== '') {
+        //                   var config = {
+        //                       InspectionId: id, LocationContactId: checkedLocationContactId, SentToClient: chkedSentEmailtoCustomer
+        //                   };
+        //                   return $http({
+        //                       url: '/Account/SendEmailOfPDF',
+        //                       method: "POST",
+        //                       data: config,
+        //                       headers: {
+        //                           "Content-Type": "application/json",
+        //                           'RequestVerificationToken': $scope.antiForgeryToken
+        //                       }
+        //                   }).then(function (response) {
+        //                       window.location = '/Admin/ManageInspectionNew';
+        //                   }, function (error) {
+        //                       alert(error);
+        //                   });
+        //               }
+        //           } else {
+        //               window.location = '/Admin/ManageInspectionNew';
+        //           }
+        //       }
         //    }, function (error) {
-        //        alert(error);
+        //       alert(error);
         //    }));
 
         //    // Wait for all promises to resolve
         //    Promise.all(promises).catch(function (error) {
-        //        console.error('Error occurred while waiting for promises:', error);
+        //       console.error('Error occurred while waiting for promises:', error);
         //    });
         //};
 
@@ -2106,25 +2121,25 @@
 
         //    // Iterate over each deficiency in the model and apply logic based on severity
         //    angular.forEach($scope.getInspectionDetailsForSheet.iDefModel, function (deficiency) {
-        //        console.log('Deficiency: ', deficiency);
+        //       console.log('Deficiency: ', deficiency);
 
-        //        // Switch based on selectedDeficiency (dropdown value)
-        //        switch ($scope.selectedDeficiency) {
-        //            case '1': // All Deficiencies (Severity 1-10)
-        //                deficiency.InspectionDeficiencyRequestQuotation = (deficiency.Severity_IndexNo >= 4 && deficiency.Severity_IndexNo <= 10);
-        //                break;
-        //            case '2': // Red Deficiencies (Severity 8-10)
-        //                deficiency.InspectionDeficiencyRequestQuotation = (deficiency.Severity_IndexNo >= 8 && deficiency.Severity_IndexNo <= 10);
-        //                break;
-        //            case '3': // Yellow Deficiencies (Severity 4-7)
-        //                deficiency.InspectionDeficiencyRequestQuotation = (deficiency.Severity_IndexNo >= 4 && deficiency.Severity_IndexNo <= 7);
-        //                break;
-        //            default: // Default: Reset to false
-        //                deficiency.InspectionDeficiencyRequestQuotation = false;
-        //        }
+        //       // Switch based on selectedDeficiency (dropdown value)
+        //       switch ($scope.selectedDeficiency) {
+        //           case '1': // All Deficiencies (Severity 1-10)
+        //               deficiency.InspectionDeficiencyRequestQuotation = (deficiency.Severity_IndexNo >= 4 && deficiency.Severity_IndexNo <= 10);
+        //               break;
+        //           case '2': // Red Deficiencies (Severity 8-10)
+        //               deficiency.InspectionDeficiencyRequestQuotation = (deficiency.Severity_IndexNo >= 8 && deficiency.Severity_IndexNo <= 10);
+        //               break;
+        //           case '3': // Yellow Deficiencies (Severity 4-7)
+        //               deficiency.InspectionDeficiencyRequestQuotation = (deficiency.Severity_IndexNo >= 4 && deficiency.Severity_IndexNo <= 7);
+        //               break;
+        //           default: // Default: Reset to false
+        //               deficiency.InspectionDeficiencyRequestQuotation = false;
+        //       }
 
-        //        // Log the result for each deficiency to verify
-        //        console.log('Updated Deficiency: ', deficiency);
+        //       // Log the result for each deficiency to verify
+        //       console.log('Updated Deficiency: ', deficiency);
         //    });
 
         //    // Explicitly trigger a digest cycle to ensure that the UI reflects changes immediately
@@ -2133,22 +2148,22 @@
 
         //$scope.ddlDeficiencySelectionCheckboxes = function () {
         //    angular.forEach($scope.getInspectionDetailsForSheet.iDefModel, function (deficiency) {
-        //        switch ($scope.selectedDeficiency) {
-        //            case '1': // All Deficiencies (Severity 4-10)
-        //                deficiency.InspectionDeficiencyRequestQuotation =
-        //                    (deficiency.Severity_IndexNo >= 4 && deficiency.Severity_IndexNo <= 10);
-        //                break;
-        //            case '2': // Red Deficiencies (Severity 8-10)
-        //                deficiency.InspectionDeficiencyRequestQuotation =
-        //                    (deficiency.Severity_IndexNo >= 8 && deficiency.Severity_IndexNo <= 10);
-        //                break;
-        //            case '3': // Yellow Deficiencies (Severity 4-7)
-        //                deficiency.InspectionDeficiencyRequestQuotation =
-        //                    (deficiency.Severity_IndexNo >= 4 && deficiency.Severity_IndexNo <= 7);
-        //                break;
-        //            default:
-        //                deficiency.InspectionDeficiencyRequestQuotation = false;
-        //        }
+        //       switch ($scope.selectedDeficiency) {
+        //           case '1': // All Deficiencies (Severity 4-10)
+        //               deficiency.InspectionDeficiencyRequestQuotation =
+        //                   (deficiency.Severity_IndexNo >= 4 && deficiency.Severity_IndexNo <= 10);
+        //               break;
+        //           case '2': // Red Deficiencies (Severity 8-10)
+        //               deficiency.InspectionDeficiencyRequestQuotation =
+        //                   (deficiency.Severity_IndexNo >= 8 && deficiency.Severity_IndexNo <= 10);
+        //               break;
+        //           case '3': // Yellow Deficiencies (Severity 4-7)
+        //               deficiency.InspectionDeficiencyRequestQuotation =
+        //                   (deficiency.Severity_IndexNo >= 4 && deficiency.Severity_IndexNo <= 7);
+        //               break;
+        //           default:
+        //               deficiency.InspectionDeficiencyRequestQuotation = false;
+        //       }
         //    });
         //};
         $scope.ddlDeficiencySelectionCheckboxes = function () {
@@ -2202,42 +2217,42 @@
         //    $scope.isProcessing = true;
         //    var checkedIspectionDeficiencyIdQuotation = '';
         //    if ($scope.getInspectionDetailsForSheet.iDefModel != null) {
-        //        $scope.getInspectionDetailsForSheet.iDefModel.forEach(function (d) {
-        //            //console.log('select item---', d);
-        //            if (d.InspectionDeficiencyRequestQuotation) { // Check if the checkbox is selected
-        //                if (checkedIspectionDeficiencyIdQuotation != '') {
-        //                    checkedIspectionDeficiencyIdQuotation += ",";
-        //                }
-        //                checkedIspectionDeficiencyIdQuotation += d.InspectionDeficiencyId;
-        //            }
-        //        });
+        //       $scope.getInspectionDetailsForSheet.iDefModel.forEach(function (d) {
+        //           //console.log('select item---', d);
+        //           if (d.InspectionDeficiencyRequestQuotation) { // Check if the checkbox is selected
+        //               if (checkedIspectionDeficiencyIdQuotation != '') {
+        //                   checkedIspectionDeficiencyIdQuotation += ",";
+        //               }
+        //               checkedIspectionDeficiencyIdQuotation += d.InspectionDeficiencyId;
+        //           }
+        //       });
         //    }
         //    var data = {
-        //        inspectionId: id,
-        //        sCustomerSelectedDeficiencyIds: checkedIspectionDeficiencyIdQuotation
+        //       inspectionId: id,
+        //       sCustomerSelectedDeficiencyIds: checkedIspectionDeficiencyIdQuotation
         //    };
         //    console.log(" On customer GenerateQuotationFromCustomer click......... ", data);
         //    //return false;
         //    //return;
         //    return $http({
-        //        url: '/api/pageview/GenerateQuotationFromCustomer',
-        //        method: "POST",
-        //        params: data,
-        //        headers: {
-        //            "Content-Type": "application/json"
-        //        }
+        //       url: '/api/pageview/GenerateQuotationFromCustomer',
+        //       method: "POST",
+        //       params: data,
+        //       headers: {
+        //           "Content-Type": "application/json"
+        //       }
         //    }).then(function (response) {
-        //        $scope.isLoadingButton = false;
-        //        $scope.isProcessing = false;
-        //        if (response.data === "Ok") {
-        //            var url = '/Customer/ManageInspection';
-        //            window.location = url;
-        //        }
+        //       $scope.isLoadingButton = false;
+        //       $scope.isProcessing = false;
+        //       if (response.data === "Ok") {
+        //           var url = '/Customer/ManageInspection';
+        //           window.location = url;
+        //       }
         //    }, function (error) {
-        //        $scope.isLoadingButton = false;
-        //        $scope.isProcessing = false;
-        //        console.log('GenerateQuotationFromCustomer --- Error:' ,error);
-        //        alert(error);
+        //       $scope.isLoadingButton = false;
+        //       $scope.isProcessing = false;
+        //       console.log('GenerateQuotationFromCustomer --- Error:' ,error);
+        //       alert(error);
         //    });
         //    $scope.isLoadingButton = false;
         //    $scope.isProcessing = false;

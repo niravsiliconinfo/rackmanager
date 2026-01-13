@@ -762,16 +762,36 @@ namespace CamV4.Controllers
         [HttpPost]
         public async Task<string> SaveProcessOverview(ProcessOverview model)
         {
-            var details = DatabaseHelper.saveProcessOverview(model);
-            return details;
+            if (model == null || string.IsNullOrEmpty(model.ProcessOverviewDesc))
+            {
+                return "Invalid data";
+            }
+
+            model.IsShelvingChecklist = model.IsShelvingChecklist ?? false; // Ensure default value
+            db.ProcessOverviews.Add(model);
+            await db.SaveChangesAsync();
+            return "Ok";
         }
 
         [Route("editProcessOverview")]
         [HttpPost]
         public async Task<string> EditProcessOverview(ProcessOverview model)
         {
-            var details = DatabaseHelper.editProcessOverview(model);
-            return details;
+            if (model == null || model.ProcessOverviewId <= 0)
+            {
+                return "Invalid data";
+            }
+
+            var existing = db.ProcessOverviews.Find(model.ProcessOverviewId);
+            if (existing == null)
+            {
+                return "Not found";
+            }
+
+            existing.ProcessOverviewDesc = model.ProcessOverviewDesc;
+            existing.IsShelvingChecklist = model.IsShelvingChecklist;
+            await db.SaveChangesAsync();
+            return "Ok";
         }
 
         [Route("removeProcessOverview")]
@@ -920,9 +940,9 @@ namespace CamV4.Controllers
 
         [Route("getAllManufacturer")]
         [HttpGet]
-        public async Task<List<Manufacturer>> GetAllManufacturer()
+        public async Task<List<Manufacturer>> GetAllManufacturer(int ManuType = 0)
         {
-            var details = DatabaseHelper.getAllManufacturer();
+            var details = DatabaseHelper.GetAllManufacturer(ManuType);
             return details;
         }
 
@@ -1640,11 +1660,12 @@ namespace CamV4.Controllers
                     return BadRequest("No technician deficiencies provided");
                 }
 
-                var result = await Task.Run(() => DatabaseHelper.saveInspectionDeficiencyTechnicianMobile(models));
+                //var result = await Task.Run(() => DatabaseHelper.saveInspectionDeficiencyTechnicianMobile(models));
+                var result = DatabaseHelper.saveInspectionDeficiencyTechnicianMobile(models);
                 return Ok(result);
             }
             catch (Exception ex)
-            {                
+            {
                 return InternalServerError(ex);
             }
         }
@@ -1659,9 +1680,9 @@ namespace CamV4.Controllers
 
         [Route("SaveUpdateApproveInspectionAdmin")]
         [HttpPost]
-        public async Task<string> SaveUpdateApproveInspectionAdmin(long inspectionId, int iInspectionStatus, string iAdminIspectionDeficiencyIdStatus, long iStampingEngineerId, string sCheckedDocument)
+        public async Task<string> SaveUpdateApproveInspectionAdmin(long inspectionId, int iInspectionStatus, string iAdminIspectionDeficiencyIdStatus, long iStampingEngineerId, string sCheckedDocument, string ShelvingChecklist3A)
         {
-            var details = DatabaseHelper.SaveUpdateApproveInspectionAdmin(inspectionId, iInspectionStatus, iAdminIspectionDeficiencyIdStatus, iStampingEngineerId, sCheckedDocument);
+            var details = DatabaseHelper.SaveUpdateApproveInspectionAdmin(inspectionId, iInspectionStatus, iAdminIspectionDeficiencyIdStatus, iStampingEngineerId, sCheckedDocument, ShelvingChecklist3A);
             return details;
         }
 
@@ -2395,6 +2416,727 @@ namespace CamV4.Controllers
         }
 
         #endregion
+
+        #region ShelvingCheckListType CRUD
+
+        [HttpPost]
+        [Route("ShelvingCheckList_CreateShelvingCheckListType")]
+        public IHttpActionResult CreateShelvingCheckListType(ShelvingCheckListType model)
+        {
+            try
+            {
+                if (model == null)
+                {
+                    return BadRequest("Invalid data");
+                }
+
+                // For mobile app - get loggedInUserId from request body or form
+                var loggedInUserId = model.CreatedBy ?? "mobile_user";
+
+                var result = DatabaseHelper.CreateShelvingCheckListType(model, loggedInUserId);
+                if (result > 0)
+                {
+                    return Ok(new { success = true, message = "Shelving checklist type created successfully", id = result });
+                }
+                return BadRequest("Failed to create shelving checklist type");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("ShelvingCheckList_UpdateShelvingCheckListType")]
+        public IHttpActionResult UpdateShelvingCheckListType(ShelvingCheckListType model)
+        {
+            try
+            {
+                if (model == null || model.ShelvingCheckListTypeId <= 0)
+                {
+                    return BadRequest("Invalid data");
+                }
+
+                var loggedInUserId = model.ModifiedBy ?? "mobile_user";
+
+                var result = DatabaseHelper.UpdateShelvingCheckListType(model, loggedInUserId);
+                if (result)
+                {
+                    return Ok(new { success = true, message = "Shelving checklist type updated successfully" });
+                }
+                return BadRequest("Failed to update shelving checklist type");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("ShelvingCheckList_DeleteShelvingCheckListType")]
+        public IHttpActionResult DeleteShelvingCheckListType([FromBody] DeleteRequest request)
+        {
+            try
+            {
+                if (request == null || request.id <= 0)
+                {
+                    return BadRequest("Invalid id");
+                }
+
+                var loggedInUserId = request.loggedInUserId ?? "mobile_user";
+
+                var result = DatabaseHelper.DeleteShelvingCheckListType(request.id, loggedInUserId);
+                if (result)
+                {
+                    return Ok(new { success = true, message = "Shelving checklist type deleted successfully" });
+                }
+                return BadRequest("Failed to delete shelving checklist type");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("ShelvingCheckList_GetShelvingCheckListType")]
+        public IHttpActionResult GetShelvingCheckListType(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    return BadRequest("Invalid id");
+                }
+
+                var result = DatabaseHelper.GetShelvingCheckListTypeById(id);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("ShelvingCheckList_GetAllShelvingCheckListTypes")]
+        public IHttpActionResult GetAllShelvingCheckListTypes()
+        {
+            try
+            {
+                var result = DatabaseHelper.GetAllShelvingCheckListTypes();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        #endregion
+
+        #region ShelvingCheckListDeficiency CRUD
+
+        [HttpPost]
+        [Route("ShelvingCheckList_CreateShelvingCheckListDeficiency")]
+        public IHttpActionResult CreateShelvingCheckListDeficiency(ShelvingCheckListDeficiency model)
+        {
+            try
+            {
+                if (model == null)
+                {
+                    return BadRequest("Invalid data");
+                }
+
+                var loggedInUserId = model.CreatedBy ?? "mobile_user";
+
+                var result = DatabaseHelper.CreateShelvingCheckListDeficiency(model, loggedInUserId);
+                if (result > 0)
+                {
+                    return Ok(new { success = true, message = "Shelving checklist deficiency created successfully", id = result });
+                }
+                return BadRequest("Failed to create shelving checklist deficiency");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("ShelvingCheckList_UpdateShelvingCheckListDeficiency")]
+        public IHttpActionResult UpdateShelvingCheckListDeficiency(ShelvingCheckListDeficiency model)
+        {
+            try
+            {
+                if (model == null || model.ShelvingCheckListDeficiencyID <= 0)
+                {
+                    return BadRequest("Invalid data");
+                }
+
+                var loggedInUserId = model.ModifiedBy ?? "mobile_user";
+
+                var result = DatabaseHelper.UpdateShelvingCheckListDeficiency(model, loggedInUserId);
+                if (result)
+                {
+                    return Ok(new { success = true, message = "Shelving checklist deficiency updated successfully" });
+                }
+                return BadRequest("Failed to update shelving checklist deficiency");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("ShelvingCheckList_DeleteShelvingCheckListDeficiency")]
+        public IHttpActionResult DeleteShelvingCheckListDeficiency([FromBody] DeleteRequest request)
+        {
+            try
+            {
+                if (request == null || request.id <= 0)
+                {
+                    return BadRequest("Invalid id");
+                }
+
+                var loggedInUserId = request.loggedInUserId ?? "mobile_user";
+
+                var result = DatabaseHelper.DeleteShelvingCheckListDeficiency(request.id, loggedInUserId);
+                if (result)
+                {
+                    return Ok(new { success = true, message = "Shelving checklist deficiency deleted successfully" });
+                }
+                return BadRequest("Failed to delete shelving checklist deficiency");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("ShelvingCheckList_GetShelvingCheckListDeficiency")]
+        public IHttpActionResult GetShelvingCheckListDeficiency(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    return BadRequest("Invalid id");
+                }
+
+                var result = DatabaseHelper.GetShelvingCheckListDeficiencyById(id);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("ShelvingCheckList_GetAllActiveShelvingCheckListDeficiencies")]
+        public IHttpActionResult GetAllActiveShelvingCheckListDeficiencies()
+        {
+            try
+            {
+                var result = DatabaseHelper.GetAllActiveShelvingCheckListDeficiencies();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        #endregion
+
+        #region ShelvingCheckList CRUD
+
+        [HttpPost]
+        [Route("ShelvingCheckList_SaveShelvingCheckList")]
+        public IHttpActionResult SaveShelvingCheckList(ShelvingCheckListSaveModel model)
+        {
+            try
+            {
+                if (model == null)
+                {
+                    return BadRequest("Invalid data");
+                }
+
+                var loggedInUserId = model.loggedInUserId ?? "mobile_user";
+
+                // Get the physical path for photo storage
+                string photoBasePath = HttpContext.Current.Server.MapPath("~/img/ShelvingCheckList/");
+                string thumbBasePath = HttpContext.Current.Server.MapPath("~/img/ShelvingCheckListThumb/");
+
+                var result = DatabaseHelper.SaveShelvingCheckListComplete(
+                    model.ShelvingCheckList,
+                    model.ShelvingCheckListDetails,
+                    model.ShelvingCheckListPhotos,
+                    loggedInUserId,
+                    photoBasePath,
+                    thumbBasePath
+                );
+
+                if (result.Success)
+                {
+                    return Ok(new
+                    {
+                        success = true,
+                        message = result.Message,
+                        shelvingCheckListId = result.ShelvingCheckListId
+                    });
+                }
+
+                return BadRequest(result.Message);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("ShelvingCheckList_DeleteShelvingCheckList")]
+        public IHttpActionResult DeleteShelvingCheckList([FromBody] DeleteRequest request)
+        {
+            try
+            {
+                if (request == null || request.id <= 0)
+                {
+                    return BadRequest("Invalid id");
+                }
+
+                var loggedInUserId = request.loggedInUserId ?? "mobile_user";
+
+                var result = DatabaseHelper.DeleteShelvingCheckList(request.id, loggedInUserId);
+                if (result)
+                {
+                    return Ok(new { success = true, message = "Shelving checklist deleted successfully" });
+                }
+                return BadRequest("Failed to delete shelving checklist");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("ShelvingCheckList_GetShelvingCheckListsByInspectionId")]
+        public IHttpActionResult GetShelvingCheckListsByInspectionId(long inspectionId)
+        {
+            try
+            {
+                if (inspectionId <= 0)
+                {
+                    return BadRequest("Invalid inspection id");
+                }
+
+                var result = DatabaseHelper.GetShelvingCheckListsByInspectionId(inspectionId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("ShelvingCheckList_GetShelvingCheckList")]
+        public IHttpActionResult GetShelvingCheckList(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    return BadRequest("Invalid id");
+                }
+
+                var result = DatabaseHelper.GetShelvingCheckListById(id);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        #endregion
+
+        #region ShelvingCheckListDetail CRUD
+
+        [HttpPost]
+        [Route("ShelvingCheckList_SaveShelvingCheckListDetails")]
+        public IHttpActionResult SaveShelvingCheckListDetails(SaveDetailsRequest request)
+        {
+            try
+            {
+                if (request == null || request.details == null || !request.details.Any())
+                {
+                    return BadRequest("Invalid data");
+                }
+
+                var loggedInUserId = request.loggedInUserId ?? "mobile_user";
+
+                // Validate each detail record
+                foreach (var detail in request.details)
+                {
+                    var checkCount = 0;
+                    if (detail.Tick_Yes == true) checkCount++;
+                    if (detail.Tick_No == true) checkCount++;
+                    if (detail.Tick_NA == true) checkCount++;
+
+                    if (checkCount != 1)
+                    {
+                        return BadRequest("Exactly one of Yes, No, or NA must be selected for each checklist detail");
+                    }
+                }
+
+                // Determine if create or update based on DetailId
+                var detailsToCreate = request.details.Where(d => d.ShelvingCheckListDetailId == 0).ToList();
+                var detailsToUpdate = request.details.Where(d => d.ShelvingCheckListDetailId > 0).ToList();
+
+                int createdCount = 0;
+                int updatedCount = 0;
+
+                if (detailsToCreate.Any())
+                {
+                    createdCount = DatabaseHelper.CreateShelvingCheckListDetails(detailsToCreate, loggedInUserId);
+                }
+
+                if (detailsToUpdate.Any())
+                {
+                    updatedCount = DatabaseHelper.UpdateShelvingCheckListDetails(detailsToUpdate, loggedInUserId);
+                }
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Shelving checklist details saved successfully",
+                    created = createdCount,
+                    updated = updatedCount,
+                    total = createdCount + updatedCount
+                });
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("ShelvingCheckList_DeleteShelvingCheckListDetail")]
+        public IHttpActionResult DeleteShelvingCheckListDetail([FromBody] DeleteDetailRequest request)
+        {
+            try
+            {
+                if (request == null || request.id <= 0)
+                {
+                    return BadRequest("Invalid id");
+                }
+
+                var loggedInUserId = request.loggedInUserId ?? "mobile_user";
+
+                var result = DatabaseHelper.DeleteShelvingCheckListDetail(request.id, loggedInUserId);
+                if (result)
+                {
+                    return Ok(new { success = true, message = "Shelving checklist detail deleted successfully" });
+                }
+                return BadRequest("Failed to delete shelving checklist detail");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("ShelvingCheckList_GetShelvingCheckListDetailsByCheckListId")]
+        public IHttpActionResult GetShelvingCheckListDetailsByCheckListId(int checkListId)
+        {
+            try
+            {
+                if (checkListId <= 0)
+                {
+                    return BadRequest("Invalid checklist id");
+                }
+
+                var result = DatabaseHelper.GetShelvingCheckListDetailsByCheckListId(checkListId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        #endregion
+
+        #region ShelvingCheckListPhoto CRUD
+
+        [HttpPost]
+        [Route("ShelvingCheckList_SaveShelvingCheckListPhotos")]
+        public IHttpActionResult SaveShelvingCheckListPhotos()
+        {
+            try
+            {
+                var httpRequest = HttpContext.Current.Request;
+
+                var checkListIdStr = httpRequest.Form["ShelvingCheckListId"];
+                var loggedInUserId = httpRequest.Form["loggedInUserId"] ?? "mobile_user";
+
+                if (string.IsNullOrEmpty(checkListIdStr))
+                {
+                    return BadRequest("ShelvingCheckListId is required");
+                }
+
+                long shelvingCheckListId = long.Parse(checkListIdStr);
+
+                if (httpRequest.Files.Count == 0)
+                {
+                    return BadRequest("No files uploaded");
+                }
+
+                // Create physical folder path: img/ShelvingCheckList/
+                var uploadPath = HttpContext.Current.Server.MapPath("~/img/ShelvingCheckList");
+                if (!Directory.Exists(uploadPath))
+                {
+                    Directory.CreateDirectory(uploadPath);
+                }
+
+                var uploadedPhotos = new List<ShelvingCheckListPhoto>();
+
+                for (int i = 0; i < httpRequest.Files.Count; i++)
+                {
+                    var file = httpRequest.Files[i];
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        // Generate unique filename with timestamp
+                        var fileExtension = Path.GetExtension(file.FileName);
+                        var uniqueFileName = $"{Guid.NewGuid()}{fileExtension}";
+                        var physicalPath = Path.Combine(uploadPath, uniqueFileName);
+
+                        // Save physical file
+                        file.SaveAs(physicalPath);
+
+                        // Save to database - store only filename, not full path
+                        var photo = new ShelvingCheckListPhoto
+                        {
+                            ShelvingCheckListId = shelvingCheckListId,
+                            ShelvingCheckListName = Path.GetFileNameWithoutExtension(file.FileName),
+                            ShelvingCheckListPath = uniqueFileName, // Just filename
+                            CreatedBy = loggedInUserId,
+                            CreatedDate = DateTime.Now
+                        };
+
+                        var photoId = DatabaseHelper.CreateShelvingCheckListPhoto(photo, loggedInUserId);
+                        if (photoId > 0)
+                        {
+                            photo.ShelvingCheckListPhotoId = photoId;
+                            uploadedPhotos.Add(photo);
+                        }
+                    }
+                }
+
+                if (uploadedPhotos.Any())
+                {
+                    return Ok(new
+                    {
+                        success = true,
+                        message = "Photos uploaded successfully",
+                        photos = uploadedPhotos,
+                        count = uploadedPhotos.Count
+                    });
+                }
+                return BadRequest("Failed to upload photos");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("ShelvingCheckList_DeleteShelvingCheckListPhoto")]
+        public IHttpActionResult DeleteShelvingCheckListPhoto([FromBody] DeletePhotoRequest request)
+        {
+            try
+            {
+                if (request == null || request.id <= 0)
+                {
+                    return BadRequest("Invalid id");
+                }
+
+                // Get photo info before deleting
+                var photo = DatabaseHelper.GetShelvingCheckListPhotoById(request.id);
+                if (photo != null && !string.IsNullOrEmpty(photo.ShelvingCheckListPath))
+                {
+                    // Delete physical file
+                    var filePath = HttpContext.Current.Server.MapPath("~/img/ShelvingCheckList/" + photo.ShelvingCheckListPath);
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
+                    var filePathThump = HttpContext.Current.Server.MapPath("~/img/Shelvingchecklistthumb/" + photo.ShelvingCheckListPath);
+                    if (File.Exists(filePathThump))
+                    {
+                        File.Delete(filePathThump);
+                    }
+                }
+
+                // Delete from database
+                var result = DatabaseHelper.DeleteShelvingCheckListPhoto(request.id);
+                if (result)
+                {
+                    return Ok(new { success = true, message = "Photo deleted successfully" });
+                }
+                return BadRequest("Failed to delete photo");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("ShelvingCheckList_GetShelvingCheckListPhotosByCheckListId")]
+        public IHttpActionResult GetShelvingCheckListPhotosByCheckListId(int checkListId)
+        {
+            try
+            {
+                if (checkListId <= 0)
+                {
+                    return BadRequest("Invalid checklist id");
+                }
+
+                var result = DatabaseHelper.GetShelvingCheckListPhotosByCheckListId(checkListId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        #endregion
+
+        #region Combined Data Retrieval
+
+        [HttpGet]
+        [Route("ShelvingCheckList_GetShelvingCheckListCompleteDataByInspectionId")]
+        public IHttpActionResult GetShelvingCheckListCompleteDataByInspectionId(long inspectionId)
+        {
+            try
+            {
+                if (inspectionId <= 0)
+                {
+                    return BadRequest("Invalid inspection id");
+                }
+
+                var checklists = DatabaseHelper.GetShelvingCheckListsByInspectionId(inspectionId);
+                var result = new List<object>();
+
+                foreach (var checklist in checklists)
+                {
+                    var details = DatabaseHelper.GetShelvingCheckListDetailsByCheckListId(checklist.ShelvingCheckListId);
+                    var photos = DatabaseHelper.GetShelvingCheckListPhotosByCheckListId(checklist.ShelvingCheckListId);
+
+                    result.Add(new
+                    {
+                        checklist = checklist,
+                        details = details,
+                        photos = photos
+                    });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("ShelvingCheckList_GetShelvingCheckListCompleteData")]
+        public IHttpActionResult GetShelvingCheckListCompleteData(int checkListId)
+        {
+            try
+            {
+                if (checkListId <= 0)
+                {
+                    return BadRequest("Invalid checklist id");
+                }
+
+                var checklist = DatabaseHelper.GetShelvingCheckListById(checkListId);
+                if (checklist == null)
+                {
+                    return NotFound();
+                }
+
+                var details = DatabaseHelper.GetShelvingCheckListDetailsByCheckListId(checkListId);
+                var photos = DatabaseHelper.GetShelvingCheckListPhotosByCheckListId(checkListId);
+
+                var result = new
+                {
+                    checklist = checklist,
+                    details = details,
+                    photos = photos
+                };
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        #endregion
+
+        #region Helper Classes for Requests
+
+        public class DeleteRequest
+        {
+            public int id { get; set; }
+            public string loggedInUserId { get; set; }
+        }
+
+        public class DeleteDetailRequest
+        {
+            public long id { get; set; }
+            public string loggedInUserId { get; set; }
+        }
+
+        public class DeletePhotoRequest
+        {
+            public long id { get; set; }
+            public string loggedInUserId { get; set; }
+        }
+
+        public class SaveDetailsRequest
+        {
+            public List<ShelvingCheckListDetail> details { get; set; }
+            public string loggedInUserId { get; set; }
+        }
+
+        #endregion
+
 
         [HttpGet]
         [Route("demonotification")]

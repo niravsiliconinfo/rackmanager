@@ -3427,7 +3427,7 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
  */
   .factory('typeaheadParser', ['$parse', function ($parse) {
 
-  //                      00000111000000000000022200000000000000003333333333333330000000000044000
+  //                     00000111000000000000022200000000000000003333333333333330000000000044000
   var TYPEAHEAD_REGEXP = /^\s*(.*?)(?:\s+as\s+(.*?))?\s+for\s+(?:([\$\w][\$\w\d]*))\s+in\s+(.*)$/;
 
   return {

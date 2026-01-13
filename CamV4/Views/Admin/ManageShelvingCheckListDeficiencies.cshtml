@@ -1,0 +1,200 @@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@functions{
+    public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    }
+}
+
+<script src="~/NgScript/Controller/shelvingchecklistdeficiencyCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100" ng-app="myApp" ng-controller="ShelvingCheckListDeficiencyCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index", "Admin")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Shelving CheckList Deficiencies</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                    <div class="input-group input-group-outline">
+                        <input type="search" class="form-control" placeholder="Type here..." id="example-search-input">
+                    </div>
+                </div>
+                <ul class="navbar-nav justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mb-0">Manage Shelving CheckList Deficiencies</h6>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <a class="btn bg-gradient-dark mb-0 mx-3" href="javascript:void(0);" ng-click="openAddDeficiencyModal()">
+                                        <i class="material-icons text-sm">add</i>&nbsp;&nbsp;Add New Shelving Deficiency
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pb-2">                        
+                        <div class="table-responsive p-0">
+                            <table id="ShelvingCheckListdeficiencyDataTable" class="table align-items-center mb-0" style="width:100%">
+                                <!-- DataTable will initialize here via controller -->
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal fade" id="deficiencyModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" ng-if="!isEditMode">
+                        <i class="material-icons text-sm align-middle">add</i> Create New Shelving Deficiency
+                    </h5>
+                    <h5 class="modal-title" ng-if="isEditMode">
+                        <i class="material-icons text-sm align-middle">edit</i> Edit Shelving Deficiency
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+
+                    <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <label class="form-label">Deficiency Description *</label>
+                            <div class="input-group input-group-outline" ng-class="{'is-filled': currentDeficiency.ShelvingCheckListDeficiencyInfo}">
+                                <textarea class="form-control" ng-model="currentDeficiency.ShelvingCheckListDeficiencyInfo" rows="3"
+                                          placeholder="Enter deficiency description (e.g., Is the type of shelving appropriate for its weight / size?)" required></textarea>
+                            </div>
+                            <span class="text-danger text-xs" ng-if="validationErrors.info">{{validationErrors.info}}</span>
+                            <small class="text-muted">This will appear as an inspection question on the checklist.</small>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <label class="form-label">Comment / Guidance <small class="text-muted">(Optional)</small></label>
+                            <div class="input-group input-group-outline" ng-class="{'is-filled': currentDeficiency.ShelvingCheckListDeficiencyComment}">
+                                <textarea class="form-control" ng-model="currentDeficiency.ShelvingCheckListDeficiencyComment" rows="2"
+                                          placeholder="Enter guidance or additional notes (e.g., Check load capacity rating)"></textarea>
+                            </div>
+                            <small class="text-muted">Additional information or instructions for the inspector.</small>
+                        </div>
+                    </div>
+
+                    <div class="row" style="display:none;">
+                        <div class="col-sm-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" ng-model="currentDeficiency.IsActive" id="isActive">
+                                <label class="form-check-label" for="isActive">
+                                    <strong>Active</strong> - This deficiency is available for use in inspections
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-gradient-secondary" ng-click="cancelDeficiencyModal()" ng-disabled="isProcessing">
+                        <i class="material-icons text-sm">close</i> Cancel
+                    </button>
+                    <button type="button" class="btn bg-gradient-info" ng-click="saveDeficiency()" ng-disabled="isProcessing">
+                        <i class="material-icons text-sm" ng-if="!isProcessing">save</i>
+                        <i class="fa fa-spinner fa-spin" ng-if="isProcessing"></i>
+                        <span ng-if="!isEditMode">Create Deficiency</span>
+                        <span ng-if="isEditMode">Update Deficiency</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("_FooterLayout")
+</main>
+
+<style>
+    .input-group-outline.is-filled .form-label {
+        transform: translateY(-0.85rem) scale(0.85);
+        color: #495057;
+    }
+
+    .input-group-outline .form-label {
+        transition: all 0.2s ease;
+        position: absolute;
+        left: 0.75rem;
+        top: 0.625rem;
+        pointer-events: none;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #e9ecef;
+    }
+
+    table.dataTable tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .dataTables_wrapper .dataTables_length select {
+        padding: 4px 8px;
+        margin: 0 5px;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        padding: 4px 8px;
+        border: 1px solid #d2d6da;
+        border-radius: 0.375rem;
+    }
+
+    .modal-lg {
+        max-width: 800px;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+</style>
+
+<!-- DataTables CSS & JS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>

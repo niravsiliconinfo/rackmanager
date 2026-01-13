@@ -591,6 +591,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.ComponentSubType_Deleted' do
           <Property Name="CustomerContactIds" Type="char" MaxLength="50" />
           <Property Name="RackingTypeId" Type="int" />
           <Property Name="ActionRequired" Type="char" MaxLength="10" />
+          <Property Name="ShelvingChecklist3A" Type="nvarchar" MaxLength="1000" />
           <Property Name="IsActive" Type="bit" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
@@ -737,6 +738,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           </Key>
           <Property Name="ManufacturerId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ManufacturerName" Type="nvarchar" MaxLength="200" />
+          <Property Name="ManufacturerType" Type="int" />
           <Property Name="IsActive" Type="bit" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
@@ -766,6 +768,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="ProcessOverviewId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ProcessOverviewDesc" Type="nvarchar" MaxLength="500" Nullable="false" />
           <Property Name="IsActive" Type="bit" />
+          <Property Name="IsShelvingChecklist" Type="bit" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
           <Property Name="ModifiedDate" Type="datetime" />
@@ -887,6 +890,94 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="RackingTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="RackingTypeName" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="IsActive" Type="bit" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="ShelvingCheckList">
+          <Key>
+            <PropertyRef Name="ShelvingCheckListId" />
+          </Key>
+          <Property Name="ShelvingCheckListId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InspectionId" Type="bigint" Nullable="false" />
+          <Property Name="ShelvingCheckListName" Type="nvarchar" MaxLength="100" />
+          <Property Name="ShelvingCheckListSection" Type="nvarchar" MaxLength="150" />
+          <Property Name="ShelvingCheckListTypeId" Type="int" />
+          <Property Name="ManufacturerId" Type="bigint" />
+          <Property Name="RowID" Type="nvarchar" MaxLength="50" />
+          <Property Name="Bays" Type="nvarchar" MaxLength="50" />
+          <Property Name="NoOfShelvesPerBay" Type="nvarchar" MaxLength="50" />
+          <Property Name="ShelvingCheckListSizeWidthIn" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="ShelvingCheckListSizeDepthIn" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="ShelvingCheckListSizeHeightIn" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="PostWidthIn" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="PostDepthIn" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="PostThicknessIn" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="PostType" Type="nvarchar" MaxLength="50" />
+          <Property Name="ShelfBeamHeightIn" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="ShelfBeamThicknessIn" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="FrameConnectorQty" Type="int" />
+          <Property Name="TieBarQty" Type="int" />
+          <Property Name="CapacityForBay" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="CapacityForShelf" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="IsDelete" Type="bit" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="ShelvingCheckListDeficiencies">
+          <Key>
+            <PropertyRef Name="ShelvingCheckListDeficiencyID" />
+          </Key>
+          <Property Name="ShelvingCheckListDeficiencyID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ShelvingCheckListDeficiencyInfo" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="ShelvingCheckListDeficiencyComment" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="ShelvingCheckListDetails">
+          <Key>
+            <PropertyRef Name="ShelvingCheckListDetailId" />
+          </Key>
+          <Property Name="ShelvingCheckListDetailId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ShelvingCheckListId" Type="bigint" Nullable="false" />
+          <Property Name="ShelvingCheckListDeficiencyID" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="Tick_Yes" Type="bit" />
+          <Property Name="Tick_No" Type="bit" />
+          <Property Name="Tick_NA" Type="bit" />
+          <Property Name="Comments" Type="nvarchar" MaxLength="1000" />
+          <Property Name="IsDelete" Type="bit" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="ShelvingCheckListPhoto">
+          <Key>
+            <PropertyRef Name="ShelvingCheckListPhotoId" />
+          </Key>
+          <Property Name="ShelvingCheckListPhotoId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ShelvingCheckListId" Type="bigint" Nullable="false" />
+          <Property Name="ShelvingCheckListName" Type="nvarchar" MaxLength="500" />
+          <Property Name="ShelvingCheckListPath" Type="nvarchar" MaxLength="500" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="ModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="ShelvingCheckListType">
+          <Key>
+            <PropertyRef Name="ShelvingCheckListTypeId" />
+          </Key>
+          <Property Name="ShelvingCheckListTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ShelvingCheckListTypeName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
           <Property Name="ModifiedDate" Type="datetime" />
@@ -1124,6 +1215,11 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <EntitySet Name="QuotationSettings" EntityType="Self.QuotationSettings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RACKING_Inspection_Report" EntityType="Self.RACKING_Inspection_Report" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RackingTypes" EntityType="Self.RackingTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ShelvingCheckList" EntityType="Self.ShelvingCheckList" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ShelvingCheckListDeficiencies" EntityType="Self.ShelvingCheckListDeficiencies" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ShelvingCheckListDetails" EntityType="Self.ShelvingCheckListDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ShelvingCheckListPhoto" EntityType="Self.ShelvingCheckListPhoto" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ShelvingCheckListType" EntityType="Self.ShelvingCheckListType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ComponentPriceListDetailHistory" EntityType="Self.ComponentPriceListDetailHistory" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -1688,40 +1784,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
         </EntityType>
-        <EntityType Name="Inspection">
-          <Key>
-            <PropertyRef Name="InspectionId" />
-          </Key>
-          <Property Name="InspectionId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="InspectionDocumentNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="InspectionDocumentNoRef" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="InspectionType" Type="String" MaxLength="2" FixedLength="true" Unicode="true" Nullable="false" />
-          <Property Name="InspectionDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Reportdate" Type="DateTime" Precision="3" />
-          <Property Name="InspectionStatus" Type="Int32" Nullable="false" />
-          <Property Name="InspectionStartedOn" Type="DateTime" Precision="3" />
-          <Property Name="InspectionEndOn" Type="DateTime" Precision="3" />
-          <Property Name="CustomerId" Type="Int64" Nullable="false" />
-          <Property Name="CustomerLocationId" Type="Int64" Nullable="false" />
-          <Property Name="CustomerAreaID" Type="Int64" />
-          <Property Name="EmployeeId" Type="Int64" Nullable="false" />
-          <Property Name="StampingEngineerId" Type="Int64" />
-          <Property Name="AssignEmployeeIds" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="FacilitiesAreasIds" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ReferenceDocumentIds" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="CADDocuments" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="ProcessOverviewIds" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ConclusionRecommendationsIds" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="InspectionPDFPath" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="CustomerContactIds" Type="String" MaxLength="50" FixedLength="true" Unicode="false" />
-          <Property Name="RackingTypeId" Type="Int32" />
-          <Property Name="ActionRequired" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
-          <Property Name="IsActive" Type="Boolean" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityType Name="InspectionDeficiency">
           <Key>
             <PropertyRef Name="InspectionDeficiencyId" />
@@ -1842,18 +1904,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="Manufacturer">
-          <Key>
-            <PropertyRef Name="ManufacturerId" />
-          </Key>
-          <Property Name="ManufacturerId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ManufacturerName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="IsActive" Type="Boolean" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityType Name="Notification">
           <Key>
             <PropertyRef Name="NotificationID" />
@@ -1865,18 +1915,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="Userid_SenderID" Type="Int64" Nullable="false" />
           <Property Name="Userid_ReceiverID" Type="Int64" Nullable="false" />
           <Property Name="ReadStatus" Type="Boolean" Nullable="false" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="ProcessOverview">
-          <Key>
-            <PropertyRef Name="ProcessOverviewId" />
-          </Key>
-          <Property Name="ProcessOverviewId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ProcessOverviewDesc" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="IsActive" Type="Boolean" />
           <Property Name="CreatedDate" Type="DateTime" Precision="3" />
           <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
@@ -2115,7 +2153,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <EntitySet Name="ImpSettings" EntityType="Self.ImpSetting" />
           <EntitySet Name="IncidentReports" EntityType="Self.IncidentReport" />
           <EntitySet Name="IncidentReportPhotoes" EntityType="Self.IncidentReportPhoto" />
-          <EntitySet Name="Inspections" EntityType="Self.Inspection" />
           <EntitySet Name="InspectionDeficiencies" EntityType="Self.InspectionDeficiency" />
           <EntitySet Name="InspectionDeficiencyMTOes" EntityType="Self.InspectionDeficiencyMTO" />
           <EntitySet Name="InspectionDeficiencyMTODetails" EntityType="Self.InspectionDeficiencyMTODetail" />
@@ -2123,9 +2160,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <EntitySet Name="InspectionDues" EntityType="Self.InspectionDue" />
           <EntitySet Name="InspectionFileDrawings" EntityType="Self.InspectionFileDrawing" />
           <EntitySet Name="InspectionTypes" EntityType="Self.InspectionType" />
-          <EntitySet Name="Manufacturers" EntityType="Self.Manufacturer" />
           <EntitySet Name="Notifications" EntityType="Self.Notification" />
-          <EntitySet Name="ProcessOverviews" EntityType="Self.ProcessOverview" />
           <EntitySet Name="Provinces" EntityType="Self.Province" />
           <EntitySet Name="Quotations" EntityType="Self.Quotation" />
           <EntitySet Name="QuotationInspectionDeficiencies" EntityType="Self.QuotationInspectionDeficiency" />
@@ -2294,11 +2329,19 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
             <Parameter Name="Region" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetInspectionDetailsForMobile" ReturnType="Collection(admin_rackauditorModel.GetInspectionDetailsForMobile_Result)">
-            <Parameter Name="InspectionId" Mode="In" Type="Int64" />
+          <Parameter Name="InspectionId" Mode="In" Type="Int64" />
           </FunctionImport>
           <FunctionImport Name="GetInspectionDetailsForSheet" ReturnType="Collection(admin_rackauditorModel.GetInspectionDetailsForSheet_Result)">
-            <Parameter Name="InspectionId" Mode="In" Type="Int64" />
+          <Parameter Name="InspectionId" Mode="In" Type="Int64" />
           </FunctionImport>
+          <EntitySet Name="ProcessOverviews" EntityType="admin_rackauditorModel.ProcessOverview" />
+          <EntitySet Name="ShelvingCheckListDeficiencies" EntityType="admin_rackauditorModel.ShelvingCheckListDeficiency" />
+          <EntitySet Name="ShelvingCheckListDetails" EntityType="admin_rackauditorModel.ShelvingCheckListDetail" />
+          <EntitySet Name="ShelvingCheckListPhotoes" EntityType="admin_rackauditorModel.ShelvingCheckListPhoto" />
+          <EntitySet Name="ShelvingCheckListTypes" EntityType="admin_rackauditorModel.ShelvingCheckListType" />
+          <EntitySet Name="ShelvingCheckLists" EntityType="admin_rackauditorModel.ShelvingCheckList" />
+          <EntitySet Name="Manufacturers" EntityType="admin_rackauditorModel.Manufacturer" />
+          <EntitySet Name="Inspections" EntityType="admin_rackauditorModel.Inspection" />
         </EntityContainer>
         <ComplexType Name="Get_DeficienciesBreakdownCategories_Result">
           <Property Type="Int32" Name="DeficiencyCategoryId" Nullable="false" />
@@ -2666,6 +2709,155 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Type="String" Name="EmployeeEmail" Nullable="true" MaxLength="250" />
           <Property Type="String" Name="EmployeeMobileNo" Nullable="true" MaxLength="20" />
         </ComplexType>
+        <EntityType Name="ProcessOverview">
+          <Key>
+            <PropertyRef Name="ProcessOverviewId" />
+          </Key>
+          <Property Name="ProcessOverviewId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProcessOverviewDesc" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IsShelvingChecklist" Type="Boolean" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ShelvingCheckListDeficiency">
+          <Key>
+            <PropertyRef Name="ShelvingCheckListDeficiencyID" />
+          </Key>
+          <Property Name="ShelvingCheckListDeficiencyID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ShelvingCheckListDeficiencyInfo" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="ShelvingCheckListDeficiencyComment" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ShelvingCheckListDetail">
+          <Key>
+            <PropertyRef Name="ShelvingCheckListDetailId" />
+          </Key>
+          <Property Name="ShelvingCheckListDetailId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ShelvingCheckListId" Type="Int64" Nullable="false" />
+          <Property Name="ShelvingCheckListDeficiencyID" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Tick_Yes" Type="Boolean" />
+          <Property Name="Tick_No" Type="Boolean" />
+          <Property Name="Tick_NA" Type="Boolean" />
+          <Property Name="Comments" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="IsDelete" Type="Boolean" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ShelvingCheckListPhoto">
+          <Key>
+            <PropertyRef Name="ShelvingCheckListPhotoId" />
+          </Key>
+          <Property Name="ShelvingCheckListPhotoId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ShelvingCheckListId" Type="Int64" Nullable="false" />
+          <Property Name="ShelvingCheckListName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ShelvingCheckListPath" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="ShelvingCheckListType">
+          <Key>
+            <PropertyRef Name="ShelvingCheckListTypeId" />
+          </Key>
+          <Property Name="ShelvingCheckListTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ShelvingCheckListTypeName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ShelvingCheckList">
+          <Key>
+            <PropertyRef Name="ShelvingCheckListId" />
+          </Key>
+          <Property Name="ShelvingCheckListId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InspectionId" Type="Int64" Nullable="false" />
+          <Property Name="ShelvingCheckListName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ShelvingCheckListSection" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ShelvingCheckListTypeId" Type="Int32" />
+          <Property Name="ManufacturerId" Type="Int64" />
+          <Property Name="RowID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Bays" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NoOfShelvesPerBay" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ShelvingCheckListSizeWidthIn" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="ShelvingCheckListSizeDepthIn" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="ShelvingCheckListSizeHeightIn" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="PostWidthIn" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="PostDepthIn" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="PostThicknessIn" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="PostType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ShelfBeamHeightIn" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="ShelfBeamThicknessIn" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="FrameConnectorQty" Type="Int32" />
+          <Property Name="TieBarQty" Type="Int32" />
+          <Property Name="CapacityForBay" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="CapacityForShelf" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="IsDelete" Type="Boolean" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Manufacturer">
+          <Key>
+            <PropertyRef Name="ManufacturerId" />
+          </Key>
+          <Property Name="ManufacturerId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ManufacturerName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ManufacturerType" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Inspection">
+          <Key>
+            <PropertyRef Name="InspectionId" />
+          </Key>
+          <Property Name="InspectionId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InspectionDocumentNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InspectionDocumentNoRef" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InspectionType" Type="String" Nullable="false" MaxLength="2" FixedLength="true" Unicode="true" />
+          <Property Name="InspectionDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Reportdate" Type="DateTime" Precision="3" />
+          <Property Name="InspectionStatus" Type="Int32" Nullable="false" />
+          <Property Name="InspectionStartedOn" Type="DateTime" Precision="3" />
+          <Property Name="InspectionEndOn" Type="DateTime" Precision="3" />
+          <Property Name="CustomerId" Type="Int64" Nullable="false" />
+          <Property Name="CustomerLocationId" Type="Int64" Nullable="false" />
+          <Property Name="CustomerAreaID" Type="Int64" />
+          <Property Name="EmployeeId" Type="Int64" Nullable="false" />
+          <Property Name="StampingEngineerId" Type="Int64" />
+          <Property Name="AssignEmployeeIds" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FacilitiesAreasIds" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceDocumentIds" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CADDocuments" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessOverviewIds" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ConclusionRecommendationsIds" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="InspectionPDFPath" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerContactIds" Type="String" MaxLength="50" FixedLength="true" Unicode="false" />
+          <Property Name="RackingTypeId" Type="Int32" />
+          <Property Name="ActionRequired" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="ShelvingChecklist3A" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3208,41 +3400,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Inspections">
-            <EntityTypeMapping TypeName="admin_rackauditorModel.Inspection">
-              <MappingFragment StoreEntitySet="Inspection">
-                <ScalarProperty Name="InspectionId" ColumnName="InspectionId" />
-                <ScalarProperty Name="InspectionDocumentNo" ColumnName="InspectionDocumentNo" />
-                <ScalarProperty Name="InspectionDocumentNoRef" ColumnName="InspectionDocumentNoRef" />
-                <ScalarProperty Name="InspectionType" ColumnName="InspectionType" />
-                <ScalarProperty Name="InspectionDate" ColumnName="InspectionDate" />
-                <ScalarProperty Name="Reportdate" ColumnName="Reportdate" />
-                <ScalarProperty Name="InspectionStatus" ColumnName="InspectionStatus" />
-                <ScalarProperty Name="InspectionStartedOn" ColumnName="InspectionStartedOn" />
-                <ScalarProperty Name="InspectionEndOn" ColumnName="InspectionEndOn" />
-                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
-                <ScalarProperty Name="CustomerLocationId" ColumnName="CustomerLocationId" />
-                <ScalarProperty Name="CustomerAreaID" ColumnName="CustomerAreaID" />
-                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
-                <ScalarProperty Name="StampingEngineerId" ColumnName="StampingEngineerId" />
-                <ScalarProperty Name="AssignEmployeeIds" ColumnName="AssignEmployeeIds" />
-                <ScalarProperty Name="FacilitiesAreasIds" ColumnName="FacilitiesAreasIds" />
-                <ScalarProperty Name="ReferenceDocumentIds" ColumnName="ReferenceDocumentIds" />
-                <ScalarProperty Name="CADDocuments" ColumnName="CADDocuments" />
-                <ScalarProperty Name="ProcessOverviewIds" ColumnName="ProcessOverviewIds" />
-                <ScalarProperty Name="ConclusionRecommendationsIds" ColumnName="ConclusionRecommendationsIds" />
-                <ScalarProperty Name="InspectionPDFPath" ColumnName="InspectionPDFPath" />
-                <ScalarProperty Name="CustomerContactIds" ColumnName="CustomerContactIds" />
-                <ScalarProperty Name="RackingTypeId" ColumnName="RackingTypeId" />
-                <ScalarProperty Name="ActionRequired" ColumnName="ActionRequired" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="InspectionDeficiencies">
             <EntityTypeMapping TypeName="admin_rackauditorModel.InspectionDeficiency">
               <MappingFragment StoreEntitySet="InspectionDeficiency">
@@ -3370,19 +3527,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Manufacturers">
-            <EntityTypeMapping TypeName="admin_rackauditorModel.Manufacturer">
-              <MappingFragment StoreEntitySet="Manufacturers">
-                <ScalarProperty Name="ManufacturerId" ColumnName="ManufacturerId" />
-                <ScalarProperty Name="ManufacturerName" ColumnName="ManufacturerName" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Notifications">
             <EntityTypeMapping TypeName="admin_rackauditorModel.Notification">
               <MappingFragment StoreEntitySet="Notification">
@@ -3393,19 +3537,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
                 <ScalarProperty Name="Userid_SenderID" ColumnName="Userid_SenderID" />
                 <ScalarProperty Name="Userid_ReceiverID" ColumnName="Userid_ReceiverID" />
                 <ScalarProperty Name="ReadStatus" ColumnName="ReadStatus" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ProcessOverviews">
-            <EntityTypeMapping TypeName="admin_rackauditorModel.ProcessOverview">
-              <MappingFragment StoreEntitySet="ProcessOverview">
-                <ScalarProperty Name="ProcessOverviewId" ColumnName="ProcessOverviewId" />
-                <ScalarProperty Name="ProcessOverviewDesc" ColumnName="ProcessOverviewDesc" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
@@ -4115,6 +4246,163 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="ProcessOverviews">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.ProcessOverview">
+              <MappingFragment StoreEntitySet="ProcessOverview">
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsShelvingChecklist" ColumnName="IsShelvingChecklist" />
+                <ScalarProperty Name="ProcessOverviewDesc" ColumnName="ProcessOverviewDesc" />
+                <ScalarProperty Name="ProcessOverviewId" ColumnName="ProcessOverviewId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ShelvingCheckListDeficiencies">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.ShelvingCheckListDeficiency">
+              <MappingFragment StoreEntitySet="ShelvingCheckListDeficiencies">
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ShelvingCheckListDeficiencyComment" ColumnName="ShelvingCheckListDeficiencyComment" />
+                <ScalarProperty Name="ShelvingCheckListDeficiencyInfo" ColumnName="ShelvingCheckListDeficiencyInfo" />
+                <ScalarProperty Name="ShelvingCheckListDeficiencyID" ColumnName="ShelvingCheckListDeficiencyID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ShelvingCheckListDetails">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.ShelvingCheckListDetail">
+              <MappingFragment StoreEntitySet="ShelvingCheckListDetails">
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IsDelete" ColumnName="IsDelete" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="Tick_NA" ColumnName="Tick_NA" />
+                <ScalarProperty Name="Tick_No" ColumnName="Tick_No" />
+                <ScalarProperty Name="Tick_Yes" ColumnName="Tick_Yes" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ShelvingCheckListDeficiencyID" ColumnName="ShelvingCheckListDeficiencyID" />
+                <ScalarProperty Name="ShelvingCheckListId" ColumnName="ShelvingCheckListId" />
+                <ScalarProperty Name="ShelvingCheckListDetailId" ColumnName="ShelvingCheckListDetailId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ShelvingCheckListPhotoes">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.ShelvingCheckListPhoto">
+              <MappingFragment StoreEntitySet="ShelvingCheckListPhoto">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="ShelvingCheckListPath" ColumnName="ShelvingCheckListPath" />
+                <ScalarProperty Name="ShelvingCheckListName" ColumnName="ShelvingCheckListName" />
+                <ScalarProperty Name="ShelvingCheckListId" ColumnName="ShelvingCheckListId" />
+                <ScalarProperty Name="ShelvingCheckListPhotoId" ColumnName="ShelvingCheckListPhotoId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ShelvingCheckListTypes">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.ShelvingCheckListType">
+              <MappingFragment StoreEntitySet="ShelvingCheckListType">
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="ShelvingCheckListTypeName" ColumnName="ShelvingCheckListTypeName" />
+                <ScalarProperty Name="ShelvingCheckListTypeId" ColumnName="ShelvingCheckListTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ShelvingCheckLists">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.ShelvingCheckList">
+              <MappingFragment StoreEntitySet="ShelvingCheckList">
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IsDelete" ColumnName="IsDelete" />
+                <ScalarProperty Name="CapacityForShelf" ColumnName="CapacityForShelf" />
+                <ScalarProperty Name="CapacityForBay" ColumnName="CapacityForBay" />
+                <ScalarProperty Name="TieBarQty" ColumnName="TieBarQty" />
+                <ScalarProperty Name="FrameConnectorQty" ColumnName="FrameConnectorQty" />
+                <ScalarProperty Name="ShelfBeamThicknessIn" ColumnName="ShelfBeamThicknessIn" />
+                <ScalarProperty Name="ShelfBeamHeightIn" ColumnName="ShelfBeamHeightIn" />
+                <ScalarProperty Name="PostType" ColumnName="PostType" />
+                <ScalarProperty Name="PostThicknessIn" ColumnName="PostThicknessIn" />
+                <ScalarProperty Name="PostDepthIn" ColumnName="PostDepthIn" />
+                <ScalarProperty Name="PostWidthIn" ColumnName="PostWidthIn" />
+                <ScalarProperty Name="ShelvingCheckListSizeHeightIn" ColumnName="ShelvingCheckListSizeHeightIn" />
+                <ScalarProperty Name="ShelvingCheckListSizeDepthIn" ColumnName="ShelvingCheckListSizeDepthIn" />
+                <ScalarProperty Name="ShelvingCheckListSizeWidthIn" ColumnName="ShelvingCheckListSizeWidthIn" />
+                <ScalarProperty Name="NoOfShelvesPerBay" ColumnName="NoOfShelvesPerBay" />
+                <ScalarProperty Name="Bays" ColumnName="Bays" />
+                <ScalarProperty Name="RowID" ColumnName="RowID" />
+                <ScalarProperty Name="ManufacturerId" ColumnName="ManufacturerId" />
+                <ScalarProperty Name="ShelvingCheckListTypeId" ColumnName="ShelvingCheckListTypeId" />
+                <ScalarProperty Name="ShelvingCheckListSection" ColumnName="ShelvingCheckListSection" />
+                <ScalarProperty Name="ShelvingCheckListName" ColumnName="ShelvingCheckListName" />
+                <ScalarProperty Name="InspectionId" ColumnName="InspectionId" />
+                <ScalarProperty Name="ShelvingCheckListId" ColumnName="ShelvingCheckListId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Manufacturers">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.Manufacturer">
+              <MappingFragment StoreEntitySet="Manufacturers">
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ManufacturerType" ColumnName="ManufacturerType" />
+                <ScalarProperty Name="ManufacturerName" ColumnName="ManufacturerName" />
+                <ScalarProperty Name="ManufacturerId" ColumnName="ManufacturerId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Inspections">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.Inspection">
+              <MappingFragment StoreEntitySet="Inspection">
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ShelvingChecklist3A" ColumnName="ShelvingChecklist3A" />
+                <ScalarProperty Name="ActionRequired" ColumnName="ActionRequired" />
+                <ScalarProperty Name="RackingTypeId" ColumnName="RackingTypeId" />
+                <ScalarProperty Name="CustomerContactIds" ColumnName="CustomerContactIds" />
+                <ScalarProperty Name="InspectionPDFPath" ColumnName="InspectionPDFPath" />
+                <ScalarProperty Name="ConclusionRecommendationsIds" ColumnName="ConclusionRecommendationsIds" />
+                <ScalarProperty Name="ProcessOverviewIds" ColumnName="ProcessOverviewIds" />
+                <ScalarProperty Name="CADDocuments" ColumnName="CADDocuments" />
+                <ScalarProperty Name="ReferenceDocumentIds" ColumnName="ReferenceDocumentIds" />
+                <ScalarProperty Name="FacilitiesAreasIds" ColumnName="FacilitiesAreasIds" />
+                <ScalarProperty Name="AssignEmployeeIds" ColumnName="AssignEmployeeIds" />
+                <ScalarProperty Name="StampingEngineerId" ColumnName="StampingEngineerId" />
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+                <ScalarProperty Name="CustomerAreaID" ColumnName="CustomerAreaID" />
+                <ScalarProperty Name="CustomerLocationId" ColumnName="CustomerLocationId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="InspectionEndOn" ColumnName="InspectionEndOn" />
+                <ScalarProperty Name="InspectionStartedOn" ColumnName="InspectionStartedOn" />
+                <ScalarProperty Name="InspectionStatus" ColumnName="InspectionStatus" />
+                <ScalarProperty Name="Reportdate" ColumnName="Reportdate" />
+                <ScalarProperty Name="InspectionDate" ColumnName="InspectionDate" />
+                <ScalarProperty Name="InspectionType" ColumnName="InspectionType" />
+                <ScalarProperty Name="InspectionDocumentNoRef" ColumnName="InspectionDocumentNoRef" />
+                <ScalarProperty Name="InspectionDocumentNo" ColumnName="InspectionDocumentNo" />
+                <ScalarProperty Name="InspectionId" ColumnName="InspectionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -3882,7 +3882,7 @@ function createEventHandler(element, events) {
   };
 
   // TODO: this is a hack for angularMocks/clearDataCache that makes it possible to deregister all
-  //       events on `element`
+  //      events on `element`
   eventHandler.elem = element;
   return eventHandler;
 }
@@ -8297,7 +8297,7 @@ function $TemplateCacheProvider() {
  *
  *     // Now we have reference to the cloned DOM via `clonedElement`.
  *     // NOTE: The `clonedElement` returned by the linking function is the same as the
- *     //       `clonedElement` passed to `cloneAttachFn`.
+ *     //      `clonedElement` passed to `cloneAttachFn`.
  *   ```
  *
  *
@@ -9420,7 +9420,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
       // first check if there are spaces because it's not the same pattern
       var trimmedSrcset = trim(value);
-      //                (   999x   ,|   999w   ,|   ,|,   )
+      //               (   999x   ,|   999w   ,|   ,|,   )
       var srcPattern = /(\s+\d+x\s*,|\s+\d+w\s*,|\s+,|,\s+)/;
       var pattern = /\s/.test(trimmedSrcset) ? srcPattern : /(,)/;
 
@@ -11759,11 +11759,11 @@ function $ControllerProvider() {
     return function $controller(expression, locals, later, ident) {
       // PRIVATE API:
       //   param `later` --- indicates that the controller's constructor is invoked at a later time.
-      //                     If true, $controller will allocate the object with the correct
-      //                     prototype chain, but will not invoke the controller until a returned
-      //                     callback is invoked.
+      //                    If true, $controller will allocate the object with the correct
+      //                    prototype chain, but will not invoke the controller until a returned
+      //                    callback is invoked.
       //   param `ident` --- An optional label which overrides the label parsed from the controller
-      //                     expression, if any.
+      //                    expression, if any.
       var instance, match, constructor, identifier;
       later = later === true;
       if (ident && isString(ident)) {
@@ -13699,7 +13699,7 @@ function createHttpBackend($browser, createXhr, $browserDefer, callbacks, rawDoc
     // http.timeout = $timeout            timeout
     // http.timeout = promise             abort
     // xhr.abort()                        abort (The xhr object is normally inaccessible, but
-    //                                    can be exposed with the xhrFactory)
+    //                                   can be exposed with the xhrFactory)
     if (timeout > 0) {
       var timeoutId = $browserDefer(function() {
         timeoutRequest('timeout');
@@ -17532,7 +17532,7 @@ function $ParseProvider() {
 
         // attempt to convert the value to a primitive type
         // TODO(docs): add a note to docs that by implementing valueOf even objects and arrays can
-        //             be cheaply dirty-checked
+        //            be cheaply dirty-checked
         newValue = getValueOf(newValue);
 
         if (typeof newValue === 'object' && !compareObjectIdentity) {
@@ -18217,12 +18217,12 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
    * ```js
    *   promiseB = promiseA.then(function(result) {
    *     // success: do something and resolve promiseB
-   *     //          with the old or a new result
+   *     //         with the old or a new result
    *     return result;
    *   }, function(reason) {
    *     // error: handle the error if possible and
-   *     //        resolve promiseB with newPromiseOrValue,
-   *     //        otherwise forward the rejection to promiseB
+   *     //       resolve promiseB with newPromiseOrValue,
+   *     //       otherwise forward the rejection to promiseB
    *     if (canHandle(reason)) {
    *      // handle the error and recover
    *      return newPromiseOrValue;
@@ -25366,7 +25366,7 @@ var ISO_DATE_REGEXP = /^\d{4,}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+(?:[+-
 //   7. Path
 //   8. Query
 //   9. Fragment
-//                 1111111111111111 222   333333    44444        55555555555555555555555     666     77777777     8888888     999
+//                1111111111111111 222   333333    44444        55555555555555555555555     666     77777777     8888888     999
 var URL_REGEXP = /^[a-z][a-z\d.+-]*:\/*(?:[^:@]+(?::[^@]+)?@)?(?:[^\s:/?#]+|\[[a-f\d:]+])(?::\d+)?(?:\/[^?#]*)?(?:\?[^#]*)?(?:#.*)?$/i;
 // eslint-disable-next-line max-len
 var EMAIL_REGEXP = /^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/;
@@ -31279,7 +31279,7 @@ function setupModelWatcher(ctrl) {
   // 2. user enters 'b'
   // 3. ng-change kicks in and reverts scope value to 'a'
   //    -> scope value did not change since the last digest as
-  //       ng-change executes in apply phase
+  //      ng-change executes in apply phase
   // 4. view should be changed back to 'a'
   ctrl.$$scope.$watch(function ngModelWatch(scope) {
     var modelValue = ctrl.$$ngModelGet(scope);
@@ -32427,7 +32427,7 @@ var ngOptionsMinErr = minErr('ngOptions');
  */
 
 /* eslint-disable max-len */
-//                     //00001111111111000000000002222222222000000000000000000000333333333300000000000000000000000004444444444400000000000005555555555555000000000666666666666600000007777777777777000000000000000888888888800000000000000000009999999999
+//                    //00001111111111000000000002222222222000000000000000000000333333333300000000000000000000000004444444444400000000000005555555555555000000000666666666666600000007777777777777000000000000000888888888800000000000000000009999999999
 var NG_OPTIONS_REGEXP = /^\s*([\s\S]+?)(?:\s+as\s+([\s\S]+?))?(?:\s+group\s+by\s+([\s\S]+?))?(?:\s+disable\s+when\s+([\s\S]+?))?\s+for\s+(?:([$\w][$\w]*)|(?:\(\s*([$\w][$\w]*)\s*,\s*([$\w][$\w]*)\s*\)))\s+in\s+([\s\S]+?)(?:\s+track\s+by\s+([\s\S]+?))?$/;
                         // 1: value expression (valueFn)
                         // 2: label expression (displayFn)

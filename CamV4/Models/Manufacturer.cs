@@ -16,6 +16,7 @@ namespace CamV4.Models
     {
         public long ManufacturerId { get; set; }
         public string ManufacturerName { get; set; }
+        public Nullable<int> ManufacturerType { get; set; }
         public Nullable<bool> IsActive { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public string CreatedBy { get; set; }

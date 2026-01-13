@@ -2619,7 +2619,7 @@ var $$AnimateQueueProvider = ['$animateProvider', /** @this */ function($animate
         // directive on it. Therefore, we must recreate `element` in order to interact with the
         // actual DOM nodes.
         // Note: We still need to use the old `node` for certain things, such as looking up in
-        //       HashMaps where it was used as the key.
+        //      HashMaps where it was used as the key.
 
         element = stripCommentsFromElement(originalElement);
 

@@ -18,6 +18,7 @@ x86/
 *.vs/
 *.vscode/
 *.idea/
+*.svn/
 
 ## NuGet packages
 packages/
@@ -110,7 +111,15 @@ CamV4/logs/
 CamV4/pricelist/
 CamV4/Properties/
 CamV4/Properties/PublishProfiles/
-
+/img/*
+CamV4/img/*
+CamV4/img/deficiency/
+CamV4/img/deficiencythumb/
+CamV4/img/in/
+CamV4/img/items/
+CamV4/img/logos/
+CamV4/img/out/
+CamV4/img/Shelvingchecklist
 # -------------------------------------------------
 # LOCAL BUILD JUNK
 # -------------------------------------------------

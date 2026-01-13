@@ -162,22 +162,22 @@
         //    //var paraMain = params.get('custid');
         //    //console.log('paramain', paramain);
         //    $scope.RemoveHistoryLegacyFile = function (id) {
-        //        //var paraMain = custid;
-        //        var config = { CustomerLocationHistoryLegacyFileId: id }
-        //        console.log('return config--', config);
-        //        return $http({
-        //            url: '/api/pageview/deleteHistoryLegacyFile',
-        //            method: "POST",
-        //            params: config,
-        //            headers: {
-        //                "Content-Type": "application/json"
-        //            }
-        //        }).then(function (response) {
-        //            if (response.data === "File deleted successfully.") {
-        //                var url = '/Admin/ManageHistoryLegacyDocuments?id=' + paraMain;
-        //                window.location = url;
-        //            }
-        //        });
+        //       //var paraMain = custid;
+        //       var config = { CustomerLocationHistoryLegacyFileId: id }
+        //       console.log('return config--', config);
+        //       return $http({
+        //           url: '/api/pageview/deleteHistoryLegacyFile',
+        //           method: "POST",
+        //           params: config,
+        //           headers: {
+        //               "Content-Type": "application/json"
+        //           }
+        //       }).then(function (response) {
+        //           if (response.data === "File deleted successfully.") {
+        //               var url = '/Admin/ManageHistoryLegacyDocuments?id=' + paraMain;
+        //               window.location = url;
+        //           }
+        //       });
         //    }
         //}
 
@@ -269,12 +269,12 @@
 
             //    for (var i = 0; i < $scope.fileList.length; i++) {
 
-            //        $scope.UploadFileIndividualHistory($scope.fileList[i].file,
-            //            $scope.fileList[i].file.name,
-            //            $scope.fileList[i].file.type,
-            //            $scope.fileList[i].file.size,
-            //            i);
-            //        PdfList[i] = $scope.fileList[i].file.name;
+            //       $scope.UploadFileIndividualHistory($scope.fileList[i].file,
+            //           $scope.fileList[i].file.name,
+            //           $scope.fileList[i].file.type,
+            //           $scope.fileList[i].file.size,
+            //           i);
+            //       PdfList[i] = $scope.fileList[i].file.name;
 
             //    }
             //    list = PdfList.toString();
@@ -283,17 +283,17 @@
             //    console.log('00000000000--UploadHistoryLegacyFile ', config);
 
             //    return $http({
-            //        url: '/api/pageview/uploadHistoryLegacyFile',
-            //        method: "POST",
-            //        data: config,
-            //        headers: {
-            //            "Content-Type": "application/json"
-            //        }
+            //       url: '/api/pageview/uploadHistoryLegacyFile',
+            //       method: "POST",
+            //       data: config,
+            //       headers: {
+            //           "Content-Type": "application/json"
+            //       }
             //    }).then(function (response) {
-            //        if (response.data != 0) {
-            //            var url = '/Admin/ManageHistoryLegacyDocuments?id='+paraMain;
-            //            window.location = url;                           
-            //        }
+            //       if (response.data != 0) {
+            //           var url = '/Admin/ManageHistoryLegacyDocuments?id='+paraMain;
+            //           window.location = url;                           
+            //       }
             //    });
             //};
 
@@ -326,18 +326,18 @@
             //    console.log('-----File Information-------fileToUpload', fileToUpload);
             //    console.log('-----File Information-------name', name);                    
             //    return $http({
-            //        url: '/UploadCustHistoryFile',
-            //        method: 'POST',
-            //        data: formData,
-            //        headers: {
-            //            'Content-Type': undefined
-            //        },
-            //        transformRequest: angular.identity
+            //       url: '/UploadCustHistoryFile',
+            //       method: 'POST',
+            //       data: formData,
+            //       headers: {
+            //           'Content-Type': undefined
+            //       },
+            //       transformRequest: angular.identity
             //    }).then(function (response) {
-            //        console.log('File uploaded successfully:', name);
+            //       console.log('File uploaded successfully:', name);
             //    }, function (error) {
-            //        console.error('File upload failed:', name, error);
-            //        $scope.validationShow = 'Failed to upload file: ' + name;
+            //       console.error('File upload failed:', name, error);
+            //       $scope.validationShow = 'Failed to upload file: ' + name;
             //    });
             //};
 
@@ -360,21 +360,21 @@
             //    console.log('-----File Information-------name', finalFileName);
             //    return;
             //    return $http({
-            //        url: '/UploadCustHistoryFile',
-            //        method: 'POST',
-            //        data: formData,
-            //        headers: {
-            //            'Content-Type': undefined
-            //        },
-            //        transformRequest: angular.identity
+            //       url: '/UploadCustHistoryFile',
+            //       method: 'POST',
+            //       data: formData,
+            //       headers: {
+            //           'Content-Type': undefined
+            //       },
+            //       transformRequest: angular.identity
             //    }).then(function (response) {                    
-            //        $scope.fileList[index].originalName = name;
-            //        $scope.fileList[index].savedName = finalFileName;
-            //        $scope.validationShow = 'File uploaded successfully : ' + name;
-            //        console.log('File uploaded successfully:', name);
+            //       $scope.fileList[index].originalName = name;
+            //       $scope.fileList[index].savedName = finalFileName;
+            //       $scope.validationShow = 'File uploaded successfully : ' + name;
+            //       console.log('File uploaded successfully:', name);
             //    }, function (error) {
-            //        console.error('File upload failed:', name, error);
-            //        $scope.validationShow = 'Failed to upload file: ' + name + error;
+            //       console.error('File upload failed:', name, error);
+            //       $scope.validationShow = 'Failed to upload file: ' + name + error;
             //    });
             //};
 
@@ -399,15 +399,15 @@
             //    formData.append('antiForgeryToken', $scope.antiForgeryToken);
 
             //    return $http.post('/UploadCustHistoryFile', formData, {
-            //        headers: { 'Content-Type': undefined },
-            //        transformRequest: angular.identity
+            //       headers: { 'Content-Type': undefined },
+            //       transformRequest: angular.identity
             //    }).then(function (response) {
-            //        var data = response.data;
-            //        $scope.fileList[index].originalName = data.OriginalFileName;
-            //        $scope.fileList[index].savedName = data.SavedFileName;
+            //       var data = response.data;
+            //       $scope.fileList[index].originalName = data.OriginalFileName;
+            //       $scope.fileList[index].savedName = data.SavedFileName;
             //    }, function (error) {
-            //        console.log(error);
-            //        $scope.validationShow = 'Failed to upload file: ' + name;
+            //       console.log(error);
+            //       $scope.validationShow = 'Failed to upload file: ' + name;
             //    });
             //};
 
@@ -515,69 +515,69 @@
             //    var customerLocationID = $scope.customerLocationId;
 
             //    if (!customerLocationID) {
-            //        $scope.validationShow = 'Please select Customer Location.';
-            //        return;
+            //       $scope.validationShow = 'Please select Customer Location.';
+            //       return;
             //    }
 
             //    if (!$scope.fileList.length) {
-            //        $scope.validationShow = 'Please select at least one file to upload.';
-            //        return;
+            //       $scope.validationShow = 'Please select at least one file to upload.';
+            //       return;
             //    }
 
             //    var uploadPromises = [];
             //    for (var i = 0; i < $scope.fileList.length; i++) {
-            //        uploadPromises.push($scope.UploadFileIndividualHistory(
-            //            $scope.fileList[i].file,
-            //            $scope.fileList[i].file.name,
-            //            $scope.fileList[i].file.type,
-            //            $scope.fileList[i].file.size,
-            //            i,
-            //            customerid,
-            //            customerLocationID
-            //        ));
+            //       uploadPromises.push($scope.UploadFileIndividualHistory(
+            //           $scope.fileList[i].file,
+            //           $scope.fileList[i].file.name,
+            //           $scope.fileList[i].file.type,
+            //           $scope.fileList[i].file.size,
+            //           i,
+            //           customerid,
+            //           customerLocationID
+            //       ));
             //    }
             //    console.log('$scope.fileList[i] : ',$scope.fileList[i]);
             //    return;
             //    // wait for all uploads to finish
             //    Promise.all(uploadPromises).then(function () {
-            //        var PdfList = [];      // renamed files (with timestamp)
-            //        var OriginalList = []; // original user file names
+            //       var PdfList = [];      // renamed files (with timestamp)
+            //       var OriginalList = []; // original user file names
 
-            //        for (var i = 0; i < $scope.fileList.length; i++) {
-            //            PdfList[i] = $scope.fileList[i].savedName;
-            //            OriginalList[i] = $scope.fileList[i].originalName;
-            //        }
+            //       for (var i = 0; i < $scope.fileList.length; i++) {
+            //           PdfList[i] = $scope.fileList[i].savedName;
+            //           OriginalList[i] = $scope.fileList[i].originalName;
+            //       }
 
-            //        var config = {
-            //            CustomerId: customerid,
-            //            CustomerLocationID: customerLocationID,
-            //            FileCategory: $scope.fileCategory,
-            //            FileDrawingPath: PdfList.toString(),   // renamed files
-            //            FileDrawingName: OriginalList.toString() // originals
-            //        };
+            //       var config = {
+            //           CustomerId: customerid,
+            //           CustomerLocationID: customerLocationID,
+            //           FileCategory: $scope.fileCategory,
+            //           FileDrawingPath: PdfList.toString(),   // renamed files
+            //           FileDrawingName: OriginalList.toString() // originals
+            //       };
 
-            //        console.log('Final config before save:', config);
+            //       console.log('Final config before save:', config);
 
-            //        return $http({
-            //            url: '/api/pageview/uploadHistoryLegacyFile',
-            //            method: "POST",
-            //            data: config,
-            //            headers: {
-            //                "Content-Type": "application/json",
-            //                "RequestVerificationToken": $scope.antiForgeryToken
-            //            }
-            //        }).then(function (response) {
-            //            if (response.data != 0) {
-            //                var url = '/Admin/ManageHistoryLegacyDocuments?id=' + paraMain;
-            //                window.location = url;
-            //            } else {
-            //                $scope.validationShow = 'Failed to save file information to database.';
-            //            }
-            //        }, function (error) {
-            //            $scope.validationShow = 'Error saving file information: ' + error.data;
-            //        });
+            //       return $http({
+            //           url: '/api/pageview/uploadHistoryLegacyFile',
+            //           method: "POST",
+            //           data: config,
+            //           headers: {
+            //               "Content-Type": "application/json",
+            //               "RequestVerificationToken": $scope.antiForgeryToken
+            //           }
+            //       }).then(function (response) {
+            //           if (response.data != 0) {
+            //               var url = '/Admin/ManageHistoryLegacyDocuments?id=' + paraMain;
+            //               window.location = url;
+            //           } else {
+            //               $scope.validationShow = 'Failed to save file information to database.';
+            //           }
+            //       }, function (error) {
+            //           $scope.validationShow = 'Error saving file information: ' + error.data;
+            //       });
             //    }, function (error) {
-            //        $scope.validationShow = 'One or more file uploads failed.';
+            //       $scope.validationShow = 'One or more file uploads failed.';
             //    });
             //};
 
@@ -588,59 +588,59 @@
             //    var PdfList = [];
 
             //    if (customerLocationID == "") {                        
-            //        $scope.validationShow = 'Please select Customer Location.';
-            //        return;
+            //       $scope.validationShow = 'Please select Customer Location.';
+            //       return;
             //    }
 
             //    if (!$scope.fileList.length) {
-            //        $scope.validationShow = 'Please select at least one file to upload.';
-            //        return;
+            //       $scope.validationShow = 'Please select at least one file to upload.';
+            //       return;
             //    }
 
             //    var uploadPromises = [];                    
             //    for (var i = 0; i < $scope.fileList.length; i++) {
-            //        uploadPromises.push($scope.UploadFileIndividualHistory(
-            //            $scope.fileList[i].file,
-            //            $scope.fileList[i].file.name,
-            //            $scope.fileList[i].file.type,
-            //            $scope.fileList[i].file.size,
-            //            i,
-            //            customerid,
-            //            customerLocationID
-            //        ));
-            //        PdfList[i] = $scope.fileList[i].file.name;
+            //       uploadPromises.push($scope.UploadFileIndividualHistory(
+            //           $scope.fileList[i].file,
+            //           $scope.fileList[i].file.name,
+            //           $scope.fileList[i].file.type,
+            //           $scope.fileList[i].file.size,
+            //           i,
+            //           customerid,
+            //           customerLocationID
+            //       ));
+            //       PdfList[i] = $scope.fileList[i].file.name;
             //    }
             //    list = PdfList.toString();
             //    console.log('-----File Information-------', list);                    
             //    Promise.all(uploadPromises).then(function () {
-            //        var config = {
-            //            CustomerId: customerid,
-            //            CustomerLocationID: customerLocationID,
-            //            FileCategory: $scope.fileCategory,
-            //            FileDrawingPath: list
-            //        };
-            //        console.log('00000000000--UploadHistoryLegacyFile ', config);
+            //       var config = {
+            //           CustomerId: customerid,
+            //           CustomerLocationID: customerLocationID,
+            //           FileCategory: $scope.fileCategory,
+            //           FileDrawingPath: list
+            //       };
+            //       console.log('00000000000--UploadHistoryLegacyFile ', config);
 
-            //        return $http({
-            //            url: '/api/pageview/uploadHistoryLegacyFile',
-            //            method: "POST",
-            //            data: config,
-            //            headers: {
-            //                "Content-Type": "application/json",
-            //                "RequestVerificationToken": $scope.antiForgeryToken
-            //            }
-            //        }).then(function (response) {
-            //            if (response.data != 0) {
-            //                var url = '/Admin/ManageHistoryLegacyDocuments?id=' + paraMain;
-            //                window.location = url;
-            //            } else {
-            //                $scope.validationShow = 'Failed to save file information to database.';
-            //            }
-            //        }, function (error) {
-            //            $scope.validationShow = 'Error saving file information: ' + error.data;
-            //        });
+            //       return $http({
+            //           url: '/api/pageview/uploadHistoryLegacyFile',
+            //           method: "POST",
+            //           data: config,
+            //           headers: {
+            //               "Content-Type": "application/json",
+            //               "RequestVerificationToken": $scope.antiForgeryToken
+            //           }
+            //       }).then(function (response) {
+            //           if (response.data != 0) {
+            //               var url = '/Admin/ManageHistoryLegacyDocuments?id=' + paraMain;
+            //               window.location = url;
+            //           } else {
+            //               $scope.validationShow = 'Failed to save file information to database.';
+            //           }
+            //       }, function (error) {
+            //           $scope.validationShow = 'Error saving file information: ' + error.data;
+            //       });
             //    }, function (error) {
-            //        $scope.validationShow = 'One or more file uploads failed.';
+            //       $scope.validationShow = 'One or more file uploads failed.';
             //    });
             //};
 

@@ -61,7 +61,6 @@ namespace CamV4.Models
         public virtual DbSet<ImpSetting> ImpSettings { get; set; }
         public virtual DbSet<IncidentReport> IncidentReports { get; set; }
         public virtual DbSet<IncidentReportPhoto> IncidentReportPhotoes { get; set; }
-        public virtual DbSet<Inspection> Inspections { get; set; }
         public virtual DbSet<InspectionDeficiency> InspectionDeficiencies { get; set; }
         public virtual DbSet<InspectionDeficiencyMTO> InspectionDeficiencyMTOes { get; set; }
         public virtual DbSet<InspectionDeficiencyMTODetail> InspectionDeficiencyMTODetails { get; set; }
@@ -69,9 +68,7 @@ namespace CamV4.Models
         public virtual DbSet<InspectionDue> InspectionDues { get; set; }
         public virtual DbSet<InspectionFileDrawing> InspectionFileDrawings { get; set; }
         public virtual DbSet<InspectionType> InspectionTypes { get; set; }
-        public virtual DbSet<Manufacturer> Manufacturers { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
-        public virtual DbSet<ProcessOverview> ProcessOverviews { get; set; }
         public virtual DbSet<Province> Provinces { get; set; }
         public virtual DbSet<Quotation> Quotations { get; set; }
         public virtual DbSet<QuotationInspectionDeficiency> QuotationInspectionDeficiencies { get; set; }
@@ -84,6 +81,14 @@ namespace CamV4.Models
         public virtual DbSet<ComponentPriceListHistory> ComponentPriceListHistories { get; set; }
         public virtual DbSet<ComponentSubType_Deleted> ComponentSubType_Deleted { get; set; }
         public virtual DbSet<InspectionStatu> InspectionStatus { get; set; }
+        public virtual DbSet<ProcessOverview> ProcessOverviews { get; set; }
+        public virtual DbSet<ShelvingCheckListDeficiency> ShelvingCheckListDeficiencies { get; set; }
+        public virtual DbSet<ShelvingCheckListDetail> ShelvingCheckListDetails { get; set; }
+        public virtual DbSet<ShelvingCheckListPhoto> ShelvingCheckListPhotoes { get; set; }
+        public virtual DbSet<ShelvingCheckListType> ShelvingCheckListTypes { get; set; }
+        public virtual DbSet<ShelvingCheckList> ShelvingCheckLists { get; set; }
+        public virtual DbSet<Manufacturer> Manufacturers { get; set; }
+        public virtual DbSet<Inspection> Inspections { get; set; }
     
         public virtual int CloneInspectionData(Nullable<long> sourceInspectionId, Nullable<long> targetInspectionId, Nullable<int> userId)
         {

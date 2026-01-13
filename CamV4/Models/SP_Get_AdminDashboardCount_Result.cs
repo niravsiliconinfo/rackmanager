@@ -15,6 +15,6 @@ namespace CamV4.Models
     {
         public string InspectionStatus { get; set; }
         public int InspectionStatusId { get; set; }
-        public Nullable<Int32> cnt { get; set; }
+        public Nullable<int> cnt { get; set; }
     }
 }

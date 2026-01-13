@@ -25,8 +25,8 @@ namespace CamV4
             //HttpConfiguration config = GlobalConfiguration.Configuration;
             //SwaggerConfig.Register();
             ////config.Formatters.JsonFormatter
-            ////            .SerializerSettings
-            ////            .ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            ////           .SerializerSettings
+            ////           .ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             //LogManager.LoadConfiguration(Server.MapPath("~/nlog.config"));
 
             AreaRegistration.RegisterAllAreas();

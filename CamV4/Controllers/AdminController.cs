@@ -66,7 +66,7 @@ namespace CamV4.Controllers
                         switch (item.InspectionStatusId)
                         {
                             case 1:
-                                graph.InspectionDueCount =(long) item.cnt;
+                                graph.InspectionDueCount = (long)item.cnt;
                                 break;
                             case 2:
                                 graph.InProgressCount = (long)item.cnt;
@@ -138,7 +138,7 @@ namespace CamV4.Controllers
             {
                 return View();
             }
-        }       
+        }
 
         // GET: /Account/Create
         [AllowAnonymous]
@@ -280,7 +280,6 @@ namespace CamV4.Controllers
                 return View();
             }
         }
-
         public ActionResult ManageManufacturer()
         {
             if (Session["LoggedInUserId"] == null)
@@ -481,7 +480,7 @@ namespace CamV4.Controllers
             {
                 return View();
             }
-        }     
+        }
 
         public ActionResult ManageDocumentTitle()
         {
@@ -1316,35 +1315,35 @@ namespace CamV4.Controllers
         //{
         //    if (file != null && file.ContentLength > 0)
         //    {
-        //        try
-        //        {
-        //            // Ensure the file is an Excel file
-        //            if (file.FileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase) ||
-        //                file.FileName.EndsWith(".xls", StringComparison.OrdinalIgnoreCase))
-        //            {
-        //                // Process the uploaded file
-        //                using (var stream = file.InputStream)
-        //                {
-        //                    var dataSet = ReadExcelFile(stream);
-        //                    var table = dataSet.Tables[0]; // Get the first table   
+        //       try
+        //       {
+        //           // Ensure the file is an Excel file
+        //           if (file.FileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase) ||
+        //               file.FileName.EndsWith(".xls", StringComparison.OrdinalIgnoreCase))
+        //           {
+        //               // Process the uploaded file
+        //               using (var stream = file.InputStream)
+        //               {
+        //                   var dataSet = ReadExcelFile(stream);
+        //                   var table = dataSet.Tables[0]; // Get the first table   
 
-        //                    // Example of processing data and passing it to the view
-        //                    ViewBag.Data = table;
-        //                }
-        //            }
-        //            else
-        //            {
-        //                ModelState.AddModelError("", "Please upload a valid Excel file.");
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            ModelState.AddModelError("", "An error occurred while processing the file: " + ex.Message);
-        //        }
+        //                   // Example of processing data and passing it to the view
+        //                   ViewBag.Data = table;
+        //               }
+        //           }
+        //           else
+        //           {
+        //               ModelState.AddModelError("", "Please upload a valid Excel file.");
+        //           }
+        //       }
+        //       catch (Exception ex)
+        //       {
+        //           ModelState.AddModelError("", "An error occurred while processing the file: " + ex.Message);
+        //       }
         //    }
         //    else
         //    {
-        //        ModelState.AddModelError("", "Please upload a file.");
+        //       ModelState.AddModelError("", "Please upload a file.");
         //    }
 
         //    return View();
@@ -1549,7 +1548,7 @@ namespace CamV4.Controllers
                     InspectionId = d.InspectionId,
                     InspectionDocumentNo = d.InspectionDocumentNo,
                     InspectionDate = d.InspectionDate,
-                    InspectionDateFormatted = d.InspectionDate.ToString("yyyy-MM-ddTHH:mm:ss"), 
+                    InspectionDateFormatted = d.InspectionDate.ToString("yyyy-MM-ddTHH:mm:ss"),
                     InspectionStatus = d.InspectionStatus,
                     Customer = d.Customer,
                     Employee = d.Employee,
@@ -1601,7 +1600,7 @@ namespace CamV4.Controllers
         //[Obsolete]
         public ActionResult ToPdfV2(int id)
         {
-
+            
             var iDetails = DatabaseHelper.getInspectionDetailsForSheet(id);
             if (iDetails != null)
             {
@@ -1726,7 +1725,7 @@ namespace CamV4.Controllers
                 strVar += "<div style='color: #000;font-size: 1rem;font-family: Arial, Helvetica, sans-serif;line-height: normal;'> ";
                 strVar += "<div style='border-bottom: 2px dotted #212121;margin-bottom: 10px;display: inline-block;width: 100%;font-size: 15px;text-transform: uppercase;'><span style='float: left;padding-right: 5px;background: #fff;height: 17px;font-weight: bold;position: relative;bottom: -2px;'>2B. REPAIR OR REPLACEMENT BASED ON DEFICIENCIES</span><span style='float: right;padding-left: 5px;background: #fff;height: 17px;font-weight: bold;position: relative;bottom: -2px;'>i2BPageNo</span></div> ";
                 strVar += "</div> ";
-                
+
                 strVar += "<div style='color: #000;font-size: 1rem;font-family: Arial, Helvetica, sans-serif;line-height: normal;'> ";
                 strVar += "<div style='border-bottom: 2px dotted #212121;margin-bottom: 10px;display: inline-block;width: 100%;font-size: 15px;text-transform: uppercase;'> ";
                 strVar += "<span style='float: left;padding-right: 5px;background: #fff;height: 17px;font-weight: bold;position: relative;bottom: -2px;'>2C. FACILITIES AREA</span><span style='float: right;padding-left: 5px;background: #fff;height: 17px;font-weight: bold;position: relative;bottom: -2px;'>i2CPageNo</span> ";
@@ -2160,52 +2159,52 @@ namespace CamV4.Controllers
                 //{
                 //    for (int i = 0; i < selectedDeficiency.Count; i += 3)
                 //    {
-                //        List<Deficiency> set = new List<Deficiency>();
-                //        for (int j = i; j < i + 3 && j < selectedDeficiency.Count; j++)
-                //        {
-                //            set.Add(selectedDeficiency[j]);
-                //        }
-                //        sets.Add(set);
+                //       List<Deficiency> set = new List<Deficiency>();
+                //       for (int j = i; j < i + 3 && j < selectedDeficiency.Count; j++)
+                //       {
+                //           set.Add(selectedDeficiency[j]);
+                //       }
+                //       sets.Add(set);
                 //    }
 
                 //    foreach (var mainSet in sets)
                 //    {
-                //        //strVar += "<section style='width:19cm;height:29.7cm;background:white;box-shadow:0 .2mm 2mm rgba(0,0,0,.3);margin:0px;padding:-25mm 0mm 0mm 0mm;box-sizing:border-box;'> ";
-                //        strVar += "<table width='100%' border='0' cellpadding='0' cellspacing='0'style='width:18.5cm;height:29.7cm;background:white;margin:0mm 0mm 0mm 0mm;padding:0mm 0mm 0mm 0mm;box-sizing:border-box;border:5px solid #0070c0;font-family: Arial, Helvetica, sans-serif;'> ";
-                //        strVar += "<tbody> ";
-                //        strVar += "<tr> ";
-                //        strVar += "<td valign='top' class='' style='padding: 2px;'> ";
-                //        strVar += "<div class='' style='border: 1px solid #0070c0;padding: 20px;height:25.6cm;position: relative;'> ";
-                //        if (iCount == 0)
-                //        {
-                //            strVar += "<div> ";
-                //            strVar += "<div style='text-align: center;'><img src='" + host + "Content/V2/images/logos/CamLogo.png' style='width: 30%;'></div> ";
-                //            strVar += "</div> ";
-                //            strVar += "<h2 style='text-align: left;margin: 10px 0px 0px 0px;font-size: 18px;text-transform: none;display: inline-block;border-bottom: 2px solid #212121;font-family: Arial, Helvetica, sans-serif;'>3A. CONCLUSION AND RECOMMENDATIONS</h2> ";
-                //        }
-                //        iCount += 1;
+                //       //strVar += "<section style='width:19cm;height:29.7cm;background:white;box-shadow:0 .2mm 2mm rgba(0,0,0,.3);margin:0px;padding:-25mm 0mm 0mm 0mm;box-sizing:border-box;'> ";
+                //       strVar += "<table width='100%' border='0' cellpadding='0' cellspacing='0'style='width:18.5cm;height:29.7cm;background:white;margin:0mm 0mm 0mm 0mm;padding:0mm 0mm 0mm 0mm;box-sizing:border-box;border:5px solid #0070c0;font-family: Arial, Helvetica, sans-serif;'> ";
+                //       strVar += "<tbody> ";
+                //       strVar += "<tr> ";
+                //       strVar += "<td valign='top' class='' style='padding: 2px;'> ";
+                //       strVar += "<div class='' style='border: 1px solid #0070c0;padding: 20px;height:25.6cm;position: relative;'> ";
+                //       if (iCount == 0)
+                //       {
+                //           strVar += "<div> ";
+                //           strVar += "<div style='text-align: center;'><img src='" + host + "Content/V2/images/logos/CamLogo.png' style='width: 30%;'></div> ";
+                //           strVar += "</div> ";
+                //           strVar += "<h2 style='text-align: left;margin: 10px 0px 0px 0px;font-size: 18px;text-transform: none;display: inline-block;border-bottom: 2px solid #212121;font-family: Arial, Helvetica, sans-serif;'>3A. CONCLUSION AND RECOMMENDATIONS</h2> ";
+                //       }
+                //       iCount += 1;
 
-                //        strVar += "<ul style='margin: 10px 0px 0px 0px;padding: 0;'> ";
-                //        foreach (var deficiency in mainSet)
-                //        {
-                //            strVar += "<li style='list-style: none;font-size: 15px;padding-left: 0px;margin-left: 50px;line-height: 20px;font-family: Arial, Helvetica, sans-serif;'> ";
-                //            strVar += iSrNo.ToString() + ". " + deficiency.DeficiencyInfo + ". <p>" + deficiency.DeficiencyDescription + "</p> ";
-                //            strVar += "</li> ";
-                //            iSrNo += 1;
-                //        }
-                //        strVar += "</ul> ";
-                //        strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                //        strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
-                //        strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
-                //        strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
-                //        strVar += "<div style='clear: both'></div> ";
-                //        strVar += "</div> ";
-                //        strVar += "</div> ";
-                //        strVar += "</td> ";
-                //        strVar += "</tr> ";
-                //        strVar += "</tbody> ";
-                //        strVar += "</table> ";
-                //        //strVar += "</section> ";
+                //       strVar += "<ul style='margin: 10px 0px 0px 0px;padding: 0;'> ";
+                //       foreach (var deficiency in mainSet)
+                //       {
+                //           strVar += "<li style='list-style: none;font-size: 15px;padding-left: 0px;margin-left: 50px;line-height: 20px;font-family: Arial, Helvetica, sans-serif;'> ";
+                //           strVar += iSrNo.ToString() + ". " + deficiency.DeficiencyInfo + ". <p>" + deficiency.DeficiencyDescription + "</p> ";
+                //           strVar += "</li> ";
+                //           iSrNo += 1;
+                //       }
+                //       strVar += "</ul> ";
+                //       strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
+                //       strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                //       strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
+                //       strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
+                //       strVar += "<div style='clear: both'></div> ";
+                //       strVar += "</div> ";
+                //       strVar += "</div> ";
+                //       strVar += "</td> ";
+                //       strVar += "</tr> ";
+                //       strVar += "</tbody> ";
+                //       strVar += "</table> ";
+                //       //strVar += "</section> ";
                 //    }
                 //}
                 strVar = strVar.Replace("i3APageNo", pageNo.ToString());
@@ -2213,6 +2212,15 @@ namespace CamV4.Controllers
                 int iSrNo = 1;
                 bool isFirstOverallPage = true;
                 int iCount = 0; // You can keep this if needed elsewhere, but it's not used here for paging
+
+
+                if (!string.IsNullOrEmpty(iDetails.ShelvingChecklist3A))
+                {
+                    Deficiency obj3A = new Deficiency();
+                    obj3A.DeficiencyID = selectedDeficiency.Count + 1;
+                    obj3A.DeficiencyDescription = iDetails.ShelvingChecklist3A;
+                    selectedDeficiency.Add(obj3A);
+                }
 
                 if (selectedDeficiency != null && selectedDeficiency.Count > 0)
                 {
@@ -2317,19 +2325,19 @@ namespace CamV4.Controllers
                     }
                 }
 
-        //strVar += "<section style='width:19cm;height:29.7cm;background:white;box-shadow:0 .2mm 2mm rgba(0,0,0,.3);margin:0px;padding:-25mm 0mm 0mm 0mm;box-sizing:border-box;'> ";
-        strVar += "<table width='100%' border='0' cellpadding='0' cellspacing='0'style='width:18.5cm;height:29.7cm;background:white;margin:0mm 0mm 0mm 0mm;padding:0mm 0mm 0mm 0mm;box-sizing:border-box;border:5px solid #0070c0;font-family: Arial, Helvetica, sans-serif;'> ";
+                //strVar += "<section style='width:19cm;height:29.7cm;background:white;box-shadow:0 .2mm 2mm rgba(0,0,0,.3);margin:0px;padding:-25mm 0mm 0mm 0mm;box-sizing:border-box;'> ";
+                strVar += "<table width='100%' border='0' cellpadding='0' cellspacing='0'style='width:18.5cm;height:29.7cm;background:white;margin:0mm 0mm 0mm 0mm;padding:0mm 0mm 0mm 0mm;box-sizing:border-box;border:5px solid #0070c0;font-family: Arial, Helvetica, sans-serif;'> ";
                 strVar += "<tbody> ";
                 strVar += "<tr> ";
                 strVar += "<td valign='top' class='' style='padding: 2px;'> ";
                 strVar += "<div class='' style='border: 1px solid #0070c0;padding: 20px;height:25.6cm;position: relative;'> ";
-                if (iCount == 0)
-                {
-                    strVar += "<div> ";
-                    strVar += "<div style='text-align: center;'><img src='" + host + "Content/V2/images/logos/CamLogo.png' style='width: 30%;'></div> ";
-                    strVar += "</div> ";
-                    strVar += "<h2 style='text-align: left;margin: 10px 0px 0px 0px;font-size: 18px;text-transform: none;display: inline-block;border-bottom: 2px solid #212121;font-family: Arial, Helvetica, sans-serif;'>3A. CONCLUSION AND RECOMMENDATIONS</h2> ";
-                }
+                //if (iCount == 0)
+                //{
+                //    strVar += "<div> ";
+                //    strVar += "<div style='text-align: center;'><img src='" + host + "Content/V2/images/logos/CamLogo.png' style='width: 30%;'></div> ";
+                //    strVar += "</div> ";
+                //    strVar += "<h2 style='text-align: left;margin: 10px 0px 0px 0px;font-size: 18px;text-transform: none;display: inline-block;border-bottom: 2px solid #212121;font-family: Arial, Helvetica, sans-serif;'>3A. CONCLUSION AND RECOMMENDATIONS</h2> ";
+                //}
                 strVar += "<ul style='margin: 0px 0px 25px 0px; padding: 0; '> ";
                 strVar += "<li style='list-style: none;font-size: 15px;padding-left: 0px;margin-left: 50px;line-height: 20px;font-family: Arial, Helvetica, sans-serif;'> ";
                 strVar += "<p>" + iSrNo.ToString() + ". In certain cases, it is possible that existing damages were not visible due to obstacles that may have obstructed the view of the inspector. We recommend keeping the aisle spacing as clear as possible. According to CSA A344-24: 8.1.4 “The inspection should also make note of poor operating practices such as:</p> ";
@@ -2595,6 +2603,18 @@ namespace CamV4.Controllers
                         strVar += "</td> ";
                         strVar += "</tr> ";
                     }
+                }
+                if (iDetails.isShelvingCheckLists == 1)
+                {
+                    strVar += "<tr> ";
+                    strVar += "<td bgcolor='#ffffff' style='padding: 20px; border-width: 1px; '> ";
+                    strVar += "Shelving Inspection";
+                    strVar += "</td> ";
+
+                    strVar += "<td bgcolor='#ffffff' style='padding: 2px; border-width: 1px; '> ";
+                    strVar += iDetails.InspectionDocumentNo;
+                    strVar += "</td> ";
+                    strVar += "</tr> ";
                 }
                 strVar += "</table> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
@@ -3019,6 +3039,149 @@ namespace CamV4.Controllers
                     strVar += "</table> ";
                     //strVar += "</section> ";
                 }
+
+
+                if (iDetails.ShelvingCheckLists != null && iDetails.ShelvingCheckLists.Count > 0)
+                {
+                    foreach (var checklist in iDetails.ShelvingCheckLists)
+                    {
+                        strVar += "<table width='100%' border='0' cellpadding='0' cellspacing='0' style='width:18.5cm;height:29.7cm;background:white;margin:0mm 0mm 0mm 0mm;padding:0mm 0mm 0mm 0mm;box-sizing:border-box;border:5px solid #0070c0;font-family: Arial, Helvetica, sans-serif;'> ";
+                        strVar += "<tbody>";
+                        strVar += "<tr>";
+                        strVar += "<td valign='top' class='' style='padding: 2px;'> ";
+                        //strVar += "<div style='border:1px solid #0070c0;padding:20px;'>";
+
+                        // Main Info Table
+                        strVar += "<table width='100%' border='1' cellspacing='0' cellpadding='0' style='border-collapse:collapse;color:#000000;margin-bottom:10px;'>";
+                        strVar += "<tr>";
+                        strVar += "<td colspan='4' style='font-size:14px;font-weight:600;text-align:center;padding:5px;background:#79addd;border-width:1px;'>SHELVING INSPECTION CHECKLIST</td>";
+                        strVar += "</tr>";
+
+                        // Section & Size
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;width:25%;'>SECTION</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListSection ?? "") + "</td>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;width:25%;'>SIZE</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListSize ?? "") + "</td>";
+                        strVar += "</tr>";
+
+                        //checklistVM.ShelvingCheckListRowId = checklist.RowID ?? "";
+                        //checklistVM.ShelvingCheckListBays = checklist.Bays ?? "";
+                        //checklistVM.ShelvingCheckListNoOfShelvesBay = checklist.NoOfShelvesPerBay ?? "";
+                        //checklistVM.ShelvingCheckListSize = "WIDTH " + checklist.ShelvingCheckListSizeWidthIn + " X DEPTH " + checklist.ShelvingCheckListSizeDepthIn + " X HEIGHT " + checklist.ShelvingCheckListSizeHeightIn;
+                        //checklistVM.ShelvingCheckListPost = "WIDTH " + checklist.PostWidthIn + " X DEPTH " + checklist.PostDepthIn + " X THICKNESS " + checklist.PostThicknessIn;
+                        //checklistVM.ShelvingCheckListShelfBeam = "HEIGHT " + checklist.PostDepthIn + " X THICKNESS " + checklist.PostThicknessIn;
+                        //checklistVM.ShelvingCheckListFrameConnector = checklist.FrameConnectorQty + " /FRAME" ?? "";
+                        //checklistVM.ShelvingCheckListTieBar = Convert.ToString(checklist.TieBarQty) + " /LEVEL" ?? "";
+                        //checklistVM.ShelvingCheckListCapacity = Convert.ToString(checklist.CapacityLbsPerBay) + " LBS/BAY" ?? "";
+                        // Build size string
+
+
+
+
+                        // Type & Post
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>TYPE</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListTypeName ?? "") + "</td>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>MANUFACTURER</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListManufacturer ?? "") + "</td>";
+                        strVar += "</tr>";
+
+                        //<td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>POST TYPE</strong></td>
+                        //<td style="padding: 2px 5px;border-width: 1px;">{{checklist.ShelvingCheckListPostType}}</td>
+                        //<td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>POST SIZE</strong></td>
+                        //<td style="padding: 2px 5px;border-width: 1px;">{{checklist.ShelvingCheckListPost}}</td>
+
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>POST TYPE</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListPostType ?? "") + "</td>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>POST SIZE</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + checklist.ShelvingCheckListPost + "</td>";
+                        strVar += "</tr>";
+
+                        // Row ID & Frame Connector
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>ROW ID</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListRowId ?? "") + "</td>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>FRAME CONNECTOR</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListFrameConnector ?? "") + "</td>";
+                        strVar += "</tr>";
+
+                        // Bays & Tie Bar
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>BAYS</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListBays ?? "") + "</td>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>TIE BAR</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListTieBar ?? "") + "</td>";
+                        strVar += "</tr>";
+
+                        // No. of Shelves/Bay & Capacity
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>No. OF SHELVES / BAY</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListNoOfShelvesBay ?? "") + "</td>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>SHELF / BEAM</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListShelfBeam ?? "") + "</td>";
+                        strVar += "</tr>";
+
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>CAPACITY FOR BAY</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListCapacityForBay ?? "") + "</td>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>CAPACITY FOR SHELF</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListCapacityforShelf ?? "") + "</td>";
+                        strVar += "</tr>";
+
+                        strVar += "</table>";
+
+                        // Details Table
+                        strVar += "<table width='100%' border='1' cellspacing='0' cellpadding='0' style='border-collapse:collapse;margin-top:10px;'>";
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#79ADDD' style='width:10rem;text-align:center;padding:2px;font-size:10px;'><strong>Description</strong></td>";
+                        strVar += "<td bgcolor='#79ADDD' style='width:2rem;text-align:center;padding:2px;font-size:10px;'><strong>Yes</strong></td>";
+                        strVar += "<td bgcolor='#79ADDD' style='width:2rem;text-align:center;padding:2px;font-size:10px;'><strong>No</strong></td>";
+                        strVar += "<td bgcolor='#79ADDD' style='width:2rem;text-align:center;padding:2px;font-size:10px;'><strong>N/A</strong></td>";
+                        strVar += "<td bgcolor='#79ADDD' style='width:10rem;text-align:center;padding:2px;font-size:10px;'><strong>Comments</strong></td>";
+                        strVar += "</tr>";
+
+                        // Loop through details
+                        if (checklist.ShelvingCheckListDetails != null && checklist.ShelvingCheckListDetails.Count > 0)
+                        {
+                            foreach (var detail in checklist.ShelvingCheckListDetails)
+                            {
+                                strVar += "<tr>";
+                                strVar += "<td valign='middle' style='padding:2px;font-size: 9.5px;border-width:1px;text-align:left;'>" + (detail.ShelvingCheckListDeficiencyInfo ?? "") + "</td>";
+                                strVar += "<td valign='middle' style='padding:2px;font-size: 9.5px;border-width:1px;text-align:center;'>" + (detail.Tick_Yes ? "√" : "") + "</td>";
+                                strVar += "<td valign='middle' style='padding:2px;font-size: 9.5px;border-width:1px;text-align:center;'>" + (detail.Tick_No ? "√" : "") + "</td>";
+                                strVar += "<td valign='middle' style='padding:2px;font-size: 9.5px;border-width:1px;text-align:center;'>" + (detail.Tick_NA ? "√" : "") + "</td>";
+                                strVar += "<td valign='middle' style='padding:2px;font-size: 9.5px;border-width:1px;text-align:left;'>" + (detail.ShelvingCheckListDeficiencyComment ?? "") + "</td>";
+                                strVar += "</tr>";
+                            }
+                        }
+
+                        // Photos Row (if any)
+                        if (checklist.ShelvingCheckListPhotos != null && checklist.ShelvingCheckListPhotos.Count > 0)
+                        {
+                            strVar += "<tr>";
+                            strVar += "<td colspan='5' valign='middle' style='padding:10px;border-width:1px;text-align:center;'>";
+
+                            foreach (var photo in checklist.ShelvingCheckListPhotos)
+                            {
+                                // Use thumbnail for PDF                                
+                                strVar += "<a target='_blank' href='" + photo.ShelvingCheckListPathFull + "'><img src='" + photo.ShelvingCheckListPathFullThumb + "' style='width:64px!important;height:64px!important;' alt=''/></a> ";
+                            }
+
+                            strVar += "</td>";
+                            strVar += "</tr>";
+                        }
+
+                        strVar += "</table>";
+                        //strVar += "</div>";
+                        strVar += "</td>";
+                        strVar += "</tr>";
+                        strVar += "</tbody>";
+                        strVar += "</table>";
+                    }
+                }
+
                 if (iDetails.objQuotation != null)
                 {
                     if (iDetails.objQuotation.QuotationNo != null && iDetails.objQuotation.QuotationStatus > 5)
@@ -3227,8 +3390,7 @@ namespace CamV4.Controllers
             strVar += "<tbody> ";
             strVar += "<tr> ";
             strVar += "<td valign='top' class='' style='padding: 2px;'> ";
-            strVar += "<div class='' style='border: 1px solid #0070c0;padding: 20px;height:25.6cm;position: relative;'> ";
-
+            strVar += "<div class='' style='border: 1px solid #0070c0;padding: 20px;height:25.6cm;position: relative;'> ";           
             if (isFirstPage)
             {
                 strVar += "<div> ";
@@ -3813,7 +3975,7 @@ namespace CamV4.Controllers
                 }
                 CustomerFullAddress = string.Join(",", FullAddress);
 
-              
+
 
                 List<List<Deficiency>> sets = new List<List<Deficiency>>();
                 List<Deficiency> selectedDeficiency = iDetails.ListConclusionandRecommendationsViewModel;
@@ -3924,7 +4086,7 @@ namespace CamV4.Controllers
                 strVar += "</tr> ";
                 strVar += "</tbody> ";
                 strVar += "</table> ";
-              
+
 
 
                 //byte[] output;
@@ -3969,7 +4131,7 @@ namespace CamV4.Controllers
                 }
                 CustomerFullAddress = string.Join(",", FullAddress);
 
-               
+
 
                 //strVar += "<section style='width:19cm;height:29.7cm;background:white;box-shadow:0 .2mm 2mm rgba(0,0,0,.3);margin:0px;padding:-25mm 0mm 0mm 0mm;box-sizing:border-box;'> ";
                 strVar += "<table width='100%' border='0' cellpadding='0' cellspacing='0'style='width:18.5cm;height:29.7cm;background:white;margin:0mm 0mm 0mm 0mm;padding:0mm 0mm 0mm 0mm;box-sizing:border-box;border:5px solid #0070c0;font-family: Arial, Helvetica, sans-serif;'> ";
@@ -4078,7 +4240,7 @@ namespace CamV4.Controllers
                 strVar += "</tbody> ";
                 strVar += "</table> ";
                 //strVar += "</section> ";
-              
+
 
                 using (var workStream = new MemoryStream())
                 using (var pdfWriter = new PdfWriter(workStream))
@@ -4120,7 +4282,7 @@ namespace CamV4.Controllers
                 }
                 CustomerFullAddress = string.Join(",", FullAddress);
 
-               
+
 
 
 
@@ -4165,7 +4327,7 @@ namespace CamV4.Controllers
                     }
                 }
 
-               
+
                 foreach (var p in iDetails.ListInspectionFileDrawing)
                 {
                     List<List<InspectionFileDrawingChildViewModel>> set1 = new List<List<InspectionFileDrawingChildViewModel>>();
@@ -4215,6 +4377,18 @@ namespace CamV4.Controllers
                         strVar += "</tr> ";
                     }
                 }
+                if (iDetails.isShelvingCheckLists == 1)
+                {
+                    strVar += "<tr> ";
+                    strVar += "<td bgcolor='#ffffff' style='padding: 20px; border-width: 1px; '> ";
+                    strVar += "Shelving Inspection";
+                    strVar += "</td> ";
+
+                    strVar += "<td bgcolor='#ffffff' style='padding: 2px; border-width: 1px; '> ";
+                    strVar += iDetails.InspectionDocumentNo;
+                    strVar += "</td> ";
+                    strVar += "</tr> ";
+                }
                 strVar += "</table> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
                 strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
@@ -4241,7 +4415,7 @@ namespace CamV4.Controllers
                 strVar += "</table> ";
                 //Racking Inspection Deficiency List
 
-               
+
 
                 using (var workStream = new MemoryStream())
                 using (var pdfWriter = new PdfWriter(workStream))
@@ -4558,7 +4732,7 @@ namespace CamV4.Controllers
                 }
                 CustomerFullAddress = string.Join(",", FullAddress);
 
-                
+
                 List<List<InspectionDeficiencyViewModel>> setsD = new List<List<InspectionDeficiencyViewModel>>();
                 List<InspectionDeficiencyViewModel> selectedDeficiencyList = iDetails.iDefModel;
 
@@ -4721,8 +4895,167 @@ namespace CamV4.Controllers
                     strVar += "</tbody> ";
                     strVar += "</table> ";
                     //strVar += "</section> ";
-                }             
+                }
                 //byte[] output;
+
+                using (var workStream = new MemoryStream())
+                using (var pdfWriter = new PdfWriter(workStream))
+                {
+                    using (var document = HtmlConverter.ConvertToDocument(strVar, pdfWriter))
+                    {
+                    }
+                    //Returns the written-to MemoryStream containing the PDF.   
+                    return File(workStream.ToArray(), "application/pdf", "" + iDetails.Customer?.Trim().Replace(" ", "_") + "_" + iDetails.InspectionDocumentNo.Trim() + "_MaterialTakeOffList.pdf");
+                }
+            }
+            return null;
+        }
+
+        public ActionResult ToPdfV2ShelvingChecklist(int id)
+        {
+            var iDetails = DatabaseHelper.getInspectionDetailsForSheet(id);
+            if (iDetails != null)
+            {
+                string strVar = " ";
+                string host = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
+                //host = host.Replace("https", "http");
+                if (iDetails.ShelvingCheckLists != null && iDetails.ShelvingCheckLists.Count > 0)
+                {
+                    foreach (var checklist in iDetails.ShelvingCheckLists)
+                    {
+                        strVar = "<table width='100%' border='0' cellpadding='0' cellspacing='0' style='width:18.5cm;height:29.7cm;background:white;margin:0mm 0mm 0mm 0mm;padding:0mm 0mm 0mm 0mm;box-sizing:border-box;border:5px solid #0070c0;font-family: Arial, Helvetica, sans-serif;'> ";
+                        strVar += "<tbody>";
+                        strVar += "<tr>";
+                        strVar += "<td valign='top' class='' style='padding: 2px;'> ";
+                        //strVar += "<div style='border:1px solid #0070c0;padding:20px;'>";
+
+                        // Main Info Table
+                        strVar += "<table width='100%' border='1' cellspacing='0' cellpadding='0' style='border-collapse:collapse;color:#000000;margin-bottom:10px;'>";
+                        strVar += "<tr>";
+                        strVar += "<td colspan='4' style='font-size:14px;font-weight:600;text-align:center;padding:5px;background:#79addd;border-width:1px;'>SHELVING INSPECTION CHECKLIST</td>";
+                        strVar += "</tr>";
+
+                        // Section & Size
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;width:25%;'>SECTION</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListSection ?? "") + "</td>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;width:25%;'>SIZE</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListSize ?? "") + "</td>";
+                        strVar += "</tr>";
+
+                        //checklistVM.ShelvingCheckListRowId = checklist.RowID ?? "";
+                        //checklistVM.ShelvingCheckListBays = checklist.Bays ?? "";
+                        //checklistVM.ShelvingCheckListNoOfShelvesBay = checklist.NoOfShelvesPerBay ?? "";
+                        //checklistVM.ShelvingCheckListSize = "WIDTH " + checklist.ShelvingCheckListSizeWidthIn + " X DEPTH " + checklist.ShelvingCheckListSizeDepthIn + " X HEIGHT " + checklist.ShelvingCheckListSizeHeightIn;
+                        //checklistVM.ShelvingCheckListPost = "WIDTH " + checklist.PostWidthIn + " X DEPTH " + checklist.PostDepthIn + " X THICKNESS " + checklist.PostThicknessIn;
+                        //checklistVM.ShelvingCheckListShelfBeam = "HEIGHT " + checklist.PostDepthIn + " X THICKNESS " + checklist.PostThicknessIn;
+                        //checklistVM.ShelvingCheckListFrameConnector = checklist.FrameConnectorQty + " /FRAME" ?? "";
+                        //checklistVM.ShelvingCheckListTieBar = Convert.ToString(checklist.TieBarQty) + " /LEVEL" ?? "";
+                        //checklistVM.ShelvingCheckListCapacity = Convert.ToString(checklist.CapacityLbsPerBay) + " LBS/BAY" ?? "";
+                        // Build size string
+
+                        // Type & Post
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>TYPE</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListTypeName ?? "") + "</td>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>MANUFACTURER</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListManufacturer ?? "") + "</td>";
+                        strVar += "</tr>";
+
+                        //<td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>POST TYPE</strong></td>
+                        //<td style="padding: 2px 5px;border-width: 1px;">{{checklist.ShelvingCheckListPostType}}</td>
+                        //<td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>POST SIZE</strong></td>
+                        //<td style="padding: 2px 5px;border-width: 1px;">{{checklist.ShelvingCheckListPost}}</td>
+
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>POST TYPE</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListPostType ?? "") + "</td>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>POST SIZE</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + checklist.ShelvingCheckListPost + "</td>";
+                        strVar += "</tr>";
+
+                        // Row ID & Frame Connector
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>ROW ID</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListRowId ?? "") + "</td>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>FRAME CONNECTOR</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListFrameConnector ?? "") + "</td>";
+                        strVar += "</tr>";
+
+                        // Bays & Tie Bar
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>BAYS</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListBays ?? "") + "</td>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>TIE BAR</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListTieBar ?? "") + "</td>";
+                        strVar += "</tr>";
+
+                        // No. of Shelves/Bay & Capacity
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>No. OF SHELVES / BAY</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListNoOfShelvesBay ?? "") + "</td>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>SHELF / BEAM</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListShelfBeam ?? "") + "</td>";
+                        strVar += "</tr>";
+
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>CAPACITY FOR BAY</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListCapacityForBay ?? "") + "</td>";
+                        strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>CAPACITY FOR SHELF</td>";
+                        strVar += "<td style='padding:2px;font-size:9px;'>" + (checklist.ShelvingCheckListCapacityforShelf ?? "") + "</td>";
+                        strVar += "</tr>";
+
+                        strVar += "</table>";
+
+                        // Details Table
+                        strVar += "<table width='100%' border='1' cellspacing='0' cellpadding='0' style='border-collapse:collapse;margin-top:10px;'>";
+                        strVar += "<tr>";
+                        strVar += "<td bgcolor='#79ADDD' style='width:10rem;text-align:center;padding:2px;font-size:10px;'><strong>Description</strong></td>";
+                        strVar += "<td bgcolor='#79ADDD' style='width:2rem;text-align:center;padding:2px;font-size:10px;'><strong>Yes</strong></td>";
+                        strVar += "<td bgcolor='#79ADDD' style='width:2rem;text-align:center;padding:2px;font-size:10px;'><strong>No</strong></td>";
+                        strVar += "<td bgcolor='#79ADDD' style='width:2rem;text-align:center;padding:2px;font-size:10px;'><strong>N/A</strong></td>";
+                        strVar += "<td bgcolor='#79ADDD' style='width:10rem;text-align:center;padding:2px;font-size:10px;'><strong>Comments</strong></td>";
+                        strVar += "</tr>";
+
+                        // Loop through details
+                        if (checklist.ShelvingCheckListDetails != null && checklist.ShelvingCheckListDetails.Count > 0)
+                        {
+                            foreach (var detail in checklist.ShelvingCheckListDetails)
+                            {
+                                strVar += "<tr>";
+                                strVar += "<td valign='middle' style='padding:2px;font-size: 9.5px;border-width:1px;text-align:left;'>" + (detail.ShelvingCheckListDeficiencyInfo ?? "") + "</td>";
+                                strVar += "<td valign='middle' style='padding:2px;font-size: 9.5px;border-width:1px;text-align:center;'>" + (detail.Tick_Yes ? "√" : "") + "</td>";
+                                strVar += "<td valign='middle' style='padding:2px;font-size: 9.5px;border-width:1px;text-align:center;'>" + (detail.Tick_No ? "√" : "") + "</td>";
+                                strVar += "<td valign='middle' style='padding:2px;font-size: 9.5px;border-width:1px;text-align:center;'>" + (detail.Tick_NA ? "√" : "") + "</td>";
+                                strVar += "<td valign='middle' style='padding:2px;font-size: 9.5px;border-width:1px;text-align:left;'>" + (detail.ShelvingCheckListDeficiencyComment ?? "") + "</td>";
+                                strVar += "</tr>";
+                            }
+                        }
+
+                        // Photos Row (if any)
+                        if (checklist.ShelvingCheckListPhotos != null && checklist.ShelvingCheckListPhotos.Count > 0)
+                        {
+                            strVar += "<tr>";
+                            strVar += "<td colspan='5' valign='middle' style='padding:10px;border-width:1px;text-align:center;'>";
+
+                            foreach (var photo in checklist.ShelvingCheckListPhotos)
+                            {
+                                // Use thumbnail for PDF                                
+                                strVar += "<a target='_blank' href='" + photo.ShelvingCheckListPathFull + "'><img src='" + photo.ShelvingCheckListPathFullThumb + "' style='width:64px!important;height:64px!important;' alt=''/></a> ";
+                            }
+
+                            strVar += "</td>";
+                            strVar += "</tr>";
+                        }
+
+                        strVar += "</table>";
+                        //strVar += "</div>";
+                        strVar += "</td>";
+                        strVar += "</tr>";
+                        strVar += "</tbody>";
+                        strVar += "</table>";
+                    }
+                }
 
                 using (var workStream = new MemoryStream())
                 using (var pdfWriter = new PdfWriter(workStream))
@@ -4745,7 +5078,7 @@ namespace CamV4.Controllers
             {
                 string host = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
                 //host = host.Replace("https", "http");
-                string strVar = " ";                
+                string strVar = " ";
                 string CustomerFullAddress = " ";
                 List<string> FullAddress = new List<string>();
                 //Index Page                
@@ -4964,9 +5297,9 @@ namespace CamV4.Controllers
             }
             return null;
         }
-        //     if (parent.RowNo == 242)
-        //                {
-        //                    int i = 0;
+        //    if (parent.RowNo == 242)
+        //               {
+        //                   int i = 0;
         //}
         public static List<List<QuotationItem>> SplitList(List<QuotationItem> originalList, int chunkSize)
         {
@@ -5046,33 +5379,33 @@ namespace CamV4.Controllers
             //    foreach (InspectionDeficiencyViewModel parent in allParents)
             //    {
 
-            //        if (parent.InspectionDeficiencyPhotoViewModel != null)
-            //        {
-            //            if (parent.InspectionDeficiencyPhotoViewModel.Count > 10)
-            //            {
-            //                if (currentSet.Count > 0)
-            //                {
-            //                    parentSets.Add(currentSet);
-            //                    currentSet = new List<InspectionDeficiencyViewModel>();
-            //                    currentChildrenCount = 0;
-            //                }
-            //                parentSets.Add(new List<InspectionDeficiencyViewModel> { parent });
-            //            }
-            //            else
-            //            {
-            //                if (currentChildrenCount + parent.InspectionDeficiencyPhotoViewModel.Count <= 10)
-            //                {
-            //                    currentSet.Add(parent);
-            //                    currentChildrenCount += parent.InspectionDeficiencyPhotoViewModel.Count;
-            //                }
-            //                else
-            //                {
-            //                    parentSets.Add(currentSet);
-            //                    currentSet = new List<InspectionDeficiencyViewModel> { parent };
-            //                    currentChildrenCount = parent.InspectionDeficiencyPhotoViewModel.Count;
-            //                }
-            //            }
-            //        }
+            //       if (parent.InspectionDeficiencyPhotoViewModel != null)
+            //       {
+            //           if (parent.InspectionDeficiencyPhotoViewModel.Count > 10)
+            //           {
+            //               if (currentSet.Count > 0)
+            //               {
+            //                   parentSets.Add(currentSet);
+            //                   currentSet = new List<InspectionDeficiencyViewModel>();
+            //                   currentChildrenCount = 0;
+            //               }
+            //               parentSets.Add(new List<InspectionDeficiencyViewModel> { parent });
+            //           }
+            //           else
+            //           {
+            //               if (currentChildrenCount + parent.InspectionDeficiencyPhotoViewModel.Count <= 10)
+            //               {
+            //                   currentSet.Add(parent);
+            //                   currentChildrenCount += parent.InspectionDeficiencyPhotoViewModel.Count;
+            //               }
+            //               else
+            //               {
+            //                   parentSets.Add(currentSet);
+            //                   currentSet = new List<InspectionDeficiencyViewModel> { parent };
+            //                   currentChildrenCount = parent.InspectionDeficiencyPhotoViewModel.Count;
+            //               }
+            //           }
+            //       }
             //    }
             //}                
 
@@ -5150,78 +5483,78 @@ namespace CamV4.Controllers
         //{
         //    static void Main(string[] args)
         //    {
-        //        List<Parent> allParents = new List<Parent>
-        //        {
-        //            new Parent("Parent 1", 3),
-        //            new Parent("Parent 2", 5),
-        //            new Parent("Parent 3", 2),
-        //            new Parent("Parent 4", 7),
-        //            new Parent("Parent 5", 1),
-        //            new Parent("Parent 6", 4),
-        //            new Parent("Parent 7", 6),
-        //            new Parent("Parent 8", 3),
-        //            new Parent("Parent 9", 5)
-        //        };
+        //       List<Parent> allParents = new List<Parent>
+        //       {
+        //           new Parent("Parent 1", 3),
+        //           new Parent("Parent 2", 5),
+        //           new Parent("Parent 3", 2),
+        //           new Parent("Parent 4", 7),
+        //           new Parent("Parent 5", 1),
+        //           new Parent("Parent 6", 4),
+        //           new Parent("Parent 7", 6),
+        //           new Parent("Parent 8", 3),
+        //           new Parent("Parent 9", 5)
+        //       };
 
-        //        List<List<Parent>> parentSets = GenerateParentSets(allParents);
-        //        PrintParentSets(parentSets);
+        //       List<List<Parent>> parentSets = GenerateParentSets(allParents);
+        //       PrintParentSets(parentSets);
         //    }
 
         //    static List<List<Parent>> GenerateParentSets(List<Parent> allParents)
         //    {
-        //        List<List<Parent>> parentSets = new List<List<Parent>>();
-        //        List<Parent> currentSet = new List<Parent>();
-        //        int currentChildrenCount = 0;
+        //       List<List<Parent>> parentSets = new List<List<Parent>>();
+        //       List<Parent> currentSet = new List<Parent>();
+        //       int currentChildrenCount = 0;
 
-        //        foreach (Parent parent in allParents)
-        //        {
-        //            if (parent.ChildrenCount > 4)
-        //            {
-        //                if (currentSet.Count > 0)
-        //                {
-        //                    parentSets.Add(currentSet);
-        //                    currentSet = new List<Parent>();
-        //                    currentChildrenCount = 0;
-        //                }
-        //                parentSets.Add(new List<Parent> { parent });
-        //            }
-        //            else
-        //            {
-        //                if (currentChildrenCount + parent.ChildrenCount <= 10)
-        //                {
-        //                    currentSet.Add(parent);
-        //                    currentChildrenCount += parent.ChildrenCount;
-        //                }
-        //                else
-        //                {
-        //                    parentSets.Add(currentSet);
-        //                    currentSet = new List<Parent> { parent };
-        //                    currentChildrenCount = parent.ChildrenCount;
-        //                }
-        //            }
-        //        }
+        //       foreach (Parent parent in allParents)
+        //       {
+        //           if (parent.ChildrenCount > 4)
+        //           {
+        //               if (currentSet.Count > 0)
+        //               {
+        //                   parentSets.Add(currentSet);
+        //                   currentSet = new List<Parent>();
+        //                   currentChildrenCount = 0;
+        //               }
+        //               parentSets.Add(new List<Parent> { parent });
+        //           }
+        //           else
+        //           {
+        //               if (currentChildrenCount + parent.ChildrenCount <= 10)
+        //               {
+        //                   currentSet.Add(parent);
+        //                   currentChildrenCount += parent.ChildrenCount;
+        //               }
+        //               else
+        //               {
+        //                   parentSets.Add(currentSet);
+        //                   currentSet = new List<Parent> { parent };
+        //                   currentChildrenCount = parent.ChildrenCount;
+        //               }
+        //           }
+        //       }
 
-        //        if (currentSet.Count > 0)
-        //        {
-        //            parentSets.Add(currentSet);
-        //        }
+        //       if (currentSet.Count > 0)
+        //       {
+        //           parentSets.Add(currentSet);
+        //       }
 
-        //        return parentSets;
+        //       return parentSets;
         //    }
 
         //    static void PrintParentSets(List<List<Parent>> parentSets)
         //    {
-        //        int setCount = 1;
-        //        foreach (List<Parent> set in parentSets)
-        //        {
-        //            Console.WriteLine($"Parent Set {setCount}:");
-        //            foreach (Parent parent in set)
-        //            {
-        //                Console.WriteLine($"{parent.Name} - Children: {parent.ChildrenCount}");
-        //            }
-        //            Console.WriteLine();
-        //            setCount++;
-        //        }
+        //       int setCount = 1;
+        //       foreach (List<Parent> set in parentSets)
+        //       {
+        //           Console.WriteLine($"Parent Set {setCount}:");
+        //           foreach (Parent parent in set)
+        //           {
+        //               Console.WriteLine($"{parent.Name} - Children: {parent.ChildrenCount}");
+        //           }
+        //           Console.WriteLine();
+        //           setCount++;
+        //       }
         //    }
         //}
 
@@ -5232,8 +5565,8 @@ namespace CamV4.Controllers
 
         //    public Parent(string name, int childrenCount)
         //    {
-        //        Name = name;
-        //        ChildrenCount = childrenCount;
+        //       Name = name;
+        //       ChildrenCount = childrenCount;
         //    }
         //}
 
@@ -5371,9 +5704,60 @@ namespace CamV4.Controllers
             {
                 //Session["CustomerId"] = id;
                 var itm = DatabaseHelper.getCustomerLocationHistoryLegacyFile(id);
-                return View(itm);                
+                return View(itm);
             }
         }
+
+        #region "Shelving Checklist"      
+        public ActionResult ManageShelvingCheckListType()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public ActionResult EditShelvingCheckListType(int id)
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                var itm = DatabaseHelper.getDeficiencyById(id);
+                itm.DeficiencyDescription = itm.DeficiencyDescription.Replace("'", "");
+                return View(itm);
+            }
+        }
+        public ActionResult ManageShelvingCheckListDeficiencies()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public ActionResult EditShelvingCheckListDeficiencies(int id)
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                var itm = DatabaseHelper.getDeficiencyById(id);
+                itm.DeficiencyDescription = itm.DeficiencyDescription.Replace("'", "");
+                return View(itm);
+            }
+        }
+        #endregion
     }
 
     //public class RotateTextEventHelper : PdfPageEventHelper

@@ -147,13 +147,13 @@
         /// <summary>Creates a new SignalR connection for the given url</summary>
         /// <param name="url" type="String">The URL of the long polling endpoint</param>
         /// <param name="qs" type="Object">
-        ///     [Optional] Custom querystring parameters to add to the connection URL.
-        ///     If an object, every non-function member will be added to the querystring.
-        ///     If a string, it's added to the QS as specified.
+        ///    [Optional] Custom querystring parameters to add to the connection URL.
+        ///    If an object, every non-function member will be added to the querystring.
+        ///    If a string, it's added to the QS as specified.
         /// </param>
         /// <param name="logging" type="Boolean">
-        ///     [Optional] A flag indicating whether connection logging is enabled to the browser
-        ///     console/log. Defaults to false.
+        ///    [Optional] A flag indicating whether connection logging is enabled to the browser
+        ///    console/log. Defaults to false.
         /// </param>
 
         return new signalR.fn.init(url, qs, logging);
@@ -384,8 +384,8 @@
             /// <summary>Checks if url is cross domain</summary>
             /// <param name="url" type="String">The base URL</param>
             /// <param name="against" type="Object">
-            ///     An optional argument to compare the URL against, if not specified it will be set to window.location.
-            ///     If specified it must contain a protocol and a host property.
+            ///    An optional argument to compare the URL against, if not specified it will be set to window.location.
+            ///    If specified it must contain a protocol and a host property.
             /// </param>
             var link;
 
@@ -2761,8 +2761,8 @@
     // hubProxy
     function hubProxy(hubConnection, hubName) {
         /// <summary>
-        ///     Creates a new proxy object for the given hub connection that can be used to invoke
-        ///     methods on server hubs and handle client method invocation requests from the server.
+        ///    Creates a new proxy object for the given hub connection that can be used to invoke
+        ///    methods on server hubs and handle client method invocation requests from the server.
         /// </summary>
         return new hubProxy.fn.init(hubConnection, hubName);
     }
@@ -3105,8 +3105,8 @@
 
     hubConnection.fn._registerSubscribedHubs = function () {
         /// <summary>
-        ///     Sets the starting event to loop through the known hubs and register any new hubs
-        ///     that have been added to the proxy.
+        ///    Sets the starting event to loop through the known hubs and register any new hubs
+        ///    that have been added to the proxy.
         /// </summary>
         var connection = this;
 
@@ -3135,11 +3135,11 @@
 
     hubConnection.fn.createHubProxy = function (hubName) {
         /// <summary>
-        ///     Creates a new proxy object for the given hub connection that can be used to invoke
-        ///     methods on server hubs and handle client method invocation requests from the server.
+        ///    Creates a new proxy object for the given hub connection that can be used to invoke
+        ///    methods on server hubs and handle client method invocation requests from the server.
         /// </summary>
         /// <param name="hubName" type="String">
-        ///     The name of the hub on the server to create the proxy for.
+        ///    The name of the hub on the server to create the proxy for.
         /// </param>
 
         // Normalize the name to lowercase

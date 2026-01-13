@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 @functions{
@@ -12,7 +11,7 @@
 }
 <script src="~/NgScript/Controller/customerCtrl.js"></script>
 
-<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg " ng-app="myApp" ng-controller="customerCtrl">
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg" ng-app="myApp" ng-controller="customerCtrl">
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
         <div class="container-fluid py-1 px-3">
             <nav aria-label="breadcrumb">
@@ -21,7 +20,8 @@
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Customer Contact</li>
                 </ol>
                 <div class="float-sm-start">
-                    <a href="@Url.Action("EditCustomer", "Admin")?id=@Session["CustomerId"]">
+                    @* <a href="@Url.Action("EditCustomer", "Admin")?id=@Session["CustomerId"]"> *@
+                    <a href="@Url.Action("EditCustomer", "Admin")?id=@ViewData["CustD"]">
                         <i class="fa fa-arrow-left"></i>
                     </a>
                     <span class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</span>

@@ -42,32 +42,32 @@ angular.module('myApp')
 
 //angular.module('myApp')
 //    .factory('myService', function ($http) {
-//        return {
-//            getAllInspectionType: function () {
-//                return $http.get('/api/pageview/getAllInspectionType')
-//                    .then(response => response.data);
-//            },
-//            getAllInspectionStatus: function () {
-//                return $http.get('/api/pageview/getAllInspectionStatus')
-//                    .then(response => response.data);
-//            },
-//            getProvinceByCountryIdFilter: function () {
-//                return $http.get('/api/pageview/getProvincebyCountryIdByCustomer')
-//                    .then(response => response.data);
-//            },
-//            getCityByProvinceId: function (provinceId) {
-//                return $http.get('/api/pageview/getCitybyProvinceIdByCustomer', {
-//                    params: { id: provinceId }
-//                }).then(response => response.data);
-//            },
-//            getLocationByCityId: function (cityId) {
-//                return $http.get('/api/pageview/getLocationbyCityIdByCustomer', {
-//                    params: { id: cityId }
-//                }).then(response => response.data);
-//            },
-//            getRegionByCustomer: function () {
-//                return $http.get('/api/pageview/getRegionbyCustomer')
-//                    .then(response => response.data);
-//            }
-//        };
+//       return {
+//           getAllInspectionType: function () {
+//               return $http.get('/api/pageview/getAllInspectionType')
+//                   .then(response => response.data);
+//           },
+//           getAllInspectionStatus: function () {
+//               return $http.get('/api/pageview/getAllInspectionStatus')
+//                   .then(response => response.data);
+//           },
+//           getProvinceByCountryIdFilter: function () {
+//               return $http.get('/api/pageview/getProvincebyCountryIdByCustomer')
+//                   .then(response => response.data);
+//           },
+//           getCityByProvinceId: function (provinceId) {
+//               return $http.get('/api/pageview/getCitybyProvinceIdByCustomer', {
+//                   params: { id: provinceId }
+//               }).then(response => response.data);
+//           },
+//           getLocationByCityId: function (cityId) {
+//               return $http.get('/api/pageview/getLocationbyCityIdByCustomer', {
+//                   params: { id: cityId }
+//               }).then(response => response.data);
+//           },
+//           getRegionByCustomer: function () {
+//               return $http.get('/api/pageview/getRegionbyCustomer')
+//                   .then(response => response.data);
+//           }
+//       };
 //    });

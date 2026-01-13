@@ -96,16 +96,16 @@ namespace CamV4.Helper
                 //    var defPhotos = photos.Where(p => p.InspectionDeficiencyId == deficiency.InspectionDeficiencyId);
                 //    foreach (var photo in defPhotos)
                 //    {
-                //        var photoViewModel = new InspectionDeficiencyPhotoTechnicianViewModel
-                //        {
-                //            DeficiencyPhoto = photo.InspectionDeficiencyPhotoPath,
-                //            DeficiencyPhotoThumb = photo.InspectionDeficiencyPhotoPath // You may want to add thumbnail logic here
-                //        };
+                //       var photoViewModel = new InspectionDeficiencyPhotoTechnicianViewModel
+                //       {
+                //           DeficiencyPhoto = photo.InspectionDeficiencyPhotoPath,
+                //           DeficiencyPhotoThumb = photo.InspectionDeficiencyPhotoPath // You may want to add thumbnail logic here
+                //       };
 
-                //        if (photo.InspectionDeficiencyIsStatus ?? false)
-                //            deficiency.InspectionDeficiencyPhotoTechnicianViewModel.Add(photoViewModel);
-                //        else
-                //            deficiency.InspectionDeficiencyPhotoViewModel.Add(photoViewModel);
+                //       if (photo.InspectionDeficiencyIsStatus ?? false)
+                //           deficiency.InspectionDeficiencyPhotoTechnicianViewModel.Add(photoViewModel);
+                //       else
+                //           deficiency.InspectionDeficiencyPhotoViewModel.Add(photoViewModel);
                 //    }
                 //}
 

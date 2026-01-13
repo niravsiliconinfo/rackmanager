@@ -26,6 +26,57 @@
             $scope.currentPage = 1; //reset to first page
         }
 
+        $scope.manufacturerTypes = [
+            { id: 0, name: 'For Racking & Shelving' },
+            { id: 1, name: 'For Racking' },
+            { id: 2, name: 'For Shelving' }          
+        ];
+
+        // Check if jQuery and DataTables are loaded
+        if (typeof $ === 'undefined') {
+            console.error('jQuery is not loaded!');
+        }
+        if (typeof $.fn.DataTable === 'undefined') {
+            console.error('DataTables is not loaded!');
+        }
+
+        $scope.getManufacturerTypeText = function (type) {
+            var t = $scope.manufacturerTypes.find(x => x.id === type);
+            return t ? t.name : '';
+        };
+
+        $scope.initManufacturerTable = function () {
+
+            setTimeout(function () {
+
+                // Destroy existing DataTable if it exists
+                if ($.fn.DataTable.isDataTable('#manufacturerTable')) {
+                    $('#manufacturerTable').DataTable().destroy();
+                }
+
+                // Check if we have data
+                if (!$scope.getAllManufacturer || $scope.getAllManufacturer.length === 0) {
+                    console.log('No manufacturer data to display');
+                    return;
+                }
+
+                console.log('Initializing DataTable with', $scope.getAllManufacturer.length, 'records');
+
+                // Initialize DataTable
+                $('#manufacturerTable').DataTable({
+                    pageLength: 10,
+                    deferRender: true,
+                    ordering: true,
+                    searching: true,
+                    destroy: true,
+                    language: {
+                        emptyTable: "No manufacturers found"
+                    }
+                });
+
+            }, 300);
+        };
+
         $http.get('/api/pageview/getAllConclusionRecommendations').then(function (response) {
             $scope.getAllConclusionRecommendations = response.data;
             console.log('$scope.getAllConclusionRecommendations', $scope.getAllConclusionRecommendations);
@@ -67,14 +118,19 @@
             });
 
         $http.get('/api/pageview/getAllManufacturer').then(function (response) {
+            console.log('call getAllManufacturer');
             $scope.getAllManufacturer = response.data;
             console.log('$scope.getAllManufacturer', $scope.getAllManufacturer);
-            if ($scope.getAllManufacturer != null) { $scope.getAllManufacturercount = $scope.getAllManufacturer.length; }
-            else { $scope.getAllManufacturercount = 0; }
+            if ($scope.getAllManufacturer != null) {
+                $scope.getAllManufacturercount = $scope.getAllManufacturer.length;
+            } else {
+                $scope.getAllManufacturercount = 0;
+            }
             $scope.totalgetAllManufacturer = $scope.getAllManufacturercount;
+            $scope.initManufacturerTable();
         }, function (response) {
             $scope.waiting = false;
-            });
+        });
 
         $http.get('/api/pageview/getAllNotificationByUserIdWeb').then(function (response) {
             $scope.getAllNotificationByUserIdWeb = response.data;
@@ -214,9 +270,10 @@
 
         $scope.SaveProcessOverview = function () {
             var config = {
-                ProcessOverviewDesc: $scope.processOverviewDesc
-            }
-            console.log('saveConclusionRecommendations', config);
+                ProcessOverviewDesc: $scope.processOverviewDesc,
+                IsShelvingChecklist: $scope.IsShelvingChecklist // Added field
+            };
+            console.log('saveProcessOverview', config);
             return $http({
                 url: '/api/pageview/saveProcessOverview',
                 method: "POST",
@@ -236,8 +293,10 @@
 
         $scope.EditProcessOverview = function (Id) {
             var config = {
-                ProcessOverviewId: Id, ProcessOverviewDesc: $scope.processOverviewDesc
-            }
+                ProcessOverviewId: Id,
+                ProcessOverviewDesc: $scope.processOverviewDesc,
+                IsShelvingChecklist: $scope.IsShelvingChecklist // Added field
+            };
             console.log('editProcessOverview', config);
             return $http({
                 url: '/api/pageview/editProcessOverview',
@@ -357,66 +416,171 @@
             });
         }
 
-        $scope.SaveManufacturer = function () {
-            var config = {
-                ManufacturerName: $scope.manufacturerName
-            }
-            console.log('saveConclusionRecommendations', config);
-            return $http({
-                url: '/api/pageview/saveManufacturer',
-                method: "POST",
-                data: config,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            }).then(function (response) {
-                if (response.data === "Ok") {
-                    var url = '/Admin/ManageManufacturer';
-                    window.location = url;
-                }
-            }, function (error) {
-                alert(error);
-            });
+        //$scope.SaveManufacturer = function () {
+        //    var config = {
+        //        ManufacturerName: $scope.manufacturerName
+        //    }
+        //    console.log('saveConclusionRecommendations', config);
+        //    return $http({
+        //        url: '/api/pageview/saveManufacturer',
+        //        method: "POST",
+        //        data: config,
+        //        headers: {
+        //            "Content-Type": "application/json"
+        //        }
+        //    }).then(function (response) {
+        //        if (response.data === "Ok") {
+        //            var url = '/Admin/ManageManufacturer';
+        //            window.location = url;
+        //        }
+        //    }, function (error) {
+        //        alert(error);
+        //    });
+        //};
+
+        //$scope.EditManufacturer = function (Id) {
+        //    var config = {
+        //        ManufacturerId: Id, ManufacturerName: $scope.manufacturerName
+        //    }
+        //    console.log('editManufacturer', config);
+        //    return $http({
+        //        url: '/api/pageview/editManufacturer',
+        //        method: "POST",
+        //        data: config,
+        //        headers: {
+        //            "Content-Type": "application/json"
+        //        }
+        //    }).then(function (response) {
+        //        if (response.data === "Ok") {
+        //            var url = '/Admin/ManageManufacturer';
+        //            window.location = url;
+        //        }
+        //    }, function (error) {
+        //        alert(error);
+        //    });
+        //};
+
+        //$scope.RemoveManufacturer = function (id) {
+        //    var config = { id: id }
+        //    console.log('return config--', config);
+        //    return $http({
+        //        url: '/api/pageview/removeManufacturer',
+        //        method: "POST",
+        //        params: config,
+        //        headers: {
+        //            "Content-Type": "application/json"
+        //        }
+        //    }).then(function (response) {
+        //        if (response.data === "Ok") {
+        //            var url = '/Admin/ManageManufacturer';
+        //            window.location = url;
+        //        }
+        //    });
+        //}
+
+        $scope.resetManufacturer = function () {
+            $scope.ManufacturerId = 0;
+            $scope.manufacturerName = '';
+            $scope.ManufacturerType = '';
         };
 
-        $scope.EditManufacturer = function (Id) {
-            var config = {
-                ManufacturerId: Id, ManufacturerName: $scope.manufacturerName
-            }
-            console.log('editManufacturer', config);
-            return $http({
-                url: '/api/pageview/editManufacturer',
-                method: "POST",
-                data: config,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            }).then(function (response) {
-                if (response.data === "Ok") {
-                    var url = '/Admin/ManageManufacturer';
-                    window.location = url;
-                }
-            }, function (error) {
-                alert(error);
-            });
+        $scope.editManufacturer = function (manufacturer) {
+            $scope.ManufacturerId = manufacturer.ManufacturerId;
+            $scope.manufacturerName = manufacturer.ManufacturerName;
+            $scope.ManufacturerType = manufacturer.ManufacturerType;
         };
 
-        $scope.RemoveManufacturer = function (id) {
-            var config = { id: id }
-            console.log('return config--', config);
-            return $http({
-                url: '/api/pageview/removeManufacturer',
-                method: "POST",
-                params: config,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            }).then(function (response) {
-                if (response.data === "Ok") {
-                    var url = '/Admin/ManageManufacturer';
-                    window.location = url;
-                }
-            });
-        }
+        $scope.loadManufacturers = function () {
+            $http.get('/api/pageview/getAllManufacturer')
+                .then(function (res) {
+                    console.log('Manufacturers loaded:', res.data);
+                    $scope.getAllManufacturer = res.data;
+
+                    // Destroy existing DataTable first
+                    if ($.fn.DataTable.isDataTable('#manufacturerTable')) {
+                        $('#manufacturerTable').DataTable().destroy();
+                    }
+
+                    // Wait for Angular to update the DOM, then reinitialize DataTable
+                    setTimeout(function () {
+                        $scope.$apply(); // Ensure Angular has updated
+                        $scope.initManufacturerTable();
+                    }, 200);
+
+                }, function (error) {
+                    console.error('Error loading manufacturers:', error);
+                    alert('Failed to load manufacturers');
+                });
+        };
+
+        $scope.saveOrUpdateManufacturer = function () {
+
+            // Validation
+            if (!$scope.manufacturerName || $scope.manufacturerName.trim() === '') {
+                alert('Please enter manufacturer name');
+                return;
+            }
+
+            if ($scope.ManufacturerType === '' || $scope.ManufacturerType === null || $scope.ManufacturerType === undefined) {
+                alert('Please select manufacturer type');
+                return;
+            }
+
+            var obj = {
+                ManufacturerId: $scope.ManufacturerId || 0,
+                ManufacturerName: $scope.manufacturerName.trim(),
+                ManufacturerType: parseInt($scope.ManufacturerType)
+            };
+
+            console.log('Saving manufacturer:', obj);
+
+            var url = $scope.ManufacturerId > 0
+                ? '/api/pageview/editManufacturer'
+                : '/api/pageview/saveManufacturer';
+
+            $http.post(url, obj)
+                .then(function (response) {
+                    console.log('Save response:', response.data);
+                    if (response.data === "Ok") {
+                        // Close modal
+                        $('#manufacturerModal').modal('hide');
+
+                        // Reset form
+                        $scope.resetManufacturer();
+
+                        // Reload data with DataTable refresh
+                        $scope.loadManufacturers();
+
+                    } else {
+                        alert('Failed to save manufacturer');
+                    }
+                }, function (error) {
+                    console.error('Error saving manufacturer:', error);
+                    alert('Error saving manufacturer. Please try again.');
+                });
+        };
+
+        $scope.DeleteManufacturer = function (id) {
+
+            console.log('Deleting manufacturer ID:', id);
+
+            $http.post('/api/pageview/removeManufacturer', null, { params: { id: id } })
+                .then(function (response) {
+                    console.log('Delete response:', response.data);
+                    if (response.data === "Ok") {
+                        // Close modal
+                        $('#deleteModal').modal('hide');
+
+                        // Reload data with DataTable refresh
+                        $scope.loadManufacturers();
+
+                    } else {
+                        alert('Failed to delete manufacturer');
+                    }
+                }, function (error) {
+                    console.error('Error deleting manufacturer:', error);
+                    alert('Error deleting manufacturer. Please try again.');
+                });
+        };
     }
 })();

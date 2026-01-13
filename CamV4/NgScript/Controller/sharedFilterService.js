@@ -46,30 +46,30 @@
         });
     //angular.module('myApp').factory('sharedFilterService', function () {
     //    var filterStore = {
-    //        schedule: {},
-    //        status: {},
-    //        docs: {}
+    //       schedule: {},
+    //       status: {},
+    //       docs: {}
     //    };
 
     //    return {
-    //        setScheduleFilter: function (filter) {
-    //            filterStore.schedule = filter;
-    //        },
-    //        getScheduleFilter: function () {
-    //            return filterStore.schedule;
-    //        },
-    //        setStatusFilter: function (filter) {
-    //            filterStore.status = filter;
-    //        },
-    //        getStatusFilter: function () {
-    //            return filterStore.status;
-    //        },
-    //        setDocsFilter: function (filter) {
-    //            filterStore.docs = filter;
-    //        },
-    //        getDocsFilter: function () {
-    //            return filterStore.docs;
-    //        }
+    //       setScheduleFilter: function (filter) {
+    //           filterStore.schedule = filter;
+    //       },
+    //       getScheduleFilter: function () {
+    //           return filterStore.schedule;
+    //       },
+    //       setStatusFilter: function (filter) {
+    //           filterStore.status = filter;
+    //       },
+    //       getStatusFilter: function () {
+    //           return filterStore.status;
+    //       },
+    //       setDocsFilter: function (filter) {
+    //           filterStore.docs = filter;
+    //       },
+    //       getDocsFilter: function () {
+    //           return filterStore.docs;
+    //       }
     //    };
     //});
 })();
@@ -78,16 +78,16 @@
         //    var filterData = {};
 
         //    return {
-        //        get: function () {
-        //            return filterData;
-        //        },
-        //        set: function (data) {
-        //            filterData = data;
-        //            console.log('Inspection Due Filter Set:', filterData);
-        //        },
-        //        reset: function () {
-        //            filterData = {};
-        //        }
+        //       get: function () {
+        //           return filterData;
+        //       },
+        //       set: function (data) {
+        //           filterData = data;
+        //           console.log('Inspection Due Filter Set:', filterData);
+        //       },
+        //       reset: function () {
+        //           filterData = {};
+        //       }
         //    };
         //})
 
@@ -96,16 +96,16 @@
         //    var filterData = {};
 
         //    return {
-        //        get: function () {
-        //            return filterData;
-        //        },
-        //        set: function (data) {
-        //            filterData = data;
-        //            console.log('Inspection Filter Set:', filterData);
-        //        },
-        //        reset: function () {
-        //            filterData = {};
-        //        }
+        //       get: function () {
+        //           return filterData;
+        //       },
+        //       set: function (data) {
+        //           filterData = data;
+        //           console.log('Inspection Filter Set:', filterData);
+        //       },
+        //       reset: function () {
+        //           filterData = {};
+        //       }
         //    };
         //})
 
@@ -114,16 +114,16 @@
         //    var filterData = {};
 
         //    return {
-        //        get: function () {
-        //            return filterData;
-        //        },
-        //        set: function (data) {
-        //            filterData = data;
-        //            console.log('Document Filter Set:', filterData);
-        //        },
-        //        reset: function () {
-        //            filterData = {};
-        //        }
+        //       get: function () {
+        //           return filterData;
+        //       },
+        //       set: function (data) {
+        //           filterData = data;
+        //           console.log('Document Filter Set:', filterData);
+        //       },
+        //       reset: function () {
+        //           filterData = {};
+        //       }
         //    };
         //});
 

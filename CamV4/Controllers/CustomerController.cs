@@ -338,12 +338,12 @@ namespace CamV4.Controllers
         //{
         //    if (Session["LoggedInUserId"] == null)
         //    {
-        //        return RedirectToAction("Login", "Account");
+        //       return RedirectToAction("Login", "Account");
         //    }
         //    else
         //    {
-        //        ViewBag.LoggedInUserName = Session["LoggedInUserName"] ?? "";
-        //        return View();
+        //       ViewBag.LoggedInUserName = Session["LoggedInUserName"] ?? "";
+        //       return View();
         //    }
         //}
 

@@ -247,6 +247,8 @@ namespace CamV4.Models
         public string Employee { get; set; }
         public long EmployeeId { get; set; }
         public string FacilitiesAreasIds { get; set; }
+        public Nullable<int> isShelvingCheckLists { get; set; }
+        public string ShelvingChecklist3A { get; set; }
         public string ProcessOverviewsIds { get; set; }
         public string FacilitiesAreas { get; set; }
         public string ProcessOverviews { get; set; }
@@ -280,8 +282,85 @@ namespace CamV4.Models
         public Nullable<int> CapacityTable { get; set; }
         public Nullable<int> PlanElevationDrawing { get; set; }
         public Quotation objQuotation { get; set; }
+        public List<ShelvingCheckListViewModel> ShelvingCheckLists { get; set; }
     }
 
+    #region "ShelvingCheckList"
+
+    public class ShelvingCheckListViewModel
+    {
+        public long ShelvingCheckListId { get; set; }
+        public long InspectionId { get; set; }
+        public string ShelvingCheckListName { get; set; }
+        public string ShelvingCheckListSection { get; set; }
+        public string ShelvingCheckListTypeName { get; set; }
+        public string ShelvingCheckListManufacturer { get; set; }
+        public string ShelvingCheckListRowId { get; set; }
+        public string ShelvingCheckListBays { get; set; }
+        public string ShelvingCheckListNoOfShelvesBay { get; set; }
+        public string ShelvingCheckListSize { get; set; }
+        public string ShelvingCheckListPost { get; set; }
+        public string ShelvingCheckListPostType { get; set; }
+        public string ShelvingCheckListShelfBeam { get; set; }
+        public string ShelvingCheckListFrameConnector { get; set; }
+        public string ShelvingCheckListTieBar { get; set; }
+        public string ShelvingCheckListCapacityForBay { get; set; }
+        public string ShelvingCheckListCapacityforShelf { get; set; }
+
+        public List<ShelvingCheckListDetailViewModel> ShelvingCheckListDetails { get; set; }
+        public List<ShelvingCheckListPhotoViewModel> ShelvingCheckListPhotos { get; set; }
+
+        public ShelvingCheckListViewModel()
+        {
+            ShelvingCheckListDetails = new List<ShelvingCheckListDetailViewModel>();
+            ShelvingCheckListPhotos = new List<ShelvingCheckListPhotoViewModel>();
+        }
+    }
+
+    public class ShelvingCheckListDetailViewModel
+    {
+        public long ShelvingCheckListDetailId { get; set; }
+        public long ShelvingCheckListId { get; set; }
+        public int ShelvingCheckListDeficiencyID { get; set; }
+        public string ShelvingCheckListDeficiencyInfo { get; set; }
+        public bool Tick_Yes { get; set; }
+        public bool Tick_No { get; set; }
+        public bool Tick_NA { get; set; }
+        public string ShelvingCheckListDeficiencyComment { get; set; }
+    }
+
+    public class ShelvingCheckListPhotoViewModel
+    {
+        public long ShelvingCheckListPhotoId { get; set; }
+        public long ShelvingCheckListId { get; set; }
+        public string ShelvingCheckListPath { get; set; }
+        public string ShelvingCheckListPathFull { get; set; }
+        public string ShelvingCheckListPathFullThumb { get; set; }
+    }
+
+    public class ShelvingCheckListSaveModel
+    {
+        public string loggedInUserId { get; set; }
+        public ShelvingCheckList ShelvingCheckList { get; set; }
+        public List<ShelvingCheckListDetail> ShelvingCheckListDetails { get; set; }
+        public List<ShelvingCheckListPhotoBase64> ShelvingCheckListPhotos { get; set; }
+    }
+
+    public class ShelvingCheckListPhotoBase64
+    {
+        public long ShelvingCheckListPhotoId { get; set; }  // 0 = new, >0 = existing
+        public string PhotoBase64 { get; set; }             // Base64 string from mobile
+        public bool ShouldDelete { get; set; }              // true = delete this photo
+    }
+
+    public class SaveShelvingCheckListResult
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public long ShelvingCheckListId { get; set; }
+    }
+
+    #endregion
 
     public class IncidentViewModel
     {
@@ -908,7 +987,7 @@ namespace CamV4.Models
         public long CustomerId { get; set; }
         public long CustomerLocationID { get; set; }
         public int customerID { get; set; }
-        public string CustomerLocation { get; set; }        
+        public string CustomerLocation { get; set; }
     }
     #endregion
 

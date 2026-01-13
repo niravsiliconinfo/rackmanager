@@ -641,9 +641,9 @@
                     //const data = {
                     //    labels: lableList,
                     //    datasets: [{
-                    //        label: "Inspections",
-                    //        backgroundColor: colorList,
-                    //        data: dataList
+                    //       label: "Inspections",
+                    //       backgroundColor: colorList,
+                    //       data: dataList
                     //    }
                     //    ]
                     //}
@@ -652,10 +652,10 @@
                     //    type: 'pie',
                     //    data,
                     //    options: {
-                    //        title: {
-                    //            display: true,
-                    //            text: ''
-                    //        }
+                    //       title: {
+                    //           display: true,
+                    //           text: ''
+                    //       }
                     //    }
                     //};                                        
                     //let myChart = new Chart(
@@ -732,49 +732,49 @@
                         });
                     //$http.get('/api/pageview/getDeficienciesbySeverityCustomerInspection', { params: { InspectionId: para } })
                     //    .then(function (response) {
-                    //        vm.deficiencies = response.data;
+                    //       vm.deficiencies = response.data;
 
-                    //        // Prepare data for the chart
-                    //        var labels = [];
-                    //        var data = [];
-                    //        var backgroundColors = [];
+                    //       // Prepare data for the chart
+                    //       var labels = [];
+                    //       var data = [];
+                    //       var backgroundColors = [];
 
-                    //        vm.deficiencies.forEach(function (deficiency) {
-                    //            labels.push(deficiency.Classifications);
-                    //            data.push(deficiency.InspectionDeficiencyCnt);
-                    //            backgroundColors.push(deficiency.ClassificationsColor);
-                    //        });
+                    //       vm.deficiencies.forEach(function (deficiency) {
+                    //           labels.push(deficiency.Classifications);
+                    //           data.push(deficiency.InspectionDeficiencyCnt);
+                    //           backgroundColors.push(deficiency.ClassificationsColor);
+                    //       });
 
-                    //        // Create the pie chart
-                    //        var ctx = document.getElementById('pie-chart-customer-inspection').getContext('2d');
-                    //        var deficiencyChart = new Chart(ctx, {
-                    //            type: 'pie',
-                    //            data: {
-                    //                labels: labels,
-                    //                datasets: [{
-                    //                    data: data,
-                    //                    backgroundColor: backgroundColors
-                    //                }]
-                    //            },
-                    //            options: {
-                    //                responsive: true,
-                    //                plugins: {
-                    //                    legend: {
-                    //                        position: 'top'
-                    //                    },
-                    //                    tooltip: {
-                    //                        callbacks: {
-                    //                            label: function (tooltipItem) {
-                    //                                return tooltipItem.label + ': ' + tooltipItem.raw;
-                    //                            }
-                    //                        }
-                    //                    }
-                    //                }
-                    //            }
-                    //        });
+                    //       // Create the pie chart
+                    //       var ctx = document.getElementById('pie-chart-customer-inspection').getContext('2d');
+                    //       var deficiencyChart = new Chart(ctx, {
+                    //           type: 'pie',
+                    //           data: {
+                    //               labels: labels,
+                    //               datasets: [{
+                    //                   data: data,
+                    //                   backgroundColor: backgroundColors
+                    //               }]
+                    //           },
+                    //           options: {
+                    //               responsive: true,
+                    //               plugins: {
+                    //                   legend: {
+                    //                       position: 'top'
+                    //                   },
+                    //                   tooltip: {
+                    //                       callbacks: {
+                    //                           label: function (tooltipItem) {
+                    //                               return tooltipItem.label + ': ' + tooltipItem.raw;
+                    //                           }
+                    //                       }
+                    //                   }
+                    //               }
+                    //           }
+                    //       });
                     //    })
                     //    .catch(function (error) {
-                    //        console.error("Error fetching deficiencies data", error);
+                    //       console.error("Error fetching deficiencies data", error);
                     //    });
                 }
                 //var defIds = $scope.getInspectionDetailsForSheet.InspectionDeficiencyAdminStatus;
@@ -782,7 +782,7 @@
                 //console.log('dfvdr', $scope.getInspectionDetailsForSheet.iDefModel);
                 //angular.forEach($scope.getInspectionDetailsForSheet.iDefModel, function (d) {
                 //    if (defIds.indexOf(d.InspectionDeficiencyId) > -1) {
-                //        d.selected = true;
+                //       d.selected = true;
                 //    }
                 //});
 

@@ -55,7 +55,17 @@
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
                                         <textarea type="text" class="form-control" name="ProcessOverviewDesc" id="ProcessOverviewDesc"
-                                               ng-model="processOverviewDesc" ng-init="processOverviewDesc = '@Model.ProcessOverviewDesc'"></textarea>
+                                                  ng-model="processOverviewDesc" ng-init="processOverviewDesc = '@Model.ProcessOverviewDesc'"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Gender</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        Yes &nbsp;<input type="radio" name="isshelvingchecklist" ng-model="IsShelvingChecklist" value="1" ng-init="IsShelvingChecklist = '@Model.IsShelvingChecklist'" />
+                                        &nbsp;&nbsp;&nbsp;
+                                        No  &nbsp;<input type="radio" name="isshelvingchecklist" ng-model="IsShelvingChecklist" value="0" ng-init="IsShelvingChecklist = '@Model.IsShelvingChecklist'" />
                                     </div>
                                 </div>
                             </div>

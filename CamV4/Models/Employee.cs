@@ -32,11 +32,11 @@ namespace CamV4.Models
         [Required(ErrorMessage = "Please enter title degree.")]
         public string TitleDegrees { get; set; }
         public string MobileNo { get; set; }
+        public Nullable<int> IsStampingEngineer { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
-        public string ModifiedBy { get; set; }
-        public Nullable<int> IsStampingEngineer { get; set; }
+        public string ModifiedBy { get; set; }        
 		public Nullable<bool> UserStatus { get; set; }
         public string UserToken { get; set; }    }
 }

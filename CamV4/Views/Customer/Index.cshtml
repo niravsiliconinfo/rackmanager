@@ -561,33 +561,33 @@
         //    data: { year: value },
         //    contentType: "application/json; charset-utf-8",
         //    success: function (response) {
-        //        console.log(response);
-        //        deficiencies = response;
-        //        const tableBody = document.getElementById('deficiencyTableBody');
-        //        tableBody.innerHTML = '';
+        //       console.log(response);
+        //       deficiencies = response;
+        //       const tableBody = document.getElementById('deficiencyTableBody');
+        //       tableBody.innerHTML = '';
 
-        //        deficiencies.forEach(category => {
-        //            const row = document.createElement('tr');
+        //       deficiencies.forEach(category => {
+        //           const row = document.createElement('tr');
 
-        //            // Create the first cell (Deficiency Category)
-        //            const categoryCell = document.createElement('td');
-        //            categoryCell.classList.add('align-middle', 'text-left', 'text-sm');
-        //            categoryCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryName}</span>`;
-        //            row.appendChild(categoryCell);
+        //           // Create the first cell (Deficiency Category)
+        //           const categoryCell = document.createElement('td');
+        //           categoryCell.classList.add('align-middle', 'text-left', 'text-sm');
+        //           categoryCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryName}</span>`;
+        //           row.appendChild(categoryCell);
 
-        //            // Create the second cell (Count)
-        //            const countCell = document.createElement('td');
-        //            countCell.classList.add('align-middle', 'text-center', 'text-sm');
-        //            countCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryCount}</span>`;
-        //            row.appendChild(countCell);
+        //           // Create the second cell (Count)
+        //           const countCell = document.createElement('td');
+        //           countCell.classList.add('align-middle', 'text-center', 'text-sm');
+        //           countCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryCount}</span>`;
+        //           row.appendChild(countCell);
 
-        //            // Append the row to the table body
-        //            tableBody.appendChild(row);
-        //        });
-        //        //myChart.update();
+        //           // Append the row to the table body
+        //           tableBody.appendChild(row);
+        //       });
+        //       //myChart.update();
         //    },
         //    failure: function (msg) {
-        //        alert(msg);
+        //       alert(msg);
         //    }
         //});
 
@@ -597,11 +597,11 @@
         //    data: { year: year },
         //    contentType: "application/json; charset-utf-8",
         //    success: function (response) {
-        //        console.log('response------response', response);
-        //        $scope.getDeficienciesBreakdownCategorieslist = response.data;
+        //       console.log('response------response', response);
+        //       $scope.getDeficienciesBreakdownCategorieslist = response.data;
         //    },
         //    failure: function (msg) {
-        //        alert(msg);
+        //       alert(msg);
         //    }
         //});
     }
@@ -694,33 +694,33 @@
         //    data: { year: curryear },
         //    contentType: "application/json; charset-utf-8",
         //    success: function (response) {
-        //        console.log(response);
-        //        deficiencies = response;
+        //       console.log(response);
+        //       deficiencies = response;
 
-        //        tableBody.innerHTML = '';
+        //       tableBody.innerHTML = '';
 
-        //        deficiencies.forEach(category => {
-        //            const row = document.createElement('tr');
+        //       deficiencies.forEach(category => {
+        //           const row = document.createElement('tr');
 
-        //            // Create the first cell (Deficiency Category)
-        //            const categoryCell = document.createElement('td');
-        //            categoryCell.classList.add('align-middle', 'text-left', 'text-sm');
-        //            categoryCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryName}</span>`;
-        //            row.appendChild(categoryCell);
+        //           // Create the first cell (Deficiency Category)
+        //           const categoryCell = document.createElement('td');
+        //           categoryCell.classList.add('align-middle', 'text-left', 'text-sm');
+        //           categoryCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryName}</span>`;
+        //           row.appendChild(categoryCell);
 
-        //            // Create the second cell (Count)
-        //            const countCell = document.createElement('td');
-        //            countCell.classList.add('align-middle', 'text-center', 'text-sm');
-        //            countCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryCount}</span>`;
-        //            row.appendChild(countCell);
+        //           // Create the second cell (Count)
+        //           const countCell = document.createElement('td');
+        //           countCell.classList.add('align-middle', 'text-center', 'text-sm');
+        //           countCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryCount}</span>`;
+        //           row.appendChild(countCell);
 
-        //            // Append the row to the table body
-        //            tableBody.appendChild(row);
-        //        });
-        //        //myChart.update();
+        //           // Append the row to the table body
+        //           tableBody.appendChild(row);
+        //       });
+        //       //myChart.update();
         //    },
         //    failure: function (msg) {
-        //        alert(msg);
+        //       alert(msg);
         //    }
         //});
 
@@ -728,74 +728,74 @@
         //    url: '/api/pageview/getDeficienciesTrendFromPreviousYears',
         //    type: 'GET',
         //    success: function (response) {
-        //        // Process the response
-        //        console.log('---------------------On Load -- response -------------------------', response);
-        //        const years = [new Set(response.map(item => item.Years))]; // Unique years
-        //        console.log('---------------------On Load -- Year -------------------------', years);
-        //        const data = {
-        //            labels: years,
-        //            datasets: [
-        //                {
-        //                    label: 'Minor',
-        //                    data: years.map(year => {
-        //                        const entry = response.find(item => item.Years == year && item.Classifications === 'Minor');
-        //                        return entry ? entry.InspectionDeficiencyCnt : 0;
-        //                    }),
-        //                    backgroundColor: '#00CC00'
-        //                },
-        //                {
-        //                    label: 'Intermediate',
-        //                    data: years.map(year => {
-        //                        const entry = response.find(item => item.Years == year && item.Classifications === 'Intermediate');
-        //                        return entry ? entry.InspectionDeficiencyCnt : 0;
-        //                    }),
-        //                    backgroundColor: '#FFFF00'
-        //                },
-        //                {
-        //                    label: 'Major',
-        //                    data: years.map(year => {
-        //                        const entry = response.find(item => item.Years == year && item.Classifications === 'Major');
-        //                        return entry ? entry.InspectionDeficiencyCnt : 0;
-        //                    }),
-        //                    backgroundColor: '#FF0000'
-        //                }
-        //            ]
-        //        };
+        //       // Process the response
+        //       console.log('---------------------On Load -- response -------------------------', response);
+        //       const years = [new Set(response.map(item => item.Years))]; // Unique years
+        //       console.log('---------------------On Load -- Year -------------------------', years);
+        //       const data = {
+        //           labels: years,
+        //           datasets: [
+        //               {
+        //                   label: 'Minor',
+        //                   data: years.map(year => {
+        //                       const entry = response.find(item => item.Years == year && item.Classifications === 'Minor');
+        //                       return entry ? entry.InspectionDeficiencyCnt : 0;
+        //                   }),
+        //                   backgroundColor: '#00CC00'
+        //               },
+        //               {
+        //                   label: 'Intermediate',
+        //                   data: years.map(year => {
+        //                       const entry = response.find(item => item.Years == year && item.Classifications === 'Intermediate');
+        //                       return entry ? entry.InspectionDeficiencyCnt : 0;
+        //                   }),
+        //                   backgroundColor: '#FFFF00'
+        //               },
+        //               {
+        //                   label: 'Major',
+        //                   data: years.map(year => {
+        //                       const entry = response.find(item => item.Years == year && item.Classifications === 'Major');
+        //                       return entry ? entry.InspectionDeficiencyCnt : 0;
+        //                   }),
+        //                   backgroundColor: '#FF0000'
+        //               }
+        //           ]
+        //       };
 
-        //        // Create the chart
-        //        const ctx = document.getElementById('deficiencyChart').getContext('2d');
-        //        const deficiencyChart = new Chart(ctx, {
-        //            type: 'bar',
-        //            data: data,
-        //            options: {
-        //                scales: {
-        //                    y: {
-        //                        beginAtZero: true,
-        //                        title: {
-        //                            display: true,
-        //                            text: 'Inspection Deficiency Count'
-        //                        }
-        //                    },
-        //                    x: {
-        //                        title: {
-        //                            display: true,
-        //                            text: 'Years'
-        //                        }
-        //                    }
-        //                },
-        //                plugins: {
-        //                    legend: {
-        //                        display: true,
-        //                        position: 'top'
-        //                    }
-        //                },
-        //                responsive: true,
-        //                maintainAspectRatio: false
-        //            }
-        //        });
+        //       // Create the chart
+        //       const ctx = document.getElementById('deficiencyChart').getContext('2d');
+        //       const deficiencyChart = new Chart(ctx, {
+        //           type: 'bar',
+        //           data: data,
+        //           options: {
+        //               scales: {
+        //                   y: {
+        //                       beginAtZero: true,
+        //                       title: {
+        //                           display: true,
+        //                           text: 'Inspection Deficiency Count'
+        //                       }
+        //                   },
+        //                   x: {
+        //                       title: {
+        //                           display: true,
+        //                           text: 'Years'
+        //                       }
+        //                   }
+        //               },
+        //               plugins: {
+        //                   legend: {
+        //                       display: true,
+        //                       position: 'top'
+        //                   }
+        //               },
+        //               responsive: true,
+        //               maintainAspectRatio: false
+        //           }
+        //       });
         //    },
         //    error: function (error) {
-        //        console.log("Error fetching data:", error);
+        //       console.log("Error fetching data:", error);
         //    }
         //});
     });

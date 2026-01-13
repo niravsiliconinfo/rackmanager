@@ -7230,28 +7230,28 @@
 	// };
 	
 	
-	//     [
-	//       {
-	//         name:      'data'                -- string   - Property name
-	//         val:       function () {},       -- function - Api method (or undefined if just an object
-	//         methodExt: [ ... ],              -- array    - Array of Api object definitions to extend the method result
-	//         propExt:   [ ... ]               -- array    - Array of Api object definitions to extend the property
-	//       },
-	//       {
-	//         name:     'row'
-	//         val:       {},
-	//         methodExt: [ ... ],
-	//         propExt:   [
-	//           {
-	//             name:      'data'
-	//             val:       function () {},
-	//             methodExt: [ ... ],
-	//             propExt:   [ ... ]
-	//           },
-	//           ...
-	//         ]
-	//       }
-	//     ]
+	//    [
+	//      {
+	//        name:      'data'                -- string   - Property name
+	//        val:       function () {},       -- function - Api method (or undefined if just an object
+	//        methodExt: [ ... ],              -- array    - Array of Api object definitions to extend the method result
+	//        propExt:   [ ... ]               -- array    - Array of Api object definitions to extend the property
+	//      },
+	//      {
+	//        name:     'row'
+	//        val:       {},
+	//        methodExt: [ ... ],
+	//        propExt:   [
+	//          {
+	//            name:      'data'
+	//            val:       function () {},
+	//            methodExt: [ ... ],
+	//            propExt:   [ ... ]
+	//          },
+	//          ...
+	//        ]
+	//      }
+	//    ]
 	
 	_Api.register = _api_register = function ( name, val )
 	{
@@ -12353,11 +12353,11 @@
 		 *    // Read table data from objects
 		 *    // JSON structure for each row:
 		 *    //   {
-		 *    //      "engine": {value},
-		 *    //      "browser": {value},
-		 *    //      "platform": {value},
-		 *    //      "version": {value},
-		 *    //      "grade": {value}
+		 *    //     "engine": {value},
+		 *    //     "browser": {value},
+		 *    //     "platform": {value},
+		 *    //     "version": {value},
+		 *    //     "grade": {value}
 		 *    //   }
 		 *    $(document).ready( function() {
 		 *      $('#example').dataTable( {
@@ -12376,14 +12376,14 @@
 		 *    // Read information from deeply nested objects
 		 *    // JSON structure for each row:
 		 *    //   {
-		 *    //      "engine": {value},
-		 *    //      "browser": {value},
-		 *    //      "platform": {
-		 *    //         "inner": {value}
-		 *    //      },
-		 *    //      "details": [
-		 *    //         {value}, {value}
-		 *    //      ]
+		 *    //     "engine": {value},
+		 *    //     "browser": {value},
+		 *    //     "platform": {
+		 *    //        "inner": {value}
+		 *    //     },
+		 *    //     "details": [
+		 *    //        {value}, {value}
+		 *    //     ]
 		 *    //   }
 		 *    $(document).ready( function() {
 		 *      $('#example').dataTable( {

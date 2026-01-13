@@ -53,7 +53,7 @@ namespace CamV4.Helper
         {
             if (!_isInitialized)
             {
-                string path = HttpContext.Current.Server.MapPath("~/") + "Keys\\rn-x-698a9-firebase-adminsdk-815g1-096d08a7c3.json";                    
+                string path = HttpContext.Current.Server.MapPath("~/") + "Keys\\rn-x-698a9-firebase-adminsdk-815g1-351ddf7376.json";                    
                 var credential = GoogleCredential.FromFile(path);                
                 FirebaseApp.Create(new AppOptions()
                 {
@@ -67,7 +67,7 @@ namespace CamV4.Helper
         public static string GetFilePath()
         {
             string strPath = "";
-            strPath = HttpContext.Current.Server.MapPath("~/") + "/rn-x-698a9-firebase-adminsdk-815g1-096d08a7c3.json";
+            strPath = HttpContext.Current.Server.MapPath("~/") + "/rn-x-698a9-firebase-adminsdk-815g1-351ddf7376.json";
 
             return strPath;
         }
@@ -104,40 +104,40 @@ namespace CamV4.Helper
         //{
         //    try
         //    {
-        //        // Create APNs request
-        //        var apnsMessage = new
-        //        {
-        //            aps = new
-        //            {
-        //                alert = new
-        //                {
-        //                    title = title,
-        //                    body = body
-        //                },
-        //                sound = "default"
-        //            }
-        //        };
+        //       // Create APNs request
+        //       var apnsMessage = new
+        //       {
+        //           aps = new
+        //           {
+        //               alert = new
+        //               {
+        //                   title = title,
+        //                   body = body
+        //               },
+        //               sound = "default"
+        //           }
+        //       };
 
-        //        var httpClient = new HttpClient();
-        //        httpClient.DefaultRequestHeaders.Add("Authorization", $"bearer {GenerateApnsJwt()}");
-        //        httpClient.DefaultRequestHeaders.Add("apns-topic", apnsBundleId);
+        //       var httpClient = new HttpClient();
+        //       httpClient.DefaultRequestHeaders.Add("Authorization", $"bearer {GenerateApnsJwt()}");
+        //       httpClient.DefaultRequestHeaders.Add("apns-topic", apnsBundleId);
 
-        //        var jsonContent = JsonConvert.SerializeObject(apnsMessage);
-        //        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        //       var jsonContent = JsonConvert.SerializeObject(apnsMessage);
+        //       var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-        //        var response = await httpClient.PostAsync($"https://api.push.apple.com/3/device/" + deviceToken, content);
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            Console.WriteLine("Successfully sent iOS notification");
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine($"Failed to send iOS notification: {response.ReasonPhrase}");
-        //        }
+        //       var response = await httpClient.PostAsync($"https://api.push.apple.com/3/device/" + deviceToken, content);
+        //       if (response.IsSuccessStatusCode)
+        //       {
+        //           Console.WriteLine("Successfully sent iOS notification");
+        //       }
+        //       else
+        //       {
+        //           Console.WriteLine($"Failed to send iOS notification: {response.ReasonPhrase}");
+        //       }
         //    }
         //    catch (Exception ex)
         //    {
-        //        Console.WriteLine($"Error sending iOS notification: {ex.Message}");
+        //       Console.WriteLine($"Error sending iOS notification: {ex.Message}");
         //    }
         //}
 
@@ -146,14 +146,14 @@ namespace CamV4.Helper
         //    string apnsKeyPath = HttpContext.Current.Server.MapPath("~/") + "Keys\\AuthKey_KF94QW8VK6.p8";
         //    var header = new
         //    {
-        //        alg = "ES256",
-        //        kid = apnsKeyId
+        //       alg = "ES256",
+        //       kid = apnsKeyId
         //    };
 
         //    var payload = new
         //    {
-        //        iss = apnsTeamId,
-        //        iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+        //       iss = apnsTeamId,
+        //       iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
         //    };
 
         //    var headerJson = JsonConvert.SerializeObject(header);
@@ -180,20 +180,20 @@ namespace CamV4.Helper
         //{
         //    try
         //    {
-        //        // Ensure private key is in the correct format (PKCS8 format) and read it correctly
-        //        byte[] privateKeyBytes = Convert.FromBase64String(privateKey);
+        //       // Ensure private key is in the correct format (PKCS8 format) and read it correctly
+        //       byte[] privateKeyBytes = Convert.FromBase64String(privateKey);
 
-        //        using (var ecdsa = new System.Security.Cryptography.ECDsaCng(System.Security.Cryptography.CngKey.Import(privateKeyBytes, System.Security.Cryptography.CngKeyBlobFormat.Pkcs8PrivateBlob)))
-        //        {
-        //            var data = Encoding.UTF8.GetBytes($"{header}.{payload}");
-        //            var signature = ecdsa.SignData(data);
-        //            return Base64UrlEncode(signature);
-        //        }
+        //       using (var ecdsa = new System.Security.Cryptography.ECDsaCng(System.Security.Cryptography.CngKey.Import(privateKeyBytes, System.Security.Cryptography.CngKeyBlobFormat.Pkcs8PrivateBlob)))
+        //       {
+        //           var data = Encoding.UTF8.GetBytes($"{header}.{payload}");
+        //           var signature = ecdsa.SignData(data);
+        //           return Base64UrlEncode(signature);
+        //       }
         //    }
         //    catch (Exception ex)
         //    {
-        //        Console.WriteLine($"Error generating signature: {ex.Message}");
-        //        throw;
+        //       Console.WriteLine($"Error generating signature: {ex.Message}");
+        //       throw;
         //    }
         //}
     }

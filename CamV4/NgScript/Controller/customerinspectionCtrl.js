@@ -87,8 +87,8 @@
         //// 3. Get selected InspectionStatusId values
         //$scope.getSelectedInspectionStatusIDs = function () {
         //    return $scope.InspectionStatusLayout
-        //        .filter(function (s) { return s.selected; })
-        //        .map(function (s) { return s.InspectionStatusId; });
+        //       .filter(function (s) { return s.selected; })
+        //       .map(function (s) { return s.InspectionStatusId; });
         //};
 
         $scope.isEditingLabour = false;
@@ -1152,68 +1152,68 @@
                 //    type: 'POST',
                 //    contentType: 'application/json',
                 //    data: JSON.stringify({
-                //        QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId, // Replace with your actual QuotationId
-                //        QuotationComponentList: itemData // Replace with your actual data
+                //       QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId, // Replace with your actual QuotationId
+                //       QuotationComponentList: itemData // Replace with your actual data
                 //    }),
                 //    success: function (response) {
 
 
 
-                //        //console.log('Remove Quotation Items By Admin Success --', response);
-                //        //$scope.getInspectionDetailsForSheet.objQuotation = response.data;
-                //        ///*$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems = response.data;*/
+                //       //console.log('Remove Quotation Items By Admin Success --', response);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation = response.data;
+                //       ///*$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems = response.data;*/
 
-                //        //let subtotal = 0;
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
-                //        //    subtotal += parseFloat(item.LineTotal);
-                //        //});
+                //       //let subtotal = 0;
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
+                //       //    subtotal += parseFloat(item.LineTotal);
+                //       //});
 
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
 
-                //        //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
-                //        //let GSTVal = parseFloat(subtotal * gstRate);
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (subtotal * gstRate).toFixed(2);
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.Total = (subtotal + GSTVal).toFixed(2);
+                //       //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
+                //       //let GSTVal = parseFloat(subtotal * gstRate);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (subtotal * gstRate).toFixed(2);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.Total = (subtotal + GSTVal).toFixed(2);
 
-                //        //if (!$scope.getInspectionDetailsForSheet.objQuotation) {
-                //        //    $scope.getInspectionDetailsForSheet.objQuotation = {};
-                //        //}
+                //       //if (!$scope.getInspectionDetailsForSheet.objQuotation) {
+                //       //    $scope.getInspectionDetailsForSheet.objQuotation = {};
+                //       //}
 
-                //        //if ($scope.getInspectionDetailsForSheet && $scope.getInspectionDetailsForSheet.objQuotation) {
-                //        //    $scope.getInspectionDetailsForSheet.objQuotation = response.data;
-                //        //} else {
-                //        //    console.error("objQuotation is not defined");
-                //        //}
+                //       //if ($scope.getInspectionDetailsForSheet && $scope.getInspectionDetailsForSheet.objQuotation) {
+                //       //    $scope.getInspectionDetailsForSheet.objQuotation = response.data;
+                //       //} else {
+                //       //    console.error("objQuotation is not defined");
+                //       //}
 
-                //        //let subtotal = 0;
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
-                //        //    subtotal += parseFloat(item.LineTotal);
-                //        //});
+                //       //let subtotal = 0;
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
+                //       //    subtotal += parseFloat(item.LineTotal);
+                //       //});
 
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
 
-                //        //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
-                //        //let GSTVal = parseFloat(subtotal * gstRate);
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (subtotal * gstRate).toFixed(2);
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.Total = (subtotal + GSTVal).toFixed(2);
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems = response;
+                //       //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
+                //       //let GSTVal = parseFloat(subtotal * gstRate);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (subtotal * gstRate).toFixed(2);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.Total = (subtotal + GSTVal).toFixed(2);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems = response;
 
 
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
 
-                //        //    subtotal += parseFloat(item.LineTotal);                            
-                //        //});
+                //       //    subtotal += parseFloat(item.LineTotal);                            
+                //       //});
 
-                //        //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
-                //        //console.log('xxxxxxx', subtotal);
-                //        //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
-                //        //let GSTVal = parseFloat(subtotal * gstRate);
-                //        ////$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (objQuotation.GSTVal).toFixed(2);
-                //        ////$scope.getInspectionDetailsForSheet.objQuotation.Total = (objQuotation.Total).toFixed(2);
+                //       //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
+                //       //console.log('xxxxxxx', subtotal);
+                //       //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
+                //       //let GSTVal = parseFloat(subtotal * gstRate);
+                //       ////$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (objQuotation.GSTVal).toFixed(2);
+                //       ////$scope.getInspectionDetailsForSheet.objQuotation.Total = (objQuotation.Total).toFixed(2);
 
                 //    },
                 //    error: function (xhr, status, error) {
-                //        console.error('Error:', xhr.responseText || 'An error occurred');
+                //       console.error('Error:', xhr.responseText || 'An error occurred');
                 //    }
                 //});
             }

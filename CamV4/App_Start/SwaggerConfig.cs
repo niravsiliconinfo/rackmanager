@@ -56,8 +56,8 @@ namespace CamV4
                         //    (apiDesc, targetApiVersion) => ResolveVersionSupportByRouteConstraint(apiDesc, targetApiVersion),
                         //    (vc) =>
                         //    {
-                        //        vc.Version("v2", "Swashbuckle Dummy API V2");
-                        //        vc.Version("v1", "Swashbuckle Dummy API V1");
+                        //       vc.Version("v2", "Swashbuckle Dummy API V2");
+                        //       vc.Version("v1", "Swashbuckle Dummy API V1");
                         //    });
 
                         // You can use "BasicAuth", "ApiKey" or "OAuth2" options to describe security schemes for the API.
@@ -83,8 +83,8 @@ namespace CamV4
                         //    //.TokenUrl("https://tempuri.org/token")
                         //    .Scopes(scopes =>
                         //    {
-                        //        scopes.Add("read", "Read access to protected resources");
-                        //        scopes.Add("write", "Write access to protected resources");
+                        //       scopes.Add("read", "Read access to protected resources");
+                        //       scopes.Add("write", "Write access to protected resources");
                         //    });
 
                         // Set this flag to omit descriptions for any actions decorated with the Obsolete attribute

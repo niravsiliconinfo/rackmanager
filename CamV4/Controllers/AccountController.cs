@@ -693,7 +693,7 @@ namespace CamV4.Controllers
         //    string path = Server.MapPath("~/CustFilesHistory/");
         //    if (!Directory.Exists(path))
         //    {
-        //        Directory.CreateDirectory(path);
+        //       Directory.CreateDirectory(path);
         //    }
         //    // save the file.            
         //    //foreach (string key in Request.Files)
@@ -717,38 +717,38 @@ namespace CamV4.Controllers
         //{
         //    try
         //    {
-        //        var length = Request.ContentLength;
-        //        var bytes = new byte[length];
-        //        Request.InputStream.Read(bytes, 0, length);
+        //       var length = Request.ContentLength;
+        //       var bytes = new byte[length];
+        //       Request.InputStream.Read(bytes, 0, length);
 
-        //        // use the file name passed from AngularJS (final name)
-        //        var finalFileName = obj.FileName;
+        //       // use the file name passed from AngularJS (final name)
+        //       var finalFileName = obj.FileName;
 
-        //        string path = Server.MapPath("~/CustFilesHistory/");
-        //        if (!Directory.Exists(path))
-        //        {
-        //            Directory.CreateDirectory(path);
-        //        }
+        //       string path = Server.MapPath("~/CustFilesHistory/");
+        //       if (!Directory.Exists(path))
+        //       {
+        //           Directory.CreateDirectory(path);
+        //       }
 
-        //        // save file
-        //        var filePath = Path.Combine(path, finalFileName);
-        //        using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
-        //        {
-        //            fileStream.Write(bytes, 0, length);
-        //        }
+        //       // save file
+        //       var filePath = Path.Combine(path, finalFileName);
+        //       using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
+        //       {
+        //           fileStream.Write(bytes, 0, length);
+        //       }
 
-        //        var result = new
-        //        {
-        //            SavedFileName = finalFileName
-        //        };
+        //       var result = new
+        //       {
+        //           SavedFileName = finalFileName
+        //       };
 
-        //        //return CreateResponse(HttpStatusCode.OK, result);
-        //        return null;
+        //       //return CreateResponse(HttpStatusCode.OK, result);
+        //       return null;
         //    }
         //    catch (Exception ex)
         //    {
-        //        //return CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
-        //        return null;
+        //       //return CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+        //       return null;
         //    }
         //}
 

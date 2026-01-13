@@ -16,6 +16,7 @@ namespace CamV4.Models
     {
         public int ProcessOverviewId { get; set; }
         public string ProcessOverviewDesc { get; set; }
+        public Nullable<bool> IsShelvingChecklist { get; set; }
         public Nullable<bool> IsActive { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public string CreatedBy { get; set; }

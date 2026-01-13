@@ -715,10 +715,10 @@ window.Modernizr = (function( window, document, undefined ) {
     //
     // We're using the Boolean constructor here, so that we can extend the value
     // e.g.  Modernizr.video     // true
-    //       Modernizr.video.ogg // 'probably'
+    //      Modernizr.video.ogg // 'probably'
     //
     // Codec values from : github.com/NielsLeenheer/html5test/blob/9106a8/index.html#L845
-    //                     thx to NielsLeenheer and zcorpan
+    //                    thx to NielsLeenheer and zcorpan
 
     // Note: in some older browsers, "no" was a return value instead of empty string.
     //   It was live in FF3.5.0 and 3.5.1, but fixed in 3.5.2
@@ -1325,7 +1325,7 @@ window.Modernizr = (function( window, document, undefined ) {
     //   * If a browser does not support media queries at all (eg. oldIE) the mq() will always return false
     //   * A max-width or orientation query will be evaluated against the current state, which may change later.
     //   * You must specify values. Eg. If you are testing support for the min-width media query use:
-    //       Modernizr.mq('(min-width:0)')
+    //      Modernizr.mq('(min-width:0)')
     // usage:
     // Modernizr.mq('only screen and (max-width:768)')
     Modernizr.mq            = testMediaQuery;
@@ -1369,18 +1369,18 @@ window.Modernizr = (function( window, document, undefined ) {
     // Properties must be passed as dom-style camelcase, rather than `box-sizing` hypentated style.
     // Return values will also be the camelCase variant, if you need to translate that to hypenated style use:
     //
-    //     str.replace(/([A-Z])/g, function(str,m1){ return '-' + m1.toLowerCase(); }).replace(/^ms-/,'-ms-');
+    //    str.replace(/([A-Z])/g, function(str,m1){ return '-' + m1.toLowerCase(); }).replace(/^ms-/,'-ms-');
 
     // If you're trying to ascertain which transition end event to bind to, you might do something like...
     //
-    //     var transEndEventNames = {
-    //       'WebkitTransition' : 'webkitTransitionEnd',
-    //       'MozTransition'    : 'transitionend',
-    //       'OTransition'      : 'oTransitionEnd',
-    //       'msTransition'     : 'MSTransitionEnd',
-    //       'transition'       : 'transitionend'
-    //     },
-    //     transEndEventName = transEndEventNames[ Modernizr.prefixed('transition') ];
+    //    var transEndEventNames = {
+    //      'WebkitTransition' : 'webkitTransitionEnd',
+    //      'MozTransition'    : 'transitionend',
+    //      'OTransition'      : 'oTransitionEnd',
+    //      'msTransition'     : 'MSTransitionEnd',
+    //      'transition'       : 'transitionend'
+    //    },
+    //    transEndEventName = transEndEventNames[ Modernizr.prefixed('transition') ];
 
     Modernizr.prefixed      = function(prop, obj, elem){
       if(!obj) {

@@ -176,27 +176,27 @@ function ImageUploadCtrl($location, $scope, $http, filterFilter, $window, $timeo
 //    var file = input.files;
 //    $scope.SelectedFiles = file;
 //    var config = {
-//        imgList: $scope.pictures
+//       imgList: $scope.pictures
 //    }
 //    console.log('config', config);
 //    Upload.upload({
-//        url: '/uploadImagestoItmFolder',
-//        data: {
-//            files: $scope.SelectedFiles,
-//            model: config
-//        }
+//       url: '/uploadImagestoItmFolder',
+//       data: {
+//           files: $scope.SelectedFiles,
+//           model: config
+//       }
 //    }).then(function (response) {
-//        $timeout(function () {
-//            $scope.Result = response.data;
-//            console.log('$scope.Result--', $scope.Result)
-//            //$scope.userInfo.ProfilePic = '/img/items/' + file;
+//       $timeout(function () {
+//           $scope.Result = response.data;
+//           console.log('$scope.Result--', $scope.Result)
+//           //$scope.userInfo.ProfilePic = '/img/items/' + file;
 
-//        });
+//       });
 //    }, function (response) {
-//        if (response.status > 0) {
-//            var errorMsg = response.status + ': ' + response.data;
-//            alert(errorMsg);
-//        }
+//       if (response.status > 0) {
+//           var errorMsg = response.status + ': ' + response.data;
+//           alert(errorMsg);
+//       }
 //    });
 //};
 
@@ -205,20 +205,20 @@ function ImageUploadCtrl($location, $scope, $http, filterFilter, $window, $timeo
 
 //Array.prototype.objIndexOf = function (field, value, value2) {
 //    if (value2 && field.indexOf(';') > 0) {
-//        var fields = field.split(';');
-//        for (var i = 0; i < this.length; i++) {
-//            if (this[i].hasOwnProperty(fields[0]) && this[i][fields[0]] == value && this[i].hasOwnProperty(fields[1]) && this[i][fields[1]] == value2) {
-//                return i;
-//                break;
-//            }
-//        }
+//       var fields = field.split(';');
+//       for (var i = 0; i < this.length; i++) {
+//           if (this[i].hasOwnProperty(fields[0]) && this[i][fields[0]] == value && this[i].hasOwnProperty(fields[1]) && this[i][fields[1]] == value2) {
+//               return i;
+//               break;
+//           }
+//       }
 //    } else {
-//        for (var i = 0; i < this.length; i++) {
-//            if (this[i].hasOwnProperty(field) && this[i][field] == value) {
-//                return i;
-//                break;
-//            }
-//        }
+//       for (var i = 0; i < this.length; i++) {
+//           if (this[i].hasOwnProperty(field) && this[i][field] == value) {
+//               return i;
+//               break;
+//           }
+//       }
 //    }
 //    return -1;
 //};

@@ -34,7 +34,7 @@
         var isSchedule = currentController == "Customer" && currentAction == "ManageInspectionDue";
         var isPeopleAdmin = currentController == "Admin" && currentAction == "ManageCustomer" || currentAction == "ManageEmployee";
         var isAdminDocuments = currentController == "Admin" && currentAction == "ManageDocumentTitle" || currentAction == "ManageHistoryLegacyDocuments";
-        var isAdminDeficiency = currentController == "Admin" && currentAction == "ManageDeficiency" || currentAction == "ManageDeficiencySummary" || currentAction == "ManageDeficiencyCategory";
+        var isAdminDeficiency = currentController == "Admin" && currentAction == "ManageDeficiency" || currentAction == "ManageDeficiencySummary" || currentAction == "ManageDeficiencyCategory" || currentAction == "ManageShelvingCheckListDeficiencies" || currentAction == "EditShelvingCheckListDeficiencies" || currentAction == "ManageShelvingCheckListType" ||  currentAction == "EditShelvingCheckListType";
         var isAdminComponent = currentController == "Admin" && currentAction == "ManageComponent" || currentAction == "ManageComponentPropertyType" || currentAction == "ManageRackingType" || currentAction == "ManageIdentifyRackingProfile" || currentAction == "ImportPrice";
         var isAdminFP = currentController == "Admin" && currentAction == "ManageFacilitiesArea" || currentAction == "ManageProcessOverview";
         var isAdminManufacturer = currentController == "Admin" && currentAction == "ManageManufacturer" || currentAction == "ManageConclusionRecommendations";
@@ -51,7 +51,7 @@
         var isTrainingRegistration = currentController == "Customer" && currentAction == "TrainingCenterRegistration";
         var isTrainingCourses = currentController == "Customer" && currentAction == "TrainingCenterCourses";
         var isTrainingAdditionalResources = currentController == "Customer" && currentAction == "TrainingCenterAdditionalResources";
-        //        || currentAction == "TrainingCenter" ||
+        //       || currentAction == "TrainingCenter" ||
         //currentAction == "TrainingCenterRegistration" ||
         //currentAction == "TrainingCenterCourses" ||
         //currentAction == "TrainingCenterAdditionalResources");
@@ -139,6 +139,8 @@ currentAction == "ManageAllUserContacts"
                         <li class="nav-item"><a class="nav-link text-white" href="@Url.Action("ManageDeficiency", "Admin")">Manage Deficiency</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="@Url.Action("ManageDeficiencySummary", "Admin")">Manage Summary</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="@Url.Action("ManageDeficiencyCategory", "Admin")">Manage Category</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="@Url.Action("ManageShelvingCheckListType", "Admin")">Shelving Type</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="@Url.Action("ManageShelvingCheckListDeficiencies", "Admin")">Deficiencies(Shelving)</a></li>
                     </ul>
                 </div>
 

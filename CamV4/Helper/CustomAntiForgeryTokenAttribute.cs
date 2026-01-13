@@ -33,11 +33,11 @@ namespace CamV4.Helper
 
         //    try
         //    {
-        //        ValidateRequestHeader(filterContext.HttpContext.Request);
+        //       ValidateRequestHeader(filterContext.HttpContext.Request);
         //    }
         //    catch (HttpAntiForgeryException e)
         //    {
-        //        throw new HttpAntiForgeryException("Anti forgery token cookie not found");
+        //       throw new HttpAntiForgeryException("Anti forgery token cookie not found");
         //    }
         //}
     }

@@ -13,12 +13,12 @@
 //    'use strict';
 
 //    angular.module('Authentication', [
-//        // Angular modules 
-//        'ngRoute'
+//       // Angular modules 
+//       'ngRoute'
 
-//        // Custom modules 
+//       // Custom modules 
 
-//        // 3rd Party Modules
+//       // 3rd Party Modules
 
 //    ]);
 //})();

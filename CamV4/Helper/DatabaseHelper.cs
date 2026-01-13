@@ -1,6 +1,8 @@
 ﻿using CamV4.Controllers;
 using CamV4.Models;
+using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
+using Microsoft.OpenApi.Any;
 using Newtonsoft.Json;
 using NLog;
 using System;
@@ -10,10 +12,12 @@ using System.Data.Entity.Validation;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -470,18 +474,18 @@ namespace CamV4.Helper
         //{
         //    using (DatabaseEntities db = new DatabaseEntities())
         //    {
-        //        var itm = db.Users.Where(x => x.UserType == 1).Count();
-        //        if (itm != 0) { return itm; }
-        //        return 0;
+        //       var itm = db.Users.Where(x => x.UserType == 1).Count();
+        //       if (itm != 0) { return itm; }
+        //       return 0;
         //    }
         //}
         //internal static int getInventoryCount()
         //{
         //    using (DatabaseEntities db = new DatabaseEntities())
         //    {
-        //        var itm = db.ComponentPriceLists.Where(x => x.IsActive == true).Count();
-        //        if (itm != 0) { return itm; }
-        //        return 0;
+        //       var itm = db.ComponentPriceLists.Where(x => x.IsActive == true).Count();
+        //       if (itm != 0) { return itm; }
+        //       return 0;
         //    }
         //}
 
@@ -489,9 +493,9 @@ namespace CamV4.Helper
         //{
         //    using (DatabaseEntities db = new DatabaseEntities())
         //    {
-        //        var itm = db.Users.Where(x => x.UserType == 2).Count();
-        //        if (itm != 0) { return itm; }
-        //        return 0;
+        //       var itm = db.Users.Where(x => x.UserType == 2).Count();
+        //       if (itm != 0) { return itm; }
+        //       return 0;
         //    }
         //}
 
@@ -1100,32 +1104,56 @@ namespace CamV4.Helper
                 var user = db.Users.Where(x => x.UserName == model.UserName && x.UserPassword == model.UserPassword && x.IsActive == true).FirstOrDefault();
                 if (user != null)
                 {
-                    UserEmployeeViewModel objEmployeeViewModel = new UserEmployeeViewModel();
+                    //UserEmployeeViewModel objEmployeeViewModel = new UserEmployeeViewModel();
                     var emp = db.Employees.Where(x => x.UserID == user.UserId).FirstOrDefault();
                     emp.UserStatus = true;
                     var token = TokenManager.GenerateToken(emp.EmployeeEmail);
                     emp.UserToken = token;
-                    objEmployeeViewModel.EmployeeID = emp.EmployeeID;
-                    objEmployeeViewModel.UserName = user.UserName;
-                    objEmployeeViewModel.UserID = emp.UserID;
-                    objEmployeeViewModel.UserType = user.UserType;
-                    objEmployeeViewModel.EmployeeEmail = emp.EmployeeEmail;
-                    objEmployeeViewModel.EmployeeName = emp.EmployeeName;
-                    objEmployeeViewModel.EmployeeAddress = emp.EmployeeAddress;
-                    objEmployeeViewModel.UserStatus = true;
-                    objEmployeeViewModel.UserToken = token;
-                    objEmployeeViewModel.CityID = emp.CityID;
-                    objEmployeeViewModel.ProvinceID = emp.ProvinceID;
-                    objEmployeeViewModel.CountryID = emp.CountryID;
-                    objEmployeeViewModel.PinCode = emp.Pincode;
-                    objEmployeeViewModel.IsActive = emp.IsActive;
-                    objEmployeeViewModel.Gender = emp.Gender;
-                    objEmployeeViewModel.TitleDegrees = emp.TitleDegrees;
-                    objEmployeeViewModel.CreatedDate = emp.CreatedDate;
-                    objEmployeeViewModel.CreatedBy = emp.CreatedBy;
-                    objEmployeeViewModel.ModifiedDate = emp.ModifiedDate;
-                    objEmployeeViewModel.ModifiedBy = emp.ModifiedBy;
-                    objEmployeeViewModel.MobileNo = emp.MobileNo;
+                    UserEmployeeViewModel objEmployeeViewModel = new UserEmployeeViewModel
+                    {
+                        EmployeeID = emp.EmployeeID,
+                        UserName = user.UserName?.Trim(),
+                        UserID = emp.UserID,
+                        UserType = user.UserType,
+                        EmployeeEmail = emp.EmployeeEmail?.Trim(),
+                        EmployeeName = emp.EmployeeName?.Trim(),
+                        EmployeeAddress = emp.EmployeeAddress?.Trim(),
+                        UserStatus = true,
+                        UserToken = token,
+                        CityID = emp.CityID,
+                        ProvinceID = emp.ProvinceID,
+                        CountryID = emp.CountryID,
+                        PinCode = emp.Pincode?.Trim(),
+                        IsActive = emp.IsActive,
+                        Gender = emp.Gender,
+                        TitleDegrees = emp.TitleDegrees?.Trim(),
+                        CreatedDate = emp.CreatedDate,
+                        CreatedBy = emp.CreatedBy,
+                        ModifiedDate = emp.ModifiedDate,
+                        ModifiedBy = emp.ModifiedBy,
+                        MobileNo = emp.MobileNo?.Trim()
+                    };
+                    //objEmployeeViewModel.EmployeeID = emp.EmployeeID;
+                    //objEmployeeViewModel.UserName = user.UserName;
+                    //objEmployeeViewModel.UserID = emp.UserID;
+                    //objEmployeeViewModel.UserType = user.UserType;
+                    //objEmployeeViewModel.EmployeeEmail = emp.EmployeeEmail;
+                    //objEmployeeViewModel.EmployeeName = emp.EmployeeName;
+                    //objEmployeeViewModel.EmployeeAddress = emp.EmployeeAddress;
+                    //objEmployeeViewModel.UserStatus = true;
+                    //objEmployeeViewModel.UserToken = token;
+                    //objEmployeeViewModel.CityID = emp.CityID;
+                    //objEmployeeViewModel.ProvinceID = emp.ProvinceID;
+                    //objEmployeeViewModel.CountryID = emp.CountryID;
+                    //objEmployeeViewModel.PinCode = emp.Pincode;
+                    //objEmployeeViewModel.IsActive = emp.IsActive;
+                    //objEmployeeViewModel.Gender = emp.Gender;
+                    //objEmployeeViewModel.TitleDegrees = emp.TitleDegrees;
+                    //objEmployeeViewModel.CreatedDate = emp.CreatedDate;
+                    //objEmployeeViewModel.CreatedBy = emp.CreatedBy;
+                    //objEmployeeViewModel.ModifiedDate = emp.ModifiedDate;
+                    //objEmployeeViewModel.ModifiedBy = emp.ModifiedBy;
+                    //objEmployeeViewModel.MobileNo = emp.MobileNo;
                     return objEmployeeViewModel;
                 }
                 else
@@ -2042,69 +2070,69 @@ namespace CamV4.Helper
         //{
         //    try
         //    {
-        //        using (DatabaseEntities db = new DatabaseEntities())
-        //        {
-        //            var customerUser = (from contact in db.CustomerLocationContacts
-        //                                where contact.LocationContactId == id && contact.IsActive == true
-        //                                select new CustomerLocationContactViewModel
-        //                                {
-        //                                    LocationContactId = contact.LocationContactId,
-        //                                    CustomerId = contact.CustomerId,
-        //                                    ContactName = contact.ContactName,
-        //                                    ContactEmail = contact.ContactEmail,
-        //                                    ContactPhone = contact.ContactPhone,
-        //                                    UserID = contact.UserID ?? 0,
-        //                                    CustomerLocationID = contact.CustomerLocationID,
-        //                                    CreatedDate = contact.CreatedDate,
-        //                                    CreatedBy = contact.CreatedBy.ToString(),
-        //                                    ModifiedDate = contact.ModifiedDate,
-        //                                    ModifiedBy = contact.ModifiedBy.ToString(),
-        //                                    IsActive = contact.IsActive,
-        //                                    Selected = false,
+        //       using (DatabaseEntities db = new DatabaseEntities())
+        //       {
+        //           var customerUser = (from contact in db.CustomerLocationContacts
+        //                               where contact.LocationContactId == id && contact.IsActive == true
+        //                               select new CustomerLocationContactViewModel
+        //                               {
+        //                                   LocationContactId = contact.LocationContactId,
+        //                                   CustomerId = contact.CustomerId,
+        //                                   ContactName = contact.ContactName,
+        //                                   ContactEmail = contact.ContactEmail,
+        //                                   ContactPhone = contact.ContactPhone,
+        //                                   UserID = contact.UserID ?? 0,
+        //                                   CustomerLocationID = contact.CustomerLocationID,
+        //                                   CreatedDate = contact.CreatedDate,
+        //                                   CreatedBy = contact.CreatedBy.ToString(),
+        //                                   ModifiedDate = contact.ModifiedDate,
+        //                                   ModifiedBy = contact.ModifiedBy.ToString(),
+        //                                   IsActive = contact.IsActive,
+        //                                   Selected = false,
 
-        //                                    // Primary location name
-        //                                    CustomerLocation = db.CustomerLocations
-        //                                        .Where(cl => cl.CustomerLocationID == contact.CustomerLocationID)
-        //                                        .Select(cl => cl.LocationName)
-        //                                        .FirstOrDefault(),
+        //                                   // Primary location name
+        //                                   CustomerLocation = db.CustomerLocations
+        //                                       .Where(cl => cl.CustomerLocationID == contact.CustomerLocationID)
+        //                                       .Select(cl => cl.LocationName)
+        //                                       .FirstOrDefault(),
 
-        //                                    // Customer name (assuming a method like getCustomerById)
-        //                                    Customer = db.Customers
-        //                                        .Where(c => c.CustomerId == contact.CustomerId)
-        //                                        .Select(c => c.CustomerName)
-        //                                        .FirstOrDefault(),
+        //                                   // Customer name (assuming a method like getCustomerById)
+        //                                   Customer = db.Customers
+        //                                       .Where(c => c.CustomerId == contact.CustomerId)
+        //                                       .Select(c => c.CustomerName)
+        //                                       .FirstOrDefault(),
 
-        //                                    // Linked location ID
-        //                                    LinkedCustomerLocationIDs = db.CustomersLocationsUsers
-        //                                        .Where(clu => clu.LocationContactId == contact.LocationContactId)
-        //                                        .Select(clu => clu.CustomerLocationID)
-        //                                        .ToList(),
+        //                                   // Linked location ID
+        //                                   LinkedCustomerLocationIDs = db.CustomersLocationsUsers
+        //                                       .Where(clu => clu.LocationContactId == contact.LocationContactId)
+        //                                       .Select(clu => clu.CustomerLocationID)
+        //                                       .ToList(),
 
-        //                                    // Linked CustomersLocationsUser IDs
-        //                                    LinkedCustomerUserLocationIds = db.CustomersLocationsUsers
-        //                                        .Where(clu => clu.LocationContactId == contact.LocationContactId)
-        //                                        .Select(clu => clu.CustomerUserLocationId)
-        //                                        .ToList(),
+        //                                   // Linked CustomersLocationsUser IDs
+        //                                   LinkedCustomerUserLocationIds = db.CustomersLocationsUsers
+        //                                       .Where(clu => clu.LocationContactId == contact.LocationContactId)
+        //                                       .Select(clu => clu.CustomerUserLocationId)
+        //                                       .ToList(),
 
-        //                                    // Comma-separated linked location names
-        //                                    LinkedLocationNames = string.Join(", ",
-        //                                        (from clu in db.CustomersLocationsUsers
-        //                                         join cl in db.CustomerLocations on clu.CustomerLocationID equals cl.CustomerLocationID
-        //                                         where clu.LocationContactId == contact.LocationContactId
-        //                                         select cl.LocationName).Distinct())
-        //                                }).FirstOrDefault();
+        //                                   // Comma-separated linked location names
+        //                                   LinkedLocationNames = string.Join(", ",
+        //                                       (from clu in db.CustomersLocationsUsers
+        //                                        join cl in db.CustomerLocations on clu.CustomerLocationID equals cl.CustomerLocationID
+        //                                        where clu.LocationContactId == contact.LocationContactId
+        //                                        select cl.LocationName).Distinct())
+        //                               }).FirstOrDefault();
 
-        //            if (customerUser != null)
-        //            {
-        //                return customerUser;
-        //            }
-        //            return null;
-        //        }
+        //           if (customerUser != null)
+        //           {
+        //               return customerUser;
+        //           }
+        //           return null;
+        //       }
 
         //    }
         //    catch (Exception ex)
         //    {
-        //        return null;                
+        //       return null;                
         //    }
 
         //}
@@ -2177,7 +2205,7 @@ namespace CamV4.Helper
                         _lContact.CreatedBy = d.CreatedBy;
                         _lContact.ModifiedDate = d.ModifiedDate;
                         _lContact.ModifiedBy = d.ModifiedBy;
-                        _lContact.UserID = d.UserID ?? 0;                    
+                        _lContact.UserID = d.UserID ?? 0;
 
                         var linkedLocations = (
                         from clu in db.CustomersLocationsUsers
@@ -2416,28 +2444,28 @@ namespace CamV4.Helper
                 //    var found = db.Users.Where(x => x.UserName == model.UserName).FirstOrDefault();
                 //    if(found == null)
                 //    {
-                //        user.UserName = model.UserName;
-                //        user.UserPassword = AccountController.MD5Hash(model.UserPassword);
-                //        user.UserType = 5;
-                //        user.IsActive = true;
-                //        user.CreatedDate = DateTime.Now;
-                //        user.ModifiedDate = DateTime.Now;
-                //        if (model.CreatedBy != null)
-                //        {
-                //            user.CreatedBy = model.CreatedBy;
-                //            user.ModifiedBy = model.CreatedBy;
-                //        }
-                //        else
-                //        {
-                //            user.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-                //            user.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-                //        }
-                //        db.Users.Add(user);
-                //        db.SaveChanges();
+                //       user.UserName = model.UserName;
+                //       user.UserPassword = AccountController.MD5Hash(model.UserPassword);
+                //       user.UserType = 5;
+                //       user.IsActive = true;
+                //       user.CreatedDate = DateTime.Now;
+                //       user.ModifiedDate = DateTime.Now;
+                //       if (model.CreatedBy != null)
+                //       {
+                //           user.CreatedBy = model.CreatedBy;
+                //           user.ModifiedBy = model.CreatedBy;
+                //       }
+                //       else
+                //       {
+                //           user.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+                //           user.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+                //       }
+                //       db.Users.Add(user);
+                //       db.SaveChanges();
 
-                //        if (user.UserId != 0)
-                //        {
-                //            contact.UserID = user.UserId;
+                //       if (user.UserId != 0)
+                //       {
+                //           contact.UserID = user.UserId;
                 contact.ContactName = model.ContactName;
                 contact.ContactEmail = model.ContactEmail;
                 contact.ContactPhone = model.ContactPhone;
@@ -3012,27 +3040,27 @@ namespace CamV4.Helper
                     }
 
                     //var existingCLU = db.CustomersLocationsUsers
-                    //                    .Where(x => x.LocationContactId == contact.LocationContactId)
-                    //                    .Select(x => x.CustomerUserLocationId)
-                    //                    .ToList();
+                    //                   .Where(x => x.LocationContactId == contact.LocationContactId)
+                    //                   .Select(x => x.CustomerUserLocationId)
+                    //                   .ToList();
 
                     //foreach (var locationIdStr in LocationIdsList)
                     //{
                     //    int locationId = Convert.ToInt32(locationIdStr);
                     //    if (!existingCLU.Contains(locationId))
                     //    {
-                    //        CustomersLocationsUser clu = new CustomersLocationsUser
-                    //        {
-                    //            LocationContactId = contact.LocationContactId,
-                    //            CustomerId = CustId,
-                    //            CustomerLocationID = locationId,
-                    //            CreatedDate = DateTime.Now,
-                    //            ModifiedDate = DateTime.Now,
-                    //            CreatedBy = model.CreatedBy ?? HttpContext.Current.Session["LoggedInUserId"].ToString(),
-                    //            ModifiedBy = model.CreatedBy ?? HttpContext.Current.Session["LoggedInUserId"].ToString()
-                    //        };
+                    //       CustomersLocationsUser clu = new CustomersLocationsUser
+                    //       {
+                    //           LocationContactId = contact.LocationContactId,
+                    //           CustomerId = CustId,
+                    //           CustomerLocationID = locationId,
+                    //           CreatedDate = DateTime.Now,
+                    //           ModifiedDate = DateTime.Now,
+                    //           CreatedBy = model.CreatedBy ?? HttpContext.Current.Session["LoggedInUserId"].ToString(),
+                    //           ModifiedBy = model.CreatedBy ?? HttpContext.Current.Session["LoggedInUserId"].ToString()
+                    //       };
 
-                    //        db.CustomersLocationsUsers.Add(clu);
+                    //       db.CustomersLocationsUsers.Add(clu);
                     //    }
                     //}
 
@@ -3658,15 +3686,25 @@ namespace CamV4.Helper
             }
         }
 
-        internal static List<Manufacturer> getAllManufacturer()
+        internal static List<Manufacturer> GetAllManufacturer(int manuType = 0)
         {
-            using (DatabaseEntities db = new DatabaseEntities())
+            using (var db = new DatabaseEntities())
             {
-                var list = db.Manufacturers.Where(x => x.IsActive == true).OrderBy(x => x.ManufacturerName).ToList();
-                if (list.Count != 0) { return list; }
-                return null;
+                var query = db.Manufacturers
+                              .Where(x => x.IsActive == true)
+                              .AsQueryable();
+
+                if (manuType == 1 || manuType == 2)
+                {
+                    query = query.Where(x => x.ManufacturerType == manuType);
+                }
+
+                return query
+                       .OrderBy(x => x.ManufacturerName)
+                       .ToList();
             }
         }
+
         internal static List<Manufacturer> getAllManufacturerByComponent(Int32 ComponentId)
         {
             using (DatabaseEntities db = new DatabaseEntities())
@@ -3708,6 +3746,7 @@ namespace CamV4.Helper
                 {
                     Manufacturer obj = new Manufacturer();
                     obj.ManufacturerName = model.ManufacturerName;
+                    obj.ManufacturerType = model.ManufacturerType;
                     obj.IsActive = true;
                     obj.CreatedDate = DateTime.Now;
                     obj.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
@@ -3734,6 +3773,7 @@ namespace CamV4.Helper
                     if (def != null)
                     {
                         def.ManufacturerName = model.ManufacturerName;
+                        def.ManufacturerType = model.ManufacturerType;
                         def.IsActive = true;
                         def.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
                         def.ModifiedDate = DateTime.Now;
@@ -4050,21 +4090,21 @@ namespace CamV4.Helper
             {
 
                 //ComponentPriceListViewModel objComponentPriceListViewModel = (from cpl in db.ComponentPriceLists
-                //            join c in db.Components on cpl.ComponentId equals c.ComponentId
-                //            join m in db.Manufacturers on cpl.ManufacturerId equals m.ManufacturerId
-                //            where cpl.ComponentPriceId == id
-                //            select new ComponentPriceListViewModel
-                //            {   
-                //                ComponentPriceId = cpl.ComponentPriceId,
-                //                ComponentId = c.ComponentId,
-                //                ComponentName = c.ComponentName,
-                //                ManufacturerId = cpl.ManufacturerId,
-                //                ManufacturerName = m.ManufacturerName,
-                //                ItemPartNo = cpl.ItemPartNo,
-                //                ComponentPriceDesc = cpl.ComponentPriceDesc,
-                //                ComponentPrice =cpl.ComponentPrice,
-                //                ComponentWeight =cpl.ComponentWeight
-                //            }).SingleOrDefault(); 
+                //           join c in db.Components on cpl.ComponentId equals c.ComponentId
+                //           join m in db.Manufacturers on cpl.ManufacturerId equals m.ManufacturerId
+                //           where cpl.ComponentPriceId == id
+                //           select new ComponentPriceListViewModel
+                //           {   
+                //               ComponentPriceId = cpl.ComponentPriceId,
+                //               ComponentId = c.ComponentId,
+                //               ComponentName = c.ComponentName,
+                //               ManufacturerId = cpl.ManufacturerId,
+                //               ManufacturerName = m.ManufacturerName,
+                //               ItemPartNo = cpl.ItemPartNo,
+                //               ComponentPriceDesc = cpl.ComponentPriceDesc,
+                //               ComponentPrice =cpl.ComponentPrice,
+                //               ComponentWeight =cpl.ComponentWeight
+                //           }).SingleOrDefault(); 
                 ComponentPriceListViewModel objComponentPriceListViewModel = (from cpl in db.ComponentPriceLists
                                                                               join c in db.Components on cpl.ComponentId equals c.ComponentId into componentGroup
                                                                               from c in componentGroup.DefaultIfEmpty()
@@ -5456,8 +5496,7 @@ namespace CamV4.Helper
             //if (HttpContext.Current.Session["LoggedInUserId"] == null)
             //{
             //    return Redirect("/Account/Login");
-            //    //return RedirectToAction("Login", "Account");
-            //}
+            //    //return RedirectToAction("Login", "Account");           
             using (DatabaseEntities db = new DatabaseEntities())
             {
                 try
@@ -5481,7 +5520,7 @@ namespace CamV4.Helper
                         _list.InspectionDocumentNoRef = list.InspectionDocumentNoRef;
                         list.FacilitiesAreasIds = RemoveDuplicates(list.FacilitiesAreasIds);
                         list.ProcessOverviewIds = RemoveDuplicates(list.ProcessOverviewIds);
-
+                        _list.ShelvingChecklist3A = list.ShelvingChecklist3A;
                         var sInspectionType = getInspectionTypeByCode(list.InspectionType);
                         if (sInspectionType != null)
                         {
@@ -5641,7 +5680,7 @@ namespace CamV4.Helper
                             _list.FacilitiesAreasIds = list.FacilitiesAreasIds;
                             //_list.FacilitiesAreas = fAreaName;
                         }
-
+                        _list.isShelvingCheckLists = 0;
                         if (list.FacilitiesAreasIds.Length != 0)
                         {
                             List<FacilitiesArea> objListfacilitiesAreas = new List<FacilitiesArea>();
@@ -5659,6 +5698,10 @@ namespace CamV4.Helper
                                         //objFacilitiesArea = fac;
                                         fAreaName += String.Concat(fac.FacilitiesAreaName + ",");
                                         objListfacilitiesAreas.Add(fac);
+                                        if (fac.FacilitiesAreaName.Contains("Shelving"))
+                                        {
+                                            _list.isShelvingCheckLists = 1;
+                                        }
 
                                     }
                                 }
@@ -5826,11 +5869,11 @@ namespace CamV4.Helper
                                     if (_list.InspectionStatus >= 7)
                                     {
                                         objInsDef.InspectionDeficiencyRequestQuotation = 0;
-                                        objInsDef.selectedReqQuote = 0;                                        
+                                        objInsDef.selectedReqQuote = 0;
                                     }
                                     else
                                     {
-                                        objInsDef.InspectionDeficiencyRequestQuotation = s.InspectionDeficiencyRequestQuotation;                                        
+                                        objInsDef.InspectionDeficiencyRequestQuotation = s.InspectionDeficiencyRequestQuotation;
                                         objInsDef.selectedReqQuote = s.InspectionDeficiencyRequestQuotation;
                                     }
                                 }
@@ -6087,13 +6130,145 @@ namespace CamV4.Helper
                                 _list.ListConclusionandRecommendationsViewModel = objDistinct;// iListConclusionandRecommendationsList;//.Select(o => o.DeficiencyID).Distinct();
                                 _list.iDefModel = iDefList;
                                 _list.iMTOModel = iMTOList;
-
-
                             }
-
                         }
 
+                        var shelvingCheckLists = db.ShelvingCheckLists
+                        .Where(x => x.InspectionId == id && x.IsDelete == false)
+                        .OrderBy(x => x.ShelvingCheckListId)
+                        .ToList();
 
+                        List<ShelvingCheckListViewModel> shelvingCheckListViewModels = new List<ShelvingCheckListViewModel>();
+
+                        foreach (var checklist in shelvingCheckLists)
+                        {
+                            ShelvingCheckListViewModel checklistVM = new ShelvingCheckListViewModel();
+
+                            // Basic checklist info
+                            checklistVM.ShelvingCheckListId = checklist.ShelvingCheckListId;
+                            checklistVM.InspectionId = checklist.InspectionId;
+                            checklistVM.ShelvingCheckListName = checklist.ShelvingCheckListName ?? "";
+                            checklistVM.ShelvingCheckListSection = checklist.ShelvingCheckListSection ?? "";
+                            if (checklist.ManufacturerId != 0)
+                            {
+                                var manufec = db.Manufacturers.Where(x => x.ManufacturerId == checklist.ManufacturerId).FirstOrDefault();
+                                if (manufec != null)
+                                {
+                                    checklistVM.ShelvingCheckListManufacturer = manufec.ManufacturerName;
+                                }
+                                else
+                                {
+                                    checklistVM.ShelvingCheckListManufacturer = "";
+                                }
+                            }
+                            else
+                            {
+                                checklistVM.ShelvingCheckListManufacturer = "";
+                            }
+                            checklistVM.ShelvingCheckListRowId = checklist.RowID ?? "";
+                            checklistVM.ShelvingCheckListBays = checklist.Bays ?? "";
+                            checklistVM.ShelvingCheckListNoOfShelvesBay = checklist.NoOfShelvesPerBay ?? "";
+                            checklistVM.ShelvingCheckListSize = "WIDTH " + checklist.ShelvingCheckListSizeWidthIn + " X DEPTH " + checklist.ShelvingCheckListSizeDepthIn + " X HEIGHT " + checklist.ShelvingCheckListSizeHeightIn;
+                            checklistVM.ShelvingCheckListPost = "WIDTH " + checklist.PostWidthIn + " X DEPTH " + checklist.PostDepthIn + " X THICKNESS " + checklist.PostThicknessIn;
+                            checklistVM.ShelvingCheckListPostType = !string.IsNullOrWhiteSpace(checklist.PostType) ? checklist.PostType.Trim() : string.Empty;
+                            checklistVM.ShelvingCheckListShelfBeam = "HEIGHT " + checklist.PostDepthIn + " X THICKNESS " + checklist.PostThicknessIn;
+                            checklistVM.ShelvingCheckListFrameConnector = checklist.FrameConnectorQty + " /FRAME" ?? "";
+                            checklistVM.ShelvingCheckListTieBar = Convert.ToString(checklist.TieBarQty) + " /LEVEL" ?? "";
+                            checklistVM.ShelvingCheckListCapacityForBay = checklist.CapacityForBay.HasValue ? checklist.CapacityForBay.Value + " LBS/BAY" : string.Empty;
+                            checklistVM.ShelvingCheckListCapacityforShelf = checklist.CapacityForShelf.HasValue ? checklist.CapacityForShelf.Value + " LBS/BAY" : string.Empty;
+
+                            // Get Type Name
+                            if (checklist.ShelvingCheckListTypeId != null && checklist.ShelvingCheckListTypeId != 0)
+                            {
+                                var checklistType = db.ShelvingCheckListTypes
+                                    .Where(x => x.ShelvingCheckListTypeId == checklist.ShelvingCheckListTypeId)
+                                    .FirstOrDefault();
+                                if (checklistType != null)
+                                {
+                                    checklistVM.ShelvingCheckListTypeName = checklistType.ShelvingCheckListTypeName;
+                                }
+                            }
+
+                            // Load Details (16 inspection items)
+                            var details = db.ShelvingCheckListDetails
+                                .Where(x => x.ShelvingCheckListId == checklist.ShelvingCheckListId && x.IsDelete == false)
+                                .OrderBy(x => x.ShelvingCheckListDeficiencyID)
+                                .ToList();
+
+                            List<ShelvingCheckListDetailViewModel> detailViewModels = new List<ShelvingCheckListDetailViewModel>();
+
+                            foreach (var detail in details)
+                            {
+                                ShelvingCheckListDetailViewModel detailVM = new ShelvingCheckListDetailViewModel();
+                                detailVM.ShelvingCheckListDetailId = detail.ShelvingCheckListDetailId;
+                                detailVM.ShelvingCheckListId = detail.ShelvingCheckListId;
+                                detailVM.ShelvingCheckListDeficiencyID = (int)detail.ShelvingCheckListDeficiencyID;
+                                detailVM.Tick_Yes = (bool)detail.Tick_Yes;
+                                detailVM.Tick_No = (bool)detail.Tick_No;
+                                detailVM.Tick_NA = (bool)detail.Tick_NA;
+                                detailVM.ShelvingCheckListDeficiencyComment = detail.Comments ?? "";
+
+                                // Get Deficiency Info
+                                if (detail.ShelvingCheckListDeficiencyID != null && detail.ShelvingCheckListDeficiencyID != 0)
+                                {
+                                    var deficiency = db.ShelvingCheckListDeficiencies
+                                        .Where(x => x.ShelvingCheckListDeficiencyID == detail.ShelvingCheckListDeficiencyID)
+                                        .FirstOrDefault();
+                                    if (deficiency != null)
+                                    {
+                                        detailVM.ShelvingCheckListDeficiencyInfo = deficiency.ShelvingCheckListDeficiencyInfo ?? "";
+                                    }
+                                }
+
+                                detailViewModels.Add(detailVM);
+                            }
+
+                            checklistVM.ShelvingCheckListDetails = detailViewModels;
+
+                            // Load Photos
+                            var photos = db.ShelvingCheckListPhotoes
+                                .Where(x => x.ShelvingCheckListId == checklist.ShelvingCheckListId)
+                                .ToList();
+
+                            List<ShelvingCheckListPhotoViewModel> photoViewModels = new List<ShelvingCheckListPhotoViewModel>();
+
+                            foreach (var photo in photos)
+                            {
+                                ShelvingCheckListPhotoViewModel photoVM = new ShelvingCheckListPhotoViewModel();
+                                photoVM.ShelvingCheckListPhotoId = photo.ShelvingCheckListPhotoId;
+                                photoVM.ShelvingCheckListId = photo.ShelvingCheckListId;
+                                photoVM.ShelvingCheckListPath = photo.ShelvingCheckListPath ?? "";
+
+
+                                if (!string.IsNullOrEmpty(photo.ShelvingCheckListPath))
+                                {
+                                    photoVM.ShelvingCheckListPathFull = host + "/img/ShelvingCheckList/" + photo.ShelvingCheckListPath;
+
+                                    string TempOutputPathShelving = Path.Combine(HostingEnvironment.MapPath("~/img/Shelvingchecklistthumb/"), photo.ShelvingCheckListPath);
+                                    if (!File.Exists(TempOutputPathShelving))
+                                    {
+                                        try
+                                        {
+                                            byte[] imageBytes = CreateThumbnail(photo.ShelvingCheckListPath, 100, 100);
+                                            var outputPath = Path.Combine(host + "/img/Shelvingchecklistthumb/", photo.ShelvingCheckListPath);
+                                            File.WriteAllBytes(TempOutputPathShelving, imageBytes);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                        }
+                                    }
+                                    photoVM.ShelvingCheckListPathFullThumb = host + "/img/Shelvingchecklistthumb/" + photo.ShelvingCheckListPath;
+                                }
+
+                                photoViewModels.Add(photoVM);
+                            }
+
+                            checklistVM.ShelvingCheckListPhotos = photoViewModels;
+
+                            shelvingCheckListViewModels.Add(checklistVM);
+                        }
+
+                        _list.ShelvingCheckLists = shelvingCheckListViewModels;
 
                         return _list;
                     }
@@ -6107,13 +6282,13 @@ namespace CamV4.Helper
         }
 
         internal static InspectionViewModel getInspectionDetailsForSheetMobile(long id)
-        {   
+        {
             using (DatabaseEntities db = new DatabaseEntities())
             {
                 try
                 {
                     InspectionViewModel _list = new InspectionViewModel();
-                    List<InspectionDeficiencyViewModel> iDefList = new List<InspectionDeficiencyViewModel>();                                        
+                    List<InspectionDeficiencyViewModel> iDefList = new List<InspectionDeficiencyViewModel>();
                     List<Deficiency> iListConclusionandRecommendationsList = new List<Deficiency>();
                     string tmpURL = HttpContext.Current.Request.Url.AbsoluteUri;
                     Uri url = new Uri(tmpURL);
@@ -6128,7 +6303,7 @@ namespace CamV4.Helper
                         _list.InspectionDocumentNoRef = list.InspectionDocumentNoRef;
                         list.FacilitiesAreasIds = RemoveDuplicates(list.FacilitiesAreasIds);
                         list.ProcessOverviewIds = RemoveDuplicates(list.ProcessOverviewIds);
-
+                        _list.ShelvingChecklist3A = list.ShelvingChecklist3A;
                         var sInspectionType = getInspectionTypeByCode(list.InspectionType);
                         if (sInspectionType != null)
                         {
@@ -6166,7 +6341,7 @@ namespace CamV4.Helper
                                 _list.empModel.MobileNo = emp.MobileNo;
                             }
                         }
-                        
+
                         _list.CustomerContactIds = list.CustomerContactIds;
                         if (list.CustomerContactIds != null)
                         {
@@ -6210,12 +6385,13 @@ namespace CamV4.Helper
                             _list.FacilitiesAreasIds = list.FacilitiesAreasIds;
                             //_list.FacilitiesAreas = fAreaName;
                         }
-
+                        _list.isShelvingCheckLists = 0;
                         if (list.FacilitiesAreasIds.Length != 0)
                         {
                             List<FacilitiesArea> objListfacilitiesAreas = new List<FacilitiesArea>();
                             string fAreaName = "";
                             string[] items = list.FacilitiesAreasIds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
                             foreach (var f in items)
                             {
                                 //FacilitiesArea objFacilitiesArea = new FacilitiesArea();
@@ -6228,7 +6404,10 @@ namespace CamV4.Helper
                                         //objFacilitiesArea = fac;
                                         fAreaName += String.Concat(fac.FacilitiesAreaName + ",");
                                         objListfacilitiesAreas.Add(fac);
-
+                                        if (fac.FacilitiesAreaName.Contains("Shelving"))
+                                        {
+                                            _list.isShelvingCheckLists = 1;
+                                        }
                                     }
                                 }
                             }
@@ -6481,6 +6660,141 @@ namespace CamV4.Helper
                                 List<Deficiency> objDistinct = iListConclusionandRecommendationsList.GroupBy(x => x.DeficiencyID).Select(g => g.First()).ToList();
                                 _list.ListConclusionandRecommendationsViewModel = objDistinct;// iListConclusionandRecommendationsList;//.Select(o => o.DeficiencyID).Distinct();
                                 _list.iDefModel = iDefList;
+
+                                var shelvingCheckLists = db.ShelvingCheckLists
+                        .Where(x => x.InspectionId == id && x.IsDelete == false)
+                        .OrderBy(x => x.ShelvingCheckListId)
+                        .ToList();
+
+                                List<ShelvingCheckListViewModel> shelvingCheckListViewModels = new List<ShelvingCheckListViewModel>();
+
+                                foreach (var checklist in shelvingCheckLists)
+                                {
+                                    ShelvingCheckListViewModel checklistVM = new ShelvingCheckListViewModel();
+
+                                    // Basic checklist info
+                                    checklistVM.ShelvingCheckListId = checklist.ShelvingCheckListId;
+                                    checklistVM.InspectionId = checklist.InspectionId;
+                                    checklistVM.ShelvingCheckListName = checklist.ShelvingCheckListName ?? "";
+                                    checklistVM.ShelvingCheckListSection = checklist.ShelvingCheckListSection ?? "";
+                                    if (checklist.ManufacturerId != 0)
+                                    {
+                                        var manufec = db.Manufacturers.Where(x => x.ManufacturerId == checklist.ManufacturerId).FirstOrDefault();
+                                        if (manufec != null)
+                                        {
+                                            checklistVM.ShelvingCheckListManufacturer = manufec.ManufacturerName;
+                                        }
+                                        else
+                                        {
+                                            checklistVM.ShelvingCheckListManufacturer = "";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        checklistVM.ShelvingCheckListManufacturer = "";
+                                    }
+                                    checklistVM.ShelvingCheckListRowId = checklist.RowID ?? "";
+                                    checklistVM.ShelvingCheckListBays = checklist.Bays ?? "";
+                                    checklistVM.ShelvingCheckListNoOfShelvesBay = checklist.NoOfShelvesPerBay ?? "";
+                                    checklistVM.ShelvingCheckListSize = "WIDTH " + checklist.ShelvingCheckListSizeWidthIn + " X DEPTH " + checklist.ShelvingCheckListSizeDepthIn + " X HEIGHT " + checklist.ShelvingCheckListSizeHeightIn;
+                                    checklistVM.ShelvingCheckListPost = "WIDTH " + checklist.PostWidthIn + " X DEPTH " + checklist.PostDepthIn + " X THICKNESS " + checklist.PostThicknessIn;
+                                    checklistVM.ShelvingCheckListPostType = !string.IsNullOrWhiteSpace(checklist.PostType) ? checklist.PostType.Trim() : string.Empty;
+                                    checklistVM.ShelvingCheckListShelfBeam = "HEIGHT " + checklist.PostDepthIn + " X THICKNESS " + checklist.PostThicknessIn;
+                                    checklistVM.ShelvingCheckListFrameConnector = checklist.FrameConnectorQty + " /FRAME" ?? "";
+                                    checklistVM.ShelvingCheckListTieBar = Convert.ToString(checklist.TieBarQty) + " /LEVEL" ?? "";
+                                    checklistVM.ShelvingCheckListCapacityForBay = checklist.CapacityForBay.HasValue ? checklist.CapacityForBay.Value + " LBS/BAY" : string.Empty;
+                                    checklistVM.ShelvingCheckListCapacityforShelf = checklist.CapacityForShelf.HasValue ? checklist.CapacityForShelf.Value + " LBS/BAY" : string.Empty;
+
+                                    // Get Type Name
+                                    if (checklist.ShelvingCheckListTypeId != null && checklist.ShelvingCheckListTypeId != 0)
+                                    {
+                                        var checklistType = db.ShelvingCheckListTypes
+                                            .Where(x => x.ShelvingCheckListTypeId == checklist.ShelvingCheckListTypeId)
+                                            .FirstOrDefault();
+                                        if (checklistType != null)
+                                        {
+                                            checklistVM.ShelvingCheckListTypeName = checklistType.ShelvingCheckListTypeName;
+                                        }
+                                    }
+
+                                    // Load Details (16 inspection items)
+                                    var details = db.ShelvingCheckListDetails
+                                        .Where(x => x.ShelvingCheckListId == checklist.ShelvingCheckListId && x.IsDelete == false)
+                                        .OrderBy(x => x.ShelvingCheckListDeficiencyID)
+                                        .ToList();
+
+                                    List<ShelvingCheckListDetailViewModel> detailViewModels = new List<ShelvingCheckListDetailViewModel>();
+
+                                    foreach (var detail in details)
+                                    {
+                                        ShelvingCheckListDetailViewModel detailVM = new ShelvingCheckListDetailViewModel();
+                                        detailVM.ShelvingCheckListDetailId = detail.ShelvingCheckListDetailId;
+                                        detailVM.ShelvingCheckListId = detail.ShelvingCheckListId;
+                                        detailVM.ShelvingCheckListDeficiencyID = (int)detail.ShelvingCheckListDeficiencyID;
+                                        detailVM.Tick_Yes = (bool)detail.Tick_Yes;
+                                        detailVM.Tick_No = (bool)detail.Tick_No;
+                                        detailVM.Tick_NA = (bool)detail.Tick_NA;
+                                        detailVM.ShelvingCheckListDeficiencyComment = detail.Comments ?? "";
+
+                                        // Get Deficiency Info
+                                        if (detail.ShelvingCheckListDeficiencyID != null && detail.ShelvingCheckListDeficiencyID != 0)
+                                        {
+                                            var deficiency = db.ShelvingCheckListDeficiencies
+                                                .Where(x => x.ShelvingCheckListDeficiencyID == detail.ShelvingCheckListDeficiencyID)
+                                                .FirstOrDefault();
+                                            if (deficiency != null)
+                                            {
+                                                detailVM.ShelvingCheckListDeficiencyInfo = deficiency.ShelvingCheckListDeficiencyInfo ?? "";
+                                            }
+                                        }
+
+                                        detailViewModels.Add(detailVM);
+                                    }
+
+                                    checklistVM.ShelvingCheckListDetails = detailViewModels;
+
+                                    // Load Photos
+                                    var photos = db.ShelvingCheckListPhotoes
+                                        .Where(x => x.ShelvingCheckListId == checklist.ShelvingCheckListId)
+                                        .ToList();
+
+                                    List<ShelvingCheckListPhotoViewModel> photoViewModels = new List<ShelvingCheckListPhotoViewModel>();
+
+                                    foreach (var photo in photos)
+                                    {
+                                        ShelvingCheckListPhotoViewModel photoVM = new ShelvingCheckListPhotoViewModel();
+                                        photoVM.ShelvingCheckListPhotoId = photo.ShelvingCheckListPhotoId;
+                                        photoVM.ShelvingCheckListId = photo.ShelvingCheckListId;
+                                        photoVM.ShelvingCheckListPath = photo.ShelvingCheckListPath ?? "";
+
+                                        // Build full URL for photo
+                                        if (!string.IsNullOrEmpty(photo.ShelvingCheckListPath))
+                                        {
+                                            photoVM.ShelvingCheckListPathFull = host + "/img/ShelvingCheckList/" + photo.ShelvingCheckListPath;
+                                            string TempOutputPathShelving = Path.Combine(HostingEnvironment.MapPath("~/img/Shelvingchecklistthumb/"), photo.ShelvingCheckListPath);
+                                            if (!File.Exists(TempOutputPathShelving))
+                                            {
+                                                try
+                                                {
+                                                    byte[] imageBytes = CreateThumbnail(photo.ShelvingCheckListPath, 100, 100);
+                                                    var outputPath = Path.Combine(host + "/img/Shelvingchecklistthumb/", photo.ShelvingCheckListPath);
+                                                    File.WriteAllBytes(TempOutputPathShelving, imageBytes);
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                }
+                                            }
+                                            photoVM.ShelvingCheckListPathFullThumb = host + "/img/Shelvingchecklistthumb/" + photo.ShelvingCheckListPath;
+                                        }
+                                        photoViewModels.Add(photoVM);
+                                    }
+
+                                    checklistVM.ShelvingCheckListPhotos = photoViewModels;
+
+                                    shelvingCheckListViewModels.Add(checklistVM);
+                                }
+
+                                _list.ShelvingCheckLists = shelvingCheckListViewModels;
                             }
                         }
                         return _list;
@@ -6501,31 +6815,31 @@ namespace CamV4.Helper
         //{
         //    try
         //    {
-        //        using (var db = new DatabaseEntities())
-        //        {
-        //            var inspection = db.Inspections.FirstOrDefault(x => x.InspectionId == id && x.IsActive == true);
-        //            if (inspection == null) return null;
+        //       using (var db = new DatabaseEntities())
+        //       {
+        //           var inspection = db.Inspections.FirstOrDefault(x => x.InspectionId == id && x.IsActive == true);
+        //           if (inspection == null) return null;
 
-        //            var model = InitializeInspectionModel(inspection);
+        //           var model = InitializeInspectionModel(inspection);
 
-        //            SetCustomerDetails(inspection, model, db);
-        //            SetLocationDetails(inspection, model, db);
-        //            SetEmployeeDetails(inspection, model, db);
+        //           SetCustomerDetails(inspection, model, db);
+        //           SetLocationDetails(inspection, model, db);
+        //           SetEmployeeDetails(inspection, model, db);
 
-        //            SetFacilitiesAreaDetails(inspection, model, db);
-        //            SetProcessOverviewDetails(inspection, model, db);
-        //            SetReferenceDocumentDetails(inspection, model, db);
+        //           SetFacilitiesAreaDetails(inspection, model, db);
+        //           SetProcessOverviewDetails(inspection, model, db);
+        //           SetReferenceDocumentDetails(inspection, model, db);
 
-        //            SetDrawingFiles(id, model, db);
-        //            SetQuotationAndDeficiencies(id, inspection, model, db);
+        //           SetDrawingFiles(id, model, db);
+        //           SetQuotationAndDeficiencies(id, inspection, model, db);
 
-        //            return model;
-        //        }
+        //           return model;
+        //       }
         //    }
         //    catch (Exception ex)
         //    {
-        //        // Log the error here
-        //        return null;
+        //       // Log the error here
+        //       return null;
         //    }
         //}
 
@@ -6533,16 +6847,16 @@ namespace CamV4.Helper
         //{
         //    return new InspectionViewModel
         //    {
-        //        InspectionId = inspection.InspectionId,
-        //        InspectionDocumentNo = inspection.InspectionDocumentNo,
-        //        InspectionDocumentNoRef = inspection.InspectionDocumentNoRef,
-        //        InspectionDate = inspection.InspectionDate,
-        //        Reportdate = inspection.Reportdate,
-        //        InspectionStatus = inspection.InspectionStatus,
-        //        CADDocuments = inspection.CADDocuments,
-        //        StampingEngineerId = inspection.StampingEngineerId,
-        //        FacilitiesAreasIds = RemoveDuplicates(inspection.FacilitiesAreasIds),
-        //        ProcessOverviewsIds = RemoveDuplicates(inspection.ProcessOverviewIds)
+        //       InspectionId = inspection.InspectionId,
+        //       InspectionDocumentNo = inspection.InspectionDocumentNo,
+        //       InspectionDocumentNoRef = inspection.InspectionDocumentNoRef,
+        //       InspectionDate = inspection.InspectionDate,
+        //       Reportdate = inspection.Reportdate,
+        //       InspectionStatus = inspection.InspectionStatus,
+        //       CADDocuments = inspection.CADDocuments,
+        //       StampingEngineerId = inspection.StampingEngineerId,
+        //       FacilitiesAreasIds = RemoveDuplicates(inspection.FacilitiesAreasIds),
+        //       ProcessOverviewsIds = RemoveDuplicates(inspection.ProcessOverviewIds)
         //    };
         //}
 
@@ -6551,16 +6865,16 @@ namespace CamV4.Helper
         //    var customer = db.Customers.FirstOrDefault(x => x.CustomerId == inspection.CustomerId);
         //    if (customer != null)
         //    {
-        //        model.CustomerName = customer.CustomerName;
-        //        model.CustomerAddress = customer.Address + ", " + customer.City + ", " + customer.State + ", " + customer.Country;
+        //       model.CustomerName = customer.CustomerName;
+        //       model.CustomerAddress = customer.Address + ", " + customer.City + ", " + customer.State + ", " + customer.Country;
         //    }
 
         //    var contact = db.CustomerContacts.FirstOrDefault(x => x.CustomerContactId == inspection.CustomerContactId);
         //    if (contact != null)
         //    {
-        //        model.ContactName = contact.ContactName;
-        //        model.ContactNo = contact.ContactNo;
-        //        model.ContactEmail = contact.ContactEmail;
+        //       model.ContactName = contact.ContactName;
+        //       model.ContactNo = contact.ContactNo;
+        //       model.ContactEmail = contact.ContactEmail;
         //    }
         //}
 
@@ -6584,9 +6898,9 @@ namespace CamV4.Helper
         //{
         //    if (!string.IsNullOrEmpty(model.FacilitiesAreasIds))
         //    {
-        //        var ids = model.FacilitiesAreasIds.Split(',').Select(long.Parse).ToList();
-        //        model.FacilitiesAreaNames = db.FacilitiesAreas.Where(x => ids.Contains(x.FacilitiesAreaId))
-        //            .Select(x => x.FacilitiesAreaName).ToList();
+        //       var ids = model.FacilitiesAreasIds.Split(',').Select(long.Parse).ToList();
+        //       model.FacilitiesAreaNames = db.FacilitiesAreas.Where(x => ids.Contains(x.FacilitiesAreaId))
+        //           .Select(x => x.FacilitiesAreaName).ToList();
         //    }
         //}
 
@@ -6594,9 +6908,9 @@ namespace CamV4.Helper
         //{
         //    if (!string.IsNullOrEmpty(model.ProcessOverviewsIds))
         //    {
-        //        var ids = model.ProcessOverviewsIds.Split(',').Select(long.Parse).ToList();
-        //        model.ProcessOverviewNames = db.ProcessOverviews.Where(x => ids.Contains(x.ProcessOverviewId))
-        //            .Select(x => x.Description).ToList();
+        //       var ids = model.ProcessOverviewsIds.Split(',').Select(long.Parse).ToList();
+        //       model.ProcessOverviewNames = db.ProcessOverviews.Where(x => ids.Contains(x.ProcessOverviewId))
+        //           .Select(x => x.Description).ToList();
         //    }
         //}
 
@@ -6604,9 +6918,9 @@ namespace CamV4.Helper
         //{
         //    if (!string.IsNullOrEmpty(inspection.ReferenceDocuments))
         //    {
-        //        var ids = inspection.ReferenceDocuments.Split(',').Select(long.Parse).ToList();
-        //        model.ReferenceDocumentNames = db.ReferenceDocuments.Where(x => ids.Contains(x.ReferenceDocumentId))
-        //            .Select(x => x.DocumentName).ToList();
+        //       var ids = inspection.ReferenceDocuments.Split(',').Select(long.Parse).ToList();
+        //       model.ReferenceDocumentNames = db.ReferenceDocuments.Where(x => ids.Contains(x.ReferenceDocumentId))
+        //           .Select(x => x.DocumentName).ToList();
         //    }
         //}
 
@@ -6617,20 +6931,20 @@ namespace CamV4.Helper
         //    string host = url.GetLeftPart(UriPartial.Authority);
 
         //    var drawings = db.InspectionFileDrawings
-        //        .Where(d => d.InspectionId == id && (d.IsDeleted == 0 || d.IsDeleted == null))
-        //        .ToList();
+        //       .Where(d => d.InspectionId == id && (d.IsDeleted == 0 || d.IsDeleted == null))
+        //       .ToList();
 
         //    model.ListInspectionFileDrawing = drawings
-        //        .GroupBy(x => x.FileCategory)
-        //        .Select(group => new InspectionFileDrawingViewModel
-        //        {
-        //            FileCategory = group.Key,
-        //            inspectionFileDrawingChildViewModels = group.Select(file => new InspectionFileDrawingChildViewModel
-        //            {
-        //                FileDrawingName = file.FileDrawingName,
-        //                FileDrawingPath = host + "/DrawingFiles/" + file.FileDrawingPath
-        //            }).ToList()
-        //        }).ToList();
+        //       .GroupBy(x => x.FileCategory)
+        //       .Select(group => new InspectionFileDrawingViewModel
+        //       {
+        //           FileCategory = group.Key,
+        //           inspectionFileDrawingChildViewModels = group.Select(file => new InspectionFileDrawingChildViewModel
+        //           {
+        //               FileDrawingName = file.FileDrawingName,
+        //               FileDrawingPath = host + "/DrawingFiles/" + file.FileDrawingPath
+        //           }).ToList()
+        //       }).ToList();
         //}
 
         //private static void SetQuotationAndDeficiencies(long id, Inspection inspection, InspectionViewModel model, DatabaseEntities db)
@@ -6640,24 +6954,24 @@ namespace CamV4.Helper
         //    var conclusionList = new List<Deficiency>();
 
         //    var deficiencies = db.InspectionDeficiencies
-        //        .Where(x => x.InspectionId == id && (x.IsDelete == false || x.IsDelete == null))
-        //        .ToList();
+        //       .Where(x => x.InspectionId == id && (x.IsDelete == false || x.IsDelete == null))
+        //       .ToList();
 
         //    string host = new Uri(HttpContext.Current.Request.Url.AbsoluteUri).GetLeftPart(UriPartial.Authority);
 
         //    foreach (var def in deficiencies)
         //    {
-        //        var defViewModel = MapDeficiencyToViewModel(def, model.InspectionStatus, db, host);
-        //        var mtoList = MapDeficiencyMTO(def.InspectionDeficiencyId, def.RowNo, def.Severity_IndexNo, db);
+        //       var defViewModel = MapDeficiencyToViewModel(def, model.InspectionStatus, db, host);
+        //       var mtoList = MapDeficiencyMTO(def.InspectionDeficiencyId, def.RowNo, def.Severity_IndexNo, db);
 
-        //        iDefList.Add(defViewModel);
-        //        iMTOList.AddRange(mtoList);
+        //       iDefList.Add(defViewModel);
+        //       iMTOList.AddRange(mtoList);
 
-        //        if (def.DeficiencyID.HasValue)
-        //        {
-        //            var baseDef = db.Deficiencies.FirstOrDefault(x => x.DeficiencyID == def.DeficiencyID.Value);
-        //            if (baseDef != null) conclusionList.Add(baseDef);
-        //        }
+        //       if (def.DeficiencyID.HasValue)
+        //       {
+        //           var baseDef = db.Deficiencies.FirstOrDefault(x => x.DeficiencyID == def.DeficiencyID.Value);
+        //           if (baseDef != null) conclusionList.Add(baseDef);
+        //       }
         //    }
 
         //    model.iDefModel = iDefList;
@@ -6669,28 +6983,28 @@ namespace CamV4.Helper
         //{
         //    var viewModel = new InspectionDeficiencyViewModel
         //    {
-        //        InspectionDeficiencyId = def.InspectionDeficiencyId,
-        //        DeficiencyDescription = def.DeficiencyDescription,
-        //        IsTechnician = def.IsTechnician,
-        //        IsAdmin = def.IsAdmin,
-        //        RowNo = def.RowNo,
-        //        Severity_IndexNo = def.Severity_IndexNo,
-        //        ActionTaken = def.ActionTaken,
-        //        PhotoUrls = new List<string>()
+        //       InspectionDeficiencyId = def.InspectionDeficiencyId,
+        //       DeficiencyDescription = def.DeficiencyDescription,
+        //       IsTechnician = def.IsTechnician,
+        //       IsAdmin = def.IsAdmin,
+        //       RowNo = def.RowNo,
+        //       Severity_IndexNo = def.Severity_IndexNo,
+        //       ActionTaken = def.ActionTaken,
+        //       PhotoUrls = new List<string>()
         //    };
 
         //    var photos = db.InspectionDeficiencyPhotos
-        //        .Where(p => p.InspectionDeficiencyId == def.InspectionDeficiencyId && (p.IsDeleted == false || p.IsDeleted == null))
-        //        .ToList();
+        //       .Where(p => p.InspectionDeficiencyId == def.InspectionDeficiencyId && (p.IsDeleted == false || p.IsDeleted == null))
+        //       .ToList();
 
         //    foreach (var photo in photos)
         //    {
-        //        try
-        //        {
-        //            string fullUrl = host + "/DeficiencyPhotos/" + photo.PhotoPath;
-        //            viewModel.PhotoUrls.Add(fullUrl);
-        //        }
-        //        catch { }
+        //       try
+        //       {
+        //           string fullUrl = host + "/DeficiencyPhotos/" + photo.PhotoPath;
+        //           viewModel.PhotoUrls.Add(fullUrl);
+        //       }
+        //       catch { }
         //    }
 
         //    return viewModel;
@@ -6703,16 +7017,16 @@ namespace CamV4.Helper
 
         //    foreach (var mto in mtoList)
         //    {
-        //        var item = new InspectionDeficiencyMTOViewModel
-        //        {
-        //            InspectionDeficiencyId = defId,
-        //            RowNo = rowNo,
-        //            Severity_IndexNo = severity,
-        //            ComponentName = db.Components.FirstOrDefault(c => c.ComponentId == mto.ComponentId)?.ComponentName,
-        //            ManufacturerName = db.Manufacturers.FirstOrDefault(m => m.ManufacturerId == mto.ManufacturerId)?.ManufacturerName,
-        //            Quantity = mto.Quantity
-        //        };
-        //        result.Add(item);
+        //       var item = new InspectionDeficiencyMTOViewModel
+        //       {
+        //           InspectionDeficiencyId = defId,
+        //           RowNo = rowNo,
+        //           Severity_IndexNo = severity,
+        //           ComponentName = db.Components.FirstOrDefault(c => c.ComponentId == mto.ComponentId)?.ComponentName,
+        //           ManufacturerName = db.Manufacturers.FirstOrDefault(m => m.ManufacturerId == mto.ManufacturerId)?.ManufacturerName,
+        //           Quantity = mto.Quantity
+        //       };
+        //       result.Add(item);
         //    }
 
         //    return result;
@@ -6845,41 +7159,41 @@ namespace CamV4.Helper
         //    // Check if the file exists
         //    if (File.Exists(filePath))
         //    {
-        //        // Load the image from the file
-        //        using (var image = Image.FromFile(filePath))
-        //        {
-        //            // Calculate dimensions for the thumbnail
-        //            int thumbnailWidth, thumbnailHeight;
-        //            if (image.Width <= maxWidth && image.Height <= maxHeight)
-        //            {
-        //                // If the image is already within the bounds, no need to resize
-        //                thumbnailWidth = image.Width;
-        //                thumbnailHeight = image.Height;
-        //            }
-        //            else
-        //            {
-        //                // Calculate new dimensions while preserving the aspect ratio
-        //                double ratioX = (double)maxWidth / image.Width;
-        //                double ratioY = (double)maxHeight / image.Height;
-        //                double ratio = Math.Min(ratioX, ratioY);
+        //       // Load the image from the file
+        //       using (var image = Image.FromFile(filePath))
+        //       {
+        //           // Calculate dimensions for the thumbnail
+        //           int thumbnailWidth, thumbnailHeight;
+        //           if (image.Width <= maxWidth && image.Height <= maxHeight)
+        //           {
+        //               // If the image is already within the bounds, no need to resize
+        //               thumbnailWidth = image.Width;
+        //               thumbnailHeight = image.Height;
+        //           }
+        //           else
+        //           {
+        //               // Calculate new dimensions while preserving the aspect ratio
+        //               double ratioX = (double)maxWidth / image.Width;
+        //               double ratioY = (double)maxHeight / image.Height;
+        //               double ratio = Math.Min(ratioX, ratioY);
 
-        //                thumbnailWidth = (int)(image.Width * ratio);
-        //                thumbnailHeight = (int)(image.Height * ratio);
-        //            }
+        //               thumbnailWidth = (int)(image.Width * ratio);
+        //               thumbnailHeight = (int)(image.Height * ratio);
+        //           }
 
-        //            // Create a new bitmap with the calculated dimensions
-        //            using (var thumbnailImage = new Bitmap(thumbnailWidth, thumbnailHeight))
-        //            using (var graphics = Graphics.FromImage(thumbnailImage))
-        //            {
-        //                graphics.DrawImage(image, 0, 0, thumbnailWidth, thumbnailHeight);
+        //           // Create a new bitmap with the calculated dimensions
+        //           using (var thumbnailImage = new Bitmap(thumbnailWidth, thumbnailHeight))
+        //           using (var graphics = Graphics.FromImage(thumbnailImage))
+        //           {
+        //               graphics.DrawImage(image, 0, 0, thumbnailWidth, thumbnailHeight);
 
-        //                using (var stream = new MemoryStream())
-        //                {
-        //                    thumbnailImage.Save(stream, ImageFormat.Jpeg);
-        //                    return stream.ToArray();
-        //                }
-        //            }
-        //        }
+        //               using (var stream = new MemoryStream())
+        //               {
+        //                   thumbnailImage.Save(stream, ImageFormat.Jpeg);
+        //                   return stream.ToArray();
+        //               }
+        //           }
+        //       }
         //    }
         //    return null;
         //}
@@ -6891,17 +7205,17 @@ namespace CamV4.Helper
 
         //    if (!System.IO.File.Exists(filePath))
         //    {
-        //        throw new FileNotFoundException("Image not found", filename);
+        //       throw new FileNotFoundException("Image not found", filename);
         //    }
 
         //    using (var image = System.Drawing.Image.FromFile(filePath))
         //    {
-        //        var resizedImage = new Bitmap(image, new Size(width, height));
-        //        using (var stream = new MemoryStream())
-        //        {
-        //            resizedImage.Save(stream, ImageFormat.Jpeg);
-        //            return stream.ToArray();
-        //        }
+        //       var resizedImage = new Bitmap(image, new Size(width, height));
+        //       using (var stream = new MemoryStream())
+        //       {
+        //           resizedImage.Save(stream, ImageFormat.Jpeg);
+        //           return stream.ToArray();
+        //       }
         //    }
         //}
 
@@ -7227,33 +7541,33 @@ namespace CamV4.Helper
                 //{
                 //    if (userId != 0)
                 //    {
-                //        var customer = db.Customers.Where(x => x.UserID == userId).FirstOrDefault();
-                //        if (customer != null)
-                //        {
-                //            var list = getAllDueInspection();//Inspection table
-                //            var itm = list.Where(x => x.CustomerId == customer.CustomerId).OrderByDescending(x => x.CreatedBy).Take(10).ToList();
-                //            if (itm != null)
-                //            {
-                //                return itm;
-                //            }
-                //        }
-                //        else
-                //        {
-                //            var usr = db.Users.Where(x => x.UserId == userId).FirstOrDefault();
-                //            if (usr != null)
-                //            {
-                //                if (usr.UserType == 9)
-                //                {
-                //                    var locationContactIds = db.CustomerLocationContacts.Where(clc => clc.UserID == userId).Select(clc => clc.LocationContactId).ToList();
-                //                    var customerLocationIds = db.CustomersLocationsUsers.Where(clu => locationContactIds.Contains(clu.LocationContactId)).Select(clu => clu.CustomerLocationID).Distinct().ToList();
-                //                    var list = getAllDueInspection().Where(i => customerLocationIds.Contains(i.CustomerLocationId)).OrderByDescending(i => i.CreatedBy).Take(10).ToList();
-                //                    if (list != null)
-                //                    {
-                //                        return list;
-                //                    }
-                //                }
-                //            }
-                //        }
+                //       var customer = db.Customers.Where(x => x.UserID == userId).FirstOrDefault();
+                //       if (customer != null)
+                //       {
+                //           var list = getAllDueInspection();//Inspection table
+                //           var itm = list.Where(x => x.CustomerId == customer.CustomerId).OrderByDescending(x => x.CreatedBy).Take(10).ToList();
+                //           if (itm != null)
+                //           {
+                //               return itm;
+                //           }
+                //       }
+                //       else
+                //       {
+                //           var usr = db.Users.Where(x => x.UserId == userId).FirstOrDefault();
+                //           if (usr != null)
+                //           {
+                //               if (usr.UserType == 9)
+                //               {
+                //                   var locationContactIds = db.CustomerLocationContacts.Where(clc => clc.UserID == userId).Select(clc => clc.LocationContactId).ToList();
+                //                   var customerLocationIds = db.CustomersLocationsUsers.Where(clu => locationContactIds.Contains(clu.LocationContactId)).Select(clu => clu.CustomerLocationID).Distinct().ToList();
+                //                   var list = getAllDueInspection().Where(i => customerLocationIds.Contains(i.CustomerLocationId)).OrderByDescending(i => i.CreatedBy).Take(10).ToList();
+                //                   if (list != null)
+                //                   {
+                //                       return list;
+                //                   }
+                //               }
+                //           }
+                //       }
                 //    }
                 //}                
                 //return null;
@@ -8022,7 +8336,7 @@ namespace CamV4.Helper
                     return strReturn + "|" + obj.InspectionDeficiencyId.ToString();
                 }
                 catch (Exception ex)
-                {                    
+                {
                     Logger.Info("Error in saving Inspection Deficiency in saveInspectionDeficiency function with details like " + ex.Message.ToString() + " at " + DateTime.Now);
                     if (strReturn != "")
                     {
@@ -8072,11 +8386,11 @@ namespace CamV4.Helper
                             });
                             Logger.Error($"Error saving deficiency ID {model.InspectionDeficiencyId}: {ex.Message}");
                         }
-                    }                    
+                    }
                     Logger.Info($"Bulk save completed: {result.SuccessCount} succeeded, {result.FailedCount} failed");
                 }
                 catch (Exception ex)
-                {                   
+                {
                     Logger.Error("Transaction rolled back in bulk save: " + ex.Message);
                     throw;
                 }
@@ -8156,7 +8470,7 @@ namespace CamV4.Helper
             catch (Exception ex)
             {
                 result.ErrorMessage = ex.Message;
-                Logger.Error($"Error in SaveSingleDeficiency: " + ex.Message);
+                Logger.Error("Error in SaveSingleDeficiency: " + ex.Message);
             }
 
             return result;
@@ -8280,15 +8594,16 @@ namespace CamV4.Helper
         }
 
 
-        internal static string SaveUpdateApproveInspectionAdmin(long inspectionId, int iInspectionStatus, string iAdminIspectionDeficiencyIdStatus, long iStampingEngineerId, string sCheckedDocument)
+        internal static string SaveUpdateApproveInspectionAdmin(long inspectionId, int iInspectionStatus, string iAdminIspectionDeficiencyIdStatus, long iStampingEngineerId, string sCheckedDocument, string ShelvingChecklist3A)
         {
             try
             {
                 using (DatabaseEntities db = new DatabaseEntities())
                 {
+
+                    var itm = db.Inspections.Where(x => x.InspectionId == inspectionId).FirstOrDefault();
                     if (iInspectionStatus != 9)
                     {
-                        var itm = db.Inspections.Where(x => x.InspectionId == inspectionId).FirstOrDefault();
                         if (itm != null)
                         {
                             if (sCheckedDocument != null)
@@ -8298,6 +8613,12 @@ namespace CamV4.Helper
                                 db.SaveChanges();
                             }
                         }
+                    }
+                    if (itm != null)
+                    {
+                        itm.ShelvingChecklist3A = ShelvingChecklist3A;
+                        db.Entry(itm).State = EntityState.Modified;
+                        db.SaveChanges();
                     }
                 }
 
@@ -8385,10 +8706,10 @@ namespace CamV4.Helper
 
                     List<QuotationSetting> quotationBasicDetails = db.QuotationSettings.ToList();
                     //// (from Qs in db.QuotationSettings                                                                    select new QuotationSetting
-                    //                                                {
-                    //                                                    QuotationSettingType = Qs.QuotationSettingType,
-                    //                                                    QuotationSettingValue = Qs.QuotationSettingValue
-                    //                                                }).ToList();
+                    //                                               {
+                    //                                                   QuotationSettingType = Qs.QuotationSettingType,
+                    //                                                   QuotationSettingValue = Qs.QuotationSettingValue
+                    //                                               }).ToList();
 
                     foreach (var item in quotationBasicDetails)
                     {
@@ -8408,7 +8729,7 @@ namespace CamV4.Helper
                     }
 
                     //var inspectionDeficiency = db.InspectionDeficiencies
-                    //                    .Where(x => x.InspectionId == inspectionId).ToList();
+                    //                   .Where(x => x.InspectionId == inspectionId).ToList();
                     //foreach (var deficiency in inspectionDeficiency)
                     //{
                     //    deficiency.InspectionDeficiencyRequestQuotation = 0;
@@ -8416,7 +8737,7 @@ namespace CamV4.Helper
                     //}
                     //db.SaveChanges();
 
-                    //                  db.InspectionDeficiencies
+                    //                 db.InspectionDeficiencies
                     //.Where(x => x.InspectionId == inspectionId)
                     //.Update(x => new InspectionDeficiency
                     //{
@@ -8437,8 +8758,8 @@ namespace CamV4.Helper
                     }
                     //sQuotationNotes = (sQuotationNotes ?? string.Empty).Trim();
                     //var deficienciesToUpdate = db.InspectionDeficiencies
-                    //                  .Where(x => sCustomerSelectedDeficiencyIds.Contains(x.InspectionDeficiencyId.ToString()) && x.InspectionId == inspectionId)
-                    //                  .ToList();
+                    //                 .Where(x => sCustomerSelectedDeficiencyIds.Contains(x.InspectionDeficiencyId.ToString()) && x.InspectionId == inspectionId)
+                    //                 .ToList();
 
                     //foreach (var deficiency in deficienciesToUpdate)
                     //{
@@ -8625,21 +8946,21 @@ namespace CamV4.Helper
                             //objComponentPropertiesMatchInput.objComponentPropertiesMatchList = objComponentPropertiesMatchList;
 
                             //var resultComponentDetails = from mt in db.InspectionDeficiencyMTOes
-                            //                             join imd in db.InspectionDeficiencyMTODetails on mt.InspectionDeficiencyMTOId equals imd.InspectionDeficiencyMTOId
-                            //                             join cpv in db.ComponentPropertyValues on new { imd.ComponentPropertyTypeId, imd.ComponentPropertyValueId }
-                            //                             equals new { cpv.ComponentPropertyTypeId, cpv.ComponentPropertyValueId }
-                            //                             join cpt in db.ComponentPropertyTypes on imd.ComponentPropertyTypeId equals cpt.ComponentPropertyTypeId
-                            //                             where mt.InspectionDeficiencyMTOId == QuotationItemChild.InspectionDeficiencyMTOId
-                            //                             select new
-                            //                             {
-                            //                                 mt.ManufacturerId,
-                            //                                 mt.ComponentId,
-                            //                                 imd.InspectionDeficiencyMTOId,
-                            //                                 imd.ComponentPropertyTypeId,
-                            //                                 imd.ComponentPropertyValueId,
-                            //                                 cpv.ComponentPropertyValue1,
-                            //                                 cpt.ComponentPropertyTypeName
-                            //                             };
+                            //                            join imd in db.InspectionDeficiencyMTODetails on mt.InspectionDeficiencyMTOId equals imd.InspectionDeficiencyMTOId
+                            //                            join cpv in db.ComponentPropertyValues on new { imd.ComponentPropertyTypeId, imd.ComponentPropertyValueId }
+                            //                            equals new { cpv.ComponentPropertyTypeId, cpv.ComponentPropertyValueId }
+                            //                            join cpt in db.ComponentPropertyTypes on imd.ComponentPropertyTypeId equals cpt.ComponentPropertyTypeId
+                            //                            where mt.InspectionDeficiencyMTOId == QuotationItemChild.InspectionDeficiencyMTOId
+                            //                            select new
+                            //                            {
+                            //                                mt.ManufacturerId,
+                            //                                mt.ComponentId,
+                            //                                imd.InspectionDeficiencyMTOId,
+                            //                                imd.ComponentPropertyTypeId,
+                            //                                imd.ComponentPropertyValueId,
+                            //                                cpv.ComponentPropertyValue1,
+                            //                                cpt.ComponentPropertyTypeName
+                            //                            };
 
                             //List<ComponentPriceListViewModel> objInnerComponentPriceListViewModelList = new List<ComponentPriceListViewModel>();
                             //if (resultComponentDetails.Any())
@@ -8649,38 +8970,38 @@ namespace CamV4.Helper
                             //    {
 
 
-                            //        //if (itemChild.ComponentPropertyTypeName == "Type")
-                            //        //{
-                            //        //    ComponentPropertiesMatchList objTempComponentPropertiesMatchList = new ComponentPropertiesMatchList();
-                            //        //    objTempComponentPropertiesMatchList.ComponentPropertyType = "Type";
-                            //        //    objTempComponentPropertiesMatchList.ComponentPropertyValue = itemChild.ComponentPropertyValue1.ToUpper();
-                            //        //    strComponentDescBuilder.Append(" " + itemChild.ComponentPropertyValue1.ToUpper());
-                            //        //    objComponentPropertiesMatchList.Add(objTempComponentPropertiesMatchList);
-                            //        //}
-                            //        //else
-                            //        //{
+                            //       //if (itemChild.ComponentPropertyTypeName == "Type")
+                            //       //{
+                            //       //    ComponentPropertiesMatchList objTempComponentPropertiesMatchList = new ComponentPropertiesMatchList();
+                            //       //    objTempComponentPropertiesMatchList.ComponentPropertyType = "Type";
+                            //       //    objTempComponentPropertiesMatchList.ComponentPropertyValue = itemChild.ComponentPropertyValue1.ToUpper();
+                            //       //    strComponentDescBuilder.Append(" " + itemChild.ComponentPropertyValue1.ToUpper());
+                            //       //    objComponentPropertiesMatchList.Add(objTempComponentPropertiesMatchList);
+                            //       //}
+                            //       //else
+                            //       //{
 
-                            //        //    //if (itemChild.ComponentPropertyValue1.Contains("/"))
-                            //        //    //{
-                            //        //    //    strComponentDescBuilder.Append(" " + ConvertMixedFractionToDecimal(itemChild.ComponentPropertyValue1).ToString());
-                            //        //    //}
-                            //        //    //else
-                            //        //    //{
-                            //        //    strComponentDescBuilder.Append(" " + itemChild.ComponentPropertyValue1);
-                            //        //    //}
+                            //       //    //if (itemChild.ComponentPropertyValue1.Contains("/"))
+                            //       //    //{
+                            //       //    //    strComponentDescBuilder.Append(" " + ConvertMixedFractionToDecimal(itemChild.ComponentPropertyValue1).ToString());
+                            //       //    //}
+                            //       //    //else
+                            //       //    //{
+                            //       //    strComponentDescBuilder.Append(" " + itemChild.ComponentPropertyValue1);
+                            //       //    //}
 
-                            //        //    ComponentPropertiesMatchList newComponentPropertyMatch = new ComponentPropertiesMatchList
-                            //        //    {
-                            //        //        //ComponentPropertyType = itemChild.ComponentPropertyTypeName,
-                            //        //        //ComponentPropertyValue = itemChild.ComponentPropertyValue1.Contains("/")
-                            //        //        //    ? ConvertMixedFractionToDecimal(itemChild.ComponentPropertyValue1).ToString()
-                            //        //        //    : itemChild.ComponentPropertyValue1.Replace("\"", "")
-                            //        //        ComponentPropertyType = itemChild.ComponentPropertyTypeName,
-                            //        //        ComponentPropertyValue = itemChild.ComponentPropertyValue1.Replace("\"", "")
-                            //        //    };
+                            //       //    ComponentPropertiesMatchList newComponentPropertyMatch = new ComponentPropertiesMatchList
+                            //       //    {
+                            //       //       //ComponentPropertyType = itemChild.ComponentPropertyTypeName,
+                            //       //       //ComponentPropertyValue = itemChild.ComponentPropertyValue1.Contains("/")
+                            //       //       //    ? ConvertMixedFractionToDecimal(itemChild.ComponentPropertyValue1).ToString()
+                            //       //       //    : itemChild.ComponentPropertyValue1.Replace("\"", "")
+                            //       //       ComponentPropertyType = itemChild.ComponentPropertyTypeName,
+                            //       //       ComponentPropertyValue = itemChild.ComponentPropertyValue1.Replace("\"", "")
+                            //       //    };
 
-                            //        //    objComponentPropertiesMatchList.Add(newComponentPropertyMatch);
-                            //        //}
+                            //       //    objComponentPropertiesMatchList.Add(newComponentPropertyMatch);
+                            //       //}
                             //    }
                             //}
                             //int iComponentChildCount = 0;
@@ -8707,10 +9028,10 @@ namespace CamV4.Helper
 
                             //    foreach (var itemDetails in itmComponentPriceDetail)
                             //    {
-                            //        ComponentPriceListViewModelDetails objComponentPriceListDetailTemp = new ComponentPriceListViewModelDetails();
-                            //        objComponentPriceListDetailTemp.ComponentPropertyTypeId = itemDetails.ComponentPropertyTypeId;
-                            //        objComponentPriceListDetailTemp.ComponentPricePropertyValue = itemDetails.ComponentPricePropertyValue;
-                            //        objInnerComponentPriceListDetail.Add(objComponentPriceListDetailTemp);
+                            //       ComponentPriceListViewModelDetails objComponentPriceListDetailTemp = new ComponentPriceListViewModelDetails();
+                            //       objComponentPriceListDetailTemp.ComponentPropertyTypeId = itemDetails.ComponentPropertyTypeId;
+                            //       objComponentPriceListDetailTemp.ComponentPricePropertyValue = itemDetails.ComponentPricePropertyValue;
+                            //       objInnerComponentPriceListDetail.Add(objComponentPriceListDetailTemp);
                             //    }
                             //    objInnerComponentPriceListViewModel.ComponentPriceListViewModelDetails = objInnerComponentPriceListDetail;
                             //    objInnerComponentPriceListViewModelList.Add(objInnerComponentPriceListViewModel);
@@ -8726,44 +9047,44 @@ namespace CamV4.Helper
                             //    i = 0;
                             //    foreach (var item2 in objComponentPropertiesMatchInput.objComponentPropertiesMatchList)
                             //    {
-                            //        if (item2.ComponentPropertyType == "ComponentId" || item2.ComponentPropertyType == "ManufacturerId")
-                            //        {
-                            //            if (item2.ComponentPropertyValue == QuotationItemChild.ComponentId.ToString())
-                            //            {
-                            //                i += 1;
-                            //            }
-                            //        }
-                            //        else
-                            //        {
-                            //            if (item1.ComponentPriceListViewModelDetails != null)
-                            //            {
-                            //                foreach (var detail in item1.ComponentPriceListViewModelDetails)
-                            //                {
-                            //                    if (detail.ComponentPricePropertyValue == item2.ComponentPropertyValue)
-                            //                    {
-                            //                        matchingItemPartNo = item1.ItemPartNo;
-                            //                        matchingItemDescription = item1.ComponentPriceDescription;
-                            //                        i += 1;
-                            //                        break;
-                            //                    }
-                            //                }
-                            //            }
-                            //        }
+                            //       if (item2.ComponentPropertyType == "ComponentId" || item2.ComponentPropertyType == "ManufacturerId")
+                            //       {
+                            //           if (item2.ComponentPropertyValue == QuotationItemChild.ComponentId.ToString())
+                            //           {
+                            //               i += 1;
+                            //           }
+                            //       }
+                            //       else
+                            //       {
+                            //           if (item1.ComponentPriceListViewModelDetails != null)
+                            //           {
+                            //               foreach (var detail in item1.ComponentPriceListViewModelDetails)
+                            //               {
+                            //                   if (detail.ComponentPricePropertyValue == item2.ComponentPropertyValue)
+                            //                   {
+                            //                       matchingItemPartNo = item1.ItemPartNo;
+                            //                       matchingItemDescription = item1.ComponentPriceDescription;
+                            //                       i += 1;
+                            //                       break;
+                            //                   }
+                            //               }
+                            //           }
+                            //       }
 
-                            //        if (matchingItemPartNo != "")
-                            //        {
+                            //       if (matchingItemPartNo != "")
+                            //       {
 
-                            //            //break;
-                            //        }
+                            //           //break;
+                            //       }
                             //    }
 
                             //    if (matchingItemPartNo != "")
                             //    {
-                            //        ComponentPriceListViewModel objInnerComponentPriceListViewModelTemp = new ComponentPriceListViewModel();
-                            //        objInnerComponentPriceListViewModelTemp.ItemPartNo = matchingItemPartNo;
-                            //        objInnerComponentPriceListViewModelTemp.iMatched = i;
-                            //        objMatched.Add(objInnerComponentPriceListViewModelTemp);
-                            //        //break;
+                            //       ComponentPriceListViewModel objInnerComponentPriceListViewModelTemp = new ComponentPriceListViewModel();
+                            //       objInnerComponentPriceListViewModelTemp.ItemPartNo = matchingItemPartNo;
+                            //       objInnerComponentPriceListViewModelTemp.iMatched = i;
+                            //       objMatched.Add(objInnerComponentPriceListViewModelTemp);
+                            //       //break;
                             //    }
                             //}
                             ////iComponentChildCount = iComponentChildCount - 2;
@@ -9286,7 +9607,7 @@ namespace CamV4.Helper
                 // Find the matching property in the component details
                 //var matchedProperty = componentDetails
                 //    .FirstOrDefault(cpld => cpld.ComponentPropertyTypeId == propertyMatch.PropertyTypeId &&
-                //                            cpld.ComponentPricePropertyValue == propertyMatch.PropertyValue);
+                //                           cpld.ComponentPricePropertyValue == propertyMatch.PropertyValue);
                 var matchedProperty = componentDetails.FirstOrDefault(cpld => cpld.ComponentPropertyTypeId == propertyMatch.PropertyTypeId &&
                              cpld.ComponentPricePropertyValue.ToLower() == propertyMatch.PropertyValue.ToLower()
                              );
@@ -9317,19 +9638,19 @@ namespace CamV4.Helper
         //    using (DatabaseEntities db = new DatabaseEntities())
         //    {
 
-        //        var matchingComponents = db.ComponentPriceLists
-        //        .Where(c => c.ComponentId == componentId && (!manufacturerId.HasValue || c.ManufacturerId == manufacturerId) && c.IsActive == true).ToList();
+        //       var matchingComponents = db.ComponentPriceLists
+        //       .Where(c => c.ComponentId == componentId && (!manufacturerId.HasValue || c.ManufacturerId == manufacturerId) && c.IsActive == true).ToList();
 
 
-        //        foreach (var component in matchingComponents)
-        //        {
-        //            long? matchedComponentPriceId = MatchComponentProperties(component.ComponentPriceId, propertyMatches);
+        //       foreach (var component in matchingComponents)
+        //       {
+        //           long? matchedComponentPriceId = MatchComponentProperties(component.ComponentPriceId, propertyMatches);
 
-        //            if (matchedComponentPriceId.HasValue)
-        //            {
-        //                return matchedComponentPriceId.Value;
-        //            }
-        //        }
+        //           if (matchedComponentPriceId.HasValue)
+        //           {
+        //               return matchedComponentPriceId.Value;
+        //           }
+        //       }
         //    }
 
 
@@ -9340,15 +9661,15 @@ namespace CamV4.Helper
         //{
         //    using (DatabaseEntities db = new DatabaseEntities())
         //    {
-        //        var componentDetails = db.ComponentPriceListDetails
-        //     .Where(cpld => cpld.ComponentPriceId == componentPriceId && cpld.IsActive == true)
-        //     .ToList();
+        //       var componentDetails = db.ComponentPriceListDetails
+        //    .Where(cpld => cpld.ComponentPriceId == componentPriceId && cpld.IsActive == true)
+        //    .ToList();
 
-        //        // If all properties match, return the ComponentPriceId
-        //        if (MatchPropertiesRecursive(componentDetails, propertyMatches, 0))
-        //        {
-        //            return componentPriceId;
-        //        }
+        //       // If all properties match, return the ComponentPriceId
+        //       if (MatchPropertiesRecursive(componentDetails, propertyMatches, 0))
+        //       {
+        //           return componentPriceId;
+        //       }
         //    }
         //    return null; // If no match found, return null
         //}
@@ -9357,24 +9678,24 @@ namespace CamV4.Helper
         //{
         //    using (DatabaseEntities db = new DatabaseEntities())
         //    {
-        //        if (matchIndex == propertyMatches.Count)
-        //        {
-        //            // If all properties are matched, return true
-        //            return true;
-        //        }
+        //       if (matchIndex == propertyMatches.Count)
+        //       {
+        //           // If all properties are matched, return true
+        //           return true;
+        //       }
 
-        //        var propertyMatch = propertyMatches[matchIndex];
+        //       var propertyMatch = propertyMatches[matchIndex];
 
-        //        // Find matching property in the component details
-        //        var matchedProperty = componentDetails
-        //            .FirstOrDefault(cpld => cpld.ComponentPropertyTypeId == propertyMatch.PropertyTypeId &&
-        //                                    cpld.ComponentPricePropertyValueId == propertyMatch.PropertyValueId);
+        //       // Find matching property in the component details
+        //       var matchedProperty = componentDetails
+        //           .FirstOrDefault(cpld => cpld.ComponentPropertyTypeId == propertyMatch.PropertyTypeId &&
+        //                                   cpld.ComponentPricePropertyValueId == propertyMatch.PropertyValueId);
 
-        //        if (matchedProperty != null)
-        //        {
-        //            // If found, recursively check the next property
-        //            return MatchPropertiesRecursive(componentDetails, propertyMatches, matchIndex + 1);
-        //        }
+        //       if (matchedProperty != null)
+        //       {
+        //           // If found, recursively check the next property
+        //           return MatchPropertiesRecursive(componentDetails, propertyMatches, matchIndex + 1);
+        //       }
         //    }
 
 
@@ -9814,282 +10135,282 @@ namespace CamV4.Helper
         //    var iDetails = DatabaseHelper.getInspectionDetailsForSheet(model.InspectionId);
         //    using (DatabaseEntities db = new DatabaseEntities())
         //    {
-        //        try
-        //        {
-        //            decimal dTotal = 0;
-        //            decimal dLabourMinutes = 0;
-        //            decimal dHours = 0;
-        //            decimal dTotalLabourCharges = 0;
-        //            decimal dSubtotal = 0;
-        //            decimal dGSTPer = 0;
-        //            decimal dGSTValue = 0;
+        //       try
+        //       {
+        //           decimal dTotal = 0;
+        //           decimal dLabourMinutes = 0;
+        //           decimal dHours = 0;
+        //           decimal dTotalLabourCharges = 0;
+        //           decimal dSubtotal = 0;
+        //           decimal dGSTPer = 0;
+        //           decimal dGSTValue = 0;
 
-        //            var objTempQuotation = db.Quotations.Where(x => x.QuotationId == model.QuotationId).FirstOrDefault();
+        //           var objTempQuotation = db.Quotations.Where(x => x.QuotationId == model.QuotationId).FirstOrDefault();
 
-        //            var AllQuotationItemsTemp = db.QuotationItems.Where(x => x.QuotationId == model.QuotationId).ToList();
-        //            foreach (var objItem in AllQuotationItemsTemp)
-        //            {
-        //                if (objItem.ItemPartNo == "")
-        //                {
-        //                    var resultInspectionDeficiency = from imto in db.InspectionDeficiencyMTOes
-        //                                                     join id in db.InspectionDeficiencies
-        //                                                     on imto.InspectionDeficiencyId equals id.InspectionDeficiencyId
-        //                                                     where id.InspectionId == model.InspectionId
-        //                                                     && imto.Size_Description == objItem.ItemDescription
-        //                                                     select new
-        //                                                     {
-        //                                                         imto.InspectionDeficiencyMTOId,
-        //                                                         imto.InspectionDeficiencyId,
-        //                                                         imto.ComponentId,
-        //                                                         imto.ManufacturerId,
-        //                                                         imto.Size_Description
-        //                                                     };
-        //                    if (resultInspectionDeficiency.Any())
-        //                    {
-        //                        foreach (var itemChild in resultInspectionDeficiency)
-        //                        {
+        //           var AllQuotationItemsTemp = db.QuotationItems.Where(x => x.QuotationId == model.QuotationId).ToList();
+        //           foreach (var objItem in AllQuotationItemsTemp)
+        //           {
+        //               if (objItem.ItemPartNo == "")
+        //               {
+        //                   var resultInspectionDeficiency = from imto in db.InspectionDeficiencyMTOes
+        //                                                    join id in db.InspectionDeficiencies
+        //                                                    on imto.InspectionDeficiencyId equals id.InspectionDeficiencyId
+        //                                                    where id.InspectionId == model.InspectionId
+        //                                                    && imto.Size_Description == objItem.ItemDescription
+        //                                                    select new
+        //                                                    {
+        //                                                        imto.InspectionDeficiencyMTOId,
+        //                                                        imto.InspectionDeficiencyId,
+        //                                                        imto.ComponentId,
+        //                                                        imto.ManufacturerId,
+        //                                                        imto.Size_Description
+        //                                                    };
+        //                   if (resultInspectionDeficiency.Any())
+        //                   {
+        //                       foreach (var itemChild in resultInspectionDeficiency)
+        //                       {
 
-        //                            List<PropertyMatch> propertyMatches = new List<PropertyMatch>();
-        //                            ComponentPropertiesMatch objComponentPropertiesMatchInput = new ComponentPropertiesMatch();
-        //                            ComponentPropertiesMatch objComponentPropertiesMatchOutput = new ComponentPropertiesMatch();
-        //                            List<ComponentPropertiesMatchList> objComponentPropertiesMatchList = new List<ComponentPropertiesMatchList>();
-        //                            ComponentPropertiesMatchList objComponentPropertyMatch = new ComponentPropertiesMatchList();
+        //                           List<PropertyMatch> propertyMatches = new List<PropertyMatch>();
+        //                           ComponentPropertiesMatch objComponentPropertiesMatchInput = new ComponentPropertiesMatch();
+        //                           ComponentPropertiesMatch objComponentPropertiesMatchOutput = new ComponentPropertiesMatch();
+        //                           List<ComponentPropertiesMatchList> objComponentPropertiesMatchList = new List<ComponentPropertiesMatchList>();
+        //                           ComponentPropertiesMatchList objComponentPropertyMatch = new ComponentPropertiesMatchList();
 
-        //                            objComponentPropertyMatch.ComponentPropertyType = "ComponentId";
-        //                            objComponentPropertyMatch.ComponentPropertyValue = itemChild.ComponentId.ToString();
-        //                            objComponentPropertiesMatchList.Add(objComponentPropertyMatch);
+        //                           objComponentPropertyMatch.ComponentPropertyType = "ComponentId";
+        //                           objComponentPropertyMatch.ComponentPropertyValue = itemChild.ComponentId.ToString();
+        //                           objComponentPropertiesMatchList.Add(objComponentPropertyMatch);
 
-        //                            objComponentPropertyMatch = new ComponentPropertiesMatchList();
-        //                            objComponentPropertyMatch.ComponentPropertyType = "ManufacturerId";
-        //                            objComponentPropertyMatch.ComponentPropertyValue = itemChild.ManufacturerId.ToString();
-        //                            objComponentPropertiesMatchList.Add(objComponentPropertyMatch);
+        //                           objComponentPropertyMatch = new ComponentPropertiesMatchList();
+        //                           objComponentPropertyMatch.ComponentPropertyType = "ManufacturerId";
+        //                           objComponentPropertyMatch.ComponentPropertyValue = itemChild.ManufacturerId.ToString();
+        //                           objComponentPropertiesMatchList.Add(objComponentPropertyMatch);
 
-        //                            objComponentPropertiesMatchInput.objComponentPropertiesMatchList = objComponentPropertiesMatchList;
+        //                           objComponentPropertiesMatchInput.objComponentPropertiesMatchList = objComponentPropertiesMatchList;
 
-        //                            var resultComponentDetails = from mt in db.InspectionDeficiencyMTOes
-        //                                                         join imd in db.InspectionDeficiencyMTODetails on mt.InspectionDeficiencyMTOId equals imd.InspectionDeficiencyMTOId
-        //                                                         join cpv in db.ComponentPropertyValues on new { imd.ComponentPropertyTypeId, imd.ComponentPropertyValueId }
-        //                                                         equals new { cpv.ComponentPropertyTypeId, cpv.ComponentPropertyValueId }
-        //                                                         join cpt in db.ComponentPropertyTypes on imd.ComponentPropertyTypeId equals cpt.ComponentPropertyTypeId
-        //                                                         where mt.InspectionDeficiencyMTOId == itemChild.InspectionDeficiencyMTOId
-        //                                                         select new
-        //                                                         {
-        //                                                             mt.ManufacturerId,
-        //                                                             mt.ComponentId,
-        //                                                             imd.InspectionDeficiencyMTOId,
-        //                                                             imd.ComponentPropertyTypeId,
-        //                                                             imd.ComponentPropertyValueId,
-        //                                                             cpv.ComponentPropertyValue1,
-        //                                                             cpt.ComponentPropertyTypeName
-        //                                                         };
+        //                           var resultComponentDetails = from mt in db.InspectionDeficiencyMTOes
+        //                                                        join imd in db.InspectionDeficiencyMTODetails on mt.InspectionDeficiencyMTOId equals imd.InspectionDeficiencyMTOId
+        //                                                        join cpv in db.ComponentPropertyValues on new { imd.ComponentPropertyTypeId, imd.ComponentPropertyValueId }
+        //                                                        equals new { cpv.ComponentPropertyTypeId, cpv.ComponentPropertyValueId }
+        //                                                        join cpt in db.ComponentPropertyTypes on imd.ComponentPropertyTypeId equals cpt.ComponentPropertyTypeId
+        //                                                        where mt.InspectionDeficiencyMTOId == itemChild.InspectionDeficiencyMTOId
+        //                                                        select new
+        //                                                        {
+        //                                                            mt.ManufacturerId,
+        //                                                            mt.ComponentId,
+        //                                                            imd.InspectionDeficiencyMTOId,
+        //                                                            imd.ComponentPropertyTypeId,
+        //                                                            imd.ComponentPropertyValueId,
+        //                                                            cpv.ComponentPropertyValue1,
+        //                                                            cpt.ComponentPropertyTypeName
+        //                                                        };
 
-        //                            List<ComponentPriceListViewModel> objInnerComponentPriceListViewModelList = new List<ComponentPriceListViewModel>();
-        //                            if (resultComponentDetails.Any())
-        //                            {
-        //                                StringBuilder strComponentDescBuilder = new StringBuilder();
-        //                                foreach (var itemChildInner in resultComponentDetails)
-        //                                {
-        //                                    PropertyMatch objPropertyMatch = new PropertyMatch();
-        //                                    objPropertyMatch.PropertyTypeId = itemChildInner.ComponentPropertyTypeId;
-        //                                    objPropertyMatch.PropertyValueId = itemChildInner.ComponentPropertyValueId;
-        //                                    propertyMatches.Add(objPropertyMatch);
-        //                                }
-        //                            }
-        //                            long matchingComponentPriceId = GetMatchingComponentPriceId(itemChild.ComponentId, itemChild.ManufacturerId, propertyMatches);
-        //                            string matchingItemPartNo = "";
-        //                            string matchingItemDescription = "";
+        //                           List<ComponentPriceListViewModel> objInnerComponentPriceListViewModelList = new List<ComponentPriceListViewModel>();
+        //                           if (resultComponentDetails.Any())
+        //                           {
+        //                               StringBuilder strComponentDescBuilder = new StringBuilder();
+        //                               foreach (var itemChildInner in resultComponentDetails)
+        //                               {
+        //                                   PropertyMatch objPropertyMatch = new PropertyMatch();
+        //                                   objPropertyMatch.PropertyTypeId = itemChildInner.ComponentPropertyTypeId;
+        //                                   objPropertyMatch.PropertyValueId = itemChildInner.ComponentPropertyValueId;
+        //                                   propertyMatches.Add(objPropertyMatch);
+        //                               }
+        //                           }
+        //                           long matchingComponentPriceId = GetMatchingComponentPriceId(itemChild.ComponentId, itemChild.ManufacturerId, propertyMatches);
+        //                           string matchingItemPartNo = "";
+        //                           string matchingItemDescription = "";
 
-        //                            var itemWithHighestMatched = db.ComponentPriceLists.Where(x => x.ComponentPriceId == matchingComponentPriceId).FirstOrDefault();
+        //                           var itemWithHighestMatched = db.ComponentPriceLists.Where(x => x.ComponentPriceId == matchingComponentPriceId).FirstOrDefault();
 
-        //                            if (itemWithHighestMatched != null)
-        //                            {
-        //                                matchingItemPartNo = itemWithHighestMatched.ItemPartNo;
-        //                            }
-        //                            else
-        //                            {
-        //                                matchingItemPartNo = "";
-        //                            }
-        //                            if (matchingItemPartNo != "")
-        //                            {
-        //                                matchingItemPartNo = matchingItemPartNo.Trim();
-        //                                var itmComponentPriceMatched = db.ComponentPriceLists.Where(x => x.ItemPartNo == matchingItemPartNo).ToList();
-        //                                foreach (var itmCalc in itmComponentPriceMatched)
-        //                                {
-        //                                    var itmQuotationItemNew = db.QuotationItems
-        //                                                                  .Where(x => x.QuotationId == model.QuotationId && x.QuotationInspectionItemId == objItem.QuotationInspectionItemId)
-        //                                                                  .FirstOrDefault();
+        //                           if (itemWithHighestMatched != null)
+        //                           {
+        //                               matchingItemPartNo = itemWithHighestMatched.ItemPartNo;
+        //                           }
+        //                           else
+        //                           {
+        //                               matchingItemPartNo = "";
+        //                           }
+        //                           if (matchingItemPartNo != "")
+        //                           {
+        //                               matchingItemPartNo = matchingItemPartNo.Trim();
+        //                               var itmComponentPriceMatched = db.ComponentPriceLists.Where(x => x.ItemPartNo == matchingItemPartNo).ToList();
+        //                               foreach (var itmCalc in itmComponentPriceMatched)
+        //                               {
+        //                                   var itmQuotationItemNew = db.QuotationItems
+        //                                                                 .Where(x => x.QuotationId == model.QuotationId && x.QuotationInspectionItemId == objItem.QuotationInspectionItemId)
+        //                                                                 .FirstOrDefault();
 
-        //                                    if (itmQuotationItemNew != null)
-        //                                    {
-        //                                        itmQuotationItemNew.ItemPartNo = itmCalc.ItemPartNo;
-        //                                        itmQuotationItemNew.ItemDescription = itmCalc.ComponentPriceDescription;
-        //                                        itmQuotationItemNew.ItemUnitPrice = itmCalc.ComponentPrice ?? 0;
-        //                                        itmQuotationItemNew.ItemSurcharge = objTempQuotation.QuotationSurcharge;
-        //                                        itmQuotationItemNew.ItemMarkup = objTempQuotation.QuotationMarkup;
-        //                                        itmQuotationItemNew.ItemPrice = (itmCalc.ComponentPrice ?? 0) * (objTempQuotation.QuotationSurcharge ?? 0) * (objTempQuotation.QuotationMarkup ?? 0);
-        //                                        itmQuotationItemNew.ItemWeight = itmCalc.ComponentWeight;
-        //                                        itmQuotationItemNew.ItemWeightTotal = itmCalc.ComponentWeight * itmQuotationItemNew.ItemQuantity;
-        //                                        itmQuotationItemNew.LineTotal = itmQuotationItemNew.ItemPrice * itmQuotationItemNew.ItemQuantity;
-        //                                        itmQuotationItemNew.ItemLabour = itmCalc.ComponentLabourTime ?? 0;
-        //                                        itmQuotationItemNew.ItemLabourTotal = (itmCalc.ComponentLabourTime ?? 0) * itmQuotationItemNew.ItemQuantity;
+        //                                   if (itmQuotationItemNew != null)
+        //                                   {
+        //                                       itmQuotationItemNew.ItemPartNo = itmCalc.ItemPartNo;
+        //                                       itmQuotationItemNew.ItemDescription = itmCalc.ComponentPriceDescription;
+        //                                       itmQuotationItemNew.ItemUnitPrice = itmCalc.ComponentPrice ?? 0;
+        //                                       itmQuotationItemNew.ItemSurcharge = objTempQuotation.QuotationSurcharge;
+        //                                       itmQuotationItemNew.ItemMarkup = objTempQuotation.QuotationMarkup;
+        //                                       itmQuotationItemNew.ItemPrice = (itmCalc.ComponentPrice ?? 0) * (objTempQuotation.QuotationSurcharge ?? 0) * (objTempQuotation.QuotationMarkup ?? 0);
+        //                                       itmQuotationItemNew.ItemWeight = itmCalc.ComponentWeight;
+        //                                       itmQuotationItemNew.ItemWeightTotal = itmCalc.ComponentWeight * itmQuotationItemNew.ItemQuantity;
+        //                                       itmQuotationItemNew.LineTotal = itmQuotationItemNew.ItemPrice * itmQuotationItemNew.ItemQuantity;
+        //                                       itmQuotationItemNew.ItemLabour = itmCalc.ComponentLabourTime ?? 0;
+        //                                       itmQuotationItemNew.ItemLabourTotal = (itmCalc.ComponentLabourTime ?? 0) * itmQuotationItemNew.ItemQuantity;
 
-        //                                        db.Entry(itmQuotationItemNew).State = EntityState.Modified;
-        //                                    }
-        //                                }
+        //                                       db.Entry(itmQuotationItemNew).State = EntityState.Modified;
+        //                                   }
+        //                               }
 
-        //                                // Call SaveChanges once after the loop
-        //                                db.SaveChanges();
+        //                               // Call SaveChanges once after the loop
+        //                               db.SaveChanges();
 
-        //                                //if (itmComponentPriceMatched != null)
-        //                                //{
-        //                                //    foreach (var itmCalc in itmComponentPriceMatched)
-        //                                //    {
-        //                                //        //using (DatabaseEntities db1 = new DatabaseEntities())
-        //                                //        //{
-        //                                //        var itmQuotationItemNew = db.QuotationItems.Where(x => x.QuotationId == model.QuotationId && x.QuotationInspectionItemId == objItem.QuotationInspectionItemId).FirstOrDefault();
-        //                                //        //Quotation obj = new Quotation();
-        //                                //        itmQuotationItemNew.ItemPartNo = itmCalc.ItemPartNo;
-        //                                //        itmQuotationItemNew.ItemDescription = itmCalc.ComponentPriceDescription;
-        //                                //        itmQuotationItemNew.ItemUnitPrice = itmCalc.ComponentPrice ?? 0;
-        //                                //        itmQuotationItemNew.ItemSurcharge = objTempQuotation.QuotationSurcharge;
-        //                                //        itmQuotationItemNew.ItemMarkup = objTempQuotation.QuotationMarkup;
-        //                                //        itmQuotationItemNew.ItemPrice = (itmCalc.ComponentPrice ?? 0) * (objTempQuotation.QuotationSurcharge ?? 0) * (objTempQuotation.QuotationMarkup ?? 0);
-        //                                //        itmQuotationItemNew.ItemWeight = itmCalc.ComponentWeight;
-        //                                //        itmQuotationItemNew.ItemWeightTotal = itmCalc.ComponentWeight * itmQuotationItemNew.ItemQuantity;
-        //                                //        itmQuotationItemNew.LineTotal = itmQuotationItemNew.ItemPrice * itmQuotationItemNew.ItemQuantity;
-        //                                //        itmQuotationItemNew.ItemLabour = itmCalc.ComponentLabourTime ?? 0;
-        //                                //        itmQuotationItemNew.ItemLabourTotal = (itmCalc.ComponentLabourTime ?? 0) * itmQuotationItemNew.ItemQuantity;
-        //                                //        db.Entry(itmQuotationItemNew).State = EntityState.Modified;
+        //                               //if (itmComponentPriceMatched != null)
+        //                               //{
+        //                               //    foreach (var itmCalc in itmComponentPriceMatched)
+        //                               //    {
+        //                               //       //using (DatabaseEntities db1 = new DatabaseEntities())
+        //                               //       //{
+        //                               //       var itmQuotationItemNew = db.QuotationItems.Where(x => x.QuotationId == model.QuotationId && x.QuotationInspectionItemId == objItem.QuotationInspectionItemId).FirstOrDefault();
+        //                               //       //Quotation obj = new Quotation();
+        //                               //       itmQuotationItemNew.ItemPartNo = itmCalc.ItemPartNo;
+        //                               //       itmQuotationItemNew.ItemDescription = itmCalc.ComponentPriceDescription;
+        //                               //       itmQuotationItemNew.ItemUnitPrice = itmCalc.ComponentPrice ?? 0;
+        //                               //       itmQuotationItemNew.ItemSurcharge = objTempQuotation.QuotationSurcharge;
+        //                               //       itmQuotationItemNew.ItemMarkup = objTempQuotation.QuotationMarkup;
+        //                               //       itmQuotationItemNew.ItemPrice = (itmCalc.ComponentPrice ?? 0) * (objTempQuotation.QuotationSurcharge ?? 0) * (objTempQuotation.QuotationMarkup ?? 0);
+        //                               //       itmQuotationItemNew.ItemWeight = itmCalc.ComponentWeight;
+        //                               //       itmQuotationItemNew.ItemWeightTotal = itmCalc.ComponentWeight * itmQuotationItemNew.ItemQuantity;
+        //                               //       itmQuotationItemNew.LineTotal = itmQuotationItemNew.ItemPrice * itmQuotationItemNew.ItemQuantity;
+        //                               //       itmQuotationItemNew.ItemLabour = itmCalc.ComponentLabourTime ?? 0;
+        //                               //       itmQuotationItemNew.ItemLabourTotal = (itmCalc.ComponentLabourTime ?? 0) * itmQuotationItemNew.ItemQuantity;
+        //                               //       db.Entry(itmQuotationItemNew).State = EntityState.Modified;
 
-        //                                //        //}
-        //                                //    }
-        //                                //}
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //            var AllQuotationItems = db.QuotationItems.Where(x => x.QuotationId == model.QuotationId).ToList();
-        //            foreach (var objItem in AllQuotationItems)
-        //            {
-        //                decimal dItempPrice = 0;
-        //                int iQty = 0;
-        //                var objQuotationItem = db.QuotationItems.Where(y => y.QuotationInspectionItemId == objItem.QuotationInspectionItemId).FirstOrDefault();
-        //                if (objQuotationItem != null)
-        //                {
-        //                    dItempPrice = objQuotationItem.ItemPrice;
-        //                    if (objQuotationItem.ItemPartNo != "")
-        //                    {
-        //                        var ComponentPriceListItem = db.ComponentPriceLists.Where(x => x.ItemPartNo == objQuotationItem.ItemPartNo).FirstOrDefault();
-        //                        if (ComponentPriceListItem != null)
-        //                        {
-        //                            if (ComponentPriceListItem.ComponentPrice != null)
-        //                            {
-        //                                dItempPrice = Convert.ToDecimal(ComponentPriceListItem.ComponentPrice);
-        //                            }
-        //                        }
-        //                    }
-        //                    iQty = Convert.ToInt16(objQuotationItem.ItemQuantity);
-        //                    decimal surcharge = Convert.ToDecimal(model.QuotationSurcharge);
-        //                    decimal markup = Convert.ToDecimal(model.QuotationMarkup);
-        //                    decimal itemUnitPrice = Convert.ToDecimal(dItempPrice);
-        //                    decimal itemPrice = (itemUnitPrice * surcharge * markup);
-        //                    if (objQuotationItem.IsTBD == true)
-        //                    {
-        //                        itemUnitPrice = 0;
-        //                        itemPrice = 0;
-        //                    }
-        //                    itemPrice = Math.Round(itemPrice, 2);
+        //                               //       //}
+        //                               //    }
+        //                               //}
+        //                           }
+        //                       }
+        //                   }
+        //               }
+        //           }
+        //           var AllQuotationItems = db.QuotationItems.Where(x => x.QuotationId == model.QuotationId).ToList();
+        //           foreach (var objItem in AllQuotationItems)
+        //           {
+        //               decimal dItempPrice = 0;
+        //               int iQty = 0;
+        //               var objQuotationItem = db.QuotationItems.Where(y => y.QuotationInspectionItemId == objItem.QuotationInspectionItemId).FirstOrDefault();
+        //               if (objQuotationItem != null)
+        //               {
+        //                   dItempPrice = objQuotationItem.ItemPrice;
+        //                   if (objQuotationItem.ItemPartNo != "")
+        //                   {
+        //                       var ComponentPriceListItem = db.ComponentPriceLists.Where(x => x.ItemPartNo == objQuotationItem.ItemPartNo).FirstOrDefault();
+        //                       if (ComponentPriceListItem != null)
+        //                       {
+        //                           if (ComponentPriceListItem.ComponentPrice != null)
+        //                           {
+        //                               dItempPrice = Convert.ToDecimal(ComponentPriceListItem.ComponentPrice);
+        //                           }
+        //                       }
+        //                   }
+        //                   iQty = Convert.ToInt16(objQuotationItem.ItemQuantity);
+        //                   decimal surcharge = Convert.ToDecimal(model.QuotationSurcharge);
+        //                   decimal markup = Convert.ToDecimal(model.QuotationMarkup);
+        //                   decimal itemUnitPrice = Convert.ToDecimal(dItempPrice);
+        //                   decimal itemPrice = (itemUnitPrice * surcharge * markup);
+        //                   if (objQuotationItem.IsTBD == true)
+        //                   {
+        //                       itemUnitPrice = 0;
+        //                       itemPrice = 0;
+        //                   }
+        //                   itemPrice = Math.Round(itemPrice, 2);
 
-        //                    decimal lineTotal = (itemPrice * iQty);
-        //                    lineTotal = Math.Round(lineTotal, 2);
+        //                   decimal lineTotal = (itemPrice * iQty);
+        //                   lineTotal = Math.Round(lineTotal, 2);
 
-        //                    objQuotationItem.QuotationInspectionItemId = objQuotationItem.QuotationInspectionItemId;
-        //                    objQuotationItem.ItemPartNo = objQuotationItem.ItemPartNo;
-        //                    objQuotationItem.ItemDescription = objQuotationItem.ItemDescription;
-        //                    objQuotationItem.ItemUnitPrice = itemUnitPrice;
-        //                    objQuotationItem.ItemSurcharge = surcharge;
-        //                    objQuotationItem.ItemMarkup = markup;
-        //                    objQuotationItem.ItemPrice = itemPrice;
-        //                    objQuotationItem.ItemQuantity = iQty;
-        //                    objQuotationItem.ItemWeight = objQuotationItem.ItemWeight;
-        //                    objQuotationItem.ItemWeightTotal = objQuotationItem.ItemWeightTotal;
-        //                    objQuotationItem.LineTotal = lineTotal;
-        //                    objQuotationItem.IsTBD = objQuotationItem.IsTBD;
-        //                    objQuotationItem.ItemLabour = objQuotationItem.ItemLabour;
-        //                    objQuotationItem.ItemLabourTotal = objQuotationItem.ItemLabourTotal;
-        //                    objQuotationItem.ModifiedDate = DateTime.Now;
-        //                    objQuotationItem.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-        //                    db.Entry(objQuotationItem).State = EntityState.Modified;
-        //                    db.SaveChanges();
-        //                }
-        //            }
+        //                   objQuotationItem.QuotationInspectionItemId = objQuotationItem.QuotationInspectionItemId;
+        //                   objQuotationItem.ItemPartNo = objQuotationItem.ItemPartNo;
+        //                   objQuotationItem.ItemDescription = objQuotationItem.ItemDescription;
+        //                   objQuotationItem.ItemUnitPrice = itemUnitPrice;
+        //                   objQuotationItem.ItemSurcharge = surcharge;
+        //                   objQuotationItem.ItemMarkup = markup;
+        //                   objQuotationItem.ItemPrice = itemPrice;
+        //                   objQuotationItem.ItemQuantity = iQty;
+        //                   objQuotationItem.ItemWeight = objQuotationItem.ItemWeight;
+        //                   objQuotationItem.ItemWeightTotal = objQuotationItem.ItemWeightTotal;
+        //                   objQuotationItem.LineTotal = lineTotal;
+        //                   objQuotationItem.IsTBD = objQuotationItem.IsTBD;
+        //                   objQuotationItem.ItemLabour = objQuotationItem.ItemLabour;
+        //                   objQuotationItem.ItemLabourTotal = objQuotationItem.ItemLabourTotal;
+        //                   objQuotationItem.ModifiedDate = DateTime.Now;
+        //                   objQuotationItem.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+        //                   db.Entry(objQuotationItem).State = EntityState.Modified;
+        //                   db.SaveChanges();
+        //               }
+        //           }
 
-        //            AllQuotationItems = db.QuotationItems.Where(x => x.QuotationId == model.QuotationId).ToList();
-        //            foreach (var item in AllQuotationItems)
-        //            {
-        //                dSubtotal += Convert.ToDecimal(item.LineTotal);
-        //                dLabourMinutes += Convert.ToDecimal(item.ItemLabourTotal);
-        //            }
-        //            if (dLabourMinutes < 240)
-        //            {
-        //                dLabourMinutes = 240;
-        //            }
-        //            dHours = Math.Round((dLabourMinutes / 60), 2);
-        //            dTotalLabourCharges = Convert.ToDecimal(dHours * model.LabourUnitPrice);
-        //            dSubtotal = Convert.ToDecimal(dSubtotal + Math.Round(dTotalLabourCharges, 2));
-        //            dGSTPer = Convert.ToDecimal(model.GSTPer);
-        //            dGSTPer = Convert.ToDecimal(dGSTPer / 100);
-        //            decimal gstVal = dSubtotal * dGSTPer;
+        //           AllQuotationItems = db.QuotationItems.Where(x => x.QuotationId == model.QuotationId).ToList();
+        //           foreach (var item in AllQuotationItems)
+        //           {
+        //               dSubtotal += Convert.ToDecimal(item.LineTotal);
+        //               dLabourMinutes += Convert.ToDecimal(item.ItemLabourTotal);
+        //           }
+        //           if (dLabourMinutes < 240)
+        //           {
+        //               dLabourMinutes = 240;
+        //           }
+        //           dHours = Math.Round((dLabourMinutes / 60), 2);
+        //           dTotalLabourCharges = Convert.ToDecimal(dHours * model.LabourUnitPrice);
+        //           dSubtotal = Convert.ToDecimal(dSubtotal + Math.Round(dTotalLabourCharges, 2));
+        //           dGSTPer = Convert.ToDecimal(model.GSTPer);
+        //           dGSTPer = Convert.ToDecimal(dGSTPer / 100);
+        //           decimal gstVal = dSubtotal * dGSTPer;
 
-        //            dGSTValue = Convert.ToDecimal(Math.Round(gstVal, 2));
-        //            dTotal = Convert.ToDecimal(dSubtotal + gstVal);
+        //           dGSTValue = Convert.ToDecimal(Math.Round(gstVal, 2));
+        //           dTotal = Convert.ToDecimal(dSubtotal + gstVal);
 
-        //            objTempQuotation.Subtotal = dSubtotal;
-        //            objTempQuotation.GSTValue = dGSTValue;
-        //            objTempQuotation.Total = dTotal;
-        //            objTempQuotation.TotalLabour = dLabourMinutes;
-        //            objTempQuotation.LabourUnitPrice = model.LabourUnitPrice;
-        //            objTempQuotation.TotalUnitPrice = Math.Round(dTotalLabourCharges, 2); ;
-        //            objTempQuotation.YourReference = model.YourReference;
-        //            objTempQuotation.ValidTo = model.ValidTo;
-        //            objTempQuotation.PaymentTerms = model.PaymentTerms;
-        //            objTempQuotation.ShipmentMethod = model.ShipmentMethod;
-        //            objTempQuotation.QuotationSalesPersonId = model.SalesPersonId;
-        //            objTempQuotation.QuotationSurcharge = model.QuotationSurcharge;
-        //            objTempQuotation.QuotationMarkup = model.QuotationMarkup;
+        //           objTempQuotation.Subtotal = dSubtotal;
+        //           objTempQuotation.GSTValue = dGSTValue;
+        //           objTempQuotation.Total = dTotal;
+        //           objTempQuotation.TotalLabour = dLabourMinutes;
+        //           objTempQuotation.LabourUnitPrice = model.LabourUnitPrice;
+        //           objTempQuotation.TotalUnitPrice = Math.Round(dTotalLabourCharges, 2); ;
+        //           objTempQuotation.YourReference = model.YourReference;
+        //           objTempQuotation.ValidTo = model.ValidTo;
+        //           objTempQuotation.PaymentTerms = model.PaymentTerms;
+        //           objTempQuotation.ShipmentMethod = model.ShipmentMethod;
+        //           objTempQuotation.QuotationSalesPersonId = model.SalesPersonId;
+        //           objTempQuotation.QuotationSurcharge = model.QuotationSurcharge;
+        //           objTempQuotation.QuotationMarkup = model.QuotationMarkup;
 
-        //            if (model.SalesPersonId != 0)
-        //            {
-        //                var empl = db.Employees.Where(y => y.EmployeeID == model.SalesPersonId).FirstOrDefault();
-        //                if (empl != null)
-        //                {
-        //                    objTempQuotation.QuotationSalesPersonName = empl.EmployeeName;
-        //                }
-        //            }
-        //            if (model.SendEmailForApproval == true)
-        //            {
-        //                objTempQuotation.QuotationStatus = 6;
-        //            }
-        //            objTempQuotation.QuotationSurcharge = model.QuotationSurcharge;
-        //            objTempQuotation.QuotationMarkup = model.QuotationMarkup;
-        //            objTempQuotation.GSTPer = model.GSTPer;
-        //            objTempQuotation.QuotationNotes = model.QuotationNotes;
-        //            objTempQuotation.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-        //            objTempQuotation.ModifiedDate = DateTime.Now;
-        //            db.Entry(objTempQuotation).State = EntityState.Modified;
-        //            db.SaveChanges();
-        //            objQuotation = db.Quotations.Where(x => x.QuotationId == model.QuotationId).FirstOrDefault();
-        //            if (objQuotation != null)
-        //            {
-        //                var tempQuotationComponent = db.QuotationItems.Where(x => x.QuotationId == objQuotation.QuotationId).ToList();
-        //                objQuotation.objQuotationItems = tempQuotationComponent;
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return objQuotation; //ex.Message.ToString();
-        //        }
+        //           if (model.SalesPersonId != 0)
+        //           {
+        //               var empl = db.Employees.Where(y => y.EmployeeID == model.SalesPersonId).FirstOrDefault();
+        //               if (empl != null)
+        //               {
+        //                   objTempQuotation.QuotationSalesPersonName = empl.EmployeeName;
+        //               }
+        //           }
+        //           if (model.SendEmailForApproval == true)
+        //           {
+        //               objTempQuotation.QuotationStatus = 6;
+        //           }
+        //           objTempQuotation.QuotationSurcharge = model.QuotationSurcharge;
+        //           objTempQuotation.QuotationMarkup = model.QuotationMarkup;
+        //           objTempQuotation.GSTPer = model.GSTPer;
+        //           objTempQuotation.QuotationNotes = model.QuotationNotes;
+        //           objTempQuotation.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+        //           objTempQuotation.ModifiedDate = DateTime.Now;
+        //           db.Entry(objTempQuotation).State = EntityState.Modified;
+        //           db.SaveChanges();
+        //           objQuotation = db.Quotations.Where(x => x.QuotationId == model.QuotationId).FirstOrDefault();
+        //           if (objQuotation != null)
+        //           {
+        //               var tempQuotationComponent = db.QuotationItems.Where(x => x.QuotationId == objQuotation.QuotationId).ToList();
+        //               objQuotation.objQuotationItems = tempQuotationComponent;
+        //           }
+        //       }
+        //       catch (Exception ex)
+        //       {
+        //           return objQuotation; //ex.Message.ToString();
+        //       }
         //    }
         //    return objQuotation;
         //}
@@ -10766,12 +11087,12 @@ namespace CamV4.Helper
                         objQuotation.objQuotationItems = tempQuotationComponent;
 
                         //List<ImpSettingsViewModel> objImpSettingsViewModel = (from Is in db.ImpSettings
-                        //                                                      select new ImpSettingsViewModel
-                        //                                                      {
-                        //                                                          SettingID = Is.SettingID,
-                        //                                                          SettingType = Is.SettingType, // Handle null cases
-                        //                                                          SettingValue = Is.SettingValue
-                        //                                                      }).ToList();
+                        //                                                     select new ImpSettingsViewModel
+                        //                                                     {
+                        //                                                         SettingID = Is.SettingID,
+                        //                                                         SettingType = Is.SettingType, // Handle null cases
+                        //                                                         SettingValue = Is.SettingValue
+                        //                                                     }).ToList();
                         //objQuotation.QuotationSurcharge = 0;
                         //objQuotation.QuotationMarkup = 0;
                         //objQuotation.GSTPer = 0;
@@ -10779,19 +11100,19 @@ namespace CamV4.Helper
                         //{
                         //    if (!string.IsNullOrEmpty(item.SettingValue))
                         //    {
-                        //        decimal settingValue = Convert.ToDecimal(item.SettingValue);
-                        //        switch (item.SettingType)
-                        //        {
-                        //            case "Surcharge":
-                        //                objQuotation.QuotationSurcharge = settingValue;
-                        //                break;
-                        //            case "Markup":
-                        //                objQuotation.QuotationMarkup = settingValue;
-                        //                break;
-                        //            case "GST":
-                        //                objQuotation.GSTPer = settingValue;
-                        //                break;
-                        //        }
+                        //       decimal settingValue = Convert.ToDecimal(item.SettingValue);
+                        //       switch (item.SettingType)
+                        //       {
+                        //           case "Surcharge":
+                        //               objQuotation.QuotationSurcharge = settingValue;
+                        //               break;
+                        //           case "Markup":
+                        //               objQuotation.QuotationMarkup = settingValue;
+                        //               break;
+                        //           case "GST":
+                        //               objQuotation.GSTPer = settingValue;
+                        //               break;
+                        //       }
                         //    }
                         //}
                     }
@@ -11359,45 +11680,45 @@ namespace CamV4.Helper
 
             using (DatabaseEntities db = new DatabaseEntities())
             {
-                using (var transaction = db.Database.BeginTransaction())
+                //using (var transaction = db.Database.BeginTransaction())
+                //{
+                try
                 {
-                    try
+                    foreach (var model in models)
                     {
-                        foreach (var model in models)
+                        try
                         {
-                            try
-                            {
-                                var deficiencyResult = SaveSingleTechnicianDeficiency(db, model);
-                                result.Results.Add(deficiencyResult);
+                            var deficiencyResult = SaveSingleTechnicianDeficiency(db, model);
+                            result.Results.Add(deficiencyResult);
 
-                                if (deficiencyResult.IsSuccess)
-                                    result.SuccessCount++;
-                                else
-                                    result.FailedCount++;
-                            }
-                            catch (Exception ex)
-                            {
+                            if (deficiencyResult.IsSuccess)
+                                result.SuccessCount++;
+                            else
                                 result.FailedCount++;
-                                result.Results.Add(new DeficiencySaveResult
-                                {
-                                    IsSuccess = false,
-                                    InspectionDeficiencyId = model.InspectionDeficiencyId,
-                                    ErrorMessage = ex.Message
-                                });
-                                Logger.Error($"Error saving technician deficiency ID {model.InspectionDeficiencyId}: {ex.Message}");
-                            }
                         }
+                        catch (Exception ex)
+                        {
+                            result.FailedCount++;
+                            result.Results.Add(new DeficiencySaveResult
+                            {
+                                IsSuccess = false,
+                                InspectionDeficiencyId = model.InspectionDeficiencyId,
+                                ErrorMessage = ex.Message
+                            });
+                            Logger.Error("Error saving technician deficiency ID  " + model.InspectionDeficiencyId + ":" + ex.Message);
+                        }
+                    }
 
-                        transaction.Commit();
-                        Logger.Info($"Bulk technician save completed: {result.SuccessCount} succeeded, {result.FailedCount} failed at {DateTime.Now}");
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        Logger.Error($"Transaction rolled back in bulk technician save: {ex.Message}", ex);
-                        throw;
-                    }
+                    //transaction.Commit();
+                    Logger.Info("Bulk technician save completed: {result.SuccessCount} succeeded, {result.FailedCount} failed at {DateTime.Now}");
                 }
+                catch (Exception ex)
+                {
+                    //transaction.Rollback();
+                    Logger.Error("Transaction rolled back in bulk technician save:" + ex.Message);
+                    throw;
+                }
+                //}
             }
 
             return result;
@@ -11443,12 +11764,12 @@ namespace CamV4.Helper
                 result.IsSuccess = true;
                 result.InspectionDeficiencyId = existingDeficiency.InspectionDeficiencyId;
 
-                Logger.Info($"Successfully saved technician deficiency ID {result.InspectionDeficiencyId} at {DateTime.Now}");
+                Logger.Info("Successfully saved technician deficiency ID { " + result.InspectionDeficiencyId + "} at { " + DateTime.Now.ToLongDateString());
             }
             catch (Exception ex)
             {
                 result.ErrorMessage = ex.Message;
-                Logger.Error($"Error in SaveSingleTechnicianDeficiency for ID {model.InspectionDeficiencyId}: {ex.Message}", ex);
+                Logger.Error("Error in SaveSingleTechnicianDeficiency for ID { " + model.InspectionDeficiencyId + "}: { " + ex.Message + "}");
             }
 
             return result;
@@ -11513,7 +11834,7 @@ namespace CamV4.Helper
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error($"Error saving technician photo {imageName}: {ex.Message}", ex);
+                    Logger.Error("Error saving technician photo " + imageName + " : " + ex.Message);
                     throw; // Re-throw to handle at upper level
                 }
             }
@@ -12463,15 +12784,15 @@ namespace CamV4.Helper
                     //{
                     //    foreach (var item in model.inspectionFileDrawing)
                     //    {
-                    //        InspectionFileDrawing ObjFileDrawing = new InspectionFileDrawing();
-                    //        ObjFileDrawing.InspectionId = iObj.InspectionId;
-                    //        ObjFileDrawing.FileDrawingNamePath = item;
-                    //        ObjFileDrawing.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-                    //        ObjFileDrawing.CreatedDate = DateTime.Now;
-                    //        ObjFileDrawing.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-                    //        ObjFileDrawing.ModifiedDate = DateTime.Now;
-                    //        db.InspectionFileDrawings.Add(ObjFileDrawing);
-                    //        db.SaveChanges();
+                    //       InspectionFileDrawing ObjFileDrawing = new InspectionFileDrawing();
+                    //       ObjFileDrawing.InspectionId = iObj.InspectionId;
+                    //       ObjFileDrawing.FileDrawingNamePath = item;
+                    //       ObjFileDrawing.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+                    //       ObjFileDrawing.CreatedDate = DateTime.Now;
+                    //       ObjFileDrawing.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+                    //       ObjFileDrawing.ModifiedDate = DateTime.Now;
+                    //       db.InspectionFileDrawings.Add(ObjFileDrawing);
+                    //       db.SaveChanges();
                     //    }                                                
                     //}
 
@@ -12485,7 +12806,7 @@ namespace CamV4.Helper
                     objUser = getUserEmployeeById(model.EmployeeId);
 
                     iObjNotification.NotificationID = notificationID;
-                    strMessage = "You have been assigned to new Inspection for " + objCustomer.CustomerName + " at " + objCustomerLocation.LocationName + " on " + model.InspectionDate.ToString("MMMM dd, yyyy") + " with Document No:" + iObj.InspectionDocumentNo + ".";
+                    strMessage = "You have been assigned to new Inspection for " + objCustomer.CustomerName + " at " + objCustomerLocation.LocationName + " on " + model.InspectionDate.ToString("MMMM dd, yyyy") + " with Document No: " + iObj.InspectionDocumentNo + ".";
                     iObjNotification.NotificationText = strMessage;
                     iObjNotification.SenderPlatform = "Admin";
                     iObjNotification.ReceiverPlatform = "Mobile";
@@ -12506,7 +12827,7 @@ namespace CamV4.Helper
                     //else
                     //{
                     await firebaseService.SendAndroidNotificationAsync(objUser.UserToken.Trim(), "CAM Industrial ", strMessage);
-                    //}                    
+                    //}                   
                     if (objCustomer.CustomerEmail != null)
                     {
                         var toEmail = objCustomer.CustomerEmail.Trim();
@@ -12913,58 +13234,58 @@ namespace CamV4.Helper
         //{
         //    using (DatabaseEntities db = new DatabaseEntities())
         //    {
-        //        try
-        //        {
-        //            CustomerLocationHistoryLegacyFile fileDrawing = new CustomerLocationHistoryLegacyFile();
-        //            long iCustomerId = 0;
-        //            long? iCustomerLoationId = 0;
-        //            iCustomerId = model.CustomerId;
-        //            iCustomerLoationId = model.CustomerLocationID;
-        //            var name = model.FileDrawingPath.Split(',');
-        //            foreach (var item in name)
-        //            {
-        //                var fileName = System.IO.Path.GetFileNameWithoutExtension(item);
-        //                var found = db.CustomerLocationHistoryLegacyFiles.Where(x => x.FileDrawingName == fileName && x.CustomerId == iCustomerId && x.CustomerLocationID == iCustomerLoationId).FirstOrDefault();
-        //                if (found == null)
-        //                {
-        //                    fileDrawing.CustomerId = Convert.ToInt64(model.CustomerId);
-        //                    fileDrawing.CustomerLocationID = Convert.ToInt64(model.CustomerLocationID);
-        //                    fileDrawing.FileCategory = model.FileCategory;
-        //                    fileDrawing.FileDrawingName = fileName;
-        //                    fileDrawing.FileDrawingPath = item;
-        //                    fileDrawing.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-        //                    fileDrawing.IsDeleted = 0;
-        //                    fileDrawing.CreatedDate = DateTime.Now;
-        //                    fileDrawing.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-        //                    fileDrawing.ModifiedDate = DateTime.Now;
-        //                    db.CustomerLocationHistoryLegacyFiles.Add(fileDrawing);
-        //                    db.SaveChanges();
-        //                }
-        //                else
-        //                {
-        //                    db.CustomerLocationHistoryLegacyFiles.Remove(found);
-        //                    db.SaveChanges();
+        //       try
+        //       {
+        //           CustomerLocationHistoryLegacyFile fileDrawing = new CustomerLocationHistoryLegacyFile();
+        //           long iCustomerId = 0;
+        //           long? iCustomerLoationId = 0;
+        //           iCustomerId = model.CustomerId;
+        //           iCustomerLoationId = model.CustomerLocationID;
+        //           var name = model.FileDrawingPath.Split(',');
+        //           foreach (var item in name)
+        //           {
+        //               var fileName = System.IO.Path.GetFileNameWithoutExtension(item);
+        //               var found = db.CustomerLocationHistoryLegacyFiles.Where(x => x.FileDrawingName == fileName && x.CustomerId == iCustomerId && x.CustomerLocationID == iCustomerLoationId).FirstOrDefault();
+        //               if (found == null)
+        //               {
+        //                   fileDrawing.CustomerId = Convert.ToInt64(model.CustomerId);
+        //                   fileDrawing.CustomerLocationID = Convert.ToInt64(model.CustomerLocationID);
+        //                   fileDrawing.FileCategory = model.FileCategory;
+        //                   fileDrawing.FileDrawingName = fileName;
+        //                   fileDrawing.FileDrawingPath = item;
+        //                   fileDrawing.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+        //                   fileDrawing.IsDeleted = 0;
+        //                   fileDrawing.CreatedDate = DateTime.Now;
+        //                   fileDrawing.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+        //                   fileDrawing.ModifiedDate = DateTime.Now;
+        //                   db.CustomerLocationHistoryLegacyFiles.Add(fileDrawing);
+        //                   db.SaveChanges();
+        //               }
+        //               else
+        //               {
+        //                   db.CustomerLocationHistoryLegacyFiles.Remove(found);
+        //                   db.SaveChanges();
 
-        //                    fileDrawing.CustomerId = Convert.ToInt64(model.CustomerId);
-        //                    fileDrawing.CustomerLocationID = Convert.ToInt64(model.CustomerLocationID);
-        //                    fileDrawing.FileCategory = model.FileCategory;
-        //                    fileDrawing.FileDrawingName = fileName;
-        //                    fileDrawing.FileDrawingPath = item;
-        //                    fileDrawing.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-        //                    fileDrawing.IsDeleted = 0;
-        //                    fileDrawing.CreatedDate = DateTime.Now;
-        //                    fileDrawing.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-        //                    fileDrawing.ModifiedDate = DateTime.Now;
-        //                    db.CustomerLocationHistoryLegacyFiles.Add(fileDrawing);
-        //                    db.SaveChanges();
-        //                }
-        //            }
-        //            return fileDrawing.CustomerId;
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return 0;
-        //        }
+        //                   fileDrawing.CustomerId = Convert.ToInt64(model.CustomerId);
+        //                   fileDrawing.CustomerLocationID = Convert.ToInt64(model.CustomerLocationID);
+        //                   fileDrawing.FileCategory = model.FileCategory;
+        //                   fileDrawing.FileDrawingName = fileName;
+        //                   fileDrawing.FileDrawingPath = item;
+        //                   fileDrawing.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+        //                   fileDrawing.IsDeleted = 0;
+        //                   fileDrawing.CreatedDate = DateTime.Now;
+        //                   fileDrawing.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+        //                   fileDrawing.ModifiedDate = DateTime.Now;
+        //                   db.CustomerLocationHistoryLegacyFiles.Add(fileDrawing);
+        //                   db.SaveChanges();
+        //               }
+        //           }
+        //           return fileDrawing.CustomerId;
+        //       }
+        //       catch (Exception ex)
+        //       {
+        //           return 0;
+        //       }
         //    }
         //}
 
@@ -13058,10 +13379,10 @@ namespace CamV4.Helper
                 //    var objNotification = db.Notifications.Where(x => x.NotificationID == item.NotificationID && x.ReadStatus == false).FirstOrDefault();
                 //    if (objNotification != null)
                 //    {
-                //        objNotification.ReadStatus = true;
-                //        objNotification.ModifiedDate = DateTime.Now;
-                //        db.Entry(objNotification).State = EntityState.Modified;
-                //        db.SaveChanges();
+                //       objNotification.ReadStatus = true;
+                //       objNotification.ModifiedDate = DateTime.Now;
+                //       db.Entry(objNotification).State = EntityState.Modified;
+                //       db.SaveChanges();
                 //    }
                 //}
                 return "true";
@@ -13074,13 +13395,13 @@ namespace CamV4.Helper
         //    FirebaseHelper firebaseService = new FirebaseHelper();
         //    try
         //    {
-        //        FirebaseHelper.InitializeFirebase();
-        //        await firebaseService.SendNotificationAsync(strdeviceToken, "CAM Industrial", strMessage);
-        //        isSend = true;
+        //       FirebaseHelper.InitializeFirebase();
+        //       await firebaseService.SendNotificationAsync(strdeviceToken, "CAM Industrial", strMessage);
+        //       isSend = true;
         //    }
         //    catch (Exception ex)
         //    {
-        //        isSend = false;
+        //       isSend = false;
         //    }
         //    return isSend;
         //}
@@ -13091,13 +13412,13 @@ namespace CamV4.Helper
         //    FirebaseHelper firebaseService = new FirebaseHelper();
         //    try
         //    {
-        //        FirebaseHelper.InitializeFirebase();
-        //        await firebaseService.SendNotificationAsync(strdeviceToken, "CAM Industrial", strMessage);
-        //        isSend = true;
+        //       FirebaseHelper.InitializeFirebase();
+        //       await firebaseService.SendNotificationAsync(strdeviceToken, "CAM Industrial", strMessage);
+        //       isSend = true;
         //    }
         //    catch (Exception ex)
         //    {
-        //        isSend = false;
+        //       isSend = false;
         //    }
         //    return isSend;
         //}
@@ -13118,13 +13439,13 @@ namespace CamV4.Helper
         //    //    to = "drejKO21hU7muKEXTi_L92:APA91bFKtwmqlOS4cR71pYryuKSoy1yArGq0-Ur0GzI_lFIz2-PprxRfJcaggtHRtusCYWmA2_SD3ouGojr_nlRuj1DATab7Ky4HUcmo6gKMsrfXV2ONxFTJ1pqUuI06peysTBumidC3",
         //    //    data = new
         //    //    {
-        //    //        key1 = "value1",
-        //    //        key2 = "value2"
+        //    //       key1 = "value1",
+        //    //       key2 = "value2"
         //    //    },
         //    //    notification = new
         //    //    {
-        //    //        title = "Notification title",
-        //    //        body = "Notification body"
+        //    //       title = "Notification title",
+        //    //       body = "Notification body"
         //    //    }
         //    //};
 
@@ -13139,12 +13460,12 @@ namespace CamV4.Helper
 
         //    var message = new
         //    {
-        //        notification = new
-        //        {
-        //            title = "CAM Industrial",
-        //            body = strMessage
-        //        },
-        //        to = deviceToken
+        //       notification = new
+        //       {
+        //           title = "CAM Industrial",
+        //           body = strMessage
+        //       },
+        //       to = deviceToken
         //    };
 
         //    var jsonMessage = JsonConvert.SerializeObject(message);
@@ -13158,7 +13479,7 @@ namespace CamV4.Helper
         //    var response = await client.SendAsync(request);
         //    if (response != null)
         //    {
-        //        return true;
+        //       return true;
         //    }
 
         //    return true;
@@ -13219,7 +13540,7 @@ namespace CamV4.Helper
 
             //    if (list.Count != 0)
             //    {
-            //        return list;
+            //       return list;
             //    }
             //    return null;
             //}
@@ -13232,12 +13553,12 @@ namespace CamV4.Helper
             using (DatabaseEntities db = new DatabaseEntities())
             {
                 //var list = db.ComponentPropertyValues.Where(x => x.ComponentPropertyTypeId == ComponentPropertyTypeId && x.IsActive == true).OrderBy(x => x.ComponentPropertyValue1).ToList();                
-                //           var list = db.ComponentPropertyValues.Where(c => c.ComponentPropertyTypeId == ComponentPropertyTypeId).AsEnumerable().OrderBy(c =>
+                //          var list = db.ComponentPropertyValues.Where(c => c.ComponentPropertyTypeId == ComponentPropertyTypeId).AsEnumerable().OrderBy(c =>
                 //{
                 //    var cleanedValue = c.ComponentPropertyValue1.Replace("\"", "")
-                //                                               .Replace("'", "")
-                //                                               .Replace("/", "")
-                //                                               .Replace("\\", "");
+                //                                              .Replace("'", "")
+                //                                              .Replace("/", "")
+                //                                              .Replace("\\", "");
 
 
                 //    float parsedValue;
@@ -14651,6 +14972,730 @@ namespace CamV4.Helper
         }
 
 
+        #region ShelvingCheckListType Database Methods
+
+        public static int CreateShelvingCheckListType(ShelvingCheckListType model, string loggedInUserId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                model.CreatedDate = DateTime.Now;
+                model.CreatedBy = loggedInUserId;
+                model.IsDeleted = false;
+
+                db.ShelvingCheckListTypes.Add(model);
+                db.SaveChanges();
+
+                return model.ShelvingCheckListTypeId;
+            }
+        }
+
+        public static bool UpdateShelvingCheckListType(ShelvingCheckListType model, string loggedInUserId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                var existing = db.ShelvingCheckListTypes.FirstOrDefault(x => x.ShelvingCheckListTypeId == model.ShelvingCheckListTypeId && x.IsDeleted != true);
+                if (existing == null)
+                {
+                    return false;
+                }
+
+                existing.ShelvingCheckListTypeName = model.ShelvingCheckListTypeName;
+                existing.ModifiedDate = DateTime.Now;
+                existing.ModifiedBy = loggedInUserId;
+
+                db.SaveChanges();
+                return true;
+            }
+        }
+
+        public static bool DeleteShelvingCheckListType(int id, string loggedInUserId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                var existing = db.ShelvingCheckListTypes.FirstOrDefault(x => x.ShelvingCheckListTypeId == id && x.IsDeleted != true);
+                if (existing == null)
+                {
+                    return false;
+                }
+
+                existing.IsDeleted = true;
+                existing.ModifiedDate = DateTime.Now;
+                existing.ModifiedBy = loggedInUserId;
+
+                db.SaveChanges();
+                return true;
+            }
+        }
+
+        public static ShelvingCheckListType GetShelvingCheckListTypeById(int id)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                return db.ShelvingCheckListTypes.FirstOrDefault(x => x.ShelvingCheckListTypeId == id && x.IsDeleted != true);
+            }
+        }
+
+        public static List<ShelvingCheckListType> GetAllShelvingCheckListTypes()
+        {
+            using (var db = new DatabaseEntities())
+            {
+                return db.ShelvingCheckListTypes.Where(x => x.IsDeleted != true).OrderBy(x => x.ShelvingCheckListTypeName).ToList();
+            }
+        }
+
+        #endregion
+
+        #region ShelvingCheckListDeficiency Database Methods
+
+        public static int CreateShelvingCheckListDeficiency(ShelvingCheckListDeficiency model, string loggedInUserId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                model.CreatedDate = DateTime.Now;
+                model.CreatedBy = loggedInUserId;
+                model.IsActive = true;
+
+                db.ShelvingCheckListDeficiencies.Add(model);
+                db.SaveChanges();
+
+                return model.ShelvingCheckListDeficiencyID;
+            }
+        }
+
+        public static bool UpdateShelvingCheckListDeficiency(ShelvingCheckListDeficiency model, string loggedInUserId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                var existing = db.ShelvingCheckListDeficiencies.FirstOrDefault(x => x.ShelvingCheckListDeficiencyID == model.ShelvingCheckListDeficiencyID);
+                if (existing == null)
+                {
+                    return false;
+                }
+
+                existing.ShelvingCheckListDeficiencyInfo = model.ShelvingCheckListDeficiencyInfo;
+                existing.ShelvingCheckListDeficiencyComment = model.ShelvingCheckListDeficiencyComment;
+                existing.IsActive = model.IsActive;
+                existing.ModifiedDate = DateTime.Now;
+                existing.ModifiedBy = loggedInUserId;
+
+                db.SaveChanges();
+                return true;
+            }
+        }
+
+        public static bool DeleteShelvingCheckListDeficiency(int id, string loggedInUserId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                var existing = db.ShelvingCheckListDeficiencies.FirstOrDefault(x => x.ShelvingCheckListDeficiencyID == id);
+                if (existing == null)
+                {
+                    return false;
+                }
+
+                existing.IsActive = false;
+                existing.ModifiedDate = DateTime.Now;
+                existing.ModifiedBy = loggedInUserId;
+
+                db.SaveChanges();
+                return true;
+            }
+        }
+
+        public static ShelvingCheckListDeficiency GetShelvingCheckListDeficiencyById(int id)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                return db.ShelvingCheckListDeficiencies.FirstOrDefault(x => x.ShelvingCheckListDeficiencyID == id);
+            }
+        }
+
+        public static List<ShelvingCheckListDeficiency> GetAllActiveShelvingCheckListDeficiencies()
+        {
+            using (var db = new DatabaseEntities())
+            {
+                return db.ShelvingCheckListDeficiencies.Where(x => x.IsActive == true).OrderBy(x => x.ShelvingCheckListDeficiencyID).ToList();
+            }
+        }
+
+        #endregion
+
+        #region ShelvingCheckList Database Methods
+
+        public static long CreateShelvingCheckList(ShelvingCheckList model, string loggedInUserId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                model.CreatedDate = DateTime.Now;
+                model.CreatedBy = loggedInUserId;
+                model.IsDelete = false;
+
+                db.ShelvingCheckLists.Add(model);
+                db.SaveChanges();
+
+                return model.ShelvingCheckListId;
+            }
+        }
+
+        public static bool UpdateShelvingCheckList(ShelvingCheckList model, string loggedInUserId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                var existing = db.ShelvingCheckLists.FirstOrDefault(x => x.ShelvingCheckListId == model.ShelvingCheckListId && x.IsDelete != true);
+                if (existing == null)
+                {
+                    return false;
+                }
+
+                existing.InspectionId = model.InspectionId;
+                existing.ShelvingCheckListName = model.ShelvingCheckListName;
+                existing.ShelvingCheckListSection = model.ShelvingCheckListSection;
+                existing.ShelvingCheckListTypeId = model.ShelvingCheckListTypeId;
+                existing.ManufacturerId = model.ManufacturerId;
+                existing.RowID = model.RowID;
+                existing.Bays = model.Bays;
+                existing.NoOfShelvesPerBay = model.NoOfShelvesPerBay;
+                existing.ShelvingCheckListSizeWidthIn = model.ShelvingCheckListSizeWidthIn;
+                existing.ShelvingCheckListSizeDepthIn = model.ShelvingCheckListSizeDepthIn;
+                existing.ShelvingCheckListSizeHeightIn = model.ShelvingCheckListSizeHeightIn;
+                existing.PostWidthIn = model.PostWidthIn;
+                existing.PostDepthIn = model.PostDepthIn;
+                existing.PostThicknessIn = model.PostThicknessIn;
+                existing.PostType = model.PostType;
+                existing.ShelfBeamHeightIn = model.ShelfBeamHeightIn;
+                existing.ShelfBeamThicknessIn = model.ShelfBeamThicknessIn;
+                existing.FrameConnectorQty = model.FrameConnectorQty;
+                existing.TieBarQty = model.TieBarQty;
+                existing.CapacityForBay = model.CapacityForBay;
+                existing.CapacityForShelf = model.CapacityForShelf;
+                existing.ModifiedDate = DateTime.Now;
+                existing.ModifiedBy = loggedInUserId;
+
+                db.SaveChanges();
+                return true;
+            }
+        }
+
+        public static bool DeleteShelvingCheckList(int id, string loggedInUserId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                var existing = db.ShelvingCheckLists.FirstOrDefault(x => x.ShelvingCheckListId == id && x.IsDelete != true);
+                if (existing == null)
+                {
+                    return false;
+                }
+
+                existing.IsDelete = true;
+                existing.ModifiedDate = DateTime.Now;
+                existing.ModifiedBy = loggedInUserId;
+
+                // Soft delete associated details
+                var details = db.ShelvingCheckListDetails.Where(x => x.ShelvingCheckListId == id && x.IsDelete != true).ToList();
+                foreach (var detail in details)
+                {
+                    detail.IsDelete = true;
+                    detail.ModifiedDate = DateTime.Now;
+                    detail.ModifiedBy = loggedInUserId;
+                }
+
+                db.SaveChanges();
+                return true;
+            }
+        }
+
+        public static ShelvingCheckList GetShelvingCheckListById(int id)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                return db.ShelvingCheckLists.FirstOrDefault(x => x.ShelvingCheckListId == id && x.IsDelete != true);
+            }
+        }
+
+        public static List<ShelvingCheckList> GetShelvingCheckListsByInspectionId(long inspectionId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                return db.ShelvingCheckLists.Where(x => x.InspectionId == inspectionId && x.IsDelete != true).OrderBy(x => x.CreatedDate).ToList();
+            }
+        }
+
+
+        #region ShelvingCheckList Complete Save/Update with Photos
+
+        public static SaveShelvingCheckListResult SaveShelvingCheckListComplete(ShelvingCheckList checkListModel, List<ShelvingCheckListDetail> detailModels, List<ShelvingCheckListPhotoBase64> photoModels, string loggedInUserId, string photoBasePath, string thumbBasePath)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                using (var transaction = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        bool isUpdate = checkListModel.ShelvingCheckListId > 0;
+                        long shelvingCheckListId = checkListModel.ShelvingCheckListId;
+
+                        if (isUpdate)
+                        {
+                            // UPDATE
+                            var existing = db.ShelvingCheckLists.FirstOrDefault(
+                                x => x.ShelvingCheckListId == shelvingCheckListId && x.IsDelete == false);
+
+                            if (existing == null)
+                            {
+                                return new SaveShelvingCheckListResult
+                                {
+                                    Success = false,
+                                    Message = "Shelving CheckList not found"
+                                };
+                            }
+
+                            // Update all fields
+                            existing.InspectionId = checkListModel.InspectionId;
+                            existing.ShelvingCheckListName = checkListModel.ShelvingCheckListName;
+                            existing.ShelvingCheckListSection = checkListModel.ShelvingCheckListSection;
+                            existing.ShelvingCheckListTypeId = checkListModel.ShelvingCheckListTypeId;
+                            existing.ShelvingCheckListSection = checkListModel.ShelvingCheckListSection;
+                            existing.ManufacturerId = checkListModel.ManufacturerId;
+                            existing.RowID = checkListModel.RowID;
+                            existing.Bays = checkListModel.Bays;
+                            existing.NoOfShelvesPerBay = checkListModel.NoOfShelvesPerBay;
+                            existing.ShelvingCheckListSizeWidthIn = checkListModel.ShelvingCheckListSizeWidthIn;
+                            existing.ShelvingCheckListSizeDepthIn = checkListModel.ShelvingCheckListSizeDepthIn;
+                            existing.ShelvingCheckListSizeHeightIn = checkListModel.ShelvingCheckListSizeHeightIn;
+                            existing.PostWidthIn = checkListModel.PostWidthIn;
+                            existing.PostDepthIn = checkListModel.PostDepthIn;
+                            existing.PostThicknessIn = checkListModel.PostThicknessIn;
+                            existing.PostType = checkListModel.PostType;
+                            existing.ShelfBeamHeightIn = checkListModel.ShelfBeamHeightIn;
+                            existing.ShelfBeamThicknessIn = checkListModel.ShelfBeamThicknessIn;
+                            existing.FrameConnectorQty = checkListModel.FrameConnectorQty;
+                            existing.TieBarQty = checkListModel.TieBarQty;
+                            existing.CapacityForBay = checkListModel.CapacityForBay;
+                            existing.CapacityForShelf = checkListModel.CapacityForShelf;
+                            existing.ModifiedDate = DateTime.Now;
+                            existing.ModifiedBy = loggedInUserId;
+                        }
+                        else
+                        {
+                            // CREATE
+                            checkListModel.CreatedDate = DateTime.Now;
+                            checkListModel.CreatedBy = loggedInUserId;
+                            checkListModel.IsDelete = false;
+
+                            db.ShelvingCheckLists.Add(checkListModel);
+                            db.SaveChanges();
+                            shelvingCheckListId = checkListModel.ShelvingCheckListId;
+                        }
+
+                        db.SaveChanges();
+
+                        if (detailModels != null && detailModels.Count > 0)
+                        {
+                            // Soft delete all existing details
+                            var existingDetails = db.ShelvingCheckListDetails
+                                .Where(x => x.ShelvingCheckListId == shelvingCheckListId && x.IsDelete == false)
+                                .ToList();
+
+                            foreach (var detail in existingDetails)
+                            {
+                                detail.IsDelete = true;
+                                detail.ModifiedDate = DateTime.Now;
+                                detail.ModifiedBy = loggedInUserId;
+                            }
+                            db.SaveChanges();
+
+                            // Insert new details
+                            foreach (var detailModel in detailModels)
+                            {
+                                var newDetail = new ShelvingCheckListDetail
+                                {
+                                    ShelvingCheckListId = shelvingCheckListId,
+                                    ShelvingCheckListDeficiencyID = detailModel.ShelvingCheckListDeficiencyID,
+                                    Description = detailModel.Description,
+                                    Tick_Yes = detailModel.Tick_Yes,
+                                    Tick_No = detailModel.Tick_No,
+                                    Tick_NA = detailModel.Tick_NA,
+                                    Comments = detailModel.Comments,
+                                    IsDelete = false,
+                                    CreatedDate = DateTime.Now,
+                                    CreatedBy = loggedInUserId
+                                };
+
+                                db.ShelvingCheckListDetails.Add(newDetail);
+                            }
+                            db.SaveChanges();
+                        }
+
+                        if (photoModels != null && photoModels.Count > 0)
+                        {
+                            // Ensure directories exist
+                            if (!Directory.Exists(photoBasePath))
+                                Directory.CreateDirectory(photoBasePath);
+                            if (!Directory.Exists(thumbBasePath))
+                                Directory.CreateDirectory(thumbBasePath);
+
+                            foreach (var photoModel in photoModels)
+                            {
+                                if (photoModel.ShouldDelete && photoModel.ShelvingCheckListPhotoId > 0)
+                                {
+                                    // DELETE existing photo
+                                    var photoToDelete = db.ShelvingCheckListPhotoes
+                                        .FirstOrDefault(x => x.ShelvingCheckListPhotoId == photoModel.ShelvingCheckListPhotoId);
+
+                                    if (photoToDelete != null)
+                                    {
+                                        // Delete physical files
+                                        string mainPhotoPath = Path.Combine(photoBasePath, photoToDelete.ShelvingCheckListPath);
+                                        string thumbPhotoPath = Path.Combine(thumbBasePath, photoToDelete.ShelvingCheckListPath);
+
+                                        if (File.Exists(mainPhotoPath))
+                                            File.Delete(mainPhotoPath);
+                                        if (File.Exists(thumbPhotoPath))
+                                            File.Delete(thumbPhotoPath);
+
+                                        // Delete from database
+                                        db.ShelvingCheckListPhotoes.Remove(photoToDelete);
+                                    }
+                                }
+                                else if (!string.IsNullOrEmpty(photoModel.PhotoBase64))
+                                {
+                                    // ADD new photo from base64
+                                    try
+                                    {
+                                        // Generate unique filename
+                                        string uniqueFileName = Guid.NewGuid().ToString() + ".jpg";
+                                        string mainPhotoPath = Path.Combine(photoBasePath, uniqueFileName);
+                                        string thumbPhotoPath = Path.Combine(thumbBasePath, uniqueFileName);
+
+                                        // Convert base64 to image
+                                        byte[] imageBytes = Convert.FromBase64String(photoModel.PhotoBase64);
+
+                                        using (var ms = new MemoryStream(imageBytes))
+                                        {
+                                            using (var originalImage = Image.FromStream(ms))
+                                            {
+                                                // Save original image
+                                                originalImage.Save(mainPhotoPath, ImageFormat.Jpeg);
+
+                                                // Create and save thumbnail (100x100)
+                                                using (var thumbnail = CreateThumbnail(originalImage, 100, 100))
+                                                {
+                                                    thumbnail.Save(thumbPhotoPath, ImageFormat.Jpeg);
+                                                }
+                                            }
+                                        }
+
+                                        // Save to database
+                                        var newPhoto = new ShelvingCheckListPhoto
+                                        {
+                                            ShelvingCheckListId = shelvingCheckListId,
+                                            ShelvingCheckListPath = uniqueFileName,
+                                            CreatedDate = DateTime.Now,
+                                            CreatedBy = loggedInUserId
+                                        };
+
+                                        db.ShelvingCheckListPhotoes.Add(newPhoto);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // Log error but continue processing other photos
+                                        Console.WriteLine($"Error processing photo: {ex.Message}");
+                                    }
+                                }
+                            }
+
+                            db.SaveChanges();
+                        }
+
+                        // ============== COMMIT TRANSACTION ==============
+                        transaction.Commit();
+
+                        return new SaveShelvingCheckListResult
+                        {
+                            Success = true,
+                            Message = isUpdate ? "Shelving CheckList updated successfully" : "Shelving CheckList created successfully",
+                            ShelvingCheckListId = shelvingCheckListId
+                        };
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        return new SaveShelvingCheckListResult
+                        {
+                            Success = false,
+                            Message = "Error: " + ex.Message
+                        };
+                    }
+                }
+            }
+        }
+
+        // Helper method to create thumbnails (100x100 with aspect ratio)
+        private static Image CreateThumbnail(Image originalImage, int width, int height)
+        {
+            var thumbnail = new Bitmap(width, height);
+
+            using (var graphics = Graphics.FromImage(thumbnail))
+            {
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+
+                // Calculate dimensions to maintain aspect ratio
+                float ratioX = (float)width / originalImage.Width;
+                float ratioY = (float)height / originalImage.Height;
+                float ratio = Math.Min(ratioX, ratioY);
+
+                int newWidth = (int)(originalImage.Width * ratio);
+                int newHeight = (int)(originalImage.Height * ratio);
+
+                // Center the image
+                int posX = (width - newWidth) / 2;
+                int posY = (height - newHeight) / 2;
+
+                graphics.DrawImage(originalImage, posX, posY, newWidth, newHeight);
+            }
+
+            return thumbnail;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region ShelvingCheckListDetail Database Methods
+
+        public static int CreateShelvingCheckListDetails(List<ShelvingCheckListDetail> models, string loggedInUserId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                int savedCount = 0;
+
+                foreach (var model in models)
+                {
+                    model.CreatedDate = DateTime.Now;
+                    model.CreatedBy = loggedInUserId;
+                    model.IsDelete = false;
+
+                    db.ShelvingCheckListDetails.Add(model);
+                    savedCount++;
+                }
+
+                db.SaveChanges();
+                return savedCount;
+            }
+        }
+
+        public static int UpdateShelvingCheckListDetails(List<ShelvingCheckListDetail> models, string loggedInUserId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                int updatedCount = 0;
+
+                foreach (var model in models)
+                {
+                    var existing = db.ShelvingCheckListDetails.FirstOrDefault(x => x.ShelvingCheckListDetailId == model.ShelvingCheckListDetailId && x.IsDelete != true);
+                    if (existing != null)
+                    {
+                        existing.ShelvingCheckListId = model.ShelvingCheckListId;
+                        existing.ShelvingCheckListDeficiencyID = model.ShelvingCheckListDeficiencyID;
+                        existing.Description = model.Description;
+                        existing.Tick_Yes = model.Tick_Yes;
+                        existing.Tick_No = model.Tick_No;
+                        existing.Tick_NA = model.Tick_NA;
+                        existing.Comments = model.Comments;
+                        existing.ModifiedDate = DateTime.Now;
+                        existing.ModifiedBy = loggedInUserId;
+                        updatedCount++;
+                    }
+                }
+
+                db.SaveChanges();
+                return updatedCount;
+            }
+        }
+
+        public static bool DeleteShelvingCheckListDetail(long id, string loggedInUserId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                var existing = db.ShelvingCheckListDetails.FirstOrDefault(x => x.ShelvingCheckListDetailId == id && x.IsDelete != true);
+                if (existing == null)
+                {
+                    return false;
+                }
+
+                existing.IsDelete = true;
+                existing.ModifiedDate = DateTime.Now;
+                existing.ModifiedBy = loggedInUserId;
+
+                db.SaveChanges();
+                return true;
+            }
+        }
+
+        public static ShelvingCheckListDetail GetShelvingCheckListDetailById(long id)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                return db.ShelvingCheckListDetails.FirstOrDefault(x => x.ShelvingCheckListDetailId == id && x.IsDelete != true);
+            }
+        }
+
+        public static List<ShelvingCheckListDetail> GetShelvingCheckListDetailsByCheckListId(long checkListId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                return db.ShelvingCheckListDetails.Where(x => x.ShelvingCheckListId == checkListId && x.IsDelete != true).OrderBy(x => x.CreatedDate).ToList();
+            }
+        }
+
+        #endregion
+
+        #region ShelvingCheckListPhoto Database Methods
+
+        public static long CreateShelvingCheckListPhoto(ShelvingCheckListPhoto model, string loggedInUserId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                model.CreatedDate = DateTime.Now;
+                model.CreatedBy = loggedInUserId;
+
+                db.ShelvingCheckListPhotoes.Add(model);
+                db.SaveChanges();
+
+                return model.ShelvingCheckListPhotoId;
+            }
+        }
+
+        public static bool DeleteShelvingCheckListPhoto(long id)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                var existing = db.ShelvingCheckListPhotoes.FirstOrDefault(x => x.ShelvingCheckListPhotoId == id);
+                if (existing == null)
+                {
+                    return false;
+                }
+
+                db.ShelvingCheckListPhotoes.Remove(existing);
+                db.SaveChanges();
+                return true;
+            }
+        }
+
+        public static ShelvingCheckListPhoto GetShelvingCheckListPhotoById(long id)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                return db.ShelvingCheckListPhotoes.FirstOrDefault(x => x.ShelvingCheckListPhotoId == id);
+            }
+        }
+
+        //public static List<ShelvingCheckListPhoto> GetShelvingCheckListPhotosByCheckListId(long checkListId)
+        //{
+        //    string host = url.GetLeftPart(UriPartial.Authority);
+        //    using (var db = new DatabaseEntities())
+        //    {
+        //        List<ShelvingCheckListPhotoViewModel> photoViewModels = new List<ShelvingCheckListPhotoViewModel>();
+        //        List<ShelvingCheckListPhoto> photos = db.ShelvingCheckListPhotoes.Where(x => x.ShelvingCheckListId == checkListId).OrderBy(x => x.CreatedDate).ToList();
+        //        foreach (var photo in photos)
+        //        {
+        //            ShelvingCheckListPhotoViewModel photoVM = new ShelvingCheckListPhotoViewModel();
+        //            photoVM.ShelvingCheckListPhotoId = photo.ShelvingCheckListPhotoId;
+        //            photoVM.ShelvingCheckListId = photo.ShelvingCheckListId;
+        //            photoVM.ShelvingCheckListPath = photo.ShelvingCheckListPath ?? "";
+
+        //            // Build full URL for photo
+        //            if (!string.IsNullOrEmpty(photo.ShelvingCheckListPath))
+        //            {
+        //                photoVM.ShelvingCheckListPathFull = host + "/img/ShelvingCheckList/" + photo.ShelvingCheckListPath;
+        //                string TempOutputPathShelving = Path.Combine(HostingEnvironment.MapPath("~/img/Shelvingchecklistthumb/"), photo.ShelvingCheckListPath);
+        //                if (!File.Exists(TempOutputPathShelving))
+        //                {
+        //                    try
+        //                    {
+        //                        byte[] imageBytes = CreateThumbnail(photo.ShelvingCheckListPath, 100, 100);
+        //                        var outputPath = Path.Combine(host + "/img/Shelvingchecklistthumb/", photo.ShelvingCheckListPath);
+        //                        File.WriteAllBytes(TempOutputPathShelving, imageBytes);
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                    }
+        //                }
+        //                photoVM.ShelvingCheckListPathFullThumb = host + "/img/Shelvingchecklistthumb/" + photo.ShelvingCheckListPath;
+        //            }
+        //            photoViewModels.Add(photoVM);
+        //        }
+        //        checklistVM.ShelvingCheckListPhotos = photoViewModels;                
+        //    }
+        //}
+
+        public static List<ShelvingCheckListPhotoViewModel> GetShelvingCheckListPhotosByCheckListId(long checkListId)
+        {
+            string tmpURL = HttpContext.Current.Request.Url.AbsoluteUri;
+            Uri url = new Uri(tmpURL);
+            string host = url.GetLeftPart(UriPartial.Authority);
+            using (var db = new DatabaseEntities())
+            {
+                var photoViewModels = new List<ShelvingCheckListPhotoViewModel>();
+
+                var photos = db.ShelvingCheckListPhotoes.Where(x => x.ShelvingCheckListId == checkListId).OrderBy(x => x.CreatedDate).ToList();
+
+                foreach (var photo in photos)
+                {
+                    var photoVM = new ShelvingCheckListPhotoViewModel
+                    {
+                        ShelvingCheckListPhotoId = photo.ShelvingCheckListPhotoId,
+                        ShelvingCheckListId = photo.ShelvingCheckListId,
+                        ShelvingCheckListPath = photo.ShelvingCheckListPath ?? string.Empty
+                    };
+
+                    if (!string.IsNullOrEmpty(photo.ShelvingCheckListPath))
+                    {
+                        // Full image URL
+                        photoVM.ShelvingCheckListPathFull =
+                            host + "/img/ShelvingCheckList/" + photo.ShelvingCheckListPath;
+
+                        // Physical thumbnail path
+                        string thumbPhysicalPath = Path.Combine(
+                            HostingEnvironment.MapPath("~/img/Shelvingchecklistthumb/"),
+                            photo.ShelvingCheckListPath
+                        );
+
+                        // Create thumbnail if missing
+                        if (!File.Exists(thumbPhysicalPath))
+                        {
+                            try
+                            {
+                                byte[] imageBytes = CreateThumbnail(
+                                    photo.ShelvingCheckListPath, 100, 100);
+
+                                File.WriteAllBytes(thumbPhysicalPath, imageBytes);
+                            }
+                            catch
+                            {
+                                // Optional: log exception
+                            }
+                        }
+
+                        // Thumbnail URL
+                        photoVM.ShelvingCheckListPathFullThumb =
+                            host + "/img/Shelvingchecklistthumb/" + photo.ShelvingCheckListPath;
+                    }
+
+                    photoViewModels.Add(photoVM);
+                }
+
+                return photoViewModels;
+            }
+        }
+
+
+        #endregion
+
+
     }
 }
 
@@ -14662,16 +15707,16 @@ namespace CamV4.Helper
 //    string[] items = list.FacilitiesAreasIds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 //    foreach (var f in items)
 //    {
-//        if (f != null)
-//        {
-//            int fId = Convert.ToInt16(f);
-//            var fac = db.FacilitiesAreas.Where(x => x.FacilitiesAreaId == fId && x.IsActive == true).FirstOrDefault();
-//            if (fac != null)
-//            {
-//                fAreaName = String.Join(",", fac.FacilitiesAreaName);
+//       if (f != null)
+//       {
+//           int fId = Convert.ToInt16(f);
+//           var fac = db.FacilitiesAreas.Where(x => x.FacilitiesAreaId == fId && x.IsActive == true).FirstOrDefault();
+//           if (fac != null)
+//           {
+//               fAreaName = String.Join(",", fac.FacilitiesAreaName);
 
-//            }
-//        }
+//           }
+//       }
 //    }
 //    _list.FacilitiesAreas = fAreaName;
 //}
@@ -14681,15 +15726,15 @@ namespace CamV4.Helper
 //    string[] overview = list.ProcessOverviewIds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 //    foreach (var h in overview)
 //    {
-//        if (h != null)
-//        {
-//            int pId = Convert.ToInt16(h);
-//            var pro = db.ProcessOverviews.Where(x => x.ProcessOverviewId == pId && x.IsActive == true).FirstOrDefault();
-//            if (pro != null)
-//            {
-//                pOverName = String.Join(",", pro.ProcessOverviewDesc);
-//            }
-//        }
+//       if (h != null)
+//       {
+//           int pId = Convert.ToInt16(h);
+//           var pro = db.ProcessOverviews.Where(x => x.ProcessOverviewId == pId && x.IsActive == true).FirstOrDefault();
+//           if (pro != null)
+//           {
+//               pOverName = String.Join(",", pro.ProcessOverviewDesc);
+//           }
+//       }
 //    }
 //    _list.ProcessOverviews = pOverName;
 //}
