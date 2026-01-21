@@ -476,6 +476,7 @@
                     window.location = url;
                 }
                 else {
+                    console.log("saveInspectionDue- error", response.data);
                     $scope.errorNot = response.data;
                 }
             }, function (error) {
@@ -1492,7 +1493,7 @@
             var chkQuotationApprovalToCustomer = 0;
             var isalespersonid = 0;
             var chkIsInspectionFinished = 0;
-            var ShelvingChecklist3A = "";
+            var ShelvingChecklistComments = "";
 
             // Get sales person ID if quotation exists
             if ($scope.getInspectionDetailsForSheet.objQuotation != null) {
@@ -1502,8 +1503,9 @@
                 }
             }
 
-            if ($scope.getInspectionDetailsForSheet.ShelvingChecklist3A != "") {
-                ShelvingChecklist3A = $scope.getInspectionDetailsForSheet.ShelvingChecklist3A;
+            if ($scope.getInspectionDetailsForSheet.ShelvingChecklistComments != "") {
+                console.log("ShelvingChecklistComments", $scope.getInspectionDetailsForSheet.ShelvingChecklistComments);
+                ShelvingChecklistComments = $scope.getInspectionDetailsForSheet.ShelvingChecklistComments;
             } 
 
             // Set inspection finished status
@@ -1581,7 +1583,7 @@
                 chkedSentEmailtoCustomer: chkedSentEmailtoCustomer,
                 istampingengineerid: istampingengineerid,
                 isalespersonid: isalespersonid,                
-                ShelvingChecklist3A: ShelvingChecklist3A
+                ShelvingChecklistComments: ShelvingChecklistComments
             });
            
             // CASE 1: Handle Inspection Finished (Priority)
@@ -1698,7 +1700,7 @@
                 iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
                 iStampingEngineerId: istampingengineerid,
                 sCheckedDocument: checkedDocument,
-                ShelvingChecklist3A: ShelvingChecklist3A
+                ShelvingChecklistComments: ShelvingChecklistComments
             };
             
             console.log("Updating inspection with data:", data);

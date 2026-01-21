@@ -60,13 +60,13 @@
         <EntityTypeShape EntityType="admin_rackauditorModel.ComponentSubType_Deleted" Width="1.5" PointX="22.75" PointY="12.75" IsExpanded="true" />
         <EntityTypeShape EntityType="admin_rackauditorModel.InspectionStatu" Width="1.5" PointX="12.75" PointY="22.75" IsExpanded="true" />
         <EntityTypeShape EntityType="admin_rackauditorModel.ProcessOverview" Width="1.5" PointX="19.375" PointY="22.75" />
-        <EntityTypeShape EntityType="admin_rackauditorModel.ShelvingCheckListDeficiency" Width="1.5" PointX="23.375" PointY="15.75" />
-        <EntityTypeShape EntityType="admin_rackauditorModel.ShelvingCheckListDetail" Width="1.5" PointX="23.375" PointY="19.75" />
-        <EntityTypeShape EntityType="admin_rackauditorModel.ShelvingCheckListPhoto" Width="1.5" PointX="7.375" PointY="24.75" />
-        <EntityTypeShape EntityType="admin_rackauditorModel.ShelvingCheckListType" Width="1.5" PointX="15.375" PointY="24.75" />
-        <EntityTypeShape EntityType="admin_rackauditorModel.ShelvingCheckList" Width="1.5" PointX="23.375" PointY="24.75" />
         <EntityTypeShape EntityType="admin_rackauditorModel.Manufacturer" Width="1.5" PointX="25.375" PointY="0.75" />
-        <EntityTypeShape EntityType="admin_rackauditorModel.Inspection" Width="1.5" PointX="0.75" PointY="18.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.ShelvingCheckList" Width="1.5" PointX="21.75" PointY="22.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.ShelvingCheckListDeficiency" Width="1.5" PointX="23.75" PointY="15.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.ShelvingCheckListDetail" Width="1.5" PointX="23.75" PointY="19.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.ShelvingCheckListPhoto" Width="1.5" PointX="7.75" PointY="24.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.ShelvingCheckListType" Width="1.5" PointX="15.75" PointY="24.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.Inspection" Width="2.25" PointX="0.75" PointY="18.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

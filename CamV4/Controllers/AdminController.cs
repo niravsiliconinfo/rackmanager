@@ -2214,11 +2214,11 @@ namespace CamV4.Controllers
                 int iCount = 0; // You can keep this if needed elsewhere, but it's not used here for paging
 
 
-                if (!string.IsNullOrEmpty(iDetails.ShelvingChecklist3A))
+                if (!string.IsNullOrEmpty(iDetails.ShelvingChecklistComments))
                 {
                     Deficiency obj3A = new Deficiency();
                     obj3A.DeficiencyID = selectedDeficiency.Count + 1;
-                    obj3A.DeficiencyDescription = iDetails.ShelvingChecklist3A;
+                    obj3A.DeficiencyDescription = iDetails.ShelvingChecklistComments;
                     selectedDeficiency.Add(obj3A);
                 }
 

@@ -248,7 +248,7 @@ namespace CamV4.Models
         public long EmployeeId { get; set; }
         public string FacilitiesAreasIds { get; set; }
         public Nullable<int> isShelvingCheckLists { get; set; }
-        public string ShelvingChecklist3A { get; set; }
+        public string ShelvingChecklistComments { get; set; }
         public string ProcessOverviewsIds { get; set; }
         public string FacilitiesAreas { get; set; }
         public string ProcessOverviews { get; set; }

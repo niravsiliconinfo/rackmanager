@@ -1680,9 +1680,9 @@ namespace CamV4.Controllers
 
         [Route("SaveUpdateApproveInspectionAdmin")]
         [HttpPost]
-        public async Task<string> SaveUpdateApproveInspectionAdmin(long inspectionId, int iInspectionStatus, string iAdminIspectionDeficiencyIdStatus, long iStampingEngineerId, string sCheckedDocument, string ShelvingChecklist3A)
+        public async Task<string> SaveUpdateApproveInspectionAdmin(long inspectionId, int iInspectionStatus, string iAdminIspectionDeficiencyIdStatus, long iStampingEngineerId, string sCheckedDocument, string ShelvingChecklistComments)
         {
-            var details = DatabaseHelper.SaveUpdateApproveInspectionAdmin(inspectionId, iInspectionStatus, iAdminIspectionDeficiencyIdStatus, iStampingEngineerId, sCheckedDocument, ShelvingChecklist3A);
+            var details = DatabaseHelper.SaveUpdateApproveInspectionAdmin(inspectionId, iInspectionStatus, iAdminIspectionDeficiencyIdStatus, iStampingEngineerId, sCheckedDocument, ShelvingChecklistComments);
             return details;
         }
 

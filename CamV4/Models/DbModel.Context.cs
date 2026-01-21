@@ -82,12 +82,12 @@ namespace CamV4.Models
         public virtual DbSet<ComponentSubType_Deleted> ComponentSubType_Deleted { get; set; }
         public virtual DbSet<InspectionStatu> InspectionStatus { get; set; }
         public virtual DbSet<ProcessOverview> ProcessOverviews { get; set; }
+        public virtual DbSet<Manufacturer> Manufacturers { get; set; }
+        public virtual DbSet<ShelvingCheckList> ShelvingCheckLists { get; set; }
         public virtual DbSet<ShelvingCheckListDeficiency> ShelvingCheckListDeficiencies { get; set; }
         public virtual DbSet<ShelvingCheckListDetail> ShelvingCheckListDetails { get; set; }
         public virtual DbSet<ShelvingCheckListPhoto> ShelvingCheckListPhotoes { get; set; }
         public virtual DbSet<ShelvingCheckListType> ShelvingCheckListTypes { get; set; }
-        public virtual DbSet<ShelvingCheckList> ShelvingCheckLists { get; set; }
-        public virtual DbSet<Manufacturer> Manufacturers { get; set; }
         public virtual DbSet<Inspection> Inspections { get; set; }
     
         public virtual int CloneInspectionData(Nullable<long> sourceInspectionId, Nullable<long> targetInspectionId, Nullable<int> userId)

@@ -5520,7 +5520,7 @@ namespace CamV4.Helper
                         _list.InspectionDocumentNoRef = list.InspectionDocumentNoRef;
                         list.FacilitiesAreasIds = RemoveDuplicates(list.FacilitiesAreasIds);
                         list.ProcessOverviewIds = RemoveDuplicates(list.ProcessOverviewIds);
-                        _list.ShelvingChecklist3A = list.ShelvingChecklist3A;
+                        _list.ShelvingChecklistComments = list.ShelvingChecklistComments;
                         var sInspectionType = getInspectionTypeByCode(list.InspectionType);
                         if (sInspectionType != null)
                         {
@@ -6303,7 +6303,7 @@ namespace CamV4.Helper
                         _list.InspectionDocumentNoRef = list.InspectionDocumentNoRef;
                         list.FacilitiesAreasIds = RemoveDuplicates(list.FacilitiesAreasIds);
                         list.ProcessOverviewIds = RemoveDuplicates(list.ProcessOverviewIds);
-                        _list.ShelvingChecklist3A = list.ShelvingChecklist3A;
+                        _list.ShelvingChecklistComments = list.ShelvingChecklistComments;
                         var sInspectionType = getInspectionTypeByCode(list.InspectionType);
                         if (sInspectionType != null)
                         {
@@ -8594,7 +8594,7 @@ namespace CamV4.Helper
         }
 
 
-        internal static string SaveUpdateApproveInspectionAdmin(long inspectionId, int iInspectionStatus, string iAdminIspectionDeficiencyIdStatus, long iStampingEngineerId, string sCheckedDocument, string ShelvingChecklist3A)
+        internal static string SaveUpdateApproveInspectionAdmin(long inspectionId, int iInspectionStatus, string iAdminIspectionDeficiencyIdStatus, long iStampingEngineerId, string sCheckedDocument, string ShelvingChecklistComments)
         {
             try
             {
@@ -8616,7 +8616,7 @@ namespace CamV4.Helper
                     }
                     if (itm != null)
                     {
-                        itm.ShelvingChecklist3A = ShelvingChecklist3A;
+                        itm.ShelvingChecklistComments = ShelvingChecklistComments;
                         db.Entry(itm).State = EntityState.Modified;
                         db.SaveChanges();
                     }
@@ -8641,7 +8641,7 @@ namespace CamV4.Helper
                 }
                 return "Ok";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -12910,7 +12910,14 @@ namespace CamV4.Helper
                 }
                 catch (Exception ex)
                 {
-                    return null;
+                    var inner = ex.InnerException;
+                    while (inner != null)
+                    {
+                        ex = inner;
+                        inner = inner.InnerException;
+                    }
+
+                    return ex.Message;
                 }
             }
         }

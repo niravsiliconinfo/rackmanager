@@ -44,7 +44,7 @@ namespace CamV4.Models
         public string CustomerContactIds { get; set; }
         public Nullable<int> RackingTypeId { get; set; }
         public string ActionRequired { get; set; }
-        public string ShelvingChecklist3A { get; set; }
+        public string ShelvingChecklistComments { get; set; }
         public Nullable<bool> IsActive { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public string CreatedBy { get; set; }
