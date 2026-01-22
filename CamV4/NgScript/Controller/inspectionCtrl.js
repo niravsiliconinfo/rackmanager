@@ -1493,7 +1493,7 @@
             var chkQuotationApprovalToCustomer = 0;
             var isalespersonid = 0;
             var chkIsInspectionFinished = 0;
-            var ShelvingChecklistComments = "";
+            var shelvingChecklistComments = "";
 
             // Get sales person ID if quotation exists
             if ($scope.getInspectionDetailsForSheet.objQuotation != null) {
@@ -1503,10 +1503,20 @@
                 }
             }
 
-            if ($scope.getInspectionDetailsForSheet.ShelvingChecklistComments != "") {
-                console.log("ShelvingChecklistComments", $scope.getInspectionDetailsForSheet.ShelvingChecklistComments);
-                ShelvingChecklistComments = $scope.getInspectionDetailsForSheet.ShelvingChecklistComments;
-            } 
+            //if ($scope.getInspectionDetailsForSheet.ShelvingChecklistComments != "") {
+            //    console.log("ShelvingChecklistComments", $scope.getInspectionDetailsForSheet.ShelvingChecklistComments);
+            //    shelvingChecklistComments = $scope.getInspectionDetailsForSheet.ShelvingChecklistComments;
+            //}
+
+            if ($scope.getInspectionDetailsForSheet.ShelvingChecklistComments) {
+                console.log(
+                    "ShelvingChecklistComments",
+                    $scope.getInspectionDetailsForSheet.ShelvingChecklistComments
+                );
+                shelvingChecklistComments =
+                    $scope.getInspectionDetailsForSheet.ShelvingChecklistComments;
+            }
+
 
             // Set inspection finished status
             if ($scope.chkIsInspectionFinished !== undefined) {
@@ -1583,7 +1593,7 @@
                 chkedSentEmailtoCustomer: chkedSentEmailtoCustomer,
                 istampingengineerid: istampingengineerid,
                 isalespersonid: isalespersonid,                
-                ShelvingChecklistComments: ShelvingChecklistComments
+                ShelvingChecklistComments: shelvingChecklistComments
             });
            
             // CASE 1: Handle Inspection Finished (Priority)
@@ -1595,7 +1605,9 @@
                     iInspectionStatus: chkInspectionStatus,
                     iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
                     iStampingEngineerId: istampingengineerid,
-                    sCheckedDocument: checkedDocument
+                    sCheckedDocument: checkedDocument,
+                    ShelvingChecklistComments: shelvingChecklistComments
+
                 };
                 
 
@@ -1661,7 +1673,8 @@
                             iInspectionStatus: chkInspectionStatus,
                             iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
                             iStampingEngineerId: istampingengineerid,
-                            sCheckedDocument: checkedDocument
+                            sCheckedDocument: checkedDocument,
+                            ShelvingChecklistComments: shelvingChecklistComments
                         };
 
                         return $http({
@@ -1700,11 +1713,12 @@
                 iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
                 iStampingEngineerId: istampingengineerid,
                 sCheckedDocument: checkedDocument,
-                ShelvingChecklistComments: ShelvingChecklistComments
+                ShelvingChecklistComments: shelvingChecklistComments
             };
             
             console.log("Updating inspection with data:", data);
-
+            
+            
             return $http({
                 url: '/api/pageview/SaveUpdateApproveInspectionAdmin',
                 method: "POST",
