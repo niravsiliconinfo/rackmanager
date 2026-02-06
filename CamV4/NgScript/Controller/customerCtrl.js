@@ -785,9 +785,9 @@
         if (window.location.pathname == "/Admin/AddLocationContact" || window.location.pathname == "/Customer/AddLocationContact") {
             var custId = window.location.search;
             custId = custId.replace('?id=', '');
-            console.log('url add customer contact--', custId);
+            console.log('url add customer contact-- getLocationContactDetailsByCustomerId ---', custId);
 
-            $http.get('/api/pageview/getLocationContactDetailsByLocationId', {
+            $http.get('/api/pageview/getLocationContactDetailsByCustomerId', {
                 params: { CustomerId: custId }
             }).then(function (response) {
                 $scope.GetContactByLocationId = response.data;

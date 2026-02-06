@@ -2179,7 +2179,14 @@ namespace CamV4.Helper
             return list;
         }
 
-        internal static List<CustomerLocationContactViewModel> getLocationContactDetailsByLocationIdBoth(long CustomerId)
+        internal static List<CustomerLocationContactViewModel> GetLocationContactDetailsByCustomerId(long CustomerId)
+        {
+            List<CustomerLocationContactViewModel> list = new List<CustomerLocationContactViewModel>();
+            list = getLocationContactDetailsByCustomerID(CustomerId);
+            return list;
+        }
+
+        internal static List<CustomerLocationContactViewModel> getLocationContactDetailsByCustomerID(long CustomerId)
         {
             using (DatabaseEntities db = new DatabaseEntities())
             {
@@ -2187,6 +2194,59 @@ namespace CamV4.Helper
 
 
                 var _contact = db.CustomerLocationContacts.Where(x => x.CustomerId == CustomerId && x.IsActive == true).OrderBy(x => x.ContactEmail).ToList();
+
+                if (_contact.Count != 0)
+                {
+                    foreach (var d in _contact)
+                    {
+                        CustomerLocationContactViewModel _lContact = new CustomerLocationContactViewModel();
+                        _lContact.LocationContactId = d.LocationContactId;
+                        _lContact.CustomerId = d.CustomerId;
+                        _lContact.ContactName = d.ContactName;
+                        _lContact.ContactEmail = d.ContactEmail;
+                        _lContact.ContactPhone = d.ContactPhone;
+                        _lContact.Customer = getCustomerById(d.CustomerId).CustomerName;
+                        _lContact.CustomerLocationID = d.CustomerLocationID;
+                        _lContact.CustomerLocation = getCustomerLocationById(Convert.ToInt16(d.CustomerLocationID)).LocationName;
+                        _lContact.CreatedDate = d.CreatedDate;
+                        _lContact.CreatedBy = d.CreatedBy;
+                        _lContact.ModifiedDate = d.ModifiedDate;
+                        _lContact.ModifiedBy = d.ModifiedBy;
+                        _lContact.UserID = d.UserID ?? 0;
+
+                        var linkedLocations = (
+                        from clu in db.CustomersLocationsUsers
+                        join cl in db.CustomerLocations on clu.CustomerLocationID equals cl.CustomerLocationID
+                        join ct in db.Cities on cl.CityID equals ct.CityID into cityGroup  // LEFT JOIN
+                        from ct in cityGroup.DefaultIfEmpty()
+                        where clu.CustomerId == d.CustomerId && clu.LocationContactId == d.LocationContactId
+                        select new
+                        {
+                            clu.CustomerUserLocationId,
+                            cl.CustomerLocationID,
+                            LocationName = cl.LocationName + (ct != null ? " (" + ct.CityName + ")" : "")  // ← only add city name if present
+                        }).ToList();
+
+
+                        _lContact.LinkedCustomerLocationIDs = linkedLocations.Select(x => x.CustomerLocationID).ToList();
+                        _lContact.LinkedCustomerUserLocationIds = linkedLocations.Select(x => x.CustomerUserLocationId).ToList();
+                        _lContact.LinkedLocationNames = string.Join(", ", linkedLocations.Select(x => x.LocationName).Distinct());
+
+                        list.Add(_lContact);
+                    }
+                    return list;
+                }
+                return null;
+            }
+        }
+        internal static List<CustomerLocationContactViewModel> getLocationContactDetailsByLocationIdBoth(long CustomerLocationId)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                List<CustomerLocationContactViewModel> list = new List<CustomerLocationContactViewModel>();
+
+
+                var _contact = db.CustomerLocationContacts.Where(x => x.CustomerLocationID == CustomerLocationId && x.IsActive == true).OrderBy(x => x.ContactEmail).ToList();
 
                 if (_contact.Count != 0)
                 {
@@ -2499,6 +2559,50 @@ namespace CamV4.Helper
                 //}
 
                 //return "Please enter user information.";
+            }
+        }
+        internal static List<CustomerLocationContactViewModel> saveNewLocationContactMobile(CustomerLocationContactViewModel model)
+        {
+            try
+            {
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    CustomerLocationContact contact = new CustomerLocationContact();
+                    User user = new User();
+                    contact.ContactName = model.ContactName;
+                    contact.ContactEmail = model.ContactEmail;
+                    contact.ContactPhone = model.ContactPhone;
+                    contact.CustomerLocationID = model.CustomerLocationID;
+                    if (model.CustomerLocationID != 0)
+                    {
+                        var location = getCustomerLocationById(Convert.ToInt16(model.CustomerLocationID));
+                        if (location != null) { contact.CustomerId = location.CustomerId; }
+
+                    }
+                    contact.IsActive = true;
+                    contact.CreatedDate = DateTime.Now;
+                    contact.ModifiedDate = DateTime.Now;
+                    if (model.CreatedBy != null)
+                    {
+                        contact.CreatedBy = model.CreatedBy;
+                        contact.ModifiedBy = model.CreatedBy;
+                    }
+                    else
+                    {
+                        contact.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+                        contact.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+                    }
+                    db.CustomerLocationContacts.Add(contact);
+                    db.SaveChanges();
+
+                    List<CustomerLocationContactViewModel> list = new List<CustomerLocationContactViewModel>();                    
+                    list = getLocationContactDetailsByLocationIdBoth(model.CustomerId);
+                    return list;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
 
@@ -7961,17 +8065,17 @@ namespace CamV4.Helper
                     else
                     {
                         //itmInspection.InspectionId = model.InspectionId;
-                        itmInspection.InspectionDocumentNo = model.InspectionDocumentNo;
+                        //itmInspection.InspectionDocumentNo = model.InspectionDocumentNo;
                         itmInspection.InspectionDocumentNoRef = model.InspectionDocumentNoRef;
-                        itmInspection.InspectionType = model.InspectionType;
+                        //itmInspection.InspectionType = model.InspectionType;
                         itmInspection.InspectionDate = model.InspectionDate;
                         itmInspection.Reportdate = model.Reportdate;
                         itmInspection.InspectionStatus = model.InspectionStatus;
                         itmInspection.InspectionStartedOn = model.InspectionStartedOn;
                         itmInspection.InspectionEndOn = model.InspectionEndOn;
-                        itmInspection.CustomerId = model.CustomerId;
-                        itmInspection.CustomerLocationId = model.CustomerLocationId;
-                        itmInspection.CustomerAreaID = model.CustomerAreaID;
+                        //itmInspection.CustomerId = model.CustomerId;
+                        //itmInspection.CustomerLocationId = model.CustomerLocationId;
+                        //itmInspection.CustomerAreaID = model.CustomerAreaID;
                         itmInspection.FacilitiesAreasIds = RemoveDuplicates(model.FacilitiesAreasIds);
                         itmInspection.ProcessOverviewIds = RemoveDuplicates(model.ProcessOverviewIds);
                         itmInspection.ConclusionRecommendationsIds = RemoveDuplicates(model.ConclusionRecommendationsIds);

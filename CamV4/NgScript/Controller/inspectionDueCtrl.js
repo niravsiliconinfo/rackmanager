@@ -76,7 +76,7 @@
         console.log('--------------------File list----------------', PDFFileList);
     });
 
-   
+
 
     //inspectionDueCtrl.$inject = ['$scope', '$http'];
     inspectionDueCtrl.$inject = ['$scope', '$http', '$q'];
@@ -111,7 +111,7 @@
                 /^\d+(\.\d+)?$/.test($scope.newquotationItem.unitPrice) &&
                 /^\d+(\.\d+)?$/.test($scope.newquotationItem.weight);
         };
-        
+
         $scope.InspectionsheetClick = function (id) {
             var url = '/Admin/InspectionSheet?id=' + id;
             window.location = url;
@@ -132,57 +132,225 @@
             $scope.waiting = false;
         });
 
-        
-        
-        if (window.location.pathname == "/Admin/EditInspectionDue") {
-            //var para = window.location.search;
-            //para = para.replace('?id=', '');
+        // Function to get customer locations by customer ID
+        $scope.GetCustomerLocationByCustomerIdDrpd = function (custid) {
+            console.log('GetLocationbyCustomerDrpd', custid);
+            if (custid) {
+                $http.get('/api/pageview/getCustomerLocationByCustomerId', { params: { id: custid } }).then(function (response) {
+                    $scope.getCustomerLocationByCustomerIdDrpd = response.data;
+                    console.log('Customer Locations loaded:', $scope.getCustomerLocationByCustomerIdDrpd);
+                }, function (response) {
+                    $scope.waiting = false;
+                });
+            } else {
+                $scope.getCustomerLocationByCustomerIdDrpd = [];
+                $scope.getAreaDetailsByLocationId = [];
+            }
+        };
+
+        // Function to get areas by location ID
+        $scope.GetAreaByLocationIdDrpd = function (locationId) {
+            console.log('GetAreaByLocationIdDrpd', locationId);
+            if (locationId) {
+                $http.get('/api/pageview/getAreaDetailsByLocationId', { params: { LocationId: locationId } }).then(function (response) {
+                    $scope.getAreaDetailsByLocationId = response.data;
+                    console.log('Areas loaded:', $scope.getAreaDetailsByLocationId);
+                }, function (response) {
+                    $scope.waiting = false;
+                });
+            } else {
+                $scope.getAreaDetailsByLocationId = [];
+            }
+        };
+
+        if (window.location.pathname === "/Admin/EditInspectionDue") {
+
             $scope.ShowDatepicker = false;
             $scope.ReadOnlyDatePicker = true;
 
-            var para = window.location.search.replace('?id=', '');
+            var inspectionId = window.location.search.replace('?id=', '');
 
-            // Call all list-loading APIs
+            // Load all inspection types
+            $http.get('/api/pageview/getAllInspectionType').then(function (response) {
+                $scope.getAllInspectionType = response.data;
+                console.log('$scope.getAllInspectionType', $scope.getAllInspectionType);
+                if ($scope.getAllInspectionType != null) { $scope.getAllInspectionTypecount = $scope.getAllInspectionType.length; }
+                else { $scope.getAllInspectionTypecount = 0; }
+            }, function (response) {
+                $scope.waiting = false;
+            });
+
+            // Load all customers
+            $http.get('/api/pageview/getAllCustomers').then(function (response) {
+                $scope.getAllCustomers = response.data;
+                console.log('$scope.getAllCustomers', $scope.getAllCustomers);
+                if ($scope.getAllCustomers != null) { $scope.getAllCustomerscount = $scope.getAllCustomers.length; }
+                else { $scope.getAllCustomerscount = 0; }
+                $scope.totalgetAllCustomers = $scope.getAllCustomerscount;
+            }, function (response) {
+                $scope.waiting = false;
+            });
+
+           
+
+
+            // Load NON-dependent lists + inspection data
             var facilitiesPromise = $http.get('/api/pageview/getAllFacilitiesArea');
             var processPromise = $http.get('/api/pageview/getAllProcessOverview');
             var documentPromise = $http.get('/api/pageview/getAllDocumentTitle');
-            var locationPromise = $http.get('/api/pageview/getAllCustomerLocations');
-            var areaPromise = $http.get('/api/pageview/getAllCustomerArea');
-            var inspectionPromise = $http.get('/api/pageview/getInspectionById', { params: { InspectionId: para } });
 
-            // Use $q.all to wait for all of them
-            $q.all([facilitiesPromise, processPromise, documentPromise, inspectionPromise, locationPromise, areaPromise])
-                .then(function (responses) {
-                    // Unpack the responses
-                    $scope.getAllFacilitiesArea = responses[0].data;
-                    $scope.getAllProcessOverview = responses[1].data;
-                    $scope.getAllDocumentTitle = responses[2].data;
-                    $scope.getInspectionById = responses[3].data;
-                    $scope.getCustomerLocationByCustomerIdDrpd = responses[4].data;
-                    $scope.getAreaDetailsByLocationId = responses[5].data;
+            var inspectionPromise = $http.get('/api/pageview/getInspectionById', {
+                params: { InspectionId: inspectionId }
+            });
 
-                    var facilities = $scope.getInspectionById.FacilitiesAreasIds || [];
-                    var process = $scope.getInspectionById.ProcessOverviewIds || [];
-                    var document = $scope.getInspectionById.ReferenceDocumentIds || [];
+            $q.all([
+                facilitiesPromise,
+                processPromise,
+                documentPromise,
+                inspectionPromise
+            ]).then(function (responses) {
 
-                    // Now we can safely map selected = true
-                    $scope.getAllFacilitiesArea.forEach(function (f) {
-                        f.selected = facilities.includes(f.FacilitiesAreaId);
-                    });
+                $scope.getAllFacilitiesArea = responses[0].data;
+                $scope.getAllProcessOverview = responses[1].data;
+                $scope.getAllDocumentTitle = responses[2].data;
+                $scope.getInspectionById = responses[3].data;
 
-                    $scope.getAllProcessOverview.forEach(function (p) {
-                        p.selected = process.includes(p.ProcessOverviewId);
-                    });
+                var d = $scope.getInspectionById;
 
-                    $scope.getAllDocumentTitle.forEach(function (d) {
-                        d.selected = document.includes(d.DocumentId);
-                    });
+                console.log('Inspection data loaded:', d);
 
-                    console.log("Document Checked IDs:", document);
-                })
-                .catch(function (error) {
-                    console.error("Error loading data:", error);
+                // Set CAD documents
+                $scope.cADDocuments = d.CADDocuments;
+
+                // Set the inspection type - keep as-is from API
+                $scope.inspectionType = d.InspectionType;
+                console.log('Set inspectionType:', $scope.inspectionType);
+
+                // Set employee ID - keep as-is from API
+               
+                // Load all employees
+                $http.get('/api/pageview/getAllEmployee').then(function (response) {
+                    $scope.getAllEmployee = response.data;                    
+                    $scope.employeeId = d.EmployeeId;
+                    console.log('Set employeeId:', $scope.employeeId);
+                }, function (response) {
+                    $scope.waiting = false;
                 });
+                // Set inspection date
+                /*$scope.inspectionDate = d.InspectionDate;*/
+                // Set inspection date - format as yyyy-MM-dd for HTML date input
+                if (d.InspectionDate) {
+                    var date = new Date(d.InspectionDate);
+                    var year = date.getFullYear();
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                    var day = ('0' + date.getDate()).slice(-2);
+                    $scope.inspectionDate = year + '-' + month + '-' + day;
+                }
+
+                // Set inspection status
+                //$scope.inspectionStatus = d.InspectionStatus;
+                // Set inspection status - convert to string to match option values
+                $scope.inspectionStatus = d.InspectionStatus ? d.InspectionStatus.toString() : '';
+                console.log('Set inspectionStatus:', $scope.inspectionStatus);
+
+                // Load customer locations based on customer ID, then load areas
+                //if (d.CustomerId) {
+                //    $http.get('/api/pageview/getCustomerLocationByCustomerId', { params: { id: d.CustomerId } }).then(function (response) {
+                //        $scope.getCustomerLocationByCustomerIdDrpd = response.data;
+                //        console.log('Customer locations loaded for edit:', $scope.getCustomerLocationByCustomerIdDrpd);
+
+                //        // Set customer ID after locations are loaded
+                //        $scope.customerId = d.CustomerId;
+                //        console.log('Set customerId:', $scope.customerId);
+
+                //        // Load areas based on location ID
+                //        if (d.CustomerLocationId) {
+                //            $http.get('/api/pageview/getAreaDetailsByLocationId', { params: { LocationId: d.CustomerLocationId } }).then(function (response) {
+                //                $scope.getAreaDetailsByLocationId = response.data;
+                //                console.log('Areas loaded for edit:', $scope.getAreaDetailsByLocationId);
+
+                //                // Set the customer location ID after locations are loaded
+                //                $scope.customerLocationId = d.CustomerLocationId;
+                //                console.log('Set customerLocationId:', $scope.customerLocationId);
+
+                //                // Set the customer area ID after areas are loaded
+                //                if (d.CustomerAreaID) {
+                //                    $scope.customerAreaId = d.CustomerAreaID;
+                //                    console.log('Set customerAreaId:', $scope.customerAreaId);
+                //                }
+                //            }, function (response) {
+                //                console.error('Error loading areas:', response);
+                //            });
+                //        } else {
+                //            // Set location ID even if no area
+                //            $scope.customerLocationId = d.CustomerLocationId;
+                //            console.log('Set customerLocationId (no area):', $scope.customerLocationId);
+                //        }
+                //    }, function (response) {
+                //        console.error('Error loading customer locations:', response);
+                //    });
+                //}
+
+                if (d.CustomerId) {
+                    $http.get('/api/pageview/getCustomerLocationByCustomerId', { params: { id: d.CustomerId } }).then(function (response) {
+                        $scope.getCustomerLocationByCustomerIdDrpd = response.data;
+                        console.log('Customer locations loaded for edit:', $scope.getCustomerLocationByCustomerIdDrpd);
+
+                        // Set customer ID after locations are loaded
+                        $scope.customerId = d.CustomerId;
+                        console.log('Set customerId:', $scope.customerId);
+
+                        // Set location ID RIGHT HERE after locations are loaded
+                        $scope.customerLocationId = d.CustomerLocationId;
+                        console.log('Set customerLocationId:', $scope.customerLocationId);
+
+                        // Load areas based on location ID
+                        if (d.CustomerLocationId) {
+                            $http.get('/api/pageview/getAreaDetailsByLocationId', { params: { LocationId: d.CustomerLocationId } }).then(function (response) {
+                                $scope.getAreaDetailsByLocationId = response.data;
+                                console.log('Areas loaded for edit:', $scope.getAreaDetailsByLocationId);
+
+                                // Set the customer area ID after areas are loaded
+                                if (d.CustomerAreaID) {
+                                    $scope.customerAreaId = d.CustomerAreaID;
+                                    console.log('Set customerAreaId:', $scope.customerAreaId);
+                                }
+                            }, function (response) {
+                                console.error('Error loading areas:', response);
+                            });
+                        }
+                    }, function (response) {
+                        console.error('Error loading customer locations:', response);
+                    });
+                }
+
+                // Set selected facilities areas
+                if (d.FacilitiesAreasIds) {
+                    var selectedFacilities = d.FacilitiesAreasIds.split(',');
+                    $scope.getAllFacilitiesArea.forEach(function (f) {
+                        f.selected = selectedFacilities.indexOf(f.FacilitiesAreaId.toString()) !== -1;
+                    });
+                }
+
+                // Set selected process overviews
+                if (d.ProcessOverviewIds) {
+                    var selectedProcess = d.ProcessOverviewIds.split(',');
+                    $scope.getAllProcessOverview.forEach(function (p) {
+                        p.selected = selectedProcess.indexOf(p.ProcessOverviewId.toString()) !== -1;
+                    });
+                }
+
+                // Set selected document titles
+                if (d.ReferenceDocumentIds) {
+                    var selectedDocuments = d.ReferenceDocumentIds.split(',');
+                    $scope.getAllDocumentTitle.forEach(function (t) {
+                        t.selected = selectedDocuments.indexOf(t.DocumentId.toString()) !== -1;
+                    });
+                }
+
+            }, function (error) {
+                console.error('Error loading inspection data:', error);
+            });
         }
 
         $scope.GetCheckedFacilitiesAndProcess = function () {

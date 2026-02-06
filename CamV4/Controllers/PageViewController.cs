@@ -572,10 +572,19 @@ namespace CamV4.Controllers
 
         [Route("getLocationContactDetailsByLocationId")]
         [HttpGet]
-        public List<CustomerLocationContactViewModel> GetLocationContactDetailsByLocationId(string CustomerId)
+        public List<CustomerLocationContactViewModel> GetLocationContactDetailsByLocationId(string CustomerLocationId)
+        {
+            var cLId = Convert.ToInt64(CustomerLocationId);
+            List<CustomerLocationContactViewModel> customerlocationcontactlist = DatabaseHelper.getLocationContactDetailsByLocationId(cLId);
+            return customerlocationcontactlist;
+        }
+
+        [Route("getLocationContactDetailsByCustomerId")]
+        [HttpGet]
+        public List<CustomerLocationContactViewModel> GetLocationContactDetailsByCustomerId(string CustomerId)
         {
             var cLId = Convert.ToInt64(CustomerId);
-            List<CustomerLocationContactViewModel> customerlocationcontactlist = DatabaseHelper.getLocationContactDetailsByLocationId(cLId);
+            List<CustomerLocationContactViewModel> customerlocationcontactlist = DatabaseHelper.GetLocationContactDetailsByCustomerId(cLId);
             return customerlocationcontactlist;
         }
 
@@ -600,6 +609,14 @@ namespace CamV4.Controllers
         public async Task<string> SaveLocationContact(CustomerLocationContactViewModel model)
         {
             var details = DatabaseHelper.saveLocationContact(model);
+            return details;
+        }
+
+        [Route("saveNewLocationContactMobile")]
+        [HttpPost]
+        public List<CustomerLocationContactViewModel> saveNewLocationContactMobile(CustomerLocationContactViewModel model)
+        {
+            var details = DatabaseHelper.saveNewLocationContactMobile(model);
             return details;
         }
 
