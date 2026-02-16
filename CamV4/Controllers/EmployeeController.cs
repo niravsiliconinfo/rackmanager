@@ -14,32 +14,33 @@ namespace CamV4.Controllers
         // GET: Employee
         public ActionResult Index()
         {
+            AdminDashboardGraphViewModel count = new AdminDashboardGraphViewModel();
+            count.InspectionDueCount = 0;
+            count.InProgressCount = 0;
+            count.SentforApprovalCount = 0;
+            count.ApprovedCompletedCount = 0;
+            count.QuotationRequestedCount = 0;
+            count.AwaitingApprovalCount = 0;
+            count.QuotationApprovedCount = 0;
+            count.RepairCompletedCount = 0;
+            count.InspectionFinishedCount = 0;
+            count.DashboardActiveUserCount = 0;
+            count.DashboardActiveUserAdminCount = 0;
+            count.DashboardActiveUserEmployeeCount = 0;
+            count.DashboardActiveCompanyCount = 0;
             if (Session["LoggedInUserId"] == null)
             {
                 return RedirectToAction("Login", "Account");
             }
             else
-            {
-                AdminDashboardGraphViewModel count = new AdminDashboardGraphViewModel();
+            {               
                 var userId = Convert.ToInt64(Session["LoggedInUserId"]);
                 if (userId != 0)
                 {
                     var empId = db.Employees.Where(x => x.UserID == userId).FirstOrDefault();
                     if (empId.EmployeeID != 0)
                     {
-                        count.InspectionDueCount = 0;
-                        count.InProgressCount = 0;
-                        count.SentforApprovalCount = 0;
-                        count.ApprovedCompletedCount = 0;
-                        count.QuotationRequestedCount = 0;
-                        count.AwaitingApprovalCount = 0;
-                        count.QuotationApprovedCount = 0;
-                        count.RepairCompletedCount = 0;
-                        count.InspectionFinishedCount = 0;
-                        count.DashboardActiveUserCount = 0;
-                        count.DashboardActiveUserAdminCount = 0;
-                        count.DashboardActiveUserEmployeeCount = 0;
-                        count.DashboardActiveCompanyCount = 0;
+                        
                         //count.InspectionDueCount = DatabaseHelper.getDueInspectionCountByEmployeeId(empId.EmployeeID);
                         //count.InProgressCount = DatabaseHelper.getInProgressInspectionCountByEmployeeId(empId.EmployeeID);
                         //count.SentforApprovalCount = DatabaseHelper.getSentForApprovalInspectionCountByEmployeeId(empId.EmployeeID);
@@ -101,9 +102,9 @@ namespace CamV4.Controllers
                         return View(count);
                     }
                 }
-
-                return View(count);
+                //return View(count);
             }
+            return View(count);
         }
 
         [AllowAnonymous]
