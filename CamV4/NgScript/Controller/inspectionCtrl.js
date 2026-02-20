@@ -122,6 +122,16 @@
             $scope.waiting = false;
         });
 
+        $http.get('/api/pageview/getAllEngineerEmployee').then(function (response) {
+            $scope.getAllEngineerEmployee = response.data;
+            console.log('$scope.getAllEngineerEmployee', $scope.getAllEngineerEmployee);
+            if ($scope.getAllEngineerEmployee != null) { $scope.getAllEngineerEmployeecount = $scope.getAllEngineerEmployee.length; }
+            else { $scope.getAllEngineerEmployeecount = 0; }
+            $scope.totalemployeeEngineer = $scope.getAllEngineerEmployeecount;
+        }, function (response) {
+            $scope.waiting = false;
+        });
+
         $http.get('/api/pageview/getAllStampingEmployee').then(function (response) {
             $scope.getAllStampingEmployee = response.data;
             console.log('$scope.getAllStampingEmployee', $scope.getAllStampingEmployee);
@@ -273,6 +283,26 @@
                 $scope.waiting = false;
             });
         };
+
+        $scope.GetCustomerFacilityByCustomerIdDrpd = function (id) {
+            console.log('GetLocationbyCustomerDrpd', id);
+            $http.get('/api/pageview/getCustomerLocationByCustomerId', { params: { id: id } }).then(function (response) {
+                $scope.getCustomerLocationByCustomerIdDrpd = response.data;
+                console.log('getCustomerLocationByCustomerIdDrpd--', $scope.getCustomerLocationByCustomerIdDrpd);
+            }, function (response) {
+                $scope.waiting = false;
+            });
+        };
+
+        $scope.GetFacilityByLocationIdDrpd = function (id) {
+            console.log('GetFacilityByLocationIdDrpd', id);
+            $http.get('/api/pageview/getFacilityByLocationId', { params: { id: id } }).then(function (response) {
+                $scope.getFacilityDetailsByLocationId = response.data;
+                console.log('getAreaDetailsByLocationId--', response.data);
+            }, function (response) {
+                $scope.waiting = false;
+            });
+        };        
 
         $scope.GetAreaByLocationIdDrpd = function (id) {
             console.log('getAreaDetailsByLocationId', id);

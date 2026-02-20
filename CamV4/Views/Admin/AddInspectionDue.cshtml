@@ -82,17 +82,31 @@
                                 </div>
                             </div>
                             <div class="row">
+
                                 <div class="col-sm-2">
                                     <span>Customer Location<span class="error">*</span></span>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
-                                        <select name="CustomerLocationId" id="CustomerLocationId" class="form-control" ng-model="customerLocationId" ng-change="GetAreaByLocationIdDrpd(customerLocationId)" required>
+                                        <select name="CustomerLocationId" id="CustomerLocationId" class="form-control" ng-model="customerLocationId" ng-change="GetAreaByLocationIdDrpd(customerLocationId); GetFacilityByLocationIdDrpd(customerLocationId)" required>
                                             <option value="">-- Select --</option>
                                             <option ng-repeat="d in getCustomerLocationByCustomerIdDrpd" value="{{d.CustomerLocationID}}">{{d.LocationName}}</option>
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-sm-2">
+                                    <span>Facility<span class="error">*</span></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="CustomerFacilityId" id="CustomerFacilityId" class="form-control" ng-model="CustomerFacilityID" ng-change="GetAreaByLocationIdDrpd(CustomerFacilityID)" required>
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getFacilityDetailsByLocationId" value="{{d.CustomerFacilityID}}">{{d.FacilityName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-sm-2">
                                     <span>Customer Area</span>
                                 </div>
@@ -104,6 +118,12 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-sm-2">
+                                    
+                                </div>
+                                <div class="col-sm-4">
+
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-2">
@@ -113,7 +133,7 @@
                                     <div class="input-group input-group-outline mb-3">
                                         <select name="EmployeeId" id="EmployeeId" class="form-control" ng-model="employeeId" required>
                                             <option value="">-- Select --</option>
-                                            <option ng-repeat="d in getAllEmployee" value="{{d.EmployeeID}}">{{d.EmployeeName}}</option>
+                                            <option ng-repeat="d in getAllEngineerEmployee" value="{{d.EmployeeID}}">{{d.EmployeeName}}</option>
                                         </select>
                                     </div>
                                     @*<div class="input-group input-group-outline mb-3 scroller">

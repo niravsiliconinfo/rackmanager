@@ -581,6 +581,9 @@
     <Compile Include="Models\CustomerArea.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\CustomerFacility.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\CustomerLocation.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
@@ -1510,6 +1513,7 @@
     <Content Include="NgScript\Controller\cityCtrl.js" />
     <Content Include="NgScript\Controller\componentCtrl.js" />
     <Content Include="NgScript\Controller\componentPriceCtrl.js" />
+    <Content Include="NgScript\Controller\customerHierarchyCtrl.js" />
     <Content Include="NgScript\Controller\customersectionCtrl.js" />
     <Content Include="NgScript\Controller\customerCtrl.js" />
     <Content Include="NgScript\Controller\customerdashboardCtrl.js" />
@@ -2983,6 +2987,8 @@
     <Content Include="Views\Admin\EditShelvingCheckListDeficiencies.cshtml" />
     <Content Include="Views\Admin\ManageShelvingCheckListType.cshtml" />
     <Content Include="Views\Admin\EditShelvingCheckListType.cshtml" />
+    <Content Include="Views\Admin\ManageCustomerFacility.cshtml" />
+    <Content Include="Views\Customer\ManageCustomerLocationHierarchy.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

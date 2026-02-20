@@ -17,6 +17,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.Remoting.Contexts;
 using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -112,6 +113,79 @@ namespace CamV4.Helper
                 return null;
             }
         }
+
+        internal static List<EmployeeViewModel> GetAllEngineerEmployee()
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                List<EmployeeViewModel> empVMList = new List<EmployeeViewModel>();
+
+                //var itm = db.Employees.Where(x => x.IsActive == true ).OrderBy(x => x.EmployeeName).ToList();
+                //var userTypes = new[] { 1, 2 };
+                int?[] userTypes = { 1, 2 };
+
+                var employees = (from e in db.Employees
+                                 join u in db.Users
+                                     on e.UserID equals u.UserId
+                                 where userTypes.Contains(u.UserType)
+                                       && e.IsActive == true
+                                 orderby e.EmployeeName
+                                 select e)
+                                 .ToList();
+
+
+                if (employees.Count != 0)
+                {
+                    foreach (var d in employees)
+                    {
+                        EmployeeViewModel empVM = new EmployeeViewModel();
+                        empVM.UserID = d.UserID;
+                        empVM.EmployeeID = d.EmployeeID;
+                        empVM.EmployeeName = d.EmployeeName;
+                        empVM.EmployeeEmail = d.EmployeeEmail;
+                        empVM.EmployeeAddress = d.EmployeeAddress;
+                        empVM.PinCode = d.Pincode;
+                        empVM.Gender = d.Gender;
+                        empVM.TitleDegrees = d.TitleDegrees;
+                        empVM.CreatedDate = d.CreatedDate;
+                        empVM.CreatedBy = d.EmployeeName;
+                        empVM.ModifiedDate = d.CreatedDate;
+                        empVM.ModifiedBy = d.EmployeeName;
+                        //if (d.CityID != null || d.CityID == 0) { empVM.CityName = getCitybyId(d.CityID).CityName; }
+                        //if (d.ProvinceID != null || d.ProvinceID == 0) { empVM.ProvianceName = getProvincebyId(d.ProvinceID).ProvinceName; }
+                        //if (d.CountryID != null || d.CountryID == 0) { empVM.CountryName = getCountrybyId(d.CountryID).CountryName; }
+                        if (d.CityID != 0)
+                        {
+                            if (d.CityID != null) { empVM.CityName = getCitybyId(d.CityID).CityName; }
+                        }
+                        else
+                        {
+                            empVM.CityName = "";
+                        }
+                        if (d.ProvinceID != 0)
+                        {
+                            if (d.ProvinceID != null) { empVM.ProvianceName = getProvincebyId(d.ProvinceID).ProvinceName; }
+                        }
+                        else
+                        {
+                            empVM.ProvianceName = "";
+                        }
+                        if (d.CountryID != 0)
+                        {
+                            if (d.CountryID != null) { empVM.CountryName = getCountrybyId(d.CountryID).CountryName; }
+                        }
+                        else
+                        {
+                            empVM.CountryName = "";
+                        }
+                        empVMList.Add(empVM);
+                    }
+                    return empVMList;
+                }
+                return null;
+            }
+        }
+
 
         internal static List<EmployeeViewModel> GetAllStampingEmployee()
         {
@@ -1876,6 +1950,19 @@ namespace CamV4.Helper
             }
         }
 
+        internal static CustomerFacility getFacilityDetailsById(int id)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                var _facility = db.CustomerFacilities.Where(x => x.CustomerFacilityID == id && x.IsActive == true).FirstOrDefault();
+                if (_facility != null)
+                {
+                    return _facility;
+                }
+                return null;
+            }
+        }
+
         internal static InspectionType getInspectionTypeByCode(string InspectionTypeCode)
         {
             using (DatabaseEntities db = new DatabaseEntities())
@@ -1907,6 +1994,31 @@ namespace CamV4.Helper
                         _cArea.CustomerLocation = getCustomerLocationById(Convert.ToInt16(d.CustomerLocationID)).LocationName;
                         _cArea.CreatedDate = d.CreatedDate;
                         list.Add(_cArea);
+                    }
+                    return list;
+                }
+                return null;
+            }
+        }
+
+        internal static List<CustomerFacilityViewModel> getFacilityDetailsByLocationId(int id)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                List<CustomerFacilityViewModel> list = new List<CustomerFacilityViewModel>();
+                var _facilityAll = db.CustomerFacilities.Where(x => x.CustomerLocationID == id && x.IsActive == true).OrderBy(x => x.FacilityName).ToList();
+                if (_facilityAll.Count != 0)
+                {
+                    foreach (var d in _facilityAll)
+                    {
+                        CustomerFacilityViewModel _facility = new CustomerFacilityViewModel();
+                        _facility.CustomerFacilityID = d.CustomerFacilityID;
+                        _facility.FacilityName = d.FacilityName;
+                        _facility.CustomerID = d.CustomerID;
+                        _facility.Customer = getCustomerById(d.CustomerID).CustomerName;
+                        _facility.CustomerLocation = getCustomerLocationById(Convert.ToInt16(d.CustomerLocationID)).LocationName;
+                        _facility.CreatedDate = d.CreatedDate;
+                        list.Add(_facility);
                     }
                     return list;
                 }
@@ -1971,6 +2083,105 @@ namespace CamV4.Helper
                     db.SaveChanges();
                     return itm.CustomerLocationID;
                 }
+                return 0;
+            }
+        }
+        internal static List<CustomerFacilityViewModel> getCustomerFacilityList(long locationId)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                var data = (from f in db.CustomerFacilities
+                            where f.CustomerLocationID == locationId
+                                  && f.IsActive == true
+                            select new CustomerFacilityViewModel
+                            {
+                                CustomerFacilityID = f.CustomerFacilityID,
+                                CustomerID = f.CustomerID,
+                                CustomerLocation = f.CustomerLocationID.ToString(),
+                                FacilityName = f.FacilityName,
+                                IsActive = f.IsActive,
+                                CreatedBy = f.CreatedBy,
+                                CreatedDate = f.CreatedDate,
+                                ModifiedBy = f.ModifiedBy,
+                                ModifiedDate = f.ModifiedDate
+                            }).ToList();
+
+                return data;
+            }
+        }
+
+        internal static long saveCustomerFacility(CustomerFacility model)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                CustomerFacility facility = new CustomerFacility();
+
+                //facility.CustomerID = model.CustomerID;
+                facility.CustomerID = getCustomerLocationById(Convert.ToInt16(model.CustomerLocationID)).CustomerId;
+                facility.CustomerLocationID = model.CustomerLocationID;
+                facility.FacilityName = model.FacilityName;
+                facility.IsActive = true;
+                facility.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+                facility.CreatedDate = DateTime.Now;
+                facility.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+                facility.ModifiedDate = DateTime.Now;
+                db.CustomerFacilities.Add(facility);
+                db.SaveChanges();
+
+                return facility.CustomerLocationID;
+            }
+        }
+        internal static int editCustomerFacility(CustomerFacility model)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                try
+                {
+                    var facility = db.CustomerFacilities
+                                     .Where(x => x.CustomerFacilityID == model.CustomerFacilityID)
+                                     .FirstOrDefault();
+
+                    if (facility != null)
+                    {
+                        facility.FacilityName = model.FacilityName;
+                        //facility.CustomerLocationID = model.CustomerLocationID;
+                        //facility.CustomerID = model.CustomerID;
+                        facility.IsActive = true;
+                        facility.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+                        facility.ModifiedDate = DateTime.Now;
+
+                        db.Entry(facility).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+
+                    return 1;
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+        }
+        internal static long removeCustomerFacility(int id)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                var itm = db.CustomerFacilities
+                            .Where(x => x.CustomerFacilityID == id)
+                            .FirstOrDefault();
+
+                if (itm != null)
+                {
+                    itm.IsActive = false;
+                    itm.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+                    itm.ModifiedDate = DateTime.Now;
+
+                    db.Entry(itm).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    return itm.CustomerLocationID;
+                }
+
                 return 0;
             }
         }
@@ -2595,7 +2806,7 @@ namespace CamV4.Helper
                     db.CustomerLocationContacts.Add(contact);
                     db.SaveChanges();
 
-                    List<CustomerLocationContactViewModel> list = new List<CustomerLocationContactViewModel>();                    
+                    List<CustomerLocationContactViewModel> list = new List<CustomerLocationContactViewModel>();
                     list = getLocationContactDetailsByLocationIdBoth(model.CustomerId);
                     return list;
                 }
@@ -7395,7 +7606,7 @@ namespace CamV4.Helper
                     }
                     return listObj;
                 }
-                return null;
+                return listObj;
             }
         }
 
@@ -8224,7 +8435,7 @@ namespace CamV4.Helper
         {
             using (DatabaseEntities db = new DatabaseEntities())
             {
-                var list = db.InspectionTypes.OrderByDescending(x => x.InspectionTypeCode).ToList();
+                var list = db.InspectionTypes.OrderBy(x => x.InspectionTypeCode).ToList();
                 if (list.Count != 0) { return list; }
                 return null;
             }
@@ -13008,7 +13219,7 @@ namespace CamV4.Helper
                         strMSG += "</body>";
                         strMSG += "</html>";
                         var tEmail = new Thread(() => EmailHelper.SendEmail(toEmail, "Rack inspection at your facility is scheduled.", null, strMSG, strCCEmailslist));
-                        tEmail.Start();
+                        //tEmail.Start();
                     }
                     return "Ok";
                 }
@@ -15805,6 +16016,273 @@ namespace CamV4.Helper
 
 
         #endregion
+
+
+        #region "Customer Location - Facility - Aera"
+        // ============================================================
+        // DatabaseHelper.cs  –  Add these static methods
+        // ============================================================
+
+        #region Customer Locations
+
+        public static List<CustomerLocation> GetCustomerLocations(long customerId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                return db.CustomerLocations
+                         .Where(l => l.CustomerId == customerId && l.IsActive == true)
+                         .OrderBy(l => l.LocationName)
+                         .ToList();
+            }
+        }
+
+        public static int SaveCustomerLocation(CustomerLocation model, string user)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                // Duplicate check
+                bool duplicate = db.CustomerLocations.Any(l =>
+                    l.CustomerId == model.CustomerId &&
+                    l.LocationName.ToLower() == model.LocationName.ToLower().Trim() &&
+                    l.IsActive == true &&
+                    l.CustomerLocationID != model.CustomerLocationID);
+
+                if (duplicate) return -1; // duplicate
+
+                if (model.CustomerLocationID > 0)
+                {
+                    var existing = db.CustomerLocations.Find(model.CustomerLocationID);
+                    if (existing == null) return 0;
+
+                    existing.LocationName = model.LocationName.Trim();
+                    existing.CustomerAddress = model.CustomerAddress;
+                    existing.CountryID = model.CountryID;
+                    existing.ProvinceID = model.ProvinceID;
+                    existing.CityID = model.CityID;
+                    existing.Pincode = model.Pincode;
+                    existing.Region = model.Region;
+                    existing.ModifiedBy = user;
+                    existing.ModifiedDate = DateTime.Now;
+                }
+                else
+                {
+                    model.LocationName = model.LocationName.Trim();
+                    model.IsActive = true;
+                    model.CreatedBy = user;
+                    model.CreatedDate = DateTime.Now;
+                    db.CustomerLocations.Add(model);
+                }
+
+                db.SaveChanges();
+                return 1;
+            }
+        }
+
+        public static int DeleteCustomerLocation(long id, string user)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                // Soft-delete cascades to facilities and areas
+                var location = db.CustomerLocations.Find(id);
+                if (location == null) return 0;
+
+                location.IsActive = false;
+                location.ModifiedBy = user;
+                location.ModifiedDate = DateTime.Now;
+
+                var facilities = db.CustomerFacilities.Where(f => f.CustomerLocationID == id && f.IsActive == true).ToList();
+                foreach (var f in facilities)
+                {
+                    f.IsActive = false;
+                    f.ModifiedBy = user;
+                    f.ModifiedDate = DateTime.Now;
+                }
+
+                var areas = db.CustomerAreas.Where(a => a.CustomerLocationID == id && a.IsActive == true).ToList();
+                foreach (var a in areas)
+                {
+                    a.IsActive = false;
+                    a.ModifiedBy = user;
+                    a.ModifiedDate = DateTime.Now;
+                }
+
+                db.SaveChanges();
+                return 1;
+            }
+        }
+
+        #endregion
+
+        #region Customer Facilities
+
+        public static List<CustomerFacility> GetCustomerFacilities(long customerId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                return db.CustomerFacilities
+                         .Where(f => f.CustomerID == customerId && f.IsActive == true)
+                         .OrderBy(f => f.FacilityName)
+                         .ToList();
+            }
+        }
+
+        public static int SaveCustomerFacility(CustomerFacility model, string user)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                // Validate location belongs to customer
+                bool validLocation = db.CustomerLocations.Any(l =>
+                    l.CustomerLocationID == model.CustomerLocationID &&
+                    l.CustomerId == model.CustomerID &&
+                    l.IsActive == true);
+                if (!validLocation) return -2; // invalid location
+
+                // Duplicate check within same location
+                bool duplicate = db.CustomerFacilities.Any(f =>
+                    f.CustomerLocationID == model.CustomerLocationID &&
+                    f.FacilityName.ToLower() == model.FacilityName.ToLower().Trim() &&
+                    f.IsActive == true &&
+                    f.CustomerFacilityID != model.CustomerFacilityID);
+                if (duplicate) return -1;
+
+                if (model.CustomerFacilityID > 0)
+                {
+                    var existing = db.CustomerFacilities.Find(model.CustomerFacilityID);
+                    if (existing == null) return 0;
+
+                    existing.FacilityName = model.FacilityName.Trim();
+                    existing.CustomerLocationID = model.CustomerLocationID;
+                    existing.ModifiedBy = user;
+                    existing.ModifiedDate = DateTime.Now;
+                }
+                else
+                {
+                    model.FacilityName = model.FacilityName.Trim();
+                    model.IsActive = true;
+                    model.CreatedBy = user;
+                    model.CreatedDate = DateTime.Now;
+                    db.CustomerFacilities.Add(model);
+                }
+
+                db.SaveChanges();
+                return 1;
+            }
+        }
+
+        public static int DeleteCustomerFacility(long id, string user)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                var facility = db.CustomerFacilities.Find(id);
+                if (facility == null) return 0;
+
+                facility.IsActive = false;
+                facility.ModifiedBy = user;
+                facility.ModifiedDate = DateTime.Now;
+
+                // Nullify facility reference in areas (area remains but loses facility link)
+                var areas = db.CustomerAreas.Where(a => a.CustomerFacilityID == id && a.IsActive == true).ToList();
+                foreach (var a in areas)
+                {
+                    a.CustomerFacilityID = 0;
+                    a.ModifiedBy = user;
+                    a.ModifiedDate = DateTime.Now;
+                }
+
+                db.SaveChanges();
+                return 1;
+            }
+        }
+
+        #endregion
+
+        #region Customer Areas
+
+        public static List<CustomerArea> GetCustomerAreas(long customerId)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                return db.CustomerAreas
+                         .Where(a => a.CustomerID == customerId && a.IsActive == true)
+                         .OrderBy(a => a.AreaName)
+                         .ToList();
+            }
+        }
+
+        public static int SaveCustomerArea(CustomerArea model, string user)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                // Validate location belongs to customer
+                bool validLocation = db.CustomerLocations.Any(l =>
+                    l.CustomerLocationID == model.CustomerLocationID &&
+                    l.CustomerId == model.CustomerID &&
+                    l.IsActive == true);
+                if (!validLocation) return -2;
+
+                // Validate facility belongs to same location (if provided)
+                if (model.CustomerFacilityID > 0)
+                {
+                    bool validFacility = db.CustomerFacilities.Any(f =>
+                        f.CustomerFacilityID == model.CustomerFacilityID &&
+                        f.CustomerLocationID == model.CustomerLocationID &&
+                        f.IsActive == true);
+                    if (!validFacility) return -3; // facility/location mismatch
+                }
+
+                // Duplicate area name within same location
+                bool duplicate = db.CustomerAreas.Any(a =>
+                    a.CustomerLocationID == model.CustomerLocationID &&
+                    a.AreaName.ToLower() == model.AreaName.ToLower().Trim() &&
+                    a.IsActive == true &&
+                    a.AreaID != model.AreaID);
+                if (duplicate) return -1;
+
+                if (model.AreaID > 0)
+                {
+                    var existing = db.CustomerAreas.Find(model.AreaID);
+                    if (existing == null) return 0;
+
+                    existing.AreaName = model.AreaName.Trim();
+                    existing.CustomerLocationID = model.CustomerLocationID;
+                    existing.CustomerFacilityID = model.CustomerFacilityID > 0 ? model.CustomerFacilityID : 0;
+                    existing.ModifiedBy = user;
+                    existing.ModifiedDate = DateTime.Now;
+                }
+                else
+                {
+                    model.AreaName = model.AreaName.Trim();
+                    model.CustomerFacilityID = model.CustomerFacilityID > 0 ? model.CustomerFacilityID : 0;
+                    model.IsActive = true;
+                    model.CreatedBy = user;
+                    model.CreatedDate = DateTime.Now;
+                    db.CustomerAreas.Add(model);
+                }
+
+                db.SaveChanges();
+                return 1;
+            }
+        }
+
+        public static int DeleteCustomerArea(long id, string user)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                var area = db.CustomerAreas.Find(id);
+                if (area == null) return 0;
+
+                area.IsActive = false;
+                area.ModifiedBy = user;
+                area.ModifiedDate = DateTime.Now;
+
+                db.SaveChanges();
+                return 1;
+            }
+        }
+
+        #endregion
+        #endregion
+
 
 
     }

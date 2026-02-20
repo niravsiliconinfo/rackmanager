@@ -858,8 +858,11 @@
                                                             <li style="list-style: decimal;font-size: 14px;font-weight: bold;padding-left: 0px;margin-left: 50px;line-height: 31px;" ng-repeat="deficiency in getInspectionDetailsForSheet.ListConclusionandRecommendationsViewModel">
                                                                 {{deficiency.DeficiencyInfo}}. <p>{{deficiency.DeficiencyDescription}}</p>
                                                             </li>
-                                                            <li *ngIf="getInspectionDetailsForSheet?.ShelvingChecklistComments?.trim()"
-                                                                style="list-style: decimal; font-size: 14px; font-weight: bold; padding-left: 0px; margin-left: 50px; line-height: 31px;">
+                                                            @*<li *ngIf="getInspectionDetailsForSheet?.ShelvingChecklistComments?.trim()"
+            style="list-style: decimal; font-size: 14px; font-weight: bold; padding-left: 0px; margin-left: 50px; line-height: 31px;">
+            <p>{{ getInspectionDetailsForSheet.ShelvingChecklistComments }}</p>
+        </li>*@
+                                                            <li ng-if="getInspectionDetailsForSheet.ShelvingChecklistComments && getInspectionDetailsForSheet.ShelvingChecklistComments.trim().length > 0" style="list-style: decimal; font-size: 14px; font-weight: bold; padding-left: 0px; margin-left: 50px; line-height: 31px;">
                                                                 <p>{{ getInspectionDetailsForSheet.ShelvingChecklistComments }}</p>
                                                             </li>
                                                             <li style="list-style: decimal; font-size: 14px; font-weight: bold; padding-left: 0px; margin-left: 50px; line-height: 31px;">

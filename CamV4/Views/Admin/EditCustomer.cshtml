@@ -300,14 +300,18 @@
                                             <span class="text-secondary text-xs font-weight-bold">{{d.Region}}</span>
                                         </td>
                                         <td class="align-middle">
+                                            <a href="@Url.Action("ManageCustomerFacility", "Admin")?id={{d.CustomerLocationID}}" class="tooltip-new">
+                                                <i class="material-icons text-lg">location_on</i>
+                                                <span class="tooltiptext">Add Facility</span>
+                                            </a>
                                             <a href="@Url.Action("AddCustomerArea", "Admin")?id={{d.CustomerLocationID}}" class="tooltip-new">
                                                 <i class="material-icons text-lg">location_city</i>
                                                 <span class="tooltiptext">Add Area</span>
                                             </a>
                                             @*<a href="@Url.Action("AddLocationContact", "Admin")?id={{d.CustomerLocationID}}" class="tooltip-new">
-                                                    <i class="material-icons text-lg">contact_phone</i>
-                                                    <span class="tooltiptext">Add Contact</span>
-                                                </a>*@
+            <i class="material-icons text-lg">contact_phone</i>
+            <span class="tooltiptext">Add Contact</span>
+        </a>*@
                                             <a href="@Url.Action("EditCustLocation", "Admin")?id={{d.CustomerLocationID}}">
                                                 <i class="material-icons text-lg">edit</i>
                                             </a>

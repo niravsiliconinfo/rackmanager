@@ -29,8 +29,6 @@ namespace CamV4.Models
     
         public virtual DbSet<ActionRequired> ActionRequireds { get; set; }
         public virtual DbSet<CAMEmailSetting> CAMEmailSettings { get; set; }
-        public virtual DbSet<City> Cities { get; set; }
-        public virtual DbSet<Component> Components { get; set; }
         public virtual DbSet<ComponentPrice> ComponentPrices { get; set; }
         public virtual DbSet<ComponentPriceList> ComponentPriceLists { get; set; }
         public virtual DbSet<ComponentPriceListDetail> ComponentPriceListDetails { get; set; }
@@ -43,7 +41,6 @@ namespace CamV4.Models
         public virtual DbSet<ComponentsProperty> ComponentsProperties { get; set; }
         public virtual DbSet<ConclusionRecommendation> ConclusionRecommendations { get; set; }
         public virtual DbSet<Country> Countries { get; set; }
-        public virtual DbSet<CustomerArea> CustomerAreas { get; set; }
         public virtual DbSet<CustomerLocation> CustomerLocations { get; set; }
         public virtual DbSet<CustomerLocationContact> CustomerLocationContacts { get; set; }
         public virtual DbSet<CustomerLocationHistoryLegacyFile> CustomerLocationHistoryLegacyFiles { get; set; }
@@ -61,13 +58,11 @@ namespace CamV4.Models
         public virtual DbSet<ImpSetting> ImpSettings { get; set; }
         public virtual DbSet<IncidentReport> IncidentReports { get; set; }
         public virtual DbSet<IncidentReportPhoto> IncidentReportPhotoes { get; set; }
-        public virtual DbSet<InspectionDeficiency> InspectionDeficiencies { get; set; }
         public virtual DbSet<InspectionDeficiencyMTO> InspectionDeficiencyMTOes { get; set; }
         public virtual DbSet<InspectionDeficiencyMTODetail> InspectionDeficiencyMTODetails { get; set; }
         public virtual DbSet<InspectionDeficiencyPhoto> InspectionDeficiencyPhotoes { get; set; }
         public virtual DbSet<InspectionDue> InspectionDues { get; set; }
         public virtual DbSet<InspectionFileDrawing> InspectionFileDrawings { get; set; }
-        public virtual DbSet<InspectionType> InspectionTypes { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<Province> Provinces { get; set; }
         public virtual DbSet<Quotation> Quotations { get; set; }
@@ -88,7 +83,13 @@ namespace CamV4.Models
         public virtual DbSet<ShelvingCheckListDetail> ShelvingCheckListDetails { get; set; }
         public virtual DbSet<ShelvingCheckListPhoto> ShelvingCheckListPhotoes { get; set; }
         public virtual DbSet<ShelvingCheckListType> ShelvingCheckListTypes { get; set; }
+        public virtual DbSet<Component> Components { get; set; }
+        public virtual DbSet<InspectionType> InspectionTypes { get; set; }
+        public virtual DbSet<City> Cities { get; set; }
+        public virtual DbSet<CustomerArea> CustomerAreas { get; set; }
         public virtual DbSet<Inspection> Inspections { get; set; }
+        public virtual DbSet<InspectionDeficiency> InspectionDeficiencies { get; set; }
+        public virtual DbSet<CustomerFacility> CustomerFacilities { get; set; }
     
         public virtual int CloneInspectionData(Nullable<long> sourceInspectionId, Nullable<long> targetInspectionId, Nullable<int> userId)
         {

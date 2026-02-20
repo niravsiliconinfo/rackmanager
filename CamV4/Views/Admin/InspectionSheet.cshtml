@@ -281,13 +281,13 @@
                                         <div class="col-sm-4">
                                             <div class="input-group input-group-outline mb-3">
                                                 @*<select name="StampingEngineerId" id="StampingEngineerId" class="form-control" ng-model="stampingengineerid" ng-init="stampingengineerid = getInspectionDetailsForSheet.StampingEngineerId">
-                        <option value="0">-- Select --</option>
-                        <option ng-repeat="d in getAllStampingEmployee" value="{{d.EmployeeID}}">{{d.EmployeeName}}</option>
-                    </select>*@
+                                                        <option value="0">-- Select --</option>
+                                                        <option ng-repeat="d in getAllStampingEmployee" value="{{d.EmployeeID}}">{{d.EmployeeName}}</option>
+                                                    </select>*@
                                                 @*<select name="" id="" class="form-control" ng-model="" ng-init=" = getInspectionDetailsForSheet..toString();">
-                        <option value="">-- Select --</option>
-                        <option ng-repeat="d in " value="{{d.EmployeeID | number}}">{{d.}}</option>
-                    </select>*@
+                                                        <option value="">-- Select --</option>
+                                                        <option ng-repeat="d in " value="{{d.EmployeeID | number}}">{{d.}}</option>
+                                                    </select>*@
                                                 <select name="StampingEngineerId" id="StampingEngineerId"
                                                         class="ng-pristine ng-valid ng-touched inspectionviewtextbox"
                                                         style="width:200px;"
@@ -310,7 +310,7 @@
                                             <span>Shelving Checklist(3A) :</span>
                                         </div>
                                         <div class="col-sm-6">
-                                            <div class="input-group input-group-outline mb-3">                                                
+                                            <div class="input-group input-group-outline mb-3">
                                                 <textarea type="text" class="form-control" id="ShelvingChecklistComments" ng-model="getInspectionDetailsForSheet.ShelvingChecklistComments" name="ShelvingChecklistComments" rows="10"></textarea>
                                             </div>
                                         </div>
@@ -980,8 +980,11 @@
                                                             <li style="list-style: decimal;font-size: 14px;font-weight: bold;padding-left: 0px;margin-left: 50px;line-height: 31px;" ng-repeat="deficiency in getInspectionDetailsForSheet.ListConclusionandRecommendationsViewModel">
                                                                 {{deficiency.DeficiencyInfo}}. <p>{{deficiency.DeficiencyDescription}}</p>
                                                             </li>
-                                                            <li *ngIf="getInspectionDetailsForSheet?.ShelvingChecklistComments?.trim()"
-                                                                style="list-style: decimal; font-size: 14px; font-weight: bold; padding-left: 0px; margin-left: 50px; line-height: 31px;">
+                                                            @*<li *ngIf="getInspectionDetailsForSheet?.ShelvingChecklistComments?.trim()"
+                                                                    style="list-style: decimal; font-size: 14px; font-weight: bold; padding-left: 0px; margin-left: 50px; line-height: 31px;">
+                                                                    <p>{{ getInspectionDetailsForSheet.ShelvingChecklistComments }}</p>
+                                                                </li>*@
+                                                            <li ng-if="getInspectionDetailsForSheet.ShelvingChecklistComments && getInspectionDetailsForSheet.ShelvingChecklistComments.trim().length > 0" style="list-style: decimal; font-size: 14px; font-weight: bold; padding-left: 0px; margin-left: 50px; line-height: 31px;">
                                                                 <p>{{ getInspectionDetailsForSheet.ShelvingChecklistComments }}</p>
                                                             </li>
                                                             <li style="list-style: decimal; font-size: 14px; font-weight: bold; padding-left: 0px; margin-left: 50px; line-height: 31px;">
@@ -1187,13 +1190,13 @@
                                                                 <td bgcolor="#ffffff" style="padding: 2px; border-width: 1px; " ng-if="(k.FacilitiesAreaId == 2) || (k.FacilitiesAreaId == 3)">{{getInspectionDetailsForSheet.InspectionDocumentNo}}</td>
                                                             </tr>
                                                             @*<tr ng-show="getInspectionDetailsForSheet.CapacityTable">
-            <td bgcolor="#ffffff" style="padding: 20px; border-width: 1px; ">Capacity Table</td>
-            <td bgcolor="#ffffff" style="padding: 2px; border-width: 1px; ">{{getInspectionDetailsForSheet.InspectionDocumentNo}}</td>
-        </tr>
-        <tr ng-show="getInspectionDetailsForSheet.PlanElevationDrawing">
-            <td bgcolor="#ffffff" style="padding: 20px; border-width: 1px; ">Plan and Elevation Drawing</td>
-            <td bgcolor="#ffffff" style="padding: 2px; border-width: 1px; ">{{getInspectionDetailsForSheet.InspectionDocumentNo}}</td>
-        </tr>*@
+                                                                    <td bgcolor="#ffffff" style="padding: 20px; border-width: 1px; ">Capacity Table</td>
+                                                                    <td bgcolor="#ffffff" style="padding: 2px; border-width: 1px; ">{{getInspectionDetailsForSheet.InspectionDocumentNo}}</td>
+                                                                </tr>
+                                                                <tr ng-show="getInspectionDetailsForSheet.PlanElevationDrawing">
+                                                                    <td bgcolor="#ffffff" style="padding: 20px; border-width: 1px; ">Plan and Elevation Drawing</td>
+                                                                    <td bgcolor="#ffffff" style="padding: 2px; border-width: 1px; ">{{getInspectionDetailsForSheet.InspectionDocumentNo}}</td>
+                                                                </tr>*@
                                                             <tr ng-repeat="items in getInspectionDetailsForSheet.ListInspectionFileDrawing">
                                                                 <td bgcolor="#ffffff" style="padding: 20px; border-width: 1px; ">{{items.FileCategory}}</td>
                                                                 <td style="border-width: 1px;background-color:white">
@@ -1274,12 +1277,17 @@
                                                                             </tr>
                                                                             <tr>
                                                                                 <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Location/ Address</td>
-                                                                                <td style="padding:2px;border-width: 1px;"> {{getInspectionDetailsForSheet.CustomerFullAddress}}</td>
-                                                                                <!--{{getInspectionDetailsForSheet.CustomerArea}}, {{getInspectionDetailsForSheet.CustomerLocation}}, {{getInspectionDetailsForSheet.custModel.CustomerAddress}}-->
+                                                                                <td style="padding:2px;border-width: 1px;">
+                                                                                    {{getInspectionDetailsForSheet.CustomerFullAddress}}
+                                                                                </td>
                                                                                 <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Date of Inspection</td>
-                                                                                <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.InspectionDate| date:'MMMM dd, yyyy'}}</td>
+                                                                                <td style="padding:2px;border-width: 1px;">
+                                                                                    {{getInspectionDetailsForSheet.InspectionDate | date:'MMMM dd, yyyy'}}
+                                                                                </td>
                                                                                 <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Total Inspection Deficiencies</td>
-                                                                                <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.iDefModel.length}}</td>
+                                                                                <td style="padding:2px;border-width: 1px;">
+                                                                                    {{getInspectionDetailsForSheet.iDefModel.length}}
+                                                                                </td>
                                                                             </tr>
                                                                             <tr>
                                                                                 <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Contact</td>
@@ -1500,7 +1508,7 @@
                                 </div>
                                 <span class="custom-card-title">Shelving Inspection Checklist</span>
                                 <div class="col-6 text-end">
-                                    <a href="@Url.Action("ToPdfV2ShelvingChecklist", "Admin")?id={{getInspectionDetailsForSheet.InspectionId}}""><i style="color: #fff; padding: 2px 40px; font-size: 2.225rem !important;" class="material-icons text-lg">download</i></a>                                    
+                                    <a href="@Url.Action("ToPdfV2ShelvingChecklist", "Admin")?id={{getInspectionDetailsForSheet.InspectionId}}" "><i style="color: #fff; padding: 2px 40px; font-size: 2.225rem !important;" class="material-icons text-lg">download</i></a>
                                 </div>
                             </div>
                             <div class="custom-card-body collapsed">
@@ -1519,7 +1527,7 @@
                                                                             <table width="100%" border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
                                                                                 <tr>
                                                                                     <td colspan="4" style="font-size:14px;font-weight:600;text-align:center;padding:2px;background:#79addd;border-width: 1px;">SHELVING INSPECTION CHECKLIST</td>
-                                                                                </tr>                                                                                
+                                                                                </tr>
                                                                                 <tr>
                                                                                     <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;width:15%;"><strong>SECTION</strong></td>
                                                                                     <td style="padding: 2px 5px; border-width: 1px; width: 25%;">{{checklist.ShelvingCheckListSection}}</td>
@@ -1632,100 +1640,100 @@
                                     </table>
                                 </section>
                                 @*<section style="width:100%;background: white; box-shadow: 0 .5mm 2mm rgba(0,0,0,.3); margin: 5mm auto; padding: 5mm; box-sizing: border-box;">
-            <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" _ngcontent-c10="" style="display: table; height: 100%;">
-                <tbody _ngcontent-c10="">
-                    <tr _ngcontent-c10="">
-                        <td _ngcontent-c10="" valign="top" style="border: 5px solid #0070c0;padding: 2px;">
-                            <div style="border: 1px solid #0070c0; padding: 20px;">
-                                <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" _ngcontent-c10="" style="border-collapse: collapse;color:#000000;">
-                                    <tbody _ngcontent-c10="">
-                                        <tr _ngcontent-c10="">
-                                            <td _ngcontent-c10="" align="center" valign="top" class="">
-                                                <table width="100%" border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
-                                                    <tr>
-                                                        <td colspan="4" style="font-size:14px;font-weight:600;text-align:center;padding:2px;background:#79addd;border-width: 1px;">SHELVING INSPECTION CHECKLIST</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Section</strong></td>
-                                                        <td style="padding:2px;border-width: 1px;">Chemical Room</td>
-                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Type</strong></td>
-                                                        <td style="padding:2px;border-width: 1px;">Standard</td>
-                                                    </tr>
+                                        <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" _ngcontent-c10="" style="display: table; height: 100%;">
+                                            <tbody _ngcontent-c10="">
+                                                <tr _ngcontent-c10="">
+                                                    <td _ngcontent-c10="" valign="top" style="border: 5px solid #0070c0;padding: 2px;">
+                                                        <div style="border: 1px solid #0070c0; padding: 20px;">
+                                                            <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" _ngcontent-c10="" style="border-collapse: collapse;color:#000000;">
+                                                                <tbody _ngcontent-c10="">
+                                                                    <tr _ngcontent-c10="">
+                                                                        <td _ngcontent-c10="" align="center" valign="top" class="">
+                                                                            <table width="100%" border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
+                                                                                <tr>
+                                                                                    <td colspan="4" style="font-size:14px;font-weight:600;text-align:center;padding:2px;background:#79addd;border-width: 1px;">SHELVING INSPECTION CHECKLIST</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Section</strong></td>
+                                                                                    <td style="padding:2px;border-width: 1px;">Chemical Room</td>
+                                                                                    <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Type</strong></td>
+                                                                                    <td style="padding:2px;border-width: 1px;">Standard</td>
+                                                                                </tr>
 
-                                                    <tr>
-                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Manufacturer</strong></td>
-                                                        <td style="padding:2px;border-width: 1px;">Rousseau</td>
-                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Row ID</strong></td>
-                                                        <td style="padding:2px;border-width: 1px;">Bin 01</td>
-                                                    </tr>
+                                                                                <tr>
+                                                                                    <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Manufacturer</strong></td>
+                                                                                    <td style="padding:2px;border-width: 1px;">Rousseau</td>
+                                                                                    <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Row ID</strong></td>
+                                                                                    <td style="padding:2px;border-width: 1px;">Bin 01</td>
+                                                                                </tr>
 
-                                                    <tr>
-                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Bays</strong></td>
-                                                        <td style="padding:2px;border-width: 1px;">18 Bays</td>
-                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>No. of Shelves / Bay</strong></td>
-                                                        <td style="padding:2px;border-width: 1px;">7 to 8</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Size</strong></td>
-                                                        <td style="padding:2px;border-width: 1px;">Width 48” x Depth 18” x Height 123”</td>
-                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Post</strong></td>
-                                                        <td style="padding:2px;border-width: 1px;">Width 1.5” x Depth 1” x Thickness 1.98 mm</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Shelf / Beam</strong></td>
-                                                        <td style="padding:2px;border-width: 1px;">Height 2.75” x Thickness 1.59 mm</td>
-                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Frame Connector</strong></td>
-                                                        <td style="padding:2px;border-width: 1px;">3 / Frame</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">&nbsp;</td>
-                                                        <td style="padding:2px;border-width: 1px;">&nbsp;</td>
-                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Tie Bar</strong></td>
-                                                        <td style="padding:2px;border-width: 1px;">1 / Levele</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="2" bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Capacity</strong></td>
-                                                        <td colspan="2">2600 lbs / Bay</td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr _ngcontent-c10="">
-                                            <td _ngcontent-c10="" align="center" valign="top" class="">
-                                                <table width="100%" border="1" cellspacing="0" cellpadding="0">
-                                                    <tr>
-                                                        <td bgcolor="#79ADDD" style="padding:2px;border-width:1px;text-align:center;">Description</td>
-                                                        <td bgcolor="#79ADDD" style="padding:2px;border-width:1px;text-align:center;width:35px;">Yes</td>
-                                                        <td bgcolor="#79ADDD" style="padding:2px;border-width:1px;text-align:center;width:35px;">No</td>
-                                                        <td bgcolor="#79ADDD" style="padding:2px;border-width:1px;text-align:center;width:35px;">N/A</td>
-                                                        <td bgcolor="#79ADDD" style="padding:2px;border-width:1px;text-align:center;">Comments</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td valign="middle" style="padding: 5px; border-width: 1px; text-align: left;">Is the type of shelving appropriate for its weight / size?</td>
-                                                        <td valign="middle" style="width:35px;text-align:center;border-width:1px;">√</td>
-                                                        <td valign="middle" style="width:35px;text-align:center;border-width:1px;"></td>
-                                                        <td valign="middle" style="width:35px;text-align:center;border-width:1px;"></td>
-                                                        <td valign="middle" style="padding:5px;border-width:1px;">Shelving bay not level Shelving bay not level Shelving bay not level Shelving bay not level</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="5" valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">
-                                                            <img ng-src="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg" class="avatar-xl me-3" alt="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg" src="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg">
-                                                            <img ng-src="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg" class="avatar-xl me-3" alt="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg" src="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg">
-                                                            <img ng-src="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg" class="avatar-xl me-3" alt="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg" src="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg">
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                                                                <tr>
+                                                                                    <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Bays</strong></td>
+                                                                                    <td style="padding:2px;border-width: 1px;">18 Bays</td>
+                                                                                    <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>No. of Shelves / Bay</strong></td>
+                                                                                    <td style="padding:2px;border-width: 1px;">7 to 8</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Size</strong></td>
+                                                                                    <td style="padding:2px;border-width: 1px;">Width 48” x Depth 18” x Height 123”</td>
+                                                                                    <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Post</strong></td>
+                                                                                    <td style="padding:2px;border-width: 1px;">Width 1.5” x Depth 1” x Thickness 1.98 mm</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Shelf / Beam</strong></td>
+                                                                                    <td style="padding:2px;border-width: 1px;">Height 2.75” x Thickness 1.59 mm</td>
+                                                                                    <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Frame Connector</strong></td>
+                                                                                    <td style="padding:2px;border-width: 1px;">3 / Frame</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">&nbsp;</td>
+                                                                                    <td style="padding:2px;border-width: 1px;">&nbsp;</td>
+                                                                                    <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Tie Bar</strong></td>
+                                                                                    <td style="padding:2px;border-width: 1px;">1 / Levele</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td colspan="2" bgcolor="#ffffcc" style="padding:2px;border-width: 1px;"><strong>Capacity</strong></td>
+                                                                                    <td colspan="2">2600 lbs / Bay</td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr _ngcontent-c10="">
+                                                                        <td _ngcontent-c10="" align="center" valign="top" class="">
+                                                                            <table width="100%" border="1" cellspacing="0" cellpadding="0">
+                                                                                <tr>
+                                                                                    <td bgcolor="#79ADDD" style="padding:2px;border-width:1px;text-align:center;">Description</td>
+                                                                                    <td bgcolor="#79ADDD" style="padding:2px;border-width:1px;text-align:center;width:35px;">Yes</td>
+                                                                                    <td bgcolor="#79ADDD" style="padding:2px;border-width:1px;text-align:center;width:35px;">No</td>
+                                                                                    <td bgcolor="#79ADDD" style="padding:2px;border-width:1px;text-align:center;width:35px;">N/A</td>
+                                                                                    <td bgcolor="#79ADDD" style="padding:2px;border-width:1px;text-align:center;">Comments</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td valign="middle" style="padding: 5px; border-width: 1px; text-align: left;">Is the type of shelving appropriate for its weight / size?</td>
+                                                                                    <td valign="middle" style="width:35px;text-align:center;border-width:1px;">√</td>
+                                                                                    <td valign="middle" style="width:35px;text-align:center;border-width:1px;"></td>
+                                                                                    <td valign="middle" style="width:35px;text-align:center;border-width:1px;"></td>
+                                                                                    <td valign="middle" style="padding:5px;border-width:1px;">Shelving bay not level Shelving bay not level Shelving bay not level Shelving bay not level</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td colspan="5" valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">
+                                                                                        <img ng-src="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg" class="avatar-xl me-3" alt="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg" src="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg">
+                                                                                        <img ng-src="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg" class="avatar-xl me-3" alt="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg" src="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg">
+                                                                                        <img ng-src="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg" class="avatar-xl me-3" alt="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg" src="https://localhost:44309/img/deficiencythumb/10630_9754_1.jpg">
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
 
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>*@
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </section>*@
 
                             </div>
                         </div>

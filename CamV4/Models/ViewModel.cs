@@ -195,6 +195,19 @@ namespace CamV4.Models
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
     }
+    public partial class CustomerFacilityViewModel
+    {
+        public long CustomerFacilityID { get; set; }
+        public string Customer { get; set; }
+        public long CustomerID { get; set; }
+        public string CustomerLocation { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+        public string FacilityName { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<System.DateTime> CreatedDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public Nullable<System.DateTime> ModifiedDate { get; set; }
+    }
 
     public partial class CustomerLocationContactViewModel
     {
@@ -1003,5 +1016,9 @@ namespace CamV4.Models
         public bool IsSuccess { get; set; }
         public long InspectionDeficiencyId { get; set; }
         public string ErrorMessage { get; set; }
+    }
+    public class IdModel
+    {
+        public long id { get; set; }
     }
 }

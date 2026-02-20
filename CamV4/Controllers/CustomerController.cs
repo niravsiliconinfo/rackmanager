@@ -179,6 +179,18 @@ namespace CamV4.Controllers
             }
         }
 
+        public ActionResult ManageCustomerLocationHierarchy()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        
         public ActionResult InspectionDetails(int id)
         {
             if (Session["LoggedInUserId"] == null)

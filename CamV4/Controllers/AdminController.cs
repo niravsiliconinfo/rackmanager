@@ -600,6 +600,21 @@ namespace CamV4.Controllers
             }
         }
 
+        public ActionResult ManageCustomerFacility(int id)
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                ViewData["CustLocID"] = id;
+                var loc = DatabaseHelper.getCustomerLocationDetailsById(id);
+                ViewData["CustLocName"] = loc.LocationName;
+                return View();
+            }
+        }
+
         public ActionResult DeleteCustomerArea(int id)
         {
             if (Session["LoggedInUserId"] == null)

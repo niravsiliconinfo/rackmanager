@@ -32,6 +32,7 @@ namespace CamV4.Models
         public Nullable<System.DateTime> InspectionEndOn { get; set; }
         public long CustomerId { get; set; }
         public long CustomerLocationId { get; set; }
+        public Nullable<long> CustomerFacilityID { get; set; }
         public Nullable<long> CustomerAreaID { get; set; }
         public long EmployeeId { get; set; }
         public string AssignEmployeeIds { get; set; }

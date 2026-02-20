@@ -288,8 +288,23 @@ warning 6002: The table/view 'admin_rackauditor.dbo.ComponentSubType_Deleted' do
           <Property Name="AreaID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CustomerID" Type="bigint" Nullable="false" />
           <Property Name="CustomerLocationID" Type="bigint" Nullable="false" />
+          <Property Name="CustomerFacilityID" Type="bigint" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="AreaName" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="ModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="CustomerFacility">
+          <Key>
+            <PropertyRef Name="CustomerFacilityID" />
+          </Key>
+          <Property Name="CustomerFacilityID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerID" Type="bigint" Nullable="false" />
+          <Property Name="CustomerLocationID" Type="bigint" Nullable="false" />
+          <Property Name="FacilityName" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
@@ -570,7 +585,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.ComponentSubType_Deleted' do
           <Property Name="InspectionId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="InspectionDocumentNo" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="InspectionDocumentNoRef" Type="nvarchar" MaxLength="50" />
-          <Property Name="InspectionType" Type="nchar" MaxLength="2" Nullable="false" />
+          <Property Name="InspectionType" Type="nvarchar" MaxLength="50" />
           <Property Name="InspectionDate" Type="datetime" Nullable="false" />
           <Property Name="Reportdate" Type="datetime" />
           <Property Name="InspectionStatus" Type="int" Nullable="false" />
@@ -578,6 +593,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.ComponentSubType_Deleted' do
           <Property Name="InspectionEndOn" Type="datetime" />
           <Property Name="CustomerId" Type="bigint" Nullable="false" />
           <Property Name="CustomerLocationId" Type="bigint" Nullable="false" />
+          <Property Name="CustomerFacilityID" Type="bigint" />
           <Property Name="CustomerAreaID" Type="bigint" />
           <Property Name="EmployeeId" Type="bigint" Nullable="false" />
           <Property Name="StampingEngineerId" Type="bigint" />
@@ -725,7 +741,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
             <PropertyRef Name="InspectionTypeId" />
           </Key>
           <Property Name="InspectionTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="InspectionTypeCode" Type="char" MaxLength="2" Nullable="false" />
+          <Property Name="InspectionTypeCode" Type="nvarchar" MaxLength="4" Nullable="false" />
           <Property Name="InspectionTypeName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
@@ -1034,7 +1050,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
         <Function Name="GET_InsepctionCode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CustomerId" Type="bigint" Mode="In" />
           <Parameter Name="CustomerLocationId" Type="bigint" Mode="In" />
-          <Parameter Name="InspectionType" Type="nchar" Mode="In" />
+          <Parameter Name="InspectionType" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="GET_InsepctionCode_bk" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CustomerId" Type="bigint" Mode="In" />
@@ -1180,6 +1196,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <EntitySet Name="ConclusionRecommendations" EntityType="Self.ConclusionRecommendations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Countries" EntityType="Self.Countries" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CustomerArea" EntityType="Self.CustomerArea" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CustomerFacility" EntityType="Self.CustomerFacility" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CustomerLocation" EntityType="Self.CustomerLocation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CustomerLocationContact" EntityType="Self.CustomerLocationContact" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CustomerLocationHistoryLegacyFile" EntityType="Self.CustomerLocationHistoryLegacyFile" Schema="dbo" store:Type="Tables" />
@@ -1305,32 +1322,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="SE_EMAIL_PASS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="SE_SSL" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="SE_FROM_EMAIL" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="City">
-          <Key>
-            <PropertyRef Name="CityID" />
-          </Key>
-          <Property Name="CityID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CityName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ProvinceID" Type="Int32" Nullable="false" />
-          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="IsActive" Type="Boolean" />
-        </EntityType>
-        <EntityType Name="Component">
-          <Key>
-            <PropertyRef Name="ComponentId" />
-          </Key>
-          <Property Name="ComponentId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ComponentName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ComponentImage" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="IsActive" Type="Boolean" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ComponentPrice">
           <Key>
@@ -1501,20 +1492,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="IsActive" Type="Boolean" />
-        </EntityType>
-        <EntityType Name="CustomerArea">
-          <Key>
-            <PropertyRef Name="AreaID" />
-          </Key>
-          <Property Name="AreaID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CustomerID" Type="Int64" Nullable="false" />
-          <Property Name="CustomerLocationID" Type="Int64" Nullable="false" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <Property Name="AreaName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="CustomerLocation">
           <Key>
@@ -1784,37 +1761,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
         </EntityType>
-        <EntityType Name="InspectionDeficiency">
-          <Key>
-            <PropertyRef Name="InspectionDeficiencyId" />
-          </Key>
-          <Property Name="InspectionDeficiencyId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="InspectionId" Type="Int64" Nullable="false" />
-          <Property Name="CustomerNomenclatureNo" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
-          <Property Name="CustomerNomenclatureBayNoID" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
-          <Property Name="BayFrameSide" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="BeamFrameLevel" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ConclusionRecommendationsID" Type="Int32" />
-          <Property Name="ConclusionRecommendationsTitle" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
-          <Property Name="DeficiencyID" Type="Int32" />
-          <Property Name="DeficiencyType" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="DeficiencyInfo" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="Action_ReferReport" Type="Boolean" />
-          <Property Name="Action_Monitor" Type="Boolean" />
-          <Property Name="Action_Replace" Type="Boolean" />
-          <Property Name="Action_Repair" Type="Boolean" />
-          <Property Name="Severity_IndexNo" Type="Int32" />
-          <Property Name="InspectionDeficiencyTechnicianRemarks" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="InspectionDeficiencyTechnicianStatus" Type="Int32" />
-          <Property Name="InspectionDeficiencyAdminStatus" Type="Int32" />
-          <Property Name="InspectionDeficiencyRequestQuotation" Type="Int32" />
-          <Property Name="InspectionDeficiencyApprovedQuotation" Type="Int32" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="IsDelete" Type="Boolean" />
-        </EntityType>
         <EntityType Name="InspectionDeficiencyMTO">
           <Key>
             <PropertyRef Name="InspectionDeficiencyMTOId" />
@@ -1887,18 +1833,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="FileDrawingName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="FileCategory" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsDeleted" Type="Int32" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="InspectionType">
-          <Key>
-            <PropertyRef Name="InspectionTypeId" />
-          </Key>
-          <Property Name="InspectionTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="InspectionTypeCode" Type="String" MaxLength="2" FixedLength="true" Unicode="false" Nullable="false" />
-          <Property Name="InspectionTypeName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Precision="3" />
           <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
@@ -2121,8 +2055,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
         <EntityContainer Name="DatabaseEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="ActionRequireds" EntityType="Self.ActionRequired" />
           <EntitySet Name="CAMEmailSettings" EntityType="Self.CAMEmailSetting" />
-          <EntitySet Name="Cities" EntityType="Self.City" />
-          <EntitySet Name="Components" EntityType="Self.Component" />
           <EntitySet Name="ComponentPrices" EntityType="Self.ComponentPrice" />
           <EntitySet Name="ComponentPriceLists" EntityType="Self.ComponentPriceList" />
           <EntitySet Name="ComponentPriceListDetails" EntityType="Self.ComponentPriceListDetail" />
@@ -2135,7 +2067,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <EntitySet Name="ComponentsProperties" EntityType="Self.ComponentsProperty" />
           <EntitySet Name="ConclusionRecommendations" EntityType="Self.ConclusionRecommendation" />
           <EntitySet Name="Countries" EntityType="Self.Country" />
-          <EntitySet Name="CustomerAreas" EntityType="Self.CustomerArea" />
           <EntitySet Name="CustomerLocations" EntityType="Self.CustomerLocation" />
           <EntitySet Name="CustomerLocationContacts" EntityType="Self.CustomerLocationContact" />
           <EntitySet Name="CustomerLocationHistoryLegacyFiles" EntityType="Self.CustomerLocationHistoryLegacyFile" />
@@ -2153,13 +2084,11 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <EntitySet Name="ImpSettings" EntityType="Self.ImpSetting" />
           <EntitySet Name="IncidentReports" EntityType="Self.IncidentReport" />
           <EntitySet Name="IncidentReportPhotoes" EntityType="Self.IncidentReportPhoto" />
-          <EntitySet Name="InspectionDeficiencies" EntityType="Self.InspectionDeficiency" />
           <EntitySet Name="InspectionDeficiencyMTOes" EntityType="Self.InspectionDeficiencyMTO" />
           <EntitySet Name="InspectionDeficiencyMTODetails" EntityType="Self.InspectionDeficiencyMTODetail" />
           <EntitySet Name="InspectionDeficiencyPhotoes" EntityType="Self.InspectionDeficiencyPhoto" />
           <EntitySet Name="InspectionDues" EntityType="Self.InspectionDue" />
           <EntitySet Name="InspectionFileDrawings" EntityType="Self.InspectionFileDrawing" />
-          <EntitySet Name="InspectionTypes" EntityType="Self.InspectionType" />
           <EntitySet Name="Notifications" EntityType="Self.Notification" />
           <EntitySet Name="Provinces" EntityType="Self.Province" />
           <EntitySet Name="Quotations" EntityType="Self.Quotation" />
@@ -2341,7 +2270,13 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <EntitySet Name="ShelvingCheckListDetails" EntityType="admin_rackauditorModel.ShelvingCheckListDetail" />
           <EntitySet Name="ShelvingCheckListPhotoes" EntityType="admin_rackauditorModel.ShelvingCheckListPhoto" />
           <EntitySet Name="ShelvingCheckListTypes" EntityType="admin_rackauditorModel.ShelvingCheckListType" />
+          <EntitySet Name="Components" EntityType="admin_rackauditorModel.Component" />
+          <EntitySet Name="InspectionTypes" EntityType="admin_rackauditorModel.InspectionType" />
+          <EntitySet Name="Cities" EntityType="admin_rackauditorModel.City" />
+          <EntitySet Name="CustomerAreas" EntityType="admin_rackauditorModel.CustomerArea" />
           <EntitySet Name="Inspections" EntityType="admin_rackauditorModel.Inspection" />
+          <EntitySet Name="InspectionDeficiencies" EntityType="admin_rackauditorModel.InspectionDeficiency" />
+          <EntitySet Name="CustomerFacilities" EntityType="admin_rackauditorModel.CustomerFacility" />
         </EntityContainer>
         <ComplexType Name="Get_DeficienciesBreakdownCategories_Result">
           <Property Type="Int32" Name="DeficiencyCategoryId" Nullable="false" />
@@ -2823,6 +2758,59 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="Component">
+          <Key>
+            <PropertyRef Name="ComponentId" />
+          </Key>
+          <Property Name="ComponentId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ComponentName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ComponentImage" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="InspectionType">
+          <Key>
+            <PropertyRef Name="InspectionTypeId" />
+          </Key>
+          <Property Name="InspectionTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InspectionTypeCode" Type="String" Nullable="false" MaxLength="4" FixedLength="false" Unicode="true" />
+          <Property Name="InspectionTypeName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="City">
+          <Key>
+            <PropertyRef Name="CityID" />
+          </Key>
+          <Property Name="CityID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CityName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ProvinceID" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="CustomerArea">
+          <Key>
+            <PropertyRef Name="AreaID" />
+          </Key>
+          <Property Name="AreaID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerID" Type="Int64" Nullable="false" />
+          <Property Name="CustomerLocationID" Type="Int64" Nullable="false" />
+          <Property Name="CustomerFacilityID" Type="Int64" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="AreaName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
         <EntityType Name="Inspection">
           <Key>
             <PropertyRef Name="InspectionId" />
@@ -2830,7 +2818,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="InspectionId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="InspectionDocumentNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="InspectionDocumentNoRef" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="InspectionType" Type="String" Nullable="false" MaxLength="2" FixedLength="true" Unicode="true" />
+          <Property Name="InspectionType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="InspectionDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Reportdate" Type="DateTime" Precision="3" />
           <Property Name="InspectionStatus" Type="Int32" Nullable="false" />
@@ -2838,6 +2826,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="InspectionEndOn" Type="DateTime" Precision="3" />
           <Property Name="CustomerId" Type="Int64" Nullable="false" />
           <Property Name="CustomerLocationId" Type="Int64" Nullable="false" />
+          <Property Name="CustomerFacilityID" Type="Int64" />
           <Property Name="CustomerAreaID" Type="Int64" />
           <Property Name="EmployeeId" Type="Int64" Nullable="false" />
           <Property Name="StampingEngineerId" Type="Int64" />
@@ -2857,6 +2846,51 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="InspectionDeficiency">
+          <Key>
+            <PropertyRef Name="InspectionDeficiencyId" />
+          </Key>
+          <Property Name="InspectionDeficiencyId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InspectionId" Type="Int64" Nullable="false" />
+          <Property Name="CustomerNomenclatureNo" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+          <Property Name="CustomerNomenclatureBayNoID" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+          <Property Name="BayFrameSide" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="BeamFrameLevel" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ConclusionRecommendationsID" Type="Int32" />
+          <Property Name="ConclusionRecommendationsTitle" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
+          <Property Name="DeficiencyID" Type="Int32" />
+          <Property Name="DeficiencyType" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="DeficiencyInfo" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Action_ReferReport" Type="Boolean" />
+          <Property Name="Action_Monitor" Type="Boolean" />
+          <Property Name="Action_Replace" Type="Boolean" />
+          <Property Name="Action_Repair" Type="Boolean" />
+          <Property Name="Severity_IndexNo" Type="Int32" />
+          <Property Name="InspectionDeficiencyTechnicianRemarks" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="InspectionDeficiencyTechnicianStatus" Type="Int32" />
+          <Property Name="InspectionDeficiencyAdminStatus" Type="Int32" />
+          <Property Name="InspectionDeficiencyRequestQuotation" Type="Int32" />
+          <Property Name="InspectionDeficiencyApprovedQuotation" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IsDelete" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="CustomerFacility">
+          <Key>
+            <PropertyRef Name="CustomerFacilityID" />
+          </Key>
+          <Property Name="CustomerFacilityID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerID" Type="Int64" Nullable="false" />
+          <Property Name="CustomerLocationID" Type="Int64" Nullable="false" />
+          <Property Name="FacilityName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -2887,34 +2921,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
                 <ScalarProperty Name="SE_EMAIL_PASS" ColumnName="SE_EMAIL_PASS" />
                 <ScalarProperty Name="SE_SSL" ColumnName="SE_SSL" />
                 <ScalarProperty Name="SE_FROM_EMAIL" ColumnName="SE_FROM_EMAIL" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Cities">
-            <EntityTypeMapping TypeName="admin_rackauditorModel.City">
-              <MappingFragment StoreEntitySet="Cities">
-                <ScalarProperty Name="CityID" ColumnName="CityID" />
-                <ScalarProperty Name="CityName" ColumnName="CityName" />
-                <ScalarProperty Name="ProvinceID" ColumnName="ProvinceID" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Components">
-            <EntityTypeMapping TypeName="admin_rackauditorModel.Component">
-              <MappingFragment StoreEntitySet="Component">
-                <ScalarProperty Name="ComponentId" ColumnName="ComponentId" />
-                <ScalarProperty Name="ComponentName" ColumnName="ComponentName" />
-                <ScalarProperty Name="ComponentImage" ColumnName="ComponentImage" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3097,21 +3103,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="CustomerAreas">
-            <EntityTypeMapping TypeName="admin_rackauditorModel.CustomerArea">
-              <MappingFragment StoreEntitySet="CustomerArea">
-                <ScalarProperty Name="AreaID" ColumnName="AreaID" />
-                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
-                <ScalarProperty Name="CustomerLocationID" ColumnName="CustomerLocationID" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="AreaName" ColumnName="AreaName" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3400,38 +3391,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="InspectionDeficiencies">
-            <EntityTypeMapping TypeName="admin_rackauditorModel.InspectionDeficiency">
-              <MappingFragment StoreEntitySet="InspectionDeficiency">
-                <ScalarProperty Name="InspectionDeficiencyId" ColumnName="InspectionDeficiencyId" />
-                <ScalarProperty Name="InspectionId" ColumnName="InspectionId" />
-                <ScalarProperty Name="CustomerNomenclatureNo" ColumnName="CustomerNomenclatureNo" />
-                <ScalarProperty Name="CustomerNomenclatureBayNoID" ColumnName="CustomerNomenclatureBayNoID" />
-                <ScalarProperty Name="BayFrameSide" ColumnName="BayFrameSide" />
-                <ScalarProperty Name="BeamFrameLevel" ColumnName="BeamFrameLevel" />
-                <ScalarProperty Name="ConclusionRecommendationsID" ColumnName="ConclusionRecommendationsID" />
-                <ScalarProperty Name="ConclusionRecommendationsTitle" ColumnName="ConclusionRecommendationsTitle" />
-                <ScalarProperty Name="DeficiencyID" ColumnName="DeficiencyID" />
-                <ScalarProperty Name="DeficiencyType" ColumnName="DeficiencyType" />
-                <ScalarProperty Name="DeficiencyInfo" ColumnName="DeficiencyInfo" />
-                <ScalarProperty Name="Action_ReferReport" ColumnName="Action_ReferReport" />
-                <ScalarProperty Name="Action_Monitor" ColumnName="Action_Monitor" />
-                <ScalarProperty Name="Action_Replace" ColumnName="Action_Replace" />
-                <ScalarProperty Name="Action_Repair" ColumnName="Action_Repair" />
-                <ScalarProperty Name="Severity_IndexNo" ColumnName="Severity_IndexNo" />
-                <ScalarProperty Name="InspectionDeficiencyTechnicianRemarks" ColumnName="InspectionDeficiencyTechnicianRemarks" />
-                <ScalarProperty Name="InspectionDeficiencyTechnicianStatus" ColumnName="InspectionDeficiencyTechnicianStatus" />
-                <ScalarProperty Name="InspectionDeficiencyAdminStatus" ColumnName="InspectionDeficiencyAdminStatus" />
-                <ScalarProperty Name="InspectionDeficiencyRequestQuotation" ColumnName="InspectionDeficiencyRequestQuotation" />
-                <ScalarProperty Name="InspectionDeficiencyApprovedQuotation" ColumnName="InspectionDeficiencyApprovedQuotation" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="IsDelete" ColumnName="IsDelete" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="InspectionDeficiencyMTOes">
             <EntityTypeMapping TypeName="admin_rackauditorModel.InspectionDeficiencyMTO">
               <MappingFragment StoreEntitySet="InspectionDeficiencyMTO">
@@ -3507,19 +3466,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
                 <ScalarProperty Name="FileDrawingName" ColumnName="FileDrawingName" />
                 <ScalarProperty Name="FileCategory" ColumnName="FileCategory" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="InspectionTypes">
-            <EntityTypeMapping TypeName="admin_rackauditorModel.InspectionType">
-              <MappingFragment StoreEntitySet="InspectionType">
-                <ScalarProperty Name="InspectionTypeId" ColumnName="InspectionTypeId" />
-                <ScalarProperty Name="InspectionTypeCode" ColumnName="InspectionTypeCode" />
-                <ScalarProperty Name="InspectionTypeName" ColumnName="InspectionTypeName" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
@@ -4367,6 +4313,63 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Components">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.Component">
+              <MappingFragment StoreEntitySet="Component">
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ComponentImage" ColumnName="ComponentImage" />
+                <ScalarProperty Name="ComponentName" ColumnName="ComponentName" />
+                <ScalarProperty Name="ComponentId" ColumnName="ComponentId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InspectionTypes">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.InspectionType">
+              <MappingFragment StoreEntitySet="InspectionType">
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="InspectionTypeName" ColumnName="InspectionTypeName" />
+                <ScalarProperty Name="InspectionTypeCode" ColumnName="InspectionTypeCode" />
+                <ScalarProperty Name="InspectionTypeId" ColumnName="InspectionTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Cities">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.City">
+              <MappingFragment StoreEntitySet="Cities">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="ProvinceID" ColumnName="ProvinceID" />
+                <ScalarProperty Name="CityName" ColumnName="CityName" />
+                <ScalarProperty Name="CityID" ColumnName="CityID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CustomerAreas">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.CustomerArea">
+              <MappingFragment StoreEntitySet="CustomerArea">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="AreaName" ColumnName="AreaName" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="CustomerFacilityID" ColumnName="CustomerFacilityID" />
+                <ScalarProperty Name="CustomerLocationID" ColumnName="CustomerLocationID" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="AreaID" ColumnName="AreaID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Inspections">
             <EntityTypeMapping TypeName="admin_rackauditorModel.Inspection">
               <MappingFragment StoreEntitySet="Inspection">
@@ -4389,6 +4392,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
                 <ScalarProperty Name="StampingEngineerId" ColumnName="StampingEngineerId" />
                 <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
                 <ScalarProperty Name="CustomerAreaID" ColumnName="CustomerAreaID" />
+                <ScalarProperty Name="CustomerFacilityID" ColumnName="CustomerFacilityID" />
                 <ScalarProperty Name="CustomerLocationId" ColumnName="CustomerLocationId" />
                 <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
                 <ScalarProperty Name="InspectionEndOn" ColumnName="InspectionEndOn" />
@@ -4400,6 +4404,53 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
                 <ScalarProperty Name="InspectionDocumentNoRef" ColumnName="InspectionDocumentNoRef" />
                 <ScalarProperty Name="InspectionDocumentNo" ColumnName="InspectionDocumentNo" />
                 <ScalarProperty Name="InspectionId" ColumnName="InspectionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InspectionDeficiencies">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.InspectionDeficiency">
+              <MappingFragment StoreEntitySet="InspectionDeficiency">
+                <ScalarProperty Name="IsDelete" ColumnName="IsDelete" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="InspectionDeficiencyApprovedQuotation" ColumnName="InspectionDeficiencyApprovedQuotation" />
+                <ScalarProperty Name="InspectionDeficiencyRequestQuotation" ColumnName="InspectionDeficiencyRequestQuotation" />
+                <ScalarProperty Name="InspectionDeficiencyAdminStatus" ColumnName="InspectionDeficiencyAdminStatus" />
+                <ScalarProperty Name="InspectionDeficiencyTechnicianStatus" ColumnName="InspectionDeficiencyTechnicianStatus" />
+                <ScalarProperty Name="InspectionDeficiencyTechnicianRemarks" ColumnName="InspectionDeficiencyTechnicianRemarks" />
+                <ScalarProperty Name="Severity_IndexNo" ColumnName="Severity_IndexNo" />
+                <ScalarProperty Name="Action_Repair" ColumnName="Action_Repair" />
+                <ScalarProperty Name="Action_Replace" ColumnName="Action_Replace" />
+                <ScalarProperty Name="Action_Monitor" ColumnName="Action_Monitor" />
+                <ScalarProperty Name="Action_ReferReport" ColumnName="Action_ReferReport" />
+                <ScalarProperty Name="DeficiencyInfo" ColumnName="DeficiencyInfo" />
+                <ScalarProperty Name="DeficiencyType" ColumnName="DeficiencyType" />
+                <ScalarProperty Name="DeficiencyID" ColumnName="DeficiencyID" />
+                <ScalarProperty Name="ConclusionRecommendationsTitle" ColumnName="ConclusionRecommendationsTitle" />
+                <ScalarProperty Name="ConclusionRecommendationsID" ColumnName="ConclusionRecommendationsID" />
+                <ScalarProperty Name="BeamFrameLevel" ColumnName="BeamFrameLevel" />
+                <ScalarProperty Name="BayFrameSide" ColumnName="BayFrameSide" />
+                <ScalarProperty Name="CustomerNomenclatureBayNoID" ColumnName="CustomerNomenclatureBayNoID" />
+                <ScalarProperty Name="CustomerNomenclatureNo" ColumnName="CustomerNomenclatureNo" />
+                <ScalarProperty Name="InspectionId" ColumnName="InspectionId" />
+                <ScalarProperty Name="InspectionDeficiencyId" ColumnName="InspectionDeficiencyId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CustomerFacilities">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.CustomerFacility">
+              <MappingFragment StoreEntitySet="CustomerFacility">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="FacilityName" ColumnName="FacilityName" />
+                <ScalarProperty Name="CustomerLocationID" ColumnName="CustomerLocationID" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="CustomerFacilityID" ColumnName="CustomerFacilityID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

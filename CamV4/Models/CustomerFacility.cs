@@ -12,14 +12,13 @@ namespace CamV4.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class CustomerArea
+    public partial class CustomerFacility
     {
-        public long AreaID { get; set; }
+        public long CustomerFacilityID { get; set; }
         public long CustomerID { get; set; }
         public long CustomerLocationID { get; set; }
-        public long CustomerFacilityID { get; set; }
+        public string FacilityName { get; set; }
         public bool IsActive { get; set; }
-        public string AreaName { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public string ModifiedBy { get; set; }

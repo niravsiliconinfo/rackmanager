@@ -35,12 +35,21 @@ namespace CamV4.Controllers
             var user = DatabaseHelper.saveUserEmployee(model);
             return user;
         }
+
         [Route("getAllEmployee")]
         [HttpGet]
         public async Task<List<EmployeeViewModel>> GetAllEmployee()
         {
             List<EmployeeViewModel> details = DatabaseHelper.getAllEmployee();
             return details;
+        }
+
+        [Route("getAllEngineerEmployee")]
+        [HttpGet]
+        public async Task<List<EmployeeViewModel>> GetAllEngineerEmployee()
+        {
+            List<EmployeeViewModel> lstEmployeeEngineer = DatabaseHelper.GetAllEngineerEmployee();
+            return lstEmployeeEngineer;
         }
 
         [Route("getAllStampingEmployee")]
@@ -472,13 +481,13 @@ namespace CamV4.Controllers
             return details;
         }
 
-        [Route("saveCustomerLocation")]
-        [HttpPost]
-        public async Task<string> SaveCustomerLocation(CustomerLocation model)
-        {
-            var details = DatabaseHelper.saveCustomerLocation(model);
-            return details;
-        }
+        //[Route("saveCustomerLocation")]
+        //[HttpPost]
+        //public async Task<string> SaveCustomerLocation(CustomerLocation model)
+        //{
+        //    var details = DatabaseHelper.saveCustomerLocation(model);
+        //    return details;
+        //}
 
         [Route("editCustomerLocation")]
         [HttpPost]
@@ -520,13 +529,22 @@ namespace CamV4.Controllers
             return details;
         }
 
-        [Route("saveCustomerArea")]
-        [HttpPost]
-        public async Task<long> SaveCustomerArea(CustomerArea model)
+        [Route("getFacilityByLocationId")]
+        [HttpGet]
+        public async Task<List<CustomerFacilityViewModel>> GetFacilityByLocationId(int id)
         {
-            var details = DatabaseHelper.saveCustomerArea(model);
+            var details = DatabaseHelper.getFacilityDetailsByLocationId(id);
             return details;
         }
+
+
+        //[Route("saveCustomerArea")]
+        //[HttpPost]
+        //public async Task<long> SaveCustomerArea(CustomerArea model)
+        //{
+        //    var details = DatabaseHelper.saveCustomerArea(model);
+        //    return details;
+        //}
 
         [Route("editCustomerArea")]
         [HttpPost]
@@ -652,6 +670,46 @@ namespace CamV4.Controllers
             return details;
         }
 
+        [Route("getFacilityDetailsByLocationId")]
+        [HttpGet]
+        public async Task<List<CustomerFacilityViewModel>> GetFacilityDetailsByLocationId(int id)
+        {
+            var details = DatabaseHelper.getFacilityDetailsByLocationId(id);
+            return details;
+        }
+
+        //[Route("saveCustomerFacility")]
+        //[HttpPost]
+        //public async Task<long> SaveCustomerFacility(CustomerFacility model)
+        //{
+        //    var details = DatabaseHelper.saveCustomerFacility(model);
+        //    return details;
+        //}
+
+        [Route("editCustomerFacility")]
+        [HttpPost]
+        public async Task<int> editCustomerFacility(CustomerFacility model)
+        {
+            var details = DatabaseHelper.editCustomerFacility(model);
+            return details;
+        }
+
+        [Route("removeCustomerFacility")]
+        [HttpPost]
+        public async Task<long> RemoveCustomerFacility(int id)
+        {
+            var details = DatabaseHelper.removeCustomerFacility(id);
+            return details;
+        }
+
+        [Route("getFacilityDetailsById")]
+        [HttpGet]
+        public async Task<CustomerFacility> getFacilityDetailsById(int id)
+        {
+            var details = DatabaseHelper.getFacilityDetailsById(id);
+            return details;
+        }
+
         #endregion
 
         [Route("saveImages")]
@@ -661,6 +719,146 @@ namespace CamV4.Controllers
             var details = DatabaseHelper.saveImages(model);
             return "Ok";
         }
+
+
+        #region "Customer - Location - Facility - Area Fucntions"
+
+        [HttpGet]
+        [Route("GetCustomerHierarchy")]
+        public IHttpActionResult GetCustomerHierarchy(long customerId)
+        {
+            try
+            {
+                var result = new
+                {
+                    Locations = DatabaseHelper.GetCustomerLocations(customerId),
+                    Facilities = DatabaseHelper.GetCustomerFacilities(customerId),
+                    Areas = DatabaseHelper.GetCustomerAreas(customerId)
+                };
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        // POST api/pageview/SaveCustomerLocation
+        [HttpPost]
+        [Route("SaveCustomerLocation")]
+        public IHttpActionResult SaveCustomerLocation(CustomerLocation model)
+        {
+            try
+            {
+                if (model == null || string.IsNullOrWhiteSpace(model.LocationName))
+                    return BadRequest("LocationName is required.");
+
+                string user = HttpContext.Current.Session["LoggedInUserId"]?.ToString() ?? "System";
+                int result = DatabaseHelper.SaveCustomerLocation(model, user);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        // POST api/pageview/DeleteCustomerLocation
+        [HttpPost]
+        [Route("DeleteCustomerLocation")]
+        public IHttpActionResult DeleteCustomerLocation([FromBody] IdModel model)
+        {
+            try
+            {
+                string user = HttpContext.Current.Session["LoggedInUserId"]?.ToString() ?? "System";
+                int result = DatabaseHelper.DeleteCustomerLocation(model.id, user);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        // POST api/pageview/SaveCustomerFacility
+        [HttpPost]
+        [Route("SaveCustomerFacility")]
+        public IHttpActionResult SaveCustomerFacility(CustomerFacility model)
+        {
+            try
+            {
+                if (model == null || string.IsNullOrWhiteSpace(model.FacilityName))
+                    return BadRequest("FacilityName is required.");
+                if (model.CustomerLocationID <= 0)
+                    return BadRequest("CustomerLocationID is required.");
+
+                string user = HttpContext.Current.Session["LoggedInUserId"]?.ToString() ?? "System";
+                int result = DatabaseHelper.SaveCustomerFacility(model, user);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        // POST api/pageview/DeleteCustomerFacility
+        [HttpPost]
+        [Route("DeleteCustomerFacility")]
+        public IHttpActionResult DeleteCustomerFacility([FromBody] IdModel model)
+        {
+            try
+            {
+                string user = HttpContext.Current.Session["LoggedInUserId"]?.ToString() ?? "System";
+                int result = DatabaseHelper.DeleteCustomerFacility(model.id, user);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        // POST api/pageview/SaveCustomerArea
+        [HttpPost]
+        [Route("SaveCustomerArea")]
+        public IHttpActionResult SaveCustomerArea(CustomerArea model)
+        {
+            try
+            {
+                if (model == null || string.IsNullOrWhiteSpace(model.AreaName))
+                    return BadRequest("AreaName is required.");
+                if (model.CustomerLocationID <= 0)
+                    return BadRequest("CustomerLocationID is required.");
+
+                string user = HttpContext.Current.Session["LoggedInUserId"]?.ToString() ?? "System";
+                int result = DatabaseHelper.SaveCustomerArea(model, user);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        // POST api/pageview/DeleteCustomerArea
+        [HttpPost]
+        [Route("DeleteCustomerArea")]
+        public IHttpActionResult DeleteCustomerArea([FromBody] IdModel model)
+        {
+            try
+            {
+                string user = HttpContext.Current.Session["LoggedInUserId"]?.ToString() ?? "System";
+                int result = DatabaseHelper.DeleteCustomerArea(model.id, user);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        #endregion
 
         #region "Inspection"
 

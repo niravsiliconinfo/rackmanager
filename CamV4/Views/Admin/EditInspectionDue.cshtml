@@ -1,4 +1,4 @@
-﻿@Model CamV4.Models.Inspection
+﻿@*@Model CamV4.Models.Inspection*@
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
@@ -9,6 +9,9 @@
         AntiForgery.GetTokens(null, out cookieToken, out formToken);
         return cookieToken + ":" + formToken;
     }
+}
+@{
+    var userType = Session["LoggedInUserType"].ToString();
 }
 <script src="~/NgScript/Controller/inspectionDueCtrl.js"></script>
 
@@ -68,10 +71,10 @@
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
                                         @*<select name="CustomerId" id="CustomerId" class="form-control" ng-model="customerId"
-                ng-change="GetCustomerLocationByCustomerIdDrpd(customerId)" required>
-            <option value="">-- Select --</option>
-            <option ng-repeat="d in getAllCustomers" value="{{d.CustomerID}}">{{d.CustomerName}}</option>
-        </select>*@
+                                                    ng-change="GetCustomerLocationByCustomerIdDrpd(customerId)" required>
+                                                <option value="">-- Select --</option>
+                                                <option ng-repeat="d in getAllCustomers" value="{{d.CustomerID}}">{{d.CustomerName}}</option>
+                                            </select>*@
                                         <select name="CustomerId" id="CustomerId" class="form-control" ng-model="customerId"
                                                 ng-change="GetCustomerLocationByCustomerIdDrpd(customerId)" required>
                                             <option value="">-- Select --</option>
@@ -87,10 +90,10 @@
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
                                         @*<select name="CustomerLocationId" id="CustomerLocationId" class="form-control" ng-model="customerLocationId"
-                ng-change="GetAreaByLocationIdDrpd(customerLocationId)" required>
-            <option value="">-- Select --</option>
-            <option ng-repeat="d in getCustomerLocationByCustomerIdDrpd" value="{{d.CustomerLocationID}}">{{d.LocationName}}</option>
-        </select>*@
+                                                    ng-change="GetAreaByLocationIdDrpd(customerLocationId)" required>
+                                                <option value="">-- Select --</option>
+                                                <option ng-repeat="d in getCustomerLocationByCustomerIdDrpd" value="{{d.CustomerLocationID}}">{{d.LocationName}}</option>
+                                            </select>*@
                                         <select name="CustomerLocationId" id="CustomerLocationId" class="form-control" ng-model="customerLocationId"
                                                 ng-change="GetAreaByLocationIdDrpd(customerLocationId)" required>
                                             <option value="">-- Select --</option>
@@ -104,9 +107,9 @@
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
                                         @*<select name="CustomerAreaID" id="CustomerAreaID" class="form-control" ng-model="customerAreaId">
-                                            <option value="">-- Select --</option>
-                                            <option ng-repeat="d in getAreaDetailsByLocationId" value="{{d.AreaID}}">{{d.AreaName}}</option>
-                                        </select>*@
+                                                <option value="">-- Select --</option>
+                                                <option ng-repeat="d in getAreaDetailsByLocationId" value="{{d.AreaID}}">{{d.AreaName}}</option>
+                                            </select>*@
                                         <select name="CustomerAreaID" id="CustomerAreaID" class="form-control" ng-model="customerAreaId">
                                             <option value="">-- Select --</option>
                                             <option ng-repeat="d in getAreaDetailsByLocationId" ng-value="d.AreaID">{{d.AreaName}}</option>
@@ -121,9 +124,9 @@
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
                                         @*<select name="EmployeeId" id="EmployeeId" class="form-control" ng-model="employeeId" required>
-            <option value="">-- Select --</option>
-            <option ng-repeat="d in getAllEmployee" value="{{d.EmployeeID}}">{{d.EmployeeName}}</option>
-        </select>*@
+                                                <option value="">-- Select --</option>
+                                                <option ng-repeat="d in getAllEmployee" value="{{d.EmployeeID}}">{{d.EmployeeName}}</option>
+                                            </select>*@
                                         <select name="EmployeeId" id="EmployeeId" class="form-control" ng-model="employeeId" required>
                                             <option value="">-- Select --</option>
                                             <option ng-repeat="d in getAllEmployee" ng-value="d.EmployeeID">{{d.EmployeeName}}</option>

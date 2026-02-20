@@ -588,6 +588,111 @@
             });
         }
 
+        $scope.AddFacilityShow = true;
+        $scope.EditFacilityShow = false;
+
+        $scope.SaveCustomerFacility = function (id) {
+            var config = {
+                CustomerLocationID: id, FacilityName: $scope.FacilityName
+            }
+            console.log('SaveFacility', config);
+            return $http({
+                url: '/api/pageview/saveCustomerFacility',
+                method: "POST",
+                data: config,
+                headers: {
+                    "Content-Type": "application/json",
+                    'RequestVerificationToken': $scope.antiForgeryToken
+                }
+            }).then(function (response) {
+                console.log('response SaveFacility--', response);
+                if (response.data != null) {
+                    $scope.FacilityTableInAddFacility = true;
+                    $window.location.reload();
+                }
+                else {
+                    var url = '/Account/Login';
+                    window.location = url;
+                }
+            }, function (error) {
+                $scope.registermessage = error;
+            });
+        };
+
+        $scope.EditFacilityClick = function (Id) {
+            $scope.AddFacilityShow = false;
+            $scope.EditFacilityShow = true;
+            console.log('getFacilityDetailsById - id', Id);
+            $http.get('/api/pageview/getFacilityDetailsById', { params: { id: Id } }).then(function (response) {
+                $scope.getFacilityDetailsById = response.data;
+                $scope.FacilityNameInEditFacility = $scope.getFacilityDetailsById.FacilityName;
+                $scope.FacilityIDInEditFacility = $scope.getFacilityDetailsById.CustomerFacilityID;
+                console.log('getFacilityDetailsById--', $scope.getFacilityDetailsById);
+            }, function (response) {
+                $scope.waiting = false;
+            });
+        }
+
+        $scope.EditCustomerFacility = function (Id) {
+            console.log('edit Facility save--', Id);
+            var config = {
+                CustomerFacilityID: Id, FacilityName: $scope.FacilityName
+            }
+            console.log('SaveFacility', config);
+            return $http({
+                url: '/api/pageview/editCustomerFacility',
+                method: "POST",
+                data: config,
+                headers: {
+                    "Content-Type": "application/json",
+                    'RequestVerificationToken': $scope.antiForgeryToken
+                }
+            }).then(function (response) {
+                console.log('response SaveFacility--', response);
+                if (response.data != null) {
+                    $window.location.reload();
+                    $scope.AddFacilityShow = true;
+                    $scope.EditFacilityShow = false;
+                }
+                else {
+                    var url = '/Account/Login';
+                    window.location = url;
+                }
+            }, function (error) {
+                $scope.registermessage = error;
+            });
+        }
+
+        $scope.RemoveCustomerFacility = function (id) {
+            if (!confirm("Are you sure you want to remove this facility?")) {
+                return;
+            }
+            console.log('removeCustomerFacility id', id);
+
+            var config = { id: id };
+
+            return $http({
+                url: '/api/pageview/removeCustomerFacility',
+                method: "POST",
+                params: config,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(function (response) {
+
+                if (response.data != 0) {
+                    var url = '/Admin/ManageCustomerFacility?id=' + response.data;
+                    window.location = url;
+                }
+
+            }, function (error) {
+                console.log(error);
+            });
+        };
+
+
+        
+
         if (window.location.pathname == "/Admin/AddCustomerArea" || window.location.pathname == "/Employee/CustomerAreaDetails") {
             var addCustURL = window.location.search;
             addCustURL = addCustURL.replace('?id=', '');
@@ -600,6 +705,24 @@
                 if ($scope.GetAreaByLocationId != null) { $scope.GetAreaByLocationIdcount = $scope.GetAreaByLocationId.length; }
                 else { $scope.GetAreaByLocationIdcount = 0; }
                 $scope.totalGetAreaByLocationId = $scope.GetAreaByLocationIdcount;
+                $scope.currentPage = '1';
+            }, function (response) {
+                $scope.waiting = false;
+            });
+        }
+
+        if (window.location.pathname == "/Admin/ManageCustomerFacility") {
+            var addCustURL = window.location.search;
+            addCustURL = addCustURL.replace('?id=', '');
+            console.log('url add customer area--', addCustURL);
+            $http.get('/api/pageview/getFacilityDetailsByLocationId', {
+                params: { id: addCustURL }
+            }).then(function (response) {
+                $scope.GetFacilityByLocationId = response.data;
+                console.log('$scope.getFacilityDetailsByLocationId', $scope.GetFacilityByLocationId);
+                if ($scope.GetFacilityByLocationId != null) { $scope.GetFacilityByLocationIdcount = $scope.GetFacilityByLocationId.length; }
+                else { $scope.GetFacilityByLocationIdcount = 0; }
+                $scope.totalGetFacilityByLocationId = $scope.GetFacilityByLocationIdcount;
                 $scope.currentPage = '1';
             }, function (response) {
                 $scope.waiting = false;
