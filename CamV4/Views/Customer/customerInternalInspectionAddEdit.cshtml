@@ -1,0 +1,385 @@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@functions{
+    public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    }
+}
+<script src="~/NgScript/Controller/internalInspectionCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg"
+      ng-controller="internalInspectionCtrl">
+
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Dashboard", "Customer")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("customerInternalInspectionListing", "Customer")">Internal Inspections</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">{{inspectionId > 0 ? 'Edit Inspection' : 'New Inspection'}}</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center"></div>
+                <ul class="navbar-nav justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4"
+         ng-init="inspectionId='@Request.QueryString["id"]'">
+        <input type="hidden" ng-model="antiForgeryToken" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+
+        <!-- ===================== INSPECTION FORM ===================== -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white text-capitalize ps-3 mt-2">
+                                {{inspectionId > 0 ? 'Edit Internal Inspection' : 'Create New Internal Inspection'}}
+                            </h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-sm text-muted mb-4">
+                            This inspection report is designed to be used by a qualified person/supervisor to identify
+                            and document rack deficiencies and generate a request for a formal inspection or repair
+                            to comply with Occupational Health and Safety Regulation.
+                        </p>
+                        <form>
+                            <!-- Row 1: Location + Type of Rack -->
+                            <div class="row">
+                                <div class="col-sm-2"><span>Location <span class="text-danger">*</span></span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select class="form-control" ng-model="form.customerLocationId"
+                                                ng-change="onLocationChange()">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="l in locationList" value="{{l.CustomerLocationID}}">
+                                                {{l.LocationName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2"><span>Type of Rack <span class="text-danger">*</span></span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select class="form-control" ng-model="form.typeOfRack">
+                                            <option value="">-- Select --</option>
+                                            <option value="Selective">Selective</option>
+                                            <option value="Drive-In">Drive-In</option>
+                                            <option value="Push-Back">Push-Back</option>
+                                            <option value="Pallet Flow">Pallet Flow</option>
+                                            <option value="Cantilever">Cantilever</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 2: Facility + Area -->
+                            <div class="row">
+                                <div class="col-sm-2"><span>Facility</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select class="form-control" ng-model="form.customerFacilityId"
+                                                ng-change="onFacilityChange()">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="f in filteredFacilities" value="{{f.CustomerFacilityID}}">
+                                                {{f.FacilityName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2"><span>Area</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select class="form-control" ng-model="form.areaId">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="a in filteredAreas" value="{{a.AreaID}}">
+                                                {{a.AreaName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 3: Inspection Date + Inspection Number (read only on edit) -->
+                            <div class="row">
+                                <div class="col-sm-2"><span>Inspection Date</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="date" class="form-control" ng-model="form.inspectionDate" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-2"><span>Inspection Number</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" ng-model="form.inspectionNumber"
+                                               placeholder="Auto-generated on save" readonly />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 4: Area text + Row -->
+                            <div class="row">
+                                <div class="col-sm-2"><span>Area / Zone</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" ng-model="form.area"
+                                               placeholder="e.g. Cold Storage" maxlength="150" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-2"><span>Row</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" ng-model="form.row" maxlength="50" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 5: Aisle + Bay -->
+                            <div class="row">
+                                <div class="col-sm-2"><span>Aisle</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" ng-model="form.aisle" maxlength="50" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-2"><span>Bay</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" ng-model="form.bay" maxlength="50" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 6: Level checkboxes + Beam Location -->
+                            <div class="row">
+                                <div class="col-sm-2"><span>Level</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3 scroller">
+                                        <ul class="navbar-nav form-control">
+                                            <li ng-repeat="lvl in levelOptions">
+                                                <label for="chkLevel_{{lvl}}">
+                                                    <input id="chkLevel_{{lvl}}" type="checkbox"
+                                                           ng-model="selectedLevels[lvl]" />
+                                                    {{lvl}}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2"><span>Beam Location</span></div>
+                                <div class="col-sm-4">
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="beamFront"
+                                                   ng-model="form.beamLocation" value="Front" />
+                                            <label class="form-check-label" for="beamFront">Front</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="beamRear"
+                                                   ng-model="form.beamLocation" value="Rear" />
+                                            <label class="form-check-label" for="beamRear">Rear</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="beamBoth"
+                                                   ng-model="form.beamLocation" value="Both" />
+                                            <label class="form-check-label" for="beamBoth">Both</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 7: Frame Side + Reported By -->
+                            <div class="row">
+                                <div class="col-sm-2"><span>Frame Side</span></div>
+                                <div class="col-sm-4">
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="frameLeft"
+                                                   ng-model="form.frameSide" value="Left" />
+                                            <label class="form-check-label" for="frameLeft">Left</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="frameRight"
+                                                   ng-model="form.frameSide" value="Right" />
+                                            <label class="form-check-label" for="frameRight">Right</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="frameBoth"
+                                                   ng-model="form.frameSide" value="Left & Right" />
+                                            <label class="form-check-label" for="frameBoth">Left &amp; Right</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="frameNone"
+                                                   ng-model="form.frameSide" value="None" />
+                                            <label class="form-check-label" for="frameNone">None</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2"><span>Reported By</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" ng-model="form.reportedBy"
+                                               maxlength="150" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 8: Inspection Summary -->
+                            <div class="row">
+                                <div class="col-sm-2"><span>Inspection Summary</span></div>
+                                <div class="col-sm-10">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <textarea class="form-control" ng-model="form.inspectionSummary"
+                                                  rows="4" maxlength="2000"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 9: Photos -->
+                            <div class="row">
+                                <div class="col-sm-2"><span>Inspection Photos</span></div>
+                                <div class="col-sm-10">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="file" id="inspectionPhotos" class="form-control"
+                                               multiple accept="image/*" />
+                                    </div>
+                                    <p class="text-xs text-muted">You can select multiple photos. Photos will be saved on submit.</p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== DEFICIENCY SECTION ===================== -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mt-2">Deficiencies</h6>
+                                </div>
+                                <div class="col-6 text-end pe-4 d-flex align-items-center justify-content-end">
+                                    <button type="button" class="btn btn-sm btn-outline-light mb-0"
+                                            ng-click="AddDeficiency()">
+                                        <i class="material-icons text-sm me-1" style="vertical-align:middle;">add</i>
+                                        Add Deficiency
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-sm text-muted" ng-if="deficiencies.length == 0">
+                            No deficiencies added yet. Click "Add Deficiency" to begin.
+                        </p>
+                        <div ng-repeat="def in deficiencies" class="border rounded p-3 mb-3">
+                            <div class="row">
+                                <div class="col-sm-11">
+                                    <h6 class="text-sm font-weight-bold mb-2">Deficiency #{{$index + 1}}</h6>
+                                </div>
+                                <div class="col-sm-1 text-end">
+                                    <a href="javascript:void(0)" ng-click="RemoveDeficiency($index)" title="Remove">
+                                        <i class="material-icons text-sm text-danger">delete</i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2"><span>Description <span class="text-danger">*</span></span></div>
+                                <div class="col-sm-10">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <textarea class="form-control" ng-model="def.DeficiencyDescription"
+                                                  rows="2" maxlength="1000"
+                                                  placeholder="Describe the deficiency"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2"><span>Severity</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select class="form-control" ng-model="def.Severity">
+                                            <option value="">-- Select --</option>
+                                            <option value="Low">Low</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="High">High</option>
+                                            <option value="Critical">Critical</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2"><span>Engineer Review</span></div>
+                                <div class="col-sm-4">
+                                    <div class="mb-3 mt-1">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox"
+                                                   id="engReview_{{$index}}"
+                                                   ng-model="def.IsEngineerReviewRequested"
+                                                   ng-change="UpdateEngineerCost()" />
+                                            <label class="form-check-label" for="engReview_{{$index}}">
+                                                Request Engineer Review ($20.00)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2"><span>Recommended Action</span></div>
+                                <div class="col-sm-10">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <textarea class="form-control" ng-model="def.RecommendedAction"
+                                                  rows="2" maxlength="1000"
+                                                  placeholder="Describe the recommended action"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Engineer review cost summary -->
+                        <div class="alert alert-info text-sm mt-3" ng-if="engineerReviewCount > 0">
+                            <i class="material-icons text-sm me-1" style="vertical-align:middle;">info</i>
+                            <strong>{{engineerReviewCount}}</strong> deficiencie(s) selected for engineer review.
+                            Estimated cost: <strong>${{engineerReviewCount * 20 | number:2}}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== VALIDATION + ACTIONS ===================== -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="text-danger mb-2" ng-show="formError">{{formError}}</div>
+                <div class="text-success mb-2" ng-show="formSuccess">{{formSuccess}}</div>
+                <button type="button" class="btn bg-gradient-info btn-lg mt-2 mb-0"
+                        ng-click="SaveInspection()" ng-disabled="saving">
+                    <span ng-if="!saving">{{inspectionId > 0 ? 'Update Inspection' : 'Submit Inspection'}}</span>
+                    <span ng-if="saving">Saving...</span>
+                </button>
+                <a href="@Url.Action("customerInternalInspectionListing", "Customer")"
+                   class="btn bg-gradient-secondary btn-lg mt-2 mb-0 ms-2">Cancel</a>
+            </div>
+        </div>
+
+        @Html.Partial("_FooterLayout")
+    </div>
+</main>

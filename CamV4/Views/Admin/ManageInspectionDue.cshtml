@@ -1,8 +1,10 @@
-﻿
-@{
+﻿@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-
+@{
+    var userType = Session["LoggedInUserType"].ToString();
+    var userId = Session["LoggedInUserId"].ToString();
+}
 <script src="~/Scripts/ui-bootstrap-tpls-0.11.0.js"></script>
 <script src="~/NgScript/Controller/inspectionDueCtrl.js"></script>
 
@@ -53,7 +55,10 @@
                                     <h6 class="text-white text-capitalize ps-3 mb-0">Manage Inspection Due</h6>
                                 </div>
                                 <div class="col-6 text-end">
-                                    <a class="btn bg-gradient-dark mb-0 mx-3" href="@Url.Action("AddInspectionDue", "Admin")"><i class="material-icons text-sm">add</i>&nbsp;&nbsp;Add New Inspection Due</a>
+                                    @if (userType == "1" || userType == "2")
+                                    {
+                                        <a class="btn bg-gradient-dark mb-0 mx-3" href="@Url.Action("AddInspectionDue", "Admin")"><i class="material-icons text-sm">add</i>&nbsp;&nbsp;Add New Inspection Due</a>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -65,7 +70,7 @@
                                     <tr>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Document No</th>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Company</th>
-                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Location And Area</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Area, Facility & Location</th>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Scheduled Date</th>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Assigned Employee</th>
                                         <th class="text-secondary opacity-7"></th>
@@ -80,8 +85,13 @@
                                             <span class="text-secondary text-xs font-weight-bold">{{d.Customer}}</span>
                                         </td>
                                         <td class="align-middle text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">{{d.CustomerLocation}}</p>
-                                            <p class="text-xs font-weight-bold mb-0">{{d.CustomerArea}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">
+                                                {{d.CustomerArea}}
+                                                <span ng-if="d.CustomerArea && (d.CustomerFacility || d.CustomerLocation)">,</span>
+                                                {{d.CustomerFacility}}
+                                                <span ng-if="d.CustomerFacility && d.CustomerLocation">,</span>
+                                                {{d.CustomerLocation}}
+                                            </p>
                                         </td>
                                         <td class="align-middle text-sm">
                                             <span class="text-secondary text-xs font-weight-bold">{{d.InspectionDate | date: 'dd MMM yyyy'}}</span>
@@ -90,12 +100,15 @@
                                             <span class="text-secondary text-xs font-weight-bold">{{d.Employee}}</span>
                                         </td>
                                         <td class="align-middle">
-                                            <a href="@Url.Action("EditInspectionDue", "Admin")?id={{d.InspectionId}}">
-                                                <i class="material-icons text-sm">edit</i>
-                                            </a>
-                                            <a href="@Url.Action("DeleteInspectionDue", "Admin")?id={{d.InspectionId}}">
-                                                <i class="material-icons text-sm">delete</i>
-                                            </a>
+                                            @if (userType == "1" || userType == "2")
+                                            {
+                                                <a href="@Url.Action("EditInspectionDue", "Admin")?id={{d.InspectionId}}">
+                                                    <i class="material-icons text-sm">edit</i>
+                                                </a>
+                                                <a href="@Url.Action("DeleteInspectionDue", "Admin")?id={{d.InspectionId}}">
+                                                    <i class="material-icons text-sm">delete</i>
+                                                </a>
+                                            }
                                         </td>
                                     </tr>
                                 </tbody>

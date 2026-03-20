@@ -119,27 +119,30 @@
                                             @if (userType == "1")
                                             {
                                                 <a href="@Url.Action("ManageHistoryLegacyDocuments", "Admin")?id={{d.CustomerID}}" title="History Legacy Documents"><i class="material-icons opacity-10">insert_drive_file</i></a>
-                                                <a href="@Url.Action("AddLocationContact", "Admin")?id={{d.CustomerID}}" title="Manage Location Contacts"><i class="material-icons opacity-10" style="color: #003DA6;">people</i></a>
-                                                <a href="@Url.Action("ManageCustomerLocationHierarchy", "Customer")?id={{d.CustomerID}}" title="Manage Locations">
+                                                <a href="@Url.Action("ManageLocationContact", "Admin")?id={{d.CustomerID}}" title="Manage Location Contacts"><i class="material-icons opacity-10" style="color: #003DA6;">people</i></a>
+                                                <a href="@Url.Action("ManageCustomerLocationHierarchy", "Admin")?id={{d.CustomerID}}" title="Manage Locations/Facility/Area">
                                                     <i class="material-icons opacity-10" style="color: #003DA6;">location_on</i>
                                                 </a>
                                                 <a href="@Url.Action("ManageCustomerPasswordByAdmin", "Admin")?id={{d.UserID}}" title="Reset Customer Password">
                                                     <i class="material-icons opacity-10">vpn_key</i>
                                                 </a>
-                                                <a href="@Url.Action("IncidentReportList", "Admin")?id={{d.CustomerID}}"  title="View Incident Reports">
+                                                <a href="@Url.Action("IncidentReportList", "Admin")?id={{d.CustomerID}}" title="View Incident Reports">
                                                     <i class="material-icons opacity-10" style="color:#ff0000;">report_problem</i>
+                                                </a>
+                                                <a href="@Url.Action("InternalInspectionListing", "Admin")?id={{d.CustomerID}}" title="View Internal Inspection">
+                                                    <i class="material-icons opacity-10" style="color:#008000;">manage_search</i>
                                                 </a>
                                                 <a href="@Url.Action("EditCustomer", "Admin")?id={{d.CustomerID}}" title="Edit Customer">
                                                     <i class="material-icons opacity-10">edit</i>
                                                 </a>
-                                                <a href="@Url.Action("DeleteCustomer", "Admin")?id={{d.CustomerID}}"  title="Delete Customer">
+                                                <a href="@Url.Action("DeleteCustomer", "Admin")?id={{d.CustomerID}}" title="Delete Customer">
                                                     <i class="material-icons opacity-10">delete</i>
                                                 </a>
                                             }
                                             else
                                             {
-                                                <a href="@Url.Action("CustomerLocationDetails", "Employee")?id={{d.CustomerID}}"  title="Location Detail">
-                                                    <i class="material-icons text-sm">location_on</i>
+                                                <a href="@Url.Action("ManageCustomerLocationHierarchy", "Admin")?id={{d.CustomerID}}" title="Manage Locations/Facility/Area">
+                                                    <i class="material-icons opacity-10" style="color: #003DA6;">location_on</i>
                                                 </a>
                                             }
                                         </td>

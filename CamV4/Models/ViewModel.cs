@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Web;
 
@@ -63,6 +64,8 @@ namespace CamV4.Models
     public class EmployeeSalesViewModel
     {
         public long EmployeeSalesID { get; set; }
+        public long EmployeeID { get; set; }
+        public string EmployeeName { get; set; }
         public long UserID { get; set; }
         public string EmployeeEmail { get; set; }
         public string EmployeeSalesName { get; set; }
@@ -78,6 +81,7 @@ namespace CamV4.Models
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
+        public string SalesCompanyListing { get; set; }
     }
 
     public class EmployeeViewModel
@@ -98,6 +102,7 @@ namespace CamV4.Models
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
+        
     }
     public class UserViewModel
     {
@@ -180,6 +185,7 @@ namespace CamV4.Models
         public List<CustomerLocationViewModel> CustomerLocation { get; set; }
         public string CustomerFullPathLogo { get; set; }
         public string CustomerPharse { get; set; }
+        public Nullable<int> SalesRepresentativeId { get; set; }
     }
 
     public partial class CustomerAreaViewModel
@@ -187,6 +193,8 @@ namespace CamV4.Models
         public long AreaID { get; set; }
         public string Customer { get; set; }
         public long CustomerID { get; set; }
+        public long CustomerLocationID { get; set; }  
+        public long CustomerFacilityID { get; set; }
         public string CustomerLocation { get; set; }
         public Nullable<bool> IsActive { get; set; }
         public string AreaName { get; set; }
@@ -198,6 +206,7 @@ namespace CamV4.Models
     public partial class CustomerFacilityViewModel
     {
         public long CustomerFacilityID { get; set; }
+        public long CustomerLocationID { get; set; }
         public string Customer { get; set; }
         public long CustomerID { get; set; }
         public string CustomerLocation { get; set; }
@@ -208,7 +217,7 @@ namespace CamV4.Models
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
     }
-
+    
     public partial class CustomerLocationContactViewModel
     {
         public long LocationContactId { get; set; }
@@ -229,9 +238,16 @@ namespace CamV4.Models
         public Nullable<System.DateTime> ModifiedDate { get; set; }
         public bool Selected { get; set; }
         public string LocationIds { get; set; }
+        public string FacilityIds { get; set; } 
+        public string AreaIds { get; set; }
         public List<long> LinkedCustomerLocationIDs { get; set; }
         public List<long> LinkedCustomerUserLocationIds { get; set; }
         public string LinkedLocationNames { get; set; }
+        public string LinkedFacilityNames { get; set; }
+        public string LinkedAreaNames { get; set; }
+
+        public List<long> LinkedFacilityIDs { get; set; }
+        public List<long> LinkedAreaIDs { get; set; }
     }
 
     public class InspectionViewModel
@@ -255,6 +271,8 @@ namespace CamV4.Models
         public string Region { get; set; }
         public Nullable<long> CustomerAreaID { get; set; }
         public string CustomerArea { get; set; }
+        public Nullable<long> CustomerFacilityID { get; set; }
+        public string CustomerFacility { get; set; }
         public string CustomerFullAddress { get; set; }
         public string CustomerLogo { get; set; }
         public string Employee { get; set; }
@@ -754,12 +772,10 @@ namespace CamV4.Models
 
     public class MailViewModel
     {
-        public int InspectionId { get; set; }
+        public long InspectionId { get; set; }
         public string LocationContactId { get; set; }
-        public int SentToClient { get; set; }
+        public int SentToClient { get; set; }    
     }
-
-
 
     public class CustomerDashboardGraphViewModel
     {
@@ -1020,5 +1036,128 @@ namespace CamV4.Models
     public class IdModel
     {
         public long id { get; set; }
+    }
+    // ============================================================
+    // Internal Inspection Module - ViewModels
+    // ============================================================
+
+    // ---- Main Inspection ViewModel ----
+    public partial class InternalInspectionViewModel
+    {
+        // Header
+        public long InternalInspectionID { get; set; }
+        public string InspectionNumber { get; set; }
+        public long CustomerID { get; set; }
+        public string CustomerName { get; set; }
+        public long CustomerLocationID { get; set; }
+        public string CustomerLocationName { get; set; }
+        public string CustomerLocationAddress { get; set; }
+        public Nullable<long> CustomerFacilityID { get; set; }
+        public string CustomerFacilityName { get; set; }
+        public Nullable<long> AreaID { get; set; }
+        public string AreaName { get; set; }
+
+        // Rack & Incident Info
+        public string TypeOfRack { get; set; }
+        public Nullable<DateTime> InspectionDate { get; set; }
+        public string InspectionDateFormatted { get; set; }  // display only: "February 02, 2026"
+
+        // Location Details
+        public string Area { get; set; }  // free-text area description
+        public string Row { get; set; }
+        public string Aisle { get; set; }
+        public string Bay { get; set; }
+        public string BeamLocation { get; set; }  // Front / Rear / Both
+        public string FrameSide { get; set; }  // Left / Right / Left & Right / None
+
+        // Report Info
+        public string ReportedBy { get; set; }
+        public string InspectionSummary { get; set; }
+        public string Status { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+
+        // Audit
+        public string CreatedBy { get; set; }
+        public Nullable<DateTime> CreatedDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public Nullable<DateTime> ModifiedDate { get; set; }
+
+        // Child collections — populated on detail/view load
+        public List<int> Levels { get; set; }  // e.g. [1, 3, 5]
+        public string LevelsDisplay { get; set; }  // e.g. "1, 3, 5"
+        public List<InternalInspectionDeficiencyViewModel> Deficiencies { get; set; }
+        public List<InternalInspectionPhotoViewModel> Photos { get; set; }
+
+        // Computed for listing
+        public int DeficiencyCount { get; set; }
+        public int EngineerReviewCount { get; set; }
+        public decimal EngineerReviewTotalCost { get; set; }  // DeficiencyCount * $20
+    }
+
+    // ---- Deficiency ViewModel ----
+    public partial class InternalInspectionDeficiencyViewModel
+    {
+        public long DeficiencyID { get; set; }
+        public long InternalInspectionID { get; set; }
+        public long CustomerID { get; set; }
+        public string DeficiencyDescription { get; set; }
+        public string Severity { get; set; }  // Low / Medium / High / Critical
+        public string RecommendedAction { get; set; }
+        public bool IsEngineerReviewRequested { get; set; }
+        public Nullable<decimal> EngineerReviewCost { get; set; }
+        public string Status { get; set; }  // Open / In Progress / Resolved
+        public Nullable<bool> IsActive { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<DateTime> CreatedDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public Nullable<DateTime> ModifiedDate { get; set; }
+    }
+
+    // ---- Photo ViewModel ----
+    public partial class InternalInspectionPhotoViewModel
+    {
+        public long InternalInspectionPhotoID { get; set; }
+        public long InternalInspectionID { get; set; }
+        public long CustomerID { get; set; }
+        public string PhotoPath { get; set; }
+        public string PhotoThumbPath { get; set; }
+        public string PhotoFullUrl { get; set; }  // display only — server maps relative to full URL
+        public string PhotoThumbFullUrl { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<DateTime> CreatedDate { get; set; }
+    }
+
+    // ---- Save Request ViewModel (used by Add/Edit form POST) ----
+    public partial class SaveInternalInspectionViewModel
+    {
+        public long InternalInspectionID { get; set; }  // 0 = new, >0 = edit
+        public long CustomerID { get; set; }
+        public long CustomerLocationID { get; set; }
+        public Nullable<long> CustomerFacilityID { get; set; }
+        public Nullable<long> AreaID { get; set; }
+        public string TypeOfRack { get; set; }
+        public string InspectionDate { get; set; }  // string from date input yyyy-MM-dd
+        public string Area { get; set; }
+        public string Row { get; set; }
+        public string Aisle { get; set; }
+        public string Bay { get; set; }
+        public string BeamLocation { get; set; }
+        public string FrameSide { get; set; }
+        public string ReportedBy { get; set; }
+        public string InspectionSummary { get; set; }
+        public string Levels { get; set; }  // comma-separated e.g. "1,3,5"
+        public List<InternalInspectionDeficiencyViewModel> Deficiencies { get; set; }
+    }
+
+    // ---- Listing / Search Filter ViewModel ----
+    public partial class InternalInspectionSearchViewModel
+    {
+        public Nullable<long> CustomerID { get; set; }
+        public Nullable<long> CustomerLocationID { get; set; }
+        public string Status { get; set; }
+        public string DateFrom { get; set; }
+        public string DateTo { get; set; }
+        public string InspectionNumber { get; set; }
     }
 }

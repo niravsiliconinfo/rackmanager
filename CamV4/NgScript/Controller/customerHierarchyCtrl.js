@@ -1,5 +1,14 @@
 // Retrieves the existing 'myApp' module — does NOT re-declare it
 angular.module('myApp')
+    .filter('startFrom', function () {
+        return function (input, start) {
+            if (input) {
+                start = +start;
+                return input.slice(start);
+            }
+            return [];
+        };
+    })
     .controller('customerHierarchyCtrl', function ($scope, $http) {
 
         // customerId is set via ng-init in the view
@@ -8,9 +17,6 @@ angular.module('myApp')
         $scope.locationList = [];
         $scope.facilityList = [];
         $scope.areaList = [];
-        $scope.getAllCountries = [];
-        $scope.getProvincebyCountryId = [];
-        $scope.getCitybyProvinceId = [];
         $scope.filteredFacilitiesForArea = [];
 
         $scope.loc = {};
@@ -20,6 +26,31 @@ angular.module('myApp')
         $scope.locError = ''; $scope.locSuccess = '';
         $scope.facError = ''; $scope.facSuccess = '';
         $scope.areaError = ''; $scope.areaSuccess = '';
+
+        // ---- Paging — use object to avoid child-scope override issue ----
+        $scope.locPaging = { current: 1, size: 10 };
+        $scope.facPaging = { current: 1, size: 10 };
+        $scope.areaPaging = { current: 1, size: 10 };
+
+        $scope.getPages = function (total, pageSize) {
+            var pages = [];
+            var count = Math.ceil(total / pageSize);
+            for (var i = 1; i <= count; i++) { pages.push(i); }
+            return pages;
+        };
+
+        $scope.setPage = function (paging, p) {
+            paging.current = p;
+        };
+
+        $scope.prevPage = function (paging) {
+            if (paging.current > 1) paging.current--;
+        };
+
+        $scope.nextPage = function (paging, total) {
+            var maxPage = Math.ceil(total / paging.size);
+            if (paging.current < maxPage) paging.current++;
+        };
 
         // ---- Helpers ----
         $scope.GetLocationName = function (id) {
@@ -36,40 +67,24 @@ angular.module('myApp')
         // ---- Data Load ----
         $scope.LoadHierarchy = function () {
             if (!$scope.customerId || $scope.customerId == 0) return;
-            $http.get('/api/pageview/GetCustomerHierarchy?customerId=' + $scope.customerId)            
+            $http.get('/api/pageview/GetCustomerHierarchy?customerId=' + $scope.customerId)
                 .then(function (res) {
                     $scope.locationList = res.data.Locations || [];
                     $scope.facilityList = res.data.Facilities || [];
                     $scope.areaList = res.data.Areas || [];
+                    $scope.locPaging.current = 1;
+                    $scope.facPaging.current = 1;
+                    $scope.areaPaging.current = 1;
                 });
-        };
-
-        $scope.LoadCountries = function () {
-            $http.get('/api/pageview/getAllCountries')
-                .then(function (res) { $scope.getAllCountries = res.data; });
-        };
-
-        $scope.getProvincebyCountryId = function () {
-            $scope.loc.provinceId = '';
-            $scope.loc.cityId = '';
-            $scope.getProvincebyCountryId = [];
-            $scope.getCitybyProvinceId = [];
-            if (!$scope.loc.countryId) return;
-            $http.get('/api/pageview/getProvincebyCountryId?id=' + $scope.loc.countryId)
-                .then(function (res) { $scope.getProvincebyCountryId = res.data; });
-        };
-
-        $scope.getCitybyProvinceId = function () {
-            $scope.loc.cityId = '';
-            $scope.getCitybyProvinceId = [];
-            if (!$scope.loc.provinceId) return;
-            $http.get('/api/pageview/getCitybyProvinceId?id=' + $scope.loc.provinceId)
-                .then(function (res) { $scope.getCitybyProvinceId = res.data; });
         };
 
         // ---- LOCATION ----
         $scope.ClearLocation = function () {
             $scope.loc = {};
+            // Reset the shared country/province/city models used by existing functions
+            $scope.country = '';
+            $scope.province = '';
+            $scope.city = '';
             $scope.getProvincebyCountryId = [];
             $scope.getCitybyProvinceId = [];
             $scope.locError = '';
@@ -99,9 +114,9 @@ angular.module('myApp')
                 CustomerId: $scope.customerId,
                 LocationName: $scope.loc.locationName,
                 CustomerAddress: $scope.loc.customerAddress || '',
-                CountryID: $scope.loc.countryId || null,
-                ProvinceID: $scope.loc.provinceId || null,
-                CityID: $scope.loc.cityId || null,
+                CountryID: $scope.country || null,
+                ProvinceID: $scope.province || null,
+                CityID: $scope.city || null,
                 Pincode: $scope.loc.pincode || '',
                 Region: $scope.loc.region || ''
             };
@@ -124,20 +139,23 @@ angular.module('myApp')
                 customerLocationId: l.CustomerLocationID,
                 locationName: l.LocationName,
                 customerAddress: l.CustomerAddress,
-                countryId: l.CountryID ? String(l.CountryID) : '',
-                provinceId: l.ProvinceID ? String(l.ProvinceID) : '',
-                cityId: l.CityID ? String(l.CityID) : '',
                 pincode: l.Pincode ? l.Pincode.trim() : '',
                 region: l.Region || ''
             };
+            // Set the shared scope models so existing GetProvincebyCountryId / GetCitybyProvinceId work
+            $scope.country = l.CountryID ? String(l.CountryID) : '';
+            $scope.province = l.ProvinceID ? String(l.ProvinceID) : '';
+            $scope.city = l.CityID ? String(l.CityID) : '';
+
             $scope.locError = '';
             $scope.locSuccess = '';
 
-            if ($scope.loc.countryId) {
-                $http.get('/api/pageview/getProvincebyCountryId?id=' + $scope.loc.countryId).then(function (res) {
+            // Reload province and city lists for the dropdowns
+            if ($scope.country) {
+                $http.get('/api/pageview/getProvincebyCountryId', { params: { id: $scope.country } }).then(function (res) {
                     $scope.getProvincebyCountryId = res.data;
-                    if ($scope.loc.provinceId) {
-                        $http.get('/api/pageview/getCitybyProvinceId?id=' + $scope.loc.provinceId).then(function (r2) {
+                    if ($scope.province) {
+                        $http.get('/api/pageview/getCitybyProvinceId', { params: { id: $scope.province } }).then(function (r2) {
                             $scope.getCitybyProvinceId = r2.data;
                         });
                     }
@@ -322,12 +340,32 @@ angular.module('myApp')
             });
         };
 
-        // ---- Bootstrap: wait for ng-init to set customerId ----
+        // ---- Bootstrap ----
         var unwatch = $scope.$watch('customerId', function (val) {
             if (val && val !== '0' && val !== '' && val !== null) {
-                $scope.LoadCountries();
                 $scope.LoadHierarchy();
                 unwatch();
             }
         });
+
+        $http.get('/api/pageview/getAllCountries').then(function (response) {
+            $scope.getAllCountries = response.data;
+        });
+
+        $scope.GetProvincebyCountryId = function () {
+            $scope.getCitybyProvinceId = [];
+            $scope.city = '';
+            var id = document.getElementById('drpcountry').value;
+            $http.get('/api/pageview/getProvincebyCountryId', { params: { id: id } }).then(function (res) {
+                $scope.getProvincebyCountryId = res.data;
+            });
+        };
+
+        $scope.GetCitybyProvinceId = function () {
+            $scope.city = '';
+            var id = document.getElementById('drpprovince').value;
+            $http.get('/api/pageview/getCitybyProvinceId', { params: { id: id } }).then(function (res) {
+                $scope.getCitybyProvinceId = res.data;
+            });
+        };
     });

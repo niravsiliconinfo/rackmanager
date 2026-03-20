@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace CamV4.Helper
 {
@@ -186,7 +187,76 @@ namespace CamV4.Helper
             }
         }
 
+        internal static List<EmployeeViewModel> GetAllProjectManager()
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                List<EmployeeViewModel> empVMList = new List<EmployeeViewModel>();
 
+                //var itm = db.Employees.Where(x => x.IsActive == true ).OrderBy(x => x.EmployeeName).ToList();
+                //var userTypes = new[] { 1, 2 };
+                int?[] userTypes = { 6 };
+
+                var employees = (from e in db.Employees
+                                 join u in db.Users
+                                     on e.UserID equals u.UserId
+                                 where userTypes.Contains(u.UserType)
+                                       && e.IsActive == true
+                                 orderby e.EmployeeName
+                                 select e)
+                                 .ToList();
+
+                if (employees.Count != 0)
+                {
+                    foreach (var d in employees)
+                    {
+                        EmployeeViewModel empVM = new EmployeeViewModel();
+                        empVM.UserID = d.UserID;
+                        empVM.EmployeeID = d.EmployeeID;
+                        empVM.EmployeeName = d.EmployeeName;
+                        empVM.EmployeeEmail = d.EmployeeEmail;
+                        empVM.EmployeeAddress = d.EmployeeAddress;
+                        empVM.PinCode = d.Pincode;
+                        empVM.Gender = d.Gender;
+                        empVM.TitleDegrees = d.TitleDegrees;
+                        empVM.CreatedDate = d.CreatedDate;
+                        empVM.CreatedBy = d.EmployeeName;
+                        empVM.ModifiedDate = d.CreatedDate;
+                        empVM.ModifiedBy = d.EmployeeName;
+                        //if (d.CityID != null || d.CityID == 0) { empVM.CityName = getCitybyId(d.CityID).CityName; }
+                        //if (d.ProvinceID != null || d.ProvinceID == 0) { empVM.ProvianceName = getProvincebyId(d.ProvinceID).ProvinceName; }
+                        //if (d.CountryID != null || d.CountryID == 0) { empVM.CountryName = getCountrybyId(d.CountryID).CountryName; }
+                        if (d.CityID != 0)
+                        {
+                            if (d.CityID != null) { empVM.CityName = getCitybyId(d.CityID).CityName; }
+                        }
+                        else
+                        {
+                            empVM.CityName = "";
+                        }
+                        if (d.ProvinceID != 0)
+                        {
+                            if (d.ProvinceID != null) { empVM.ProvianceName = getProvincebyId(d.ProvinceID).ProvinceName; }
+                        }
+                        else
+                        {
+                            empVM.ProvianceName = "";
+                        }
+                        if (d.CountryID != 0)
+                        {
+                            if (d.CountryID != null) { empVM.CountryName = getCountrybyId(d.CountryID).CountryName; }
+                        }
+                        else
+                        {
+                            empVM.CountryName = "";
+                        }
+                        empVMList.Add(empVM);
+                    }
+                    return empVMList;
+                }
+                return null;
+            }
+        }
         internal static List<EmployeeViewModel> GetAllStampingEmployee()
         {
             using (DatabaseEntities db = new DatabaseEntities())
@@ -244,6 +314,74 @@ namespace CamV4.Helper
                 return null;
             }
         }
+
+
+        internal static List<EmployeeSalesViewModel> GetAllSalesRep()
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                List<EmployeeSalesViewModel> empSalesRepVMList = new List<EmployeeSalesViewModel>();
+                //var itm = db.Employees.Where(x => x.IsActive == true).OrderBy(x => x.EmployeeName).ToList();
+                var employees = db.Employees.Join(db.Users, e => e.UserID, u => u.UserId,
+                                (e, u) => new { e, u })
+                                .Where(x => x.u.UserType == 5 && x.u.IsActive == true)
+                                .Select(x => x.e).ToList();
+
+                if (employees.Count != 0)
+                {
+                    foreach (var d in employees)
+                    {
+                        EmployeeSalesViewModel empVM = new EmployeeSalesViewModel();
+                        empVM.UserID = d.UserID;
+                        empVM.EmployeeSalesID = d.EmployeeID;
+                        empVM.EmployeeSalesName = d.EmployeeName;
+                        empVM.EmployeeID = d.EmployeeID;
+                        empVM.EmployeeName = d.EmployeeName;
+                        empVM.EmployeeEmail = d.EmployeeEmail;
+                        empVM.EmployeeAddress = d.EmployeeAddress;
+                        empVM.PinCode = d.Pincode;
+                        empVM.Gender = d.Gender;
+                        empVM.TitleDegrees = d.TitleDegrees;
+                        empVM.CreatedDate = d.CreatedDate;
+                        empVM.CreatedBy = d.EmployeeName;
+                        empVM.ModifiedDate = d.CreatedDate;
+                        empVM.ModifiedBy = d.EmployeeName;
+                        if (d.CityID != 0)
+                        {
+                            if (d.CityID != null) { empVM.CityName = getCitybyId(d.CityID).CityName; }
+                        }
+                        else
+                        {
+                            empVM.CityName = "";
+                        }
+                        if (d.ProvinceID != 0)
+                        {
+                            if (d.ProvinceID != null) { empVM.ProvianceName = getProvincebyId(d.ProvinceID).ProvinceName; }
+                        }
+                        else
+                        {
+                            empVM.ProvianceName = "";
+                        }
+                        if (d.CountryID != 0)
+                        {
+                            if (d.CountryID != null) { empVM.CountryName = getCountrybyId(d.CountryID).CountryName; }
+                        }
+                        else
+                        {
+                            empVM.CountryName = "";
+                        }
+                        var AllCustomerSales = db.Customers.Where(x => x.SalesRepresentativeId == d.EmployeeID).Select(x => x.CustomerId.ToString()).ToList();
+                        empVM.SalesCompanyListing = string.Join(",", AllCustomerSales);
+
+                        empSalesRepVMList.Add(empVM);
+                    }
+                    return empSalesRepVMList;
+                }
+                return null;
+            }
+        }
+
+
 
         internal static List<EmployeeSalesViewModel> GetAllSalesPerson()
         {
@@ -416,6 +554,7 @@ namespace CamV4.Helper
                 var objEmp = db.Employees.Where(x => x.UserID == id).FirstOrDefault();
                 if (objEmp != null)
                 {
+                    vm.EmployeeID = objEmp.EmployeeID;
                     vm.EmployeeName = objEmp.EmployeeName;
                     vm.EmployeeEmail = objEmp.EmployeeEmail;
                     vm.EmployeeAddress = objEmp.EmployeeAddress;
@@ -896,7 +1035,7 @@ namespace CamV4.Helper
                 throw;
             }
         }
-        internal static List<CustomerLocation> GetLocationbyByCustomer()
+        internal static List<CustomerLocation> GetLocationByCustomer()
         {
             try
             {
@@ -928,6 +1067,72 @@ namespace CamV4.Helper
                 throw;
             }
         }
+
+        internal static List<CustomerFacility> GetFacilityByCustomer()
+        {
+            try
+            {
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    var userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+                    if (userId != 0)
+                    {
+                        var cust = db.Customers.FirstOrDefault(x => x.UserID == userId);
+                        if (cust != null)
+                        {
+                            long customerId = cust.CustomerId;
+
+                            var itm = db.CustomerFacilities.Where(cl => cl.CustomerID == customerId).ToList();
+
+                            if (itm != null)
+                            {
+                                return itm;
+                            }
+                        }
+                    }
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+
+                throw;
+            }
+        }
+        internal static List<CustomerArea> GetAreaByCustomer()
+        {
+            try
+            {
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    var userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+                    if (userId != 0)
+                    {
+                        var cust = db.Customers.FirstOrDefault(x => x.UserID == userId);
+                        if (cust != null)
+                        {
+                            long customerId = cust.CustomerId;
+
+                            var itm = db.CustomerAreas.Where(cl => cl.CustomerID == customerId).ToList();
+
+                            if (itm != null)
+                            {
+                                return itm;
+                            }
+                        }
+                    }
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+
+                throw;
+            }
+        }
+
 
         internal static List<CustomerLocation> GetLocationbyRegionByCustomer(string region)
         {
@@ -1170,7 +1375,7 @@ namespace CamV4.Helper
             }
         }
 
-        internal static UserEmployeeViewModel mobileLogin(LoginViewModel model)
+        internal static UserEmployeeViewModel mobilelogin(LoginViewModel model)
         {
             using (DatabaseEntities db = new DatabaseEntities())
             {
@@ -1255,33 +1460,68 @@ namespace CamV4.Helper
                 string host = url.GetLeftPart(UriPartial.Authority);
 
                 List<CustomerViewModel> custList = new List<CustomerViewModel>();
-                var customer = db.Customers.Where(x => x.IsActive == true).OrderBy(x => x.CustomerName).ToList();
-                if (customer.Count != 0)
+                if (Convert.ToInt64(HttpContext.Current.Session["LoggedInUserType"]) == 5)
                 {
-                    foreach (var d in customer)
+                    long sSalesRepresentativeId = Convert.ToInt64(HttpContext.Current.Session["EmployeeID"]);
+                    var customer = db.Customers.Where(x => x.IsActive == true && x.SalesRepresentativeId == sSalesRepresentativeId).OrderBy(x => x.CustomerName).ToList();
+                    if (customer.Count != 0)
                     {
-                        CustomerViewModel cust = new CustomerViewModel();
-                        cust.CustomerID = d.CustomerId;
-                        cust.UserID = d.UserID ?? 0;
-                        cust.CustomerName = d.CustomerName;
-                        cust.CustomerNAVNo = d.CustomerNAVNo;
-                        if (d.CustomerLogo != null)
+                        foreach (var d in customer)
                         {
-                            cust.CustomerLogo = d.CustomerLogo;
+                            CustomerViewModel cust = new CustomerViewModel();
+                            cust.CustomerID = d.CustomerId;
+                            cust.UserID = d.UserID ?? 0;
+                            cust.CustomerName = d.CustomerName;
+                            cust.CustomerNAVNo = d.CustomerNAVNo;
+                            if (d.CustomerLogo != null)
+                            {
+                                cust.CustomerLogo = d.CustomerLogo;
+                            }
+                            else
+                            {
+                                cust.CustomerLogo = "/defaultcompany.png";
+                            }
+                            cust.CustomerAddress = d.CustomerAddress;
+                            cust.CustomerPharse = d.CustomerPharse;
+                            cust.PinCode = d.Pincode;
+                            if (d.CityID != null) { cust.CityID = getCitybyId(d.CityID).CityName; }
+                            if (d.ProvinceID != null) { cust.ProvinceID = getProvincebyId(d.ProvinceID).ProvinceName; }
+                            if (d.CountryID != null) { cust.Country = getCountrybyId(d.CountryID).CountryName; }
+                            custList.Add(cust);
                         }
-                        else
-                        {
-                            cust.CustomerLogo = "/defaultcompany.png";
-                        }
-                        cust.CustomerAddress = d.CustomerAddress;
-                        cust.CustomerPharse = d.CustomerPharse;
-                        cust.PinCode = d.Pincode;
-                        if (d.CityID != null) { cust.CityID = getCitybyId(d.CityID).CityName; }
-                        if (d.ProvinceID != null) { cust.ProvinceID = getProvincebyId(d.ProvinceID).ProvinceName; }
-                        if (d.CountryID != null) { cust.Country = getCountrybyId(d.CountryID).CountryName; }
-                        custList.Add(cust);
+                        return custList;
                     }
-                    return custList;
+                }
+                else
+                {
+                    var customer = db.Customers.Where(x => x.IsActive == true).OrderBy(x => x.CustomerName).ToList();
+                    if (customer.Count != 0)
+                    {
+                        foreach (var d in customer)
+                        {
+                            CustomerViewModel cust = new CustomerViewModel();
+                            cust.CustomerID = d.CustomerId;
+                            cust.UserID = d.UserID ?? 0;
+                            cust.CustomerName = d.CustomerName;
+                            cust.CustomerNAVNo = d.CustomerNAVNo;
+                            if (d.CustomerLogo != null)
+                            {
+                                cust.CustomerLogo = d.CustomerLogo;
+                            }
+                            else
+                            {
+                                cust.CustomerLogo = "/defaultcompany.png";
+                            }
+                            cust.CustomerAddress = d.CustomerAddress;
+                            cust.CustomerPharse = d.CustomerPharse;
+                            cust.PinCode = d.Pincode;
+                            if (d.CityID != null) { cust.CityID = getCitybyId(d.CityID).CityName; }
+                            if (d.ProvinceID != null) { cust.ProvinceID = getProvincebyId(d.ProvinceID).ProvinceName; }
+                            if (d.CountryID != null) { cust.Country = getCountrybyId(d.CountryID).CountryName; }
+                            custList.Add(cust);
+                        }
+                        return custList;
+                    }
                 }
                 return null;
             }
@@ -1489,6 +1729,7 @@ namespace CamV4.Helper
                     cust.CityID = model.CityID;
                     cust.ProvinceID = model.ProvinceID;
                     cust.Pincode = model.Pincode;
+                    cust.SalesRepresentativeId = model.SalesRepresentativeId;
                     cust.IsActive = true;
                     cust.CustomerLogo = model.CustomerLogo;
                     cust.CustomerContactName = model.CustomerContactName;
@@ -1552,6 +1793,7 @@ namespace CamV4.Helper
                         customer.CityID = model.CityID;
                         customer.ProvinceID = model.ProvinceID;
                         customer.Pincode = model.Pincode;
+                        customer.SalesRepresentativeId = model.SalesRepresentativeId;
                         customer.CustomerNAVNo = model.CustomerNAVNo;
                         if (model.CustomerLogo != null)
                         {
@@ -1785,6 +2027,77 @@ namespace CamV4.Helper
             return custLocList;
         }
 
+        //internal static List<CustomerFacility> getCustomerFacilityByCustomerId(long customerId)
+        //{
+        //    using (DatabaseEntities db = new DatabaseEntities())
+        //    {
+        //        var item = db.CustomerFacilities.Where(cl => cl.CustomerID == customerId).ToList();
+        //        if (item != null)
+        //        {
+        //            return item;
+        //        }
+        //        return null;
+        //    }
+        //}
+        internal static List<CustomerFacilityViewModel> getCustomerFacilityByCustomerId(long customerId)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                return db.CustomerFacilities
+                    .Where(f => f.CustomerID == customerId && f.IsActive == true)
+                    .OrderBy(f => f.FacilityName)
+                    .Select(f => new CustomerFacilityViewModel
+                    {
+                        CustomerFacilityID = f.CustomerFacilityID,
+                        CustomerLocationID = f.CustomerLocationID,
+                        CustomerID = f.CustomerID,
+                        FacilityName = f.FacilityName,
+                        IsActive = f.IsActive,
+                        CreatedBy = f.CreatedBy,
+                        CreatedDate = f.CreatedDate,
+                        ModifiedBy = f.ModifiedBy,
+                        ModifiedDate = f.ModifiedDate
+                    })
+                    .ToList();
+            }
+        }
+
+        internal static List<CustomerAreaViewModel> getCustomerAreaByCustomerId(long customerId)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                return db.CustomerAreas
+                    .Where(a => a.CustomerID == customerId && a.IsActive == true)
+                    .OrderBy(a => a.AreaName)
+                    .Select(a => new CustomerAreaViewModel
+                    {
+                        AreaID = a.AreaID,
+                        CustomerLocationID = a.CustomerLocationID,
+                        CustomerFacilityID = a.CustomerFacilityID,
+                        CustomerID = a.CustomerID,
+                        AreaName = a.AreaName,
+                        IsActive = a.IsActive,
+                        CreatedBy = a.CreatedBy,
+                        CreatedDate = a.CreatedDate,
+                        ModifiedBy = a.ModifiedBy,
+                        ModifiedDate = a.ModifiedDate
+                    })
+                    .ToList();
+            }
+        }
+        //internal static List<CustomerArea> getCustomerAreaByCustomerId(int customerId)
+        //{
+        //    using (DatabaseEntities db = new DatabaseEntities())
+        //    {
+        //        var item = db.CustomerAreas.Where(cl => cl.CustomerID == customerId).ToList();
+        //        if (item != null)
+        //        {
+        //            return item;
+        //        }
+        //        return null;
+        //    }
+        //}
+
         internal static List<CustomerLocationViewModel> getCustomerLocationByCustomerIdCommon(long id)
         {
             using (DatabaseEntities db = new DatabaseEntities())
@@ -1950,7 +2263,7 @@ namespace CamV4.Helper
             }
         }
 
-        internal static CustomerFacility getFacilityDetailsById(int id)
+        internal static CustomerFacility getFacilityDetailsById(Int64 id)
         {
             using (DatabaseEntities db = new DatabaseEntities())
             {
@@ -2219,35 +2532,58 @@ namespace CamV4.Helper
                                    c.ModifiedBy
                                }).FirstOrDefault();
 
-                if (contact == null)
-                    return null;
+                if (contact == null) return null;
 
-                // Get linked location ID
+                // Linked Location IDs
                 var linkedLocations = db.CustomersLocationsUsers
                     .Where(clu => clu.LocationContactId == contact.LocationContactId)
                     .Select(clu => clu.CustomerLocationID)
                     .ToList();
 
-                // Get linked CustomersLocationsUser IDs
+                // Linked CustomersLocationsUser IDs
                 var linkedCLUserIds = db.CustomersLocationsUsers
                     .Where(clu => clu.LocationContactId == contact.LocationContactId)
                     .Select(clu => clu.CustomerUserLocationId)
                     .ToList();
 
-                // Get linked location names
+                // Linked Location Names
                 var linkedLocationNames = (from clu in db.CustomersLocationsUsers
                                            join cl in db.CustomerLocations on clu.CustomerLocationID equals cl.CustomerLocationID
                                            join ct in db.Cities on cl.CityID equals ct.CityID
                                            where clu.LocationContactId == contact.LocationContactId
                                            select cl.LocationName + "[" + ct.CityName + "]").Distinct().ToList();
 
-                // Get customer name
+                // Linked Facility IDs
+                var linkedFacilityIDs = db.CustomersLocationsUserFacilities
+                    .Where(x => x.LocationContactId == contact.LocationContactId)
+                    .Select(x => x.CustomerFacilityID)
+                    .ToList();
+
+                // Linked Facility Names
+                var linkedFacilityNames = (from clf in db.CustomersLocationsUserFacilities
+                                           join cf in db.CustomerFacilities on clf.CustomerFacilityID equals cf.CustomerFacilityID
+                                           where clf.LocationContactId == contact.LocationContactId
+                                           select cf.FacilityName).Distinct().ToList();
+
+                // Linked Area IDs
+                var linkedAreaIDs = db.CustomersLocationsUserAreas
+                    .Where(x => x.LocationContactId == contact.LocationContactId)
+                    .Select(x => x.AreaID)
+                    .ToList();
+
+                // Linked Area Names
+                var linkedAreaNames = (from cla in db.CustomersLocationsUserAreas
+                                       join ca in db.CustomerAreas on cla.AreaID equals ca.AreaID
+                                       where cla.LocationContactId == contact.LocationContactId
+                                       select ca.AreaName).Distinct().ToList();
+
+                // Customer Name
                 var customerName = db.Customers
                     .Where(c => c.CustomerId == contact.CustomerId)
                     .Select(c => c.CustomerName)
                     .FirstOrDefault();
 
-                // Get primary location name
+                // Primary Location Name
                 var primaryLocation = db.CustomerLocations
                     .Where(cl => cl.CustomerLocationID == contact.CustomerLocationID)
                     .Select(cl => cl.LocationName)
@@ -2272,7 +2608,11 @@ namespace CamV4.Helper
                     CustomerLocation = primaryLocation,
                     LinkedCustomerLocationIDs = linkedLocations,
                     LinkedCustomerUserLocationIds = linkedCLUserIds,
-                    LinkedLocationNames = string.Join(", ", linkedLocationNames)
+                    LinkedLocationNames = string.Join(", ", linkedLocationNames),
+                    LinkedFacilityIDs = linkedFacilityIDs,
+                    LinkedFacilityNames = string.Join(", ", linkedFacilityNames),
+                    LinkedAreaIDs = linkedAreaIDs,
+                    LinkedAreaNames = string.Join(", ", linkedAreaNames)
                 };
             }
         }
@@ -2402,10 +2742,7 @@ namespace CamV4.Helper
             using (DatabaseEntities db = new DatabaseEntities())
             {
                 List<CustomerLocationContactViewModel> list = new List<CustomerLocationContactViewModel>();
-
-
                 var _contact = db.CustomerLocationContacts.Where(x => x.CustomerId == CustomerId && x.IsActive == true).OrderBy(x => x.ContactEmail).ToList();
-
                 if (_contact.Count != 0)
                 {
                     foreach (var d in _contact)
@@ -2425,23 +2762,53 @@ namespace CamV4.Helper
                         _lContact.ModifiedBy = d.ModifiedBy;
                         _lContact.UserID = d.UserID ?? 0;
 
+                        // Linked Locations
                         var linkedLocations = (
-                        from clu in db.CustomersLocationsUsers
-                        join cl in db.CustomerLocations on clu.CustomerLocationID equals cl.CustomerLocationID
-                        join ct in db.Cities on cl.CityID equals ct.CityID into cityGroup  // LEFT JOIN
-                        from ct in cityGroup.DefaultIfEmpty()
-                        where clu.CustomerId == d.CustomerId && clu.LocationContactId == d.LocationContactId
-                        select new
-                        {
-                            clu.CustomerUserLocationId,
-                            cl.CustomerLocationID,
-                            LocationName = cl.LocationName + (ct != null ? " (" + ct.CityName + ")" : "")  // ← only add city name if present
-                        }).ToList();
-
+                            from clu in db.CustomersLocationsUsers
+                            join cl in db.CustomerLocations on clu.CustomerLocationID equals cl.CustomerLocationID
+                            join ct in db.Cities on cl.CityID equals ct.CityID into cityGroup
+                            from ct in cityGroup.DefaultIfEmpty()
+                            where clu.CustomerId == d.CustomerId && clu.LocationContactId == d.LocationContactId
+                            select new
+                            {
+                                clu.CustomerUserLocationId,
+                                cl.CustomerLocationID,
+                                LocationName = cl.LocationName + (ct != null ? " (" + ct.CityName + ")" : "")
+                            }).ToList();
 
                         _lContact.LinkedCustomerLocationIDs = linkedLocations.Select(x => x.CustomerLocationID).ToList();
                         _lContact.LinkedCustomerUserLocationIds = linkedLocations.Select(x => x.CustomerUserLocationId).ToList();
                         _lContact.LinkedLocationNames = string.Join(", ", linkedLocations.Select(x => x.LocationName).Distinct());
+
+                        // Linked Facilities
+                        var linkedFacilities = (
+                            from clf in db.CustomersLocationsUserFacilities
+                            join cf in db.CustomerFacilities on clf.CustomerFacilityID equals cf.CustomerFacilityID
+                            where clf.LocationContactId == d.LocationContactId
+                            select new
+                            {
+                                cf.CustomerFacilityID,
+                                cf.FacilityName
+                            }).ToList();
+
+                        _lContact.LinkedFacilityNames = linkedFacilities.Any()
+                            ? string.Join(", ", linkedFacilities.Select(x => x.FacilityName).Distinct())
+                            : "";
+
+                        // Linked Areas
+                        var linkedAreas = (
+                            from cla in db.CustomersLocationsUserAreas
+                            join ca in db.CustomerAreas on cla.AreaID equals ca.AreaID
+                            where cla.LocationContactId == d.LocationContactId
+                            select new
+                            {
+                                ca.AreaID,
+                                ca.AreaName
+                            }).ToList();
+
+                        _lContact.LinkedAreaNames = linkedAreas.Any()
+                            ? string.Join(", ", linkedAreas.Select(x => x.AreaName).Distinct())
+                            : "";
 
                         list.Add(_lContact);
                     }
@@ -2817,239 +3184,295 @@ namespace CamV4.Helper
             }
         }
 
+        //internal static string saveLocationContactMultiple(CustomerLocationContactViewModel model)
+        //{
+        //    using (DatabaseEntities db = new DatabaseEntities())
+        //    {
+        //        long CustId = 0;
+        //        bool isNewUser = false;
+        //        List<CustomerLocation> lstLocationName;
+        //        List<long> locationIds = model.LocationIds.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(id => Convert.ToInt64(id.Trim())).ToList();
+        //        lstLocationName = db.CustomerLocations.Where(loc => locationIds.Contains(loc.CustomerLocationID)).ToList();
+        //        CustId = model.CustomerId;
+        //        var custUser = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+        //        if (custUser != 0)
+        //        {
+        //            var customer = db.Customers.Where(x => x.UserID == custUser).FirstOrDefault();
+        //            if (customer != null)
+        //            {
+        //                CustId = customer.CustomerId;
+        //            }
+        //        }
+        //        User user = new User();
+        //        //if (model.UserName == null)
+        //        //{
+        //        //    return "Please enter user name.";
+        //        //}
+        //        model.UserPassword = GenerateRandomPassword(8);
+        //        if (model.UserPassword == null)
+        //        {
+        //            return "Please enter user password.";
+        //        }
+        //        if (model.ContactName == null)
+        //        {
+        //            return "Please enter contact name.";
+        //        }
+        //        if (model.ContactEmail == null)
+        //        {
+        //            return "Please enter contact email(User Name).";
+        //        }
+        //        if (model.LocationIds == null)
+        //        {
+        //            return "Please select Location.";
+        //        }
+        //        if (model.UserName != null && model.UserPassword != null)
+        //        {
+        //            var found = db.Users.Where(x => x.UserName == model.ContactEmail).FirstOrDefault();
+        //            if (found == null)
+        //            {
+        //                user.UserName = model.ContactEmail;
+        //                user.UserPassword = AccountController.MD5Hash(model.UserPassword);
+        //                user.UserType = 9;
+        //                user.IsActive = true;
+        //                user.CreatedDate = DateTime.Now;
+        //                user.ModifiedDate = DateTime.Now;
+        //                if (model.CreatedBy != null)
+        //                {
+        //                    user.CreatedBy = model.CreatedBy;
+        //                    user.ModifiedBy = model.CreatedBy;
+        //                }
+        //                else
+        //                {
+        //                    user.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+        //                    user.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+        //                }
+        //                db.Users.Add(user);
+        //                db.SaveChanges();
+        //                isNewUser = true;
+        //                if (user.UserId != 0)
+        //                {
+
+
+        //                    List<string> LocationIdslist = model.LocationIds.Split(',').ToList();
+        //                    if (LocationIdslist.Count > 0)
+        //                    {
+        //                        CustomerLocationContact contact = new CustomerLocationContact();
+        //                        contact.UserID = user.UserId;
+        //                        contact.ContactName = model.ContactName;
+        //                        contact.ContactEmail = model.ContactEmail;
+        //                        contact.ContactPhone = model.ContactPhone;
+        //                        contact.CustomerId = CustId;
+        //                        contact.CustomerLocationID = Convert.ToInt32(LocationIdslist[0]);
+        //                        //if (model.CustomerLocationID != 0)
+        //                        //{
+        //                        //    var location = getCustomerLocationById(Convert.ToInt16(model.CustomerLocationID));
+        //                        //    if (location != null) { contact.CustomerId = location.CustomerId; }
+        //                        //}
+        //                        contact.IsActive = true;
+        //                        contact.CreatedDate = DateTime.Now;
+        //                        contact.ModifiedDate = DateTime.Now;
+        //                        if (model.CreatedBy != null)
+        //                        {
+        //                            contact.CreatedBy = "1";
+        //                            contact.ModifiedBy = "1";
+        //                        }
+        //                        else
+        //                        {
+        //                            contact.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+        //                            contact.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+        //                        }
+        //                        db.CustomerLocationContacts.Add(contact);
+        //                        db.SaveChanges();
+
+        //                        foreach (string locationId in LocationIdslist)
+        //                        {
+        //                            CustomersLocationsUser CLU = new CustomersLocationsUser();
+        //                            CLU.LocationContactId = contact.LocationContactId;
+        //                            CLU.CustomerId = CustId;
+        //                            CLU.CustomerLocationID = Convert.ToInt32(locationId);
+        //                            CLU.CreatedDate = DateTime.Now;
+        //                            CLU.ModifiedDate = DateTime.Now;
+        //                            if (model.CreatedBy != null)
+        //                            {
+        //                                CLU.CreatedBy = model.CreatedBy;
+        //                                CLU.ModifiedBy = model.CreatedBy;
+        //                            }
+        //                            else
+        //                            {
+        //                                CLU.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+        //                                CLU.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+        //                            }
+        //                            db.CustomersLocationsUsers.Add(CLU);
+        //                            db.SaveChanges();
+        //                        }
+        //                    }
+        //                }
+        //                db.SaveChanges();
+        //                if (isNewUser == true)
+        //                {
+        //                    SendContactEmailWithPassword(model, lstLocationName);                            
+        //                }
+        //                return "Ok";
+        //            }
+        //            else
+        //            {
+        //                return "User already exist. Please try another user name.";
+        //            }
+        //        }
+        //        return "Ok";
+        //        //return "Please enter user information.";
+        //    }
+        //}
+
         internal static string saveLocationContactMultiple(CustomerLocationContactViewModel model)
         {
-            using (DatabaseEntities db = new DatabaseEntities())
+            try
             {
-                long CustId = 0;
-                bool isNewUser = false;
-                List<CustomerLocation> lstLocationName;
-                List<long> locationIds = model.LocationIds.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(id => Convert.ToInt64(id.Trim())).ToList();
-                lstLocationName = db.CustomerLocations.Where(loc => locationIds.Contains(loc.CustomerLocationID)).ToList();
-                CustId = model.CustomerId;
-                var custUser = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
-                if (custUser != 0)
+                using (DatabaseEntities db = new DatabaseEntities())
                 {
-                    var customer = db.Customers.Where(x => x.UserID == custUser).FirstOrDefault();
-                    if (customer != null)
+                    long CustId = 0;
+                    bool isNewUser = false;
+
+                    // Validate
+                    if (model.ContactName == null) return "Please enter contact name.";
+                    if (model.ContactEmail == null) return "Please enter contact email(User Name).";
+                    //if (model.UserPassword == null) return "Please enter user password.";
+                    if (model.LocationIds == null) return "Please select Location.";
+                    model.UserPassword = GenerateRandomPassword(8);
+                    if (model.UserPassword == null) return "Please enter user password.";
+                    // Resolve CustomerId
+                    CustId = model.CustomerId;
+                    var custUser = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+                    if (custUser != 0)
                     {
-                        CustId = customer.CustomerId;
+                        var customer = db.Customers.Where(x => x.UserID == custUser).FirstOrDefault();
+                        if (customer != null) CustId = customer.CustomerId;
                     }
-                }
-                User user = new User();
-                //if (model.UserName == null)
-                //{
-                //    return "Please enter user name.";
-                //}
-                model.UserPassword = GenerateRandomPassword(8);
-                if (model.UserPassword == null)
-                {
-                    return "Please enter user password.";
-                }
-                if (model.ContactName == null)
-                {
-                    return "Please enter contact name.";
-                }
-                if (model.ContactEmail == null)
-                {
-                    return "Please enter contact email(User Name).";
-                }
-                if (model.LocationIds == null)
-                {
-                    return "Please select Location.";
-                }
-                if (model.UserName != null && model.UserPassword != null)
-                {
+
+                    string auditUser = model.CreatedBy ?? HttpContext.Current.Session["LoggedInUserId"].ToString();
+
+                    // Prepare location names for email
+                    List<long> locationIds = model.LocationIds
+                        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(id => Convert.ToInt64(id.Trim())).ToList();
+                    List<CustomerLocation> lstLocationName = db.CustomerLocations
+                        .Where(loc => locationIds.Contains(loc.CustomerLocationID)).ToList();
+
+                    // Check user does not already exist
                     var found = db.Users.Where(x => x.UserName == model.ContactEmail).FirstOrDefault();
-                    if (found == null)
-                    {
-                        user.UserName = model.ContactEmail;
-                        user.UserPassword = AccountController.MD5Hash(model.UserPassword);
-                        user.UserType = 9;
-                        user.IsActive = true;
-                        user.CreatedDate = DateTime.Now;
-                        user.ModifiedDate = DateTime.Now;
-                        if (model.CreatedBy != null)
-                        {
-                            user.CreatedBy = model.CreatedBy;
-                            user.ModifiedBy = model.CreatedBy;
-                        }
-                        else
-                        {
-                            user.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-                            user.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-                        }
-                        db.Users.Add(user);
-                        db.SaveChanges();
-                        isNewUser = true;
-                        if (user.UserId != 0)
-                        {
-
-
-                            List<string> LocationIdslist = model.LocationIds.Split(',').ToList();
-                            if (LocationIdslist.Count > 0)
-                            {
-                                CustomerLocationContact contact = new CustomerLocationContact();
-                                contact.UserID = user.UserId;
-                                contact.ContactName = model.ContactName;
-                                contact.ContactEmail = model.ContactEmail;
-                                contact.ContactPhone = model.ContactPhone;
-                                contact.CustomerId = CustId;
-                                contact.CustomerLocationID = Convert.ToInt32(LocationIdslist[0]);
-                                //if (model.CustomerLocationID != 0)
-                                //{
-                                //    var location = getCustomerLocationById(Convert.ToInt16(model.CustomerLocationID));
-                                //    if (location != null) { contact.CustomerId = location.CustomerId; }
-                                //}
-                                contact.IsActive = true;
-                                contact.CreatedDate = DateTime.Now;
-                                contact.ModifiedDate = DateTime.Now;
-                                if (model.CreatedBy != null)
-                                {
-                                    contact.CreatedBy = "1";
-                                    contact.ModifiedBy = "1";
-                                }
-                                else
-                                {
-                                    contact.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-                                    contact.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-                                }
-                                db.CustomerLocationContacts.Add(contact);
-                                db.SaveChanges();
-
-                                foreach (string locationId in LocationIdslist)
-                                {
-                                    CustomersLocationsUser CLU = new CustomersLocationsUser();
-                                    CLU.LocationContactId = contact.LocationContactId;
-                                    CLU.CustomerId = CustId;
-                                    CLU.CustomerLocationID = Convert.ToInt32(locationId);
-                                    CLU.CreatedDate = DateTime.Now;
-                                    CLU.ModifiedDate = DateTime.Now;
-                                    if (model.CreatedBy != null)
-                                    {
-                                        CLU.CreatedBy = model.CreatedBy;
-                                        CLU.ModifiedBy = model.CreatedBy;
-                                    }
-                                    else
-                                    {
-                                        CLU.CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-                                        CLU.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-                                    }
-                                    db.CustomersLocationsUsers.Add(CLU);
-                                    db.SaveChanges();
-                                }
-                            }
-                        }
-                        db.SaveChanges();
-                        if (isNewUser == true)
-                        {
-                            SendContactEmailWithPassword(model, lstLocationName);
-                            //string StrCustName = "";
-                            //var customerEmail = db.Customers.Where(x => x.CustomerId == model.CustomerId).FirstOrDefault();
-                            //if (customerEmail != null)
-                            //{
-                            //    StrCustName = customerEmail.CustomerName;
-                            //}
-
-                            //string strMSG = "";
-                            //string tmpURL = HttpContext.Current.Request.Url.AbsoluteUri;
-                            //Uri url = new Uri(tmpURL);
-                            //string host = url.GetLeftPart(UriPartial.Authority);
-
-                            //List<string> strCCEmailslist = new List<string>();
-                            //string toCustContact;
-                            //strCCEmailslist.Add("b.trivedi@camindustrial.net");
-                            ////strCCEmailslist.Add("nirav.m@siliconinfo.com");
-
-                            //toCustContact = model.ContactEmail;
-
-                            ////var subject = "" + iDetails.InspectionDocumentNo + "-" + iDetails.Customer + "";
-                            //var subject = "You have been receiving this email as primary contact to access “Rack Manager” for below locations.";
-                            //var toEmail = model.ContactEmail;
-                            //strMSG = "<html>";
-                            //strMSG += "<head>";
-                            //strMSG += "<style>";
-                            //strMSG += "p{margin:0px}";
-                            //strMSG += "</style>";
-                            //strMSG += "</head>";
-                            //strMSG += "<body>";
-                            //strMSG += "<div style='width:1200px; height: auto; border: 0px solid #e3e4e8; margin: 0px; padding: 10px; float: left;'>";
-
-
-                            //strMSG += "<p>Attention: " + model.ContactName + " [" + StrCustName + "]</p>";
-
-                            //strMSG += "<br/>";
-                            //strMSG += "<br/>";
-                            //strMSG += "<p>You have been receiving this email as primary contact to access “Rack Manager” for below locations.</p>";
-                            //strMSG += "<br/>";
-
-                            //strMSG += "<ul>";
-                            //foreach (var loc in lstLocationName)
-                            //{
-                            //    strMSG += $"<li><p>{loc.LocationName}</p></li>";
-                            //}
-                            //strMSG += "</ul>";
-                            //strMSG += "<br/>";
-                            //strMSG += "<p>You can access  <a href='https://rack-manager.com/'>(rack-manager.com)</a> by using your email as user ID and temporary password as " + model.UserPassword + " provided by admin.</p>";
-                            //strMSG += "<p>You will find the outcome of the inspection, and the detailed findings are now documented in the report. We understand the importance of this report in providing valuable insights into the condition and any necessary actions regarding the pallet racking.</p>";
-                            //strMSG += "<p>Additionally, you can access the deficiency list and select red and/or yellow deficiencies that you would like us to provide repair/replace quotation.</p>";
-                            //strMSG += "<br/>";
-                            //strMSG += "<p>There are two ways to select the deficiencies:</p>";
-                            //strMSG += "<p>1) Click “Select Deficiency For Quotation” to select all red and/or yellow deficiencies, located at the top-right corner of the Deficiency List.</p>";
-                            //strMSG += "<p><span><img alt='SelectDeficiencyQuotationEmail' src = 'https://rack-manager.com/img/SelectDeficiencyQuotationEmail.png' /></span></p>";
-                            //strMSG += "<p>2) You can select checkboxes under “Quotation” → “Request Quotation”, which allows to select specific deficiencies.</p>";
-                            //strMSG += "<p><span><img alt='QuotationSelectionEmail' src = 'https://rack-manager.com/img/QuotationSelectionEmail.png' /></span></p>";
-                            //strMSG += "<p>Once you have made your selections, please click “Request Quotation”.</p>";
-                            //strMSG += "<p><span><img alt='QuotationButtonEmail' src = 'https://rack-manager.com/img/QuotationButtonEmail.png' /></span></p>";
-                            //strMSG += "<br/>";
-                            //strMSG += "<p>Please don’t hesitate to contact office+1 800 772 3213 for any queries.</p>";
-                            //strMSG += "<br/>";
-                            //strMSG += "<p>Should you have any questions or require further clarification on any aspect of the report, please do not hesitate to reach out to us. Our team is available to discuss the findings and provide any assistance you may need.</p>";
-                            //strMSG += "<br/>";
-                            //strMSG += "<div><div></div></div><br/><br/><div><div>";
-                            //strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7b7b7b' lang='EN-US'>Best regards,</span></p>";
-                            //strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>Bhavik Trivedi </span></b>";
-                            //strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'> P.Eng, M.Tech, PMP</span></p>";
-                            //strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Engineering Manager</span></b></p>";
-                            //strMSG += "<br/>";
-                            //strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>cam|</span></b><b>";
-                            //strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>industrial</span></b></p>";
-                            //strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>20 7095 64 Street SE |";
-                            //strMSG += "</span></b><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Calgary, AB, T2C 5C3</span></b></p>";
-                            //strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                            //strMSG += "<br/>";
-                            //strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='ES'>E ~ &nbsp;</span></b><b>";
-                            //strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#454545' lang='EN-US'>";
-                            //strMSG += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank'><span lang='ES'>b.trivedi@camindustrial.net</span></a></span></b></p>";
-                            //strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='ES'>C ~</span></b><b>";
-                            //strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='ES'>(403) 690-2976</span></b></p>";
-                            //strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>D ~</span></b><b>";
-                            //strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'> (587) 355-1346</span></b></p>";
-                            //strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>F ~</span></b><b>";
-                            //strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 720-7074</span></b></p>";
-                            //strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                            //strMSG += "<p><span><img style='width:2.618in;height:.6458in'";
-                            //strMSG += "src='https://rack-manager.com/img/sigimg.png' alt='sig' data-image-whitelisted=''";
-                            //strMSG += "class='CToWUd' data-bit='iit' width='251' height='62' border='0'></span></p>";
-                            //strMSG += "</div>";
-                            //strMSG += "</div>";
-                            //strMSG += "</div>";
-                            //strMSG += "</body>";
-                            //strMSG += "</html>";
-
-                            //var tEmail = new Thread(() => EmailHelper.SendEmail(toCustContact, subject, null, strMSG, strCCEmailslist)); //attachmentFile
-                            //tEmail.Start();
-                        }
-                        return "Ok";
-                    }
-                    else
-                    {
+                    if (found != null)
                         return "User already exist. Please try another user name.";
+
+                    // 1. Create User
+                    User user = new User
+                    {
+                        UserName = model.ContactEmail,
+                        UserPassword = AccountController.MD5Hash(model.UserPassword),
+                        UserType = 9,
+                        IsActive = true,
+                        CreatedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        CreatedBy = auditUser,
+                        ModifiedBy = auditUser
+                    };
+                    db.Users.Add(user);
+                    db.SaveChanges();
+                    isNewUser = true;
+
+                    if (user.UserId == 0) return "Failed to create user.";
+
+                    // 2. Create CustomerLocationContact
+                    List<string> locationIdsList = model.LocationIds.Split(',').ToList();
+                    CustomerLocationContact contact = new CustomerLocationContact
+                    {
+                        UserID = user.UserId,
+                        ContactName = model.ContactName,
+                        ContactEmail = model.ContactEmail,
+                        ContactPhone = model.ContactPhone,
+                        CustomerId = CustId,
+                        CustomerLocationID = Convert.ToInt64(locationIdsList[0]),
+                        IsActive = true,
+                        CreatedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        CreatedBy = auditUser,
+                        ModifiedBy = auditUser
+                    };
+                    db.CustomerLocationContacts.Add(contact);
+                    db.SaveChanges();
+
+                    // 3. Insert Location links (CustomersLocationsUser)
+                    foreach (string locationId in locationIdsList)
+                    {
+                        db.CustomersLocationsUsers.Add(new CustomersLocationsUser
+                        {
+                            LocationContactId = contact.LocationContactId,
+                            CustomerId = CustId,
+                            CustomerLocationID = Convert.ToInt64(locationId.Trim()),
+                            CreatedDate = DateTime.Now,
+                            ModifiedDate = DateTime.Now,
+                            CreatedBy = auditUser,
+                            ModifiedBy = auditUser
+                        });
                     }
+                    db.SaveChanges();
+
+                    // 4. Insert Facility links (CustomersLocationsUserFacility)
+                    if (!string.IsNullOrEmpty(model.FacilityIds))
+                    {
+                        foreach (string facilityId in model.FacilityIds
+                            .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            string[] parts = facilityId.Split('_');
+                            db.CustomersLocationsUserFacilities.Add(new CustomersLocationsUserFacility
+                            {
+                                LocationContactId = contact.LocationContactId,
+                                CustomerId = CustId,
+                                CustomerLocationID = Convert.ToInt64(parts[0]),
+                                CustomerFacilityID = Convert.ToInt64(parts[1]),
+                                CreatedDate = DateTime.Now,
+                                ModifiedDate = DateTime.Now,
+                                CreatedBy = auditUser,
+                                ModifiedBy = auditUser
+                            });
+                        }
+                        db.SaveChanges();
+                    }
+
+                    // 5. Insert Area links (CustomersLocationsUserArea)
+                    if (!string.IsNullOrEmpty(model.AreaIds))
+                    {
+                        foreach (string areaId in model.AreaIds
+                            .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            string[] parts = areaId.Split('_');
+                            db.CustomersLocationsUserAreas.Add(new CustomersLocationsUserArea
+                            {
+                                LocationContactId = contact.LocationContactId,
+                                CustomerId = CustId,
+                                CustomerLocationID = Convert.ToInt64(parts[0]),
+                                CustomerFacilityID = parts[1] == "0" ? (long?)null : Convert.ToInt64(parts[1]),
+                                AreaID = Convert.ToInt64(parts[2]),
+                                CreatedDate = DateTime.Now,
+                                ModifiedDate = DateTime.Now,
+                                CreatedBy = auditUser,
+                                ModifiedBy = auditUser
+                            });
+                        }
+                        db.SaveChanges();
+                    }
+
+                    // 6. Send welcome email with password
+                    if (isNewUser)
+                        SendContactEmailWithPassword(model, lstLocationName);
+
+                    return "Ok";
                 }
-                return "Ok";
-                //return "Please enter user information.";
             }
+            catch (Exception ex)
+            {
+                return ex.Message.ToString();
+            }
+
         }
         public static string GenerateRandomPassword(int length)
         {
@@ -3086,6 +3509,35 @@ namespace CamV4.Helper
                     List<string> strCCEmailslist = new List<string>();
                     string toCustContact;
                     strCCEmailslist.Add("b.trivedi@camindustrial.net");
+
+                    //List<EmployeeViewModel> objPMList = new List<EmployeeViewModel>();
+                    //objPMList = DatabaseHelper.GetAllProjectManager();
+                    //if (objPMList != null && objPMList.Count != 0)
+                    //{
+                    //    foreach (var pm in objPMList)
+                    //    {
+                    //        if (!string.IsNullOrWhiteSpace(pm.EmployeeEmail))
+                    //        {
+                    //            strCCEmailslist.Add(pm.EmployeeEmail);
+                    //        }
+                    //    }
+                    //}
+
+                    //List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
+                    //objSalesList = DatabaseHelper.GetAllSalesRep();
+                    //foreach (var sales in objSalesList)
+                    //{
+                    //    var customerArray = sales.SalesCompanyListing?.Split(',');
+
+                    //    if (customerArray != null && customerArray.Contains(model.CustomerId.ToString()))
+                    //    {
+                    //        if (!string.IsNullOrWhiteSpace(sales.EmployeeEmail))
+                    //        {
+                    //            strCCEmailslist.Add(sales.EmployeeEmail);
+                    //        }
+                    //    }
+                    //}
+
                     //strCCEmailslist.Add("nirav.m@siliconinfo.com");
 
                     toCustContact = model.ContactEmail;
@@ -3212,25 +3664,26 @@ namespace CamV4.Helper
                     // 1. Handle user creation if UserID == 0
                     if (model.UserID == 0)
                     {
-                        if (string.IsNullOrEmpty(model.UserPassword))
-                        {
-                            return "User creation incomplete. Please enter your password.";
-                        }
+                        //if (string.IsNullOrEmpty(model.UserPassword))
+                        //{
+                        //    return "User creation incomplete. Please enter your password.";
+                        //}
 
                         var existingUser = db.Users.FirstOrDefault(x => x.UserId == model.UserID);
                         if (existingUser != null)
                         {
                             User objUser = new User();
                             objUser.UserName = model.UserName;
-                            if (!string.IsNullOrEmpty(model.UserPassword))
-                            {
-                                objUser.UserPassword = AccountController.MD5Hash(model.UserPassword);
-                            }
+                            //if (!string.IsNullOrEmpty(model.UserPassword))
+                            //{
+                            //    objUser.UserPassword = AccountController.MD5Hash(model.UserPassword);
+                            //}
                             db.Entry(objUser).State = EntityState.Modified;
                             db.SaveChanges();
                         }
                         else
                         {
+                            model.UserPassword = GenerateRandomPassword(8);
                             user = new User
                             {
                                 UserName = model.ContactEmail,
@@ -3306,52 +3759,180 @@ namespace CamV4.Helper
 
                     db.SaveChanges();
 
-                    // 3. Insert new locations into CustomersLocationsUser
-                    var existingCLU = db.CustomersLocationsUsers
-                    .Where(x => x.LocationContactId == contact.LocationContactId)
-                    .Select(x => x.CustomerLocationID)
-                    .ToList(); // Get the existing CustomerLocationIDs for the current LocationContactId
+                    // 3. Location links — delta update
+                    List<long> newLocationIds = model.LocationIds
+                        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(x => Convert.ToInt64(x.Trim())).ToList();
 
-                    // Remove entries where CustomerLocationID is not part of the LocationIdsList
-                    var locationIdsListInt = LocationIdsList.Select(id => Convert.ToInt64(id)).ToList();
-                    var toRemove = db.CustomersLocationsUsers
-                                    .Where(x => x.LocationContactId == contact.LocationContactId && !locationIdsListInt.Contains(x.CustomerLocationID))
-                                    .ToList();
+                    var existingLocLinks = db.CustomersLocationsUsers
+                        .Where(x => x.LocationContactId == contact.LocationContactId).ToList();
 
-                    if (toRemove.Any())
+                    // Remove rows no longer selected
+                    foreach (var existing in existingLocLinks)
                     {
-                        db.CustomersLocationsUsers.RemoveRange(toRemove); // Remove data not part of the new LocationIdsList
+                        if (!newLocationIds.Contains(existing.CustomerLocationID))
+                            db.CustomersLocationsUsers.Remove(existing);
                     }
 
-                    // Insert new CustomerLocationIDs
-                    foreach (var locationId in locationIdsListInt)
+                    // Add rows not already in database
+                    var existingLocIds = existingLocLinks.Select(x => x.CustomerLocationID).ToList();
+                    foreach (long locId in newLocationIds)
                     {
-                        if (!existingCLU.Contains(locationId)) // Check if the CustomerLocationID already exists
+                        if (!existingLocIds.Contains(locId))
                         {
-                            var clu = new CustomersLocationsUser
+                            db.CustomersLocationsUsers.Add(new CustomersLocationsUser
                             {
                                 LocationContactId = contact.LocationContactId,
                                 CustomerId = CustId,
-                                CustomerLocationID = locationId,
+                                CustomerLocationID = locId,
                                 CreatedDate = DateTime.Now,
                                 ModifiedDate = DateTime.Now,
                                 CreatedBy = model.CreatedBy ?? HttpContext.Current.Session["LoggedInUserId"].ToString(),
                                 ModifiedBy = model.CreatedBy ?? HttpContext.Current.Session["LoggedInUserId"].ToString()
-                            };
-
-                            db.CustomersLocationsUsers.Add(clu); // Add new entry for the new CustomerLocationID
+                            });
                         }
                     }
 
-                    // Save changes to the database
                     db.SaveChanges();
+
+                    // 4. Facility links — delta update
+                    List<long> newFacilityIds = string.IsNullOrEmpty(model.FacilityIds)
+                        ? new List<long>()
+                        : model.FacilityIds
+                            .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                            .Select(x => Convert.ToInt64(x.Split('_')[1])).ToList();
+
+                    var existingFacLinks = db.CustomersLocationsUserFacilities
+                        .Where(x => x.LocationContactId == contact.LocationContactId).ToList();
+
+                    // Remove rows no longer selected
+                    foreach (var existing in existingFacLinks)
+                    {
+                        if (!newFacilityIds.Contains(existing.CustomerFacilityID))
+                            db.CustomersLocationsUserFacilities.Remove(existing);
+                    }
+
+                    // Add rows not already in database
+                    var existingFacIds = existingFacLinks.Select(x => x.CustomerFacilityID).ToList();
+                    if (!string.IsNullOrEmpty(model.FacilityIds))
+                    {
+                        foreach (string facilityId in model.FacilityIds
+                            .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            string[] parts = facilityId.Split('_');
+                            long facId = Convert.ToInt64(parts[1]);
+                            if (!existingFacIds.Contains(facId))
+                            {
+                                db.CustomersLocationsUserFacilities.Add(new CustomersLocationsUserFacility
+                                {
+                                    LocationContactId = contact.LocationContactId,
+                                    CustomerId = CustId,
+                                    CustomerLocationID = Convert.ToInt64(parts[0]),
+                                    CustomerFacilityID = facId,
+                                    CreatedDate = DateTime.Now,
+                                    ModifiedDate = DateTime.Now,
+                                    CreatedBy = model.CreatedBy ?? HttpContext.Current.Session["LoggedInUserId"].ToString(),
+                                    ModifiedBy = model.CreatedBy ?? HttpContext.Current.Session["LoggedInUserId"].ToString()
+                                });
+                            }
+                        }
+                    }
+
+                    db.SaveChanges();
+
+                    // 5. Area links — delta update
+                    List<long> newAreaIds = string.IsNullOrEmpty(model.AreaIds)
+                        ? new List<long>()
+                        : model.AreaIds
+                            .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                            .Select(x => Convert.ToInt64(x.Split('_')[2])).ToList();
+
+                    var existingAreaLinks = db.CustomersLocationsUserAreas
+                        .Where(x => x.LocationContactId == contact.LocationContactId).ToList();
+
+                    // Remove rows no longer selected
+                    foreach (var existing in existingAreaLinks)
+                    {
+                        if (!newAreaIds.Contains(existing.AreaID))
+                            db.CustomersLocationsUserAreas.Remove(existing);
+                    }
+
+                    // Add rows not already in database
+                    var existingAreaIDs = existingAreaLinks.Select(x => x.AreaID).ToList();
+                    if (!string.IsNullOrEmpty(model.AreaIds))
+                    {
+                        foreach (string areaId in model.AreaIds
+                            .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            string[] parts = areaId.Split('_');
+                            long aId = Convert.ToInt64(parts[2]);
+                            if (!existingAreaIDs.Contains(aId))
+                            {
+                                db.CustomersLocationsUserAreas.Add(new CustomersLocationsUserArea
+                                {
+                                    LocationContactId = contact.LocationContactId,
+                                    CustomerId = CustId,
+                                    CustomerLocationID = Convert.ToInt64(parts[0]),
+                                    CustomerFacilityID = parts[1] == "0" ? (long?)null : Convert.ToInt64(parts[1]),
+                                    AreaID = aId,
+                                    CreatedDate = DateTime.Now,
+                                    ModifiedDate = DateTime.Now,
+                                    CreatedBy = model.CreatedBy ?? HttpContext.Current.Session["LoggedInUserId"].ToString(),
+                                    ModifiedBy = model.CreatedBy ?? HttpContext.Current.Session["LoggedInUserId"].ToString()
+                                });
+                            }
+                        }
+                    }
+
+                    db.SaveChanges();
+
+                    //// 3. Insert new locations into CustomersLocationsUser
+                    //var existingCLU = db.CustomersLocationsUsers
+                    //.Where(x => x.LocationContactId == contact.LocationContactId)
+                    //.Select(x => x.CustomerLocationID)
+                    //.ToList(); // Get the existing CustomerLocationIDs for the current LocationContactId
+
+                    //// Remove entries where CustomerLocationID is not part of the LocationIdsList
+                    //var locationIdsListInt = LocationIdsList.Select(id => Convert.ToInt64(id)).ToList();
+                    //var toRemove = db.CustomersLocationsUsers
+                    //                .Where(x => x.LocationContactId == contact.LocationContactId && !locationIdsListInt.Contains(x.CustomerLocationID))
+                    //                .ToList();
+
+                    //if (toRemove.Any())
+                    //{
+                    //    db.CustomersLocationsUsers.RemoveRange(toRemove); // Remove data not part of the new LocationIdsList
+                    //}
+
+                    //// Insert new CustomerLocationIDs
+                    //foreach (var locationId in locationIdsListInt)
+                    //{
+                    //    if (!existingCLU.Contains(locationId)) // Check if the CustomerLocationID already exists
+                    //    {
+                    //        var clu = new CustomersLocationsUser
+                    //        {
+                    //            LocationContactId = contact.LocationContactId,
+                    //            CustomerId = CustId,
+                    //            CustomerLocationID = locationId,
+                    //            CreatedDate = DateTime.Now,
+                    //            ModifiedDate = DateTime.Now,
+                    //            CreatedBy = model.CreatedBy ?? HttpContext.Current.Session["LoggedInUserId"].ToString(),
+                    //            ModifiedBy = model.CreatedBy ?? HttpContext.Current.Session["LoggedInUserId"].ToString()
+                    //        };
+
+                    //        db.CustomersLocationsUsers.Add(clu); // Add new entry for the new CustomerLocationID
+                    //    }
+                    //}
+
+                    //// Save changes to the database
+                    //db.SaveChanges();
 
                     if (!string.IsNullOrEmpty(model.UserPassword))
                     {
                         List<CustomerLocation> lstLocationName;
                         List<long> locationIds = model.LocationIds.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(id => Convert.ToInt64(id.Trim())).ToList();
                         lstLocationName = db.CustomerLocations.Where(loc => locationIds.Contains(loc.CustomerLocationID)).ToList();
-                        SendContactEmailWithPassword(model, lstLocationName);
+                        if (isNewUser)
+                            SendContactEmailWithPassword(model, lstLocationName);
                     }
 
                     //var existingCLU = db.CustomersLocationsUsers
@@ -3416,28 +3997,91 @@ namespace CamV4.Helper
             }
         }
 
-        internal static long removeLocationContact(int id)
+        //internal static long removeLocationContact(long id)
+        //{
+        //    using (DatabaseEntities db = new DatabaseEntities())
+        //    {
+        //        var itm = db.CustomerLocationContacts.Where(x => x.LocationContactId == id).FirstOrDefault();
+        //        if (itm != null)
+        //        {
+        //            if (!string.IsNullOrEmpty(Convert.ToString(itm.UserID)))
+        //            {
+        //                var usr = db.Users.Where(y => y.UserId == itm.UserID).FirstOrDefault();
+        //                if (usr != null)
+        //                {
+        //                    usr.IsActive = false;
+        //                    db.Entry(usr).State = EntityState.Modified;
+        //                }
+        //            }
+        //            itm.IsActive = false;
+        //            db.Entry(itm).State = EntityState.Modified;
+        //            db.SaveChanges();
+        //            return itm.CustomerLocationID;
+        //        }
+        //        return 0;
+        //    }
+        //}
+        //internal static string removeLocationContact(long id)
+        //{
+        //    using (DatabaseEntities db = new DatabaseEntities())
+        //    {
+        //        var contact = db.CustomerLocationContacts.Find(id);
+        //        if (contact == null) return "0";
+
+        //        string auditUser = HttpContext.Current.Session["LoggedInUserId"].ToString();
+
+        //        contact.IsActive = false;
+        //        contact.ModifiedBy = auditUser;
+        //        contact.ModifiedDate = DateTime.Now;
+
+        //        db.SaveChanges();
+        //        return contact.CustomerId.ToString();
+        //    }
+        //}
+
+        internal static string removeLocationContact(long id)
         {
             using (DatabaseEntities db = new DatabaseEntities())
             {
-                var itm = db.CustomerLocationContacts.Where(x => x.LocationContactId == id).FirstOrDefault();
-                if (itm != null)
+                var contact = db.CustomerLocationContacts.Find(id);
+                if (contact == null) return "0";
+
+                string auditUser = HttpContext.Current.Session["LoggedInUserId"].ToString();
+
+                // 1. Soft delete the contact
+                contact.IsActive = false;
+                contact.ModifiedBy = auditUser;
+                contact.ModifiedDate = DateTime.Now;
+
+                // 2. Soft delete the linked User
+                if (contact.UserID.HasValue && contact.UserID.Value != 0)
                 {
-                    if (!string.IsNullOrEmpty(Convert.ToString(itm.UserID)))
+                    var user = db.Users.Find(contact.UserID.Value);
+                    if (user != null)
                     {
-                        var usr = db.Users.Where(y => y.UserId == itm.UserID).FirstOrDefault();
-                        if (usr != null)
-                        {
-                            usr.IsActive = false;
-                            db.Entry(usr).State = EntityState.Modified;
-                        }
+                        user.IsActive = false;
+                        user.ModifiedBy = auditUser;
+                        user.ModifiedDate = DateTime.Now;
                     }
-                    itm.IsActive = false;
-                    db.Entry(itm).State = EntityState.Modified;
-                    db.SaveChanges();
-                    return itm.CustomerLocationID;
                 }
-                return 0;
+
+                // 3. Remove Location links
+                var locLinks = db.CustomersLocationsUsers
+                    .Where(x => x.LocationContactId == id).ToList();
+                db.CustomersLocationsUsers.RemoveRange(locLinks);
+
+                // 4. Remove Facility links
+                var facLinks = db.CustomersLocationsUserFacilities
+                    .Where(x => x.LocationContactId == id).ToList();
+                db.CustomersLocationsUserFacilities.RemoveRange(facLinks);
+
+                // 5. Remove Area links
+                var areaLinks = db.CustomersLocationsUserAreas
+                    .Where(x => x.LocationContactId == id).ToList();
+                db.CustomersLocationsUserAreas.RemoveRange(areaLinks);
+
+                db.SaveChanges();
+                return contact.CustomerId.ToString();
             }
         }
 
@@ -4940,11 +5584,41 @@ namespace CamV4.Helper
                 string tmpURL = HttpContext.Current.Request.Url.AbsoluteUri;
                 Uri url = new Uri(tmpURL);
                 string host = url.GetLeftPart(UriPartial.Authority);
-
+                Int32 userId = 0;
+                userId = Convert.ToInt32(HttpContext.Current.Session["LoggedInUserId"].ToString());
                 List<InspectionViewModel> _listM = new List<InspectionViewModel>();
 
-                var list = db.Inspections.Where(x => x.IsActive == true).OrderBy(x => x.InspectionStatus).ThenByDescending(x => x.InspectionDate).ToList();
-                //var list = db.GetInspectionDetails().ToList();
+                var user = db.Users.FirstOrDefault(u => u.UserId == userId);
+                int userType = Convert.ToInt32(HttpContext.Current.Session["LoggedInUserType"].ToString());
+
+                long employeeId = 0;
+
+                if (userType == 5)
+                {
+                    employeeId = db.Employees
+                                   .Where(e => e.UserID == userId)
+                                   .Select(e => e.EmployeeID)
+                                   .FirstOrDefault();
+                }
+
+                var query = from i in db.Inspections
+                            join c in db.Customers on i.CustomerId equals c.CustomerId
+                            where i.IsActive == true
+                            select new { i, c };
+
+                if (userType == 5)
+                {
+                    query = query.Where(x => x.c.SalesRepresentativeId == employeeId);
+                }
+
+                var list = query
+                            .OrderBy(x => x.i.InspectionStatus)
+                            .ThenByDescending(x => x.i.InspectionDate)
+                            .Select(x => x.i)
+                            .ToList();
+
+                //var list = db.Inspections.Where(x => x.IsActive == true).OrderBy(x => x.InspectionStatus).ThenByDescending(x => x.InspectionDate).ToList();
+
                 if (list.Count != 0)
                 {
                     foreach (var d in list)
@@ -4989,6 +5663,12 @@ namespace CamV4.Helper
                         {
                             var area = getAreaDetailsById(Convert.ToInt16(d.CustomerAreaID));
                             if (area != null) { _list.CustomerArea = area.AreaName; }
+                        }
+                        if (d.CustomerFacilityID != 0)
+                        {
+                            _list.CustomerFacilityID = d.CustomerFacilityID;
+                            var facility = getFacilityDetailsById(Convert.ToInt64(d.CustomerFacilityID));
+                            if (facility != null) { _list.CustomerFacility = facility.FacilityName; }
                         }
                         if (d.EmployeeId != 0)
                         {
@@ -5938,6 +6618,7 @@ namespace CamV4.Helper
                                 _list.empModel.TitleDegrees = emp.TitleDegrees;
                                 _list.empModel.EmployeeEmail = emp.EmployeeEmail;
                                 _list.empModel.MobileNo = emp.MobileNo;
+                                _list.empModel.UserID = emp.UserID;
                             }
                         }
                         if (list.StampingEngineerId != 0)
@@ -7123,9 +7804,6 @@ namespace CamV4.Helper
             }
         }
 
-
-
-
         //internal static InspectionViewModel GetInspectionDetailsForSheetV2(long id)
         //{
         //    try
@@ -7353,7 +8031,6 @@ namespace CamV4.Helper
         //    var set = new HashSet<string>(csv.Split(',').Where(s => !string.IsNullOrWhiteSpace(s)));
         //    return string.Join(",", set);
         //}
-
 
         internal static Quotation getQuotationDetails(long InspectionId, long QuotationId)
         {
@@ -9664,11 +10341,37 @@ namespace CamV4.Helper
                 objUser = getUserEmployeeById(iEmployeeId);
 
                 strCCEmailslist.Add("b.trivedi@camindustrial.net");
+                List<EmployeeViewModel> objPMList = new List<EmployeeViewModel>();
+                objPMList = DatabaseHelper.GetAllProjectManager();
+                if (objPMList != null && objPMList.Count != 0)
+                {
+                    foreach (var pm in objPMList)
+                    {
+                        if (!string.IsNullOrWhiteSpace(pm.EmployeeEmail))
+                        {
+                            strCCEmailslist.Add(pm.EmployeeEmail);
+                        }
+                    }
+                }
                 //strCCEmailslist.Add("nirav.m@siliconinfo.com");
                 var cust = getCustomerById(lCustomerId);
                 if (cust != null)
                 {
                     strCustomerName = cust.CustomerName;
+                }
+                List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
+                objSalesList = DatabaseHelper.GetAllSalesRep();
+                foreach (var sales in objSalesList)
+                {
+                    var customerArray = sales.SalesCompanyListing?.Split(',');
+
+                    if (customerArray != null && customerArray.Contains(lCustomerId.ToString()))
+                    {
+                        if (!string.IsNullOrWhiteSpace(sales.EmployeeEmail))
+                        {
+                            strCCEmailslist.Add(sales.EmployeeEmail);
+                        }
+                    }
                 }
 
                 var loc = getCustomerLocationById(lCustomerLocationId);
@@ -9682,6 +10385,54 @@ namespace CamV4.Helper
 
                 //Email to Employee for quotation
                 string strMSGEmployee = "";
+                strMSGEmployee = "";
+                strMSGEmployee = "<html>";
+                strMSGEmployee += "<head>";
+                strMSGEmployee += "<style>";
+                strMSGEmployee += "p{margin:0px}";
+                strMSGEmployee += "</style>";
+                strMSGEmployee += "</head>";
+                strMSGEmployee += "<body>";
+                strMSGEmployee += "<div style='width: 1200px; height: auto; border: 0px solid #e3e4e8; margin: 0px; padding: 10px; float: left;'>";
+                strMSGEmployee += "<br/>";
+                strMSGEmployee += "<br/>";
+                strMSGEmployee += "<p> Attention " + objUser.EmployeeName + ",";
+                strMSGEmployee += "<p>This is to inform you that the customer has reviewed the deficiency list and selected the red and/or yellow deficiencies. Please proceed with preparing the quotation based on these selections. </p>";
+                strMSGEmployee += "<br/>";
+                strMSGEmployee += "<div><div></div></div><br/><br/><div><div>";
+                strMSGEmployee += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7b7b7b' lang='EN-US'>Thanks,</span></p>";
+                strMSGEmployee += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>Bhavik Trivedi </span></b>";
+                strMSGEmployee += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>P.Eng, M.Tech, PMP</span></p>";
+                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Engineering Manager</span></b></p>";
+                strMSGEmployee += "<br/>";
+                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>cam|</span></b><b>";
+                strMSGEmployee += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>industrial</span></b></p>";
+                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>20 7095 64 Street SE |";
+                strMSGEmployee += "</span></b><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Calgary, AB, T2C 5C3</span></b></p>";
+                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
+                strMSGEmployee += "<br/>";
+                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>E ~ &nbsp;</span></b><b>";
+                strMSGEmployee += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#454545' lang='EN-US'>";
+                strMSGEmployee += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank'><span lang='EN-US'>b.trivedi@camindustrial.net</span></a></span></b></p>";
+                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>C ~</span></b><b>";
+                strMSGEmployee += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 690-2976</span></b></p>";
+                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>D ~</span></b><b>";
+                strMSGEmployee += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'> (587) 355-1346</span></b></p>";
+                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>F ~</span></b><b>";
+                strMSGEmployee += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 720-7074</span></b></p>";
+                strMSGEmployee += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
+                strMSGEmployee += "<p><span><img style='width:2.618in;height:.6458in'";
+                strMSGEmployee += "src='https://rack-manager.com/img/sigimg.png' alt='sig' data-image-whitelisted='' ";
+                strMSGEmployee += "class='CToWUd' data-bit='iit' width='251' height='62' border='0'></span></p>";
+                strMSGEmployee += "</div>";
+                strMSGEmployee += "</div>";
+                strMSGEmployee += "</div>";
+                strMSGEmployee += "</body>";
+                strMSGEmployee += "</html>";
+
+                var tEmailToEmployee = new Thread(() => EmailHelper.SendEmail(toEmailEmployee, strCustomerName + " Deficiency Selections for Quotation", null, strMSGEmployee, strCCEmailslist));
+                tEmailToEmployee.Start();
+
                 //strMSGEmployee = "<html>";
                 //strMSGEmployee += "<head>";
                 //strMSGEmployee += "<style>";
@@ -9729,50 +10480,6 @@ namespace CamV4.Helper
                 //strMSGEmployee += "</body>";
                 //strMSGEmployee += "</html>";
 
-                strMSGEmployee = "";
-                strMSGEmployee = "<html>";
-                strMSGEmployee += "<head>";
-                strMSGEmployee += "<style>";
-                strMSGEmployee += "p{margin:0px}";
-                strMSGEmployee += "</style>";
-                strMSGEmployee += "</head>";
-                strMSGEmployee += "<body>";
-                strMSGEmployee += "<div style='width: 1200px; height: auto; border: 0px solid #e3e4e8; margin: 0px; padding: 10px; float: left;'>";
-                strMSGEmployee += "<br/>";
-                strMSGEmployee += "<br/>";
-                strMSGEmployee += "<p> Attention " + objUser.EmployeeName + ",";
-                strMSGEmployee += "<p>This is to inform you that the customer has reviewed the deficiency list and selected the red and/or yellow deficiencies. Please proceed with preparing the quotation based on these selections. </p>";
-                strMSGEmployee += "<br/>";
-                strMSGEmployee += "<div><div></div></div><br/><br/><div><div>";
-                strMSGEmployee += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7b7b7b' lang='EN-US'>Thanks,</span></p>";
-                strMSGEmployee += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>Bhavik Trivedi </span></b>";
-                strMSGEmployee += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>P.Eng, M.Tech, PMP</span></p>";
-                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Engineering Manager</span></b></p>";
-                strMSGEmployee += "<br/>";
-                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>cam|</span></b><b>";
-                strMSGEmployee += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>industrial</span></b></p>";
-                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>20 7095 64 Street SE |";
-                strMSGEmployee += "</span></b><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Calgary, AB, T2C 5C3</span></b></p>";
-                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                strMSGEmployee += "<br/>";
-                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>E ~ &nbsp;</span></b><b>";
-                strMSGEmployee += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#454545' lang='EN-US'>";
-                strMSGEmployee += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank'><span lang='EN-US'>b.trivedi@camindustrial.net</span></a></span></b></p>";
-                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>C ~</span></b><b>";
-                strMSGEmployee += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 690-2976</span></b></p>";
-                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>D ~</span></b><b>";
-                strMSGEmployee += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'> (587) 355-1346</span></b></p>";
-                strMSGEmployee += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>F ~</span></b><b>";
-                strMSGEmployee += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 720-7074</span></b></p>";
-                strMSGEmployee += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                strMSGEmployee += "<p><span><img style='width:2.618in;height:.6458in'";
-                strMSGEmployee += "src='https://rack-manager.com/img/sigimg.png' alt='sig' data-image-whitelisted='' ";
-                strMSGEmployee += "class='CToWUd' data-bit='iit' width='251' height='62' border='0'></span></p>";
-                strMSGEmployee += "</div>";
-                strMSGEmployee += "</div>";
-                strMSGEmployee += "</div>";
-                strMSGEmployee += "</body>";
-                strMSGEmployee += "</html>";
 
                 //toEmailEmployee
                 // Use async/await for email sending (replace Thread with async method)
@@ -9780,8 +10487,6 @@ namespace CamV4.Helper
 
                 //toEmailEmployee
 
-                var tEmailToEmployee = new Thread(() => EmailHelper.SendEmail(toEmailEmployee, strCustomerName + " Deficiency Selections for Quotation", null, strMSGEmployee, strCCEmailslist));
-                tEmailToEmployee.Start();
                 //var tEmailEmployee = new Thread(() => EmailHelper.SendEmail(toEmailEmployee, strCustomerName + " Deficiency Selections for Quotation", null, strMSGEmployee, strCCEmailslist));
                 //tEmailEmployee.Start();
 
@@ -10189,6 +10894,34 @@ namespace CamV4.Helper
                         List<string> toCustContact = new List<string>();
 
                         strCCEmailslist.Add("b.trivedi@camindustrial.net");
+                        List<EmployeeViewModel> objPMList = new List<EmployeeViewModel>();
+                        objPMList = DatabaseHelper.GetAllProjectManager();
+                        if (objPMList != null && objPMList.Count != 0)
+                        {
+                            foreach (var pm in objPMList)
+                            {
+                                if (!string.IsNullOrWhiteSpace(pm.EmployeeEmail))
+                                {
+                                    strCCEmailslist.Add(pm.EmployeeEmail);
+                                }
+                            }
+                        }
+
+                        List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
+                        objSalesList = DatabaseHelper.GetAllSalesRep();
+                        foreach (var sales in objSalesList)
+                        {
+                            var customerArray = sales.SalesCompanyListing?.Split(',');
+
+                            if (customerArray != null && customerArray.Contains(model.CustomerId.ToString()))
+                            {
+                                if (!string.IsNullOrWhiteSpace(sales.EmployeeEmail))
+                                {
+                                    strCCEmailslist.Add(sales.EmployeeEmail);
+                                }
+                            }
+                        }
+
                         //strCCEmailslist.Add("nirav.m@siliconinfo.com");
                         if (model.LocationContactId != null)
                         {
@@ -10328,6 +11061,34 @@ namespace CamV4.Helper
                     List<string> toCustContact = new List<string>();
 
                     strCCEmailslist.Add("b.trivedi@camindustrial.net");
+                    List<EmployeeViewModel> objPMList = new List<EmployeeViewModel>();
+                    objPMList = DatabaseHelper.GetAllProjectManager();
+                    if (objPMList != null && objPMList.Count != 0)
+                    {
+                        foreach (var pm in objPMList)
+                        {
+                            if (!string.IsNullOrWhiteSpace(pm.EmployeeEmail))
+                            {
+                                strCCEmailslist.Add(pm.EmployeeEmail);
+                            }
+                        }
+                    }
+
+                    List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
+                    objSalesList = DatabaseHelper.GetAllSalesRep();
+                    foreach (var sales in objSalesList)
+                    {
+                        var customerArray = sales.SalesCompanyListing?.Split(',');
+
+                        if (customerArray != null && customerArray.Contains(model.CustomerId.ToString()))
+                        {
+                            if (!string.IsNullOrWhiteSpace(sales.EmployeeEmail))
+                            {
+                                strCCEmailslist.Add(sales.EmployeeEmail);
+                            }
+                        }
+                    }
+
                     //strCCEmailslist.Add("nirav.m@siliconinfo.com");
                     if (model.LocationContactId != null)
                     {
@@ -11478,6 +12239,34 @@ namespace CamV4.Helper
 
                     var toEmail = Convert.ToString(objUser.EmployeeEmail);
                     strCCEmailslist.Add("b.trivedi@camindustrial.net");
+                    List<EmployeeViewModel> objPMList = new List<EmployeeViewModel>();
+                    objPMList = DatabaseHelper.GetAllProjectManager();
+                    if (objPMList != null && objPMList.Count != 0)
+                    {
+                        foreach (var pm in objPMList)
+                        {
+                            if (!string.IsNullOrWhiteSpace(pm.EmployeeEmail))
+                            {
+                                strCCEmailslist.Add(pm.EmployeeEmail);
+                            }
+                        }
+                    }
+
+                    List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
+                    objSalesList = DatabaseHelper.GetAllSalesRep();
+                    foreach (var sales in objSalesList)
+                    {
+                        var customerArray = sales.SalesCompanyListing?.Split(',');
+
+                        if (customerArray != null && customerArray.Contains(itmInspection.CustomerId.ToString()))
+                        {
+                            if (!string.IsNullOrWhiteSpace(sales.EmployeeEmail))
+                            {
+                                strCCEmailslist.Add(sales.EmployeeEmail);
+                            }
+                        }
+                    }
+
                     //strCCEmailslist.Add("nirav.m@siliconinfo.com");
                     string strMSG = "";
                     strMSG = "<html>";
@@ -13130,6 +13919,34 @@ namespace CamV4.Helper
 
                     strCCEmailslist.Add(objUser.EmployeeEmail);
                     strCCEmailslist.Add("b.trivedi@camindustrial.net");
+                    List<EmployeeViewModel> objPMList = new List<EmployeeViewModel>();
+                    objPMList = DatabaseHelper.GetAllProjectManager();
+                    if (objPMList != null && objPMList.Count != 0)
+                    {
+                        foreach (var pm in objPMList)
+                        {
+                            if (!string.IsNullOrWhiteSpace(pm.EmployeeEmail))
+                            {
+                                strCCEmailslist.Add(pm.EmployeeEmail);
+                            }
+                        }
+                    }
+
+                    List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
+                    objSalesList = DatabaseHelper.GetAllSalesRep();
+                    foreach (var sales in objSalesList)
+                    {
+                        var customerArray = sales.SalesCompanyListing?.Split(',');
+
+                        if (customerArray != null && customerArray.Contains(model.CustomerId.ToString()))
+                        {
+                            if (!string.IsNullOrWhiteSpace(sales.EmployeeEmail))
+                            {
+                                strCCEmailslist.Add(sales.EmployeeEmail);
+                            }
+                        }
+                    }
+
                     //strCCEmailslist.Add("nirav.m@siliconinfo.com");
                     saveNotification(iObjNotification);
 
@@ -14302,24 +15119,24 @@ namespace CamV4.Helper
             }
         }
 
-        internal static List<InsepctionCount_Graph> getInspectionCountGraphByYear(Int32 id, int year)
+        internal static List<InsepctionCount_Graph> getInspectionCountGraphByYear(Int32 userid, int year)
         {
             using (DatabaseEntities db = new DatabaseEntities())
             {
 
-                Int32 userId = 0;
+                Int32 iUserId = 0;
 
-                if (id == 0)
+                if (userid == 0)
                 {
-                    userId = Convert.ToInt32(HttpContext.Current.Session["LoggedInUserId"]);
+                    iUserId = Convert.ToInt32(HttpContext.Current.Session["LoggedInUserId"]);
                 }
                 else
                 {
-                    userId = id;
+                    iUserId = userid;
                 }
                 //var InspectionDocumentNo = "00032CNAL0022RI00001";//db.GET_InsepctionCode(CustomerId, CustomerLocationId, InspectionType);
                 List<InsepctionCount_Graph> InspectionCount = new List<InsepctionCount_Graph>();
-                var tmpInspectionCount = db.Get_InspectionCountGraph_new(userId, year).ToList();
+                var tmpInspectionCount = db.Get_InspectionCountGraph_new(iUserId, year).ToList();
                 foreach (var item in tmpInspectionCount)
                 {
                     InsepctionCount_Graph objGET_InsepctionCount_Graph = new InsepctionCount_Graph();
@@ -16280,7 +17097,653 @@ namespace CamV4.Helper
             }
         }
 
+
+
         #endregion
+        #endregion
+
+
+        // ============================================================
+        // DatabaseHelper - Internal Inspection Module
+        // All business logic including photo upload handling
+        // ============================================================
+
+        #region "Internal Inspection"
+
+        // ---- Generate unique inspection number e.g. II-2026-0001 ----
+        private static string GenerateInspectionNumber(DatabaseEntities db)
+        {
+            int year = DateTime.Now.Year;
+            string prefix = "II-" + year + "-";
+            int count = db.InternalInspections
+                .Where(x => x.InspectionNumber.StartsWith(prefix))
+                .Count();
+            return prefix + (count + 1).ToString("D4");
+        }
+
+        // ---- Get audit user ----
+        private static string GetAuditUser()
+        {
+            return HttpContext.Current.Session["LoggedInUserId"]?.ToString() ?? "System";
+        }
+
+        // ---- Create thumbnail ----
+        private static void CreateThumbnail(string sourcePath, string destPath, int maxWidth)
+        {
+            try
+            {
+                using (var srcImage = System.Drawing.Image.FromFile(sourcePath))
+                {
+                    int thumbWidth = Math.Min(srcImage.Width, maxWidth);
+                    int thumbHeight = (int)((double)srcImage.Height / srcImage.Width * thumbWidth);
+
+                    using (var thumb = new System.Drawing.Bitmap(thumbWidth, thumbHeight))
+                    using (var g = System.Drawing.Graphics.FromImage(thumb))
+                    {
+                        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                        g.DrawImage(srcImage, 0, 0, thumbWidth, thumbHeight);
+                        thumb.Save(destPath, srcImage.RawFormat);
+                    }
+                }
+            }
+            catch { /* skip thumbnail if fails — main photo still saved */ }
+        }
+
+        // ============================================================
+        // SAVE (Add + Edit)
+        // ============================================================
+        internal static long SaveInternalInspection(SaveInternalInspectionViewModel model)
+        {
+            try
+            {
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    string auditUser = GetAuditUser();
+                    InternalInspection inspection;
+                    bool isNew = model.InternalInspectionID == 0;
+
+                    if (isNew)
+                    {
+                        // ---- INSERT ----
+                        inspection = new InternalInspection
+                        {
+                            InspectionNumber = GenerateInspectionNumber(db),
+                            CustomerID = model.CustomerID,
+                            CustomerLocationID = model.CustomerLocationID,
+                            CustomerFacilityID = model.CustomerFacilityID,
+                            AreaID = model.AreaID,
+                            TypeOfRack = model.TypeOfRack,
+                            InspectionDate = string.IsNullOrEmpty(model.InspectionDate)
+                                                    ? (DateTime?)null
+                                                    : DateTime.Parse(model.InspectionDate),
+                            Area = model.Area,
+                            Row = model.Row,
+                            Aisle = model.Aisle,
+                            Bay = model.Bay,
+                            BeamLocation = model.BeamLocation,
+                            FrameSide = model.FrameSide,
+                            ReportedBy = model.ReportedBy,
+                            InspectionSummary = model.InspectionSummary,
+                            Status = "Submitted",
+                            IsActive = true,
+                            CreatedBy = auditUser,
+                            CreatedDate = DateTime.Now,
+                            ModifiedBy = auditUser,
+                            ModifiedDate = DateTime.Now
+                        };
+                        db.InternalInspections.Add(inspection);
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        // ---- UPDATE ----
+                        inspection = db.InternalInspections.Find(model.InternalInspectionID);
+                        if (inspection == null) return -1;
+
+                        inspection.CustomerLocationID = model.CustomerLocationID;
+                        inspection.CustomerFacilityID = model.CustomerFacilityID;
+                        inspection.AreaID = model.AreaID;
+                        inspection.TypeOfRack = model.TypeOfRack;
+                        inspection.InspectionDate = string.IsNullOrEmpty(model.InspectionDate)
+                                                            ? (DateTime?)null
+                                                            : DateTime.Parse(model.InspectionDate);
+                        inspection.Area = model.Area;
+                        inspection.Row = model.Row;
+                        inspection.Aisle = model.Aisle;
+                        inspection.Bay = model.Bay;
+                        inspection.BeamLocation = model.BeamLocation;
+                        inspection.FrameSide = model.FrameSide;
+                        inspection.ReportedBy = model.ReportedBy;
+                        inspection.InspectionSummary = model.InspectionSummary;
+                        inspection.ModifiedBy = auditUser;
+                        inspection.ModifiedDate = DateTime.Now;
+                        db.SaveChanges();
+                    }
+
+                    // ---- Levels — delta update ----
+                    List<int> newLevels = string.IsNullOrEmpty(model.Levels)
+                        ? new List<int>()
+                        : model.Levels
+                            .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                            .Select(x => int.Parse(x.Trim())).ToList();
+
+                    var existingLevels = db.InternalInspectionLevels
+                        .Where(x => x.InternalInspectionID == inspection.InternalInspectionID).ToList();
+
+                    // Remove deselected
+                    foreach (var lvl in existingLevels)
+                    {
+                        if (!newLevels.Contains(lvl.LevelNumber))
+                            db.InternalInspectionLevels.Remove(lvl);
+                    }
+
+                    // Add new
+                    var existingLevelNumbers = existingLevels.Select(x => x.LevelNumber).ToList();
+                    foreach (int lvl in newLevels)
+                    {
+                        if (!existingLevelNumbers.Contains(lvl))
+                        {
+                            db.InternalInspectionLevels.Add(new InternalInspectionLevel
+                            {
+                                InternalInspectionID = inspection.InternalInspectionID,
+                                LevelNumber = lvl,
+                                CreatedBy = auditUser,
+                                CreatedDate = DateTime.Now
+                            });
+                        }
+                    }
+                    db.SaveChanges();
+
+                    // ---- Deficiencies — delta update ----
+                    if (model.Deficiencies != null && model.Deficiencies.Count > 0)
+                    {
+                        var incomingIds = model.Deficiencies
+                            .Where(d => d.DeficiencyID > 0)
+                            .Select(d => d.DeficiencyID).ToList();
+
+                        // Soft delete removed deficiencies
+                        var existingDeficiencies = db.InternalInspectionDeficiencies
+                            .Where(x => x.InternalInspectionID == inspection.InternalInspectionID
+                                     && x.IsActive == true).ToList();
+
+                        foreach (var def in existingDeficiencies)
+                        {
+                            if (!incomingIds.Contains(def.DeficiencyID))
+                            {
+                                def.IsActive = false;
+                                def.ModifiedBy = auditUser;
+                                def.ModifiedDate = DateTime.Now;
+                            }
+                        }
+
+                        // Add new or update existing
+                        foreach (var def in model.Deficiencies)
+                        {
+                            if (def.DeficiencyID == 0)
+                            {
+                                db.InternalInspectionDeficiencies.Add(new InternalInspectionDeficiency
+                                {
+                                    InternalInspectionID = inspection.InternalInspectionID,
+                                    CustomerID = model.CustomerID,
+                                    DeficiencyDescription = def.DeficiencyDescription,
+                                    Severity = def.Severity,
+                                    RecommendedAction = def.RecommendedAction,
+                                    IsEngineerReviewRequested = def.IsEngineerReviewRequested,
+                                    EngineerReviewCost = def.IsEngineerReviewRequested ? 20.00m : (decimal?)null,
+                                    Status = "Open",
+                                    IsActive = true,
+                                    CreatedBy = auditUser,
+                                    CreatedDate = DateTime.Now,
+                                    ModifiedBy = auditUser,
+                                    ModifiedDate = DateTime.Now
+                                });
+                            }
+                            else
+                            {
+                                var existing = db.InternalInspectionDeficiencies.Find(def.DeficiencyID);
+                                if (existing != null)
+                                {
+                                    existing.DeficiencyDescription = def.DeficiencyDescription;
+                                    existing.Severity = def.Severity;
+                                    existing.RecommendedAction = def.RecommendedAction;
+                                    existing.IsEngineerReviewRequested = def.IsEngineerReviewRequested;
+                                    existing.EngineerReviewCost = def.IsEngineerReviewRequested ? 20.00m : (decimal?)null;
+                                    existing.Status = def.Status ?? existing.Status;
+                                    existing.ModifiedBy = auditUser;
+                                    existing.ModifiedDate = DateTime.Now;
+                                }
+                            }
+                        }
+                        db.SaveChanges();
+                    }
+
+                    return inspection.InternalInspectionID;
+                }
+            }
+            catch (Exception ex)
+            {
+                return -99;
+            }
+        }
+
+        // ============================================================
+        // SAVE PHOTOS — handles multipart request, file save, thumbnail
+        // ============================================================
+        internal static async Task<object> SaveInternalInspectionPhotos(HttpRequestMessage request)
+        {
+            string uploadPath = HttpContext.Current.Server.MapPath("~/img/InternalInspection/");
+            string uploadThumbPath = HttpContext.Current.Server.MapPath("~/img/InternalInspectionThumb/");
+
+            if (!Directory.Exists(uploadPath)) Directory.CreateDirectory(uploadPath);
+            if (!Directory.Exists(uploadThumbPath)) Directory.CreateDirectory(uploadThumbPath);
+
+            var provider = new MultipartFormDataStreamProvider(uploadPath);
+            await request.Content.ReadAsMultipartAsync(provider);
+
+            long inspectionId = Convert.ToInt64(provider.FormData["inspectionId"]);
+            long customerId = Convert.ToInt64(provider.FormData["customerId"]);
+
+            List<string> photoPaths = new List<string>();
+            List<string> thumbPaths = new List<string>();
+
+            foreach (var file in provider.FileData)
+            {
+                string originalName = file.Headers.ContentDisposition.FileName.Trim('"');
+                string extension = Path.GetExtension(originalName);
+                string newFileName = Guid.NewGuid().ToString() + extension;
+
+                string finalPath = Path.Combine(uploadPath, newFileName);
+                string thumbFileName = "thumb_" + newFileName;
+                string thumbFilePath = Path.Combine(uploadThumbPath, thumbFileName);
+
+                File.Move(file.LocalFileName, finalPath);
+                CreateThumbnail(finalPath, thumbFilePath, 200);
+
+                photoPaths.Add(newFileName);
+                thumbPaths.Add(thumbFileName);
+            }
+
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                string auditUser = GetAuditUser();
+                for (int i = 0; i < photoPaths.Count; i++)
+                {
+                    db.InternalInspectionPhotoes.Add(new InternalInspectionPhoto
+                    {
+                        InternalInspectionID = inspectionId,
+                        CustomerID = customerId,
+                        PhotoPath = photoPaths[i],
+                        PhotoThumbPath = thumbPaths[i],
+                        IsActive = true,
+                        CreatedBy = auditUser,
+                        CreatedDate = DateTime.Now
+                    });
+                }
+                db.SaveChanges();
+            }
+
+            return new { success = true, count = photoPaths.Count };
+        }
+
+        // ============================================================
+        // GET LIST — Current Customer (session-resolved) with optional filter
+        // ============================================================
+        internal static List<InternalInspectionViewModel> GetInternalInspectionsByCurrentCustomer(
+            long? customerLocationId = null,
+            long? customerFacilityId = null,
+            long? areaId = null,
+            string region = null)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                long custUser = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+                var customer = db.Customers.FirstOrDefault(x => x.UserID == custUser);
+                if (customer == null) return new List<InternalInspectionViewModel>();
+
+                var query = db.InternalInspections
+                    .Where(i => i.CustomerID == customer.CustomerId && i.IsActive == true);
+
+                // Apply optional filters from menu
+                if (customerLocationId.HasValue && customerLocationId.Value > 0)
+                    query = query.Where(i => i.CustomerLocationID == customerLocationId.Value);
+
+                if (customerFacilityId.HasValue && customerFacilityId.Value > 0)
+                    query = query.Where(i => i.CustomerFacilityID == customerFacilityId.Value);
+
+                if (areaId.HasValue && areaId.Value > 0)
+                    query = query.Where(i => i.AreaID == areaId.Value);
+
+                var list = (from i in query
+                            join cl in db.CustomerLocations
+                                on i.CustomerLocationID equals cl.CustomerLocationID
+                            orderby i.CreatedDate descending
+                            select new InternalInspectionViewModel
+                            {
+                                InternalInspectionID = i.InternalInspectionID,
+                                InspectionNumber = i.InspectionNumber,
+                                CustomerID = i.CustomerID,
+                                CustomerLocationID = i.CustomerLocationID,
+                                CustomerLocationName = cl.LocationName,
+                                TypeOfRack = i.TypeOfRack,
+                                InspectionDate = i.InspectionDate,
+                                ReportedBy = i.ReportedBy,
+                                Status = i.Status,
+                                CreatedDate = i.CreatedDate,
+                                DeficiencyCount = db.InternalInspectionDeficiencies
+                                                        .Count(d => d.InternalInspectionID == i.InternalInspectionID
+                                                                 && d.IsActive == true),
+                                EngineerReviewCount = db.InternalInspectionDeficiencies
+                                                        .Count(d => d.InternalInspectionID == i.InternalInspectionID
+                                                                 && d.IsActive == true
+                                                                 && d.IsEngineerReviewRequested == true)
+                            }).ToList();
+
+                // Apply Region filter post-query (requires location join)
+                if (!string.IsNullOrEmpty(region))
+                {
+                    var locationIdsInRegion = db.CustomerLocations
+                        .Where(cl => cl.Region == region && cl.CustomerId == customer.CustomerId)
+                        .Select(cl => cl.CustomerLocationID).ToList();
+                    list = list.Where(i => locationIdsInRegion.Contains(i.CustomerLocationID)).ToList();
+                }
+
+                foreach (var item in list)
+                {
+                    item.InspectionDateFormatted = item.InspectionDate.HasValue
+                        ? item.InspectionDate.Value.ToString("MMMM dd, yyyy") : "";
+                    item.EngineerReviewTotalCost = item.EngineerReviewCount * 20.00m;
+                }
+
+                return list;
+            }
+        }
+
+        // ============================================================
+        // GET LIST — By CustomerId (used by admin endpoints)
+        // ============================================================
+        internal static List<InternalInspectionViewModel> GetInternalInspectionsByCustomerId(long customerId)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                var list = (from i in db.InternalInspections
+                            join cl in db.CustomerLocations on i.CustomerLocationID equals cl.CustomerLocationID
+                            where i.CustomerID == customerId && i.IsActive == true
+                            orderby i.CreatedDate descending
+                            select new InternalInspectionViewModel
+                            {
+                                InternalInspectionID = i.InternalInspectionID,
+                                InspectionNumber = i.InspectionNumber,
+                                CustomerID = i.CustomerID,
+                                CustomerLocationID = i.CustomerLocationID,
+                                CustomerLocationName = cl.LocationName,
+                                TypeOfRack = i.TypeOfRack,
+                                InspectionDate = i.InspectionDate,
+                                ReportedBy = i.ReportedBy,
+                                Status = i.Status,
+                                CreatedDate = i.CreatedDate,
+                                DeficiencyCount = db.InternalInspectionDeficiencies
+                                                        .Count(d => d.InternalInspectionID == i.InternalInspectionID
+                                                                 && d.IsActive == true),
+                                EngineerReviewCount = db.InternalInspectionDeficiencies
+                                                        .Count(d => d.InternalInspectionID == i.InternalInspectionID
+                                                                 && d.IsActive == true
+                                                                 && d.IsEngineerReviewRequested == true)
+                            }).ToList();
+
+                foreach (var item in list)
+                {
+                    item.InspectionDateFormatted = item.InspectionDate.HasValue
+                        ? item.InspectionDate.Value.ToString("MMMM dd, yyyy") : "";
+                    item.EngineerReviewTotalCost = item.EngineerReviewCount * 20.00m;
+                }
+
+                return list;
+            }
+        }
+
+        // ============================================================
+        // GET LIST — Admin/Employee (with filters)
+        // ============================================================
+        internal static List<InternalInspectionViewModel> GetInternalInspectionsForAdmin(InternalInspectionSearchViewModel filter)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                var query = from i in db.InternalInspections
+                            join cl in db.CustomerLocations on i.CustomerLocationID equals cl.CustomerLocationID
+                            join c in db.Customers on i.CustomerID equals c.CustomerId
+                            where i.IsActive == true
+                            select new { i, cl, c };
+
+                if (filter.CustomerID.HasValue && filter.CustomerID.Value > 0)
+                    query = query.Where(x => x.i.CustomerID == filter.CustomerID.Value);
+
+                if (filter.CustomerLocationID.HasValue && filter.CustomerLocationID.Value > 0)
+                    query = query.Where(x => x.i.CustomerLocationID == filter.CustomerLocationID.Value);
+
+                if (!string.IsNullOrEmpty(filter.Status))
+                    query = query.Where(x => x.i.Status == filter.Status);
+
+                if (!string.IsNullOrEmpty(filter.InspectionNumber))
+                    query = query.Where(x => x.i.InspectionNumber.Contains(filter.InspectionNumber));
+
+                if (!string.IsNullOrEmpty(filter.DateFrom))
+                {
+                    DateTime dateFrom = DateTime.Parse(filter.DateFrom);
+                    query = query.Where(x => x.i.InspectionDate >= dateFrom);
+                }
+
+                if (!string.IsNullOrEmpty(filter.DateTo))
+                {
+                    DateTime dateTo = DateTime.Parse(filter.DateTo).AddDays(1);
+                    query = query.Where(x => x.i.InspectionDate < dateTo);
+                }
+
+                var list = query.OrderByDescending(x => x.i.CreatedDate)
+                    .Select(x => new InternalInspectionViewModel
+                    {
+                        InternalInspectionID = x.i.InternalInspectionID,
+                        InspectionNumber = x.i.InspectionNumber,
+                        CustomerID = x.i.CustomerID,
+                        CustomerName = x.c.CustomerName,
+                        CustomerLocationID = x.i.CustomerLocationID,
+                        CustomerLocationName = x.cl.LocationName,
+                        TypeOfRack = x.i.TypeOfRack,
+                        InspectionDate = x.i.InspectionDate,
+                        ReportedBy = x.i.ReportedBy,
+                        Status = x.i.Status,
+                        CreatedDate = x.i.CreatedDate,
+                        DeficiencyCount = db.InternalInspectionDeficiencies
+                                                .Count(d => d.InternalInspectionID == x.i.InternalInspectionID
+                                                         && d.IsActive == true),
+                        EngineerReviewCount = db.InternalInspectionDeficiencies
+                                                .Count(d => d.InternalInspectionID == x.i.InternalInspectionID
+                                                         && d.IsActive == true
+                                                         && d.IsEngineerReviewRequested == true)
+                    }).ToList();
+
+                foreach (var item in list)
+                {
+                    item.InspectionDateFormatted = item.InspectionDate.HasValue
+                        ? item.InspectionDate.Value.ToString("MMMM dd, yyyy") : "";
+                    item.EngineerReviewTotalCost = item.EngineerReviewCount * 20.00m;
+                }
+
+                return list;
+            }
+        }
+
+        // ============================================================
+        // GET DETAIL — full record with levels, deficiencies, photos
+        // ============================================================
+        internal static InternalInspectionViewModel GetInternalInspectionById(long id)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                var i = db.InternalInspections.Find(id);
+                if (i == null || i.IsActive == false) return null;
+
+                var location = db.CustomerLocations
+                    .FirstOrDefault(cl => cl.CustomerLocationID == i.CustomerLocationID);
+                var customer = db.Customers
+                    .FirstOrDefault(c => c.CustomerId == i.CustomerID);
+                var facility = i.CustomerFacilityID.HasValue
+                    ? db.CustomerFacilities.Find(i.CustomerFacilityID.Value) : null;
+                var area = i.AreaID.HasValue
+                    ? db.CustomerAreas.Find(i.AreaID.Value) : null;
+
+                var levels = db.InternalInspectionLevels
+                    .Where(x => x.InternalInspectionID == id)
+                    .Select(x => x.LevelNumber)
+                    .OrderBy(x => x).ToList();
+
+                var deficiencies = db.InternalInspectionDeficiencies
+                    .Where(x => x.InternalInspectionID == id && x.IsActive == true)
+                    .OrderBy(x => x.CreatedDate)
+                    .Select(x => new InternalInspectionDeficiencyViewModel
+                    {
+                        DeficiencyID = x.DeficiencyID,
+                        InternalInspectionID = x.InternalInspectionID,
+                        CustomerID = x.CustomerID,
+                        DeficiencyDescription = x.DeficiencyDescription,
+                        Severity = x.Severity,
+                        RecommendedAction = x.RecommendedAction,
+                        IsEngineerReviewRequested = x.IsEngineerReviewRequested,
+                        EngineerReviewCost = x.EngineerReviewCost,
+                        Status = x.Status,
+                        CreatedDate = x.CreatedDate,
+                        ModifiedDate = x.ModifiedDate
+                    }).ToList();
+
+                var photos = db.InternalInspectionPhotoes
+                    .Where(x => x.InternalInspectionID == id && x.IsActive == true)
+                    .OrderBy(x => x.CreatedDate)
+                    .Select(x => new InternalInspectionPhotoViewModel
+                    {
+                        InternalInspectionPhotoID = x.InternalInspectionPhotoID,
+                        InternalInspectionID = x.InternalInspectionID,
+                        CustomerID = x.CustomerID,
+                        PhotoPath = x.PhotoPath,
+                        PhotoThumbPath = x.PhotoThumbPath,
+                        CreatedDate = x.CreatedDate
+                    }).ToList();
+
+                string baseUrl = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority);
+                foreach (var p in photos)
+                {
+                    p.PhotoFullUrl = baseUrl + "/img/InternalInspection/" + p.PhotoPath;
+                    p.PhotoThumbFullUrl = baseUrl + "/img/InternalInspectionThumb/" + p.PhotoThumbPath;
+                }
+
+                return new InternalInspectionViewModel
+                {
+                    InternalInspectionID = i.InternalInspectionID,
+                    InspectionNumber = i.InspectionNumber,
+                    CustomerID = i.CustomerID,
+                    CustomerName = customer?.CustomerName,
+                    CustomerLocationID = i.CustomerLocationID,
+                    CustomerLocationName = location?.LocationName,
+                    CustomerLocationAddress = location?.CustomerAddress,
+                    CustomerFacilityID = i.CustomerFacilityID,
+                    CustomerFacilityName = facility?.FacilityName,
+                    AreaID = i.AreaID,
+                    AreaName = area?.AreaName,
+                    TypeOfRack = i.TypeOfRack,
+                    InspectionDate = i.InspectionDate,
+                    InspectionDateFormatted = i.InspectionDate.HasValue
+                                                    ? i.InspectionDate.Value.ToString("MMMM dd, yyyy") : "",
+                    Area = i.Area,
+                    Row = i.Row,
+                    Aisle = i.Aisle,
+                    Bay = i.Bay,
+                    BeamLocation = i.BeamLocation,
+                    FrameSide = i.FrameSide,
+                    ReportedBy = i.ReportedBy,
+                    InspectionSummary = i.InspectionSummary,
+                    Status = i.Status,
+                    IsActive = i.IsActive,
+                    CreatedBy = i.CreatedBy,
+                    CreatedDate = i.CreatedDate,
+                    ModifiedBy = i.ModifiedBy,
+                    ModifiedDate = i.ModifiedDate,
+                    Levels = levels,
+                    LevelsDisplay = string.Join(", ", levels),
+                    Deficiencies = deficiencies,
+                    Photos = photos,
+                    DeficiencyCount = deficiencies.Count,
+                    EngineerReviewCount = deficiencies.Count(d => d.IsEngineerReviewRequested),
+                    EngineerReviewTotalCost = deficiencies.Count(d => d.IsEngineerReviewRequested) * 20.00m
+                };
+            }
+        }
+
+        // ============================================================
+        // SOFT DELETE
+        // ============================================================
+        internal static bool DeleteInternalInspection(long id)
+        {
+            try
+            {
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    string auditUser = GetAuditUser();
+
+                    var inspection = db.InternalInspections.Find(id);
+                    if (inspection == null) return false;
+
+                    inspection.IsActive = false;
+                    inspection.ModifiedBy = auditUser;
+                    inspection.ModifiedDate = DateTime.Now;
+
+                    // Soft delete deficiencies
+                    var deficiencies = db.InternalInspectionDeficiencies
+                        .Where(x => x.InternalInspectionID == id).ToList();
+                    foreach (var d in deficiencies)
+                    {
+                        d.IsActive = false;
+                        d.ModifiedBy = auditUser;
+                        d.ModifiedDate = DateTime.Now;
+                    }
+
+                    // Soft delete photos
+                    var photos = db.InternalInspectionPhotoes
+                        .Where(x => x.InternalInspectionID == id).ToList();
+                    foreach (var p in photos)
+                        p.IsActive = false;
+
+                    // Hard delete levels
+                    var levels = db.InternalInspectionLevels
+                        .Where(x => x.InternalInspectionID == id).ToList();
+                    db.InternalInspectionLevels.RemoveRange(levels);
+
+                    db.SaveChanges();
+                    return true;
+                }
+            }
+            catch { return false; }
+        }
+
+        // ============================================================
+        // UPDATE STATUS — Admin/Employee only
+        // ============================================================
+        internal static bool UpdateInternalInspectionStatus(long id, string status)
+        {
+            try
+            {
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    var inspection = db.InternalInspections.Find(id);
+                    if (inspection == null) return false;
+
+                    inspection.Status = status;
+                    inspection.ModifiedBy = GetAuditUser();
+                    inspection.ModifiedDate = DateTime.Now;
+                    db.SaveChanges();
+                    return true;
+                }
+            }
+            catch { return false; }
+        }
+
         #endregion
 
 

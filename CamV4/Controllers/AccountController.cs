@@ -103,12 +103,25 @@ namespace CamV4.Controllers
                         Response.Cookies.Add(mycookie);
                     }
 
-                    if (user.UserType == 1)
+                    if (user.UserType == 1 || user.UserType == 6 || user.UserType == 3 || user.UserType == 5)
                     {
+                        var emp =  DatabaseHelper.getUserEmployeeByUserId(user.UserId);
+                        if (emp != null) 
+                        {
+                            Session["EmployeeID"] = emp.EmployeeID;
+                            Session["EmployeeName"] = emp.EmployeeName;
+                        }
                         return RedirectToAction("Index", "Admin");
                     }
                     else if (user.UserType == 2)
                     {
+                        var emp = DatabaseHelper.getUserEmployeeByUserId(user.UserId);
+                        if (emp != null)
+                        {
+                            Session["EmployeeID"] = emp.EmployeeID;
+                            Session["EmployeeName"] = emp.EmployeeName;
+                        }
+                        Session["LoggedInUserId"] = user.UserId;
                         return RedirectToAction("Index", "Employee");
                     }
                     else if (user.UserType == 4)
@@ -119,10 +132,10 @@ namespace CamV4.Controllers
                     {
                         return RedirectToAction("Index", "Customer");
                     }
-                    else if (user.UserType == 5)
-                    {
-                        return RedirectToAction("Index", "CustomerLocationContact");
-                    }
+                    //else if (user.UserType == 5)
+                    //{
+                    //    return RedirectToAction("Index", "CustomerLocationContact");
+                    //}
                     else
                     {
                         //return RedirectToAction("Index", "User");
@@ -134,100 +147,124 @@ namespace CamV4.Controllers
                 {
                     ViewBag.Message = string.Format("Login failed. User doesn't exist.");
                     return View();
-                }                
+                }
             }
             catch (Exception ex)
             {
-                ViewBag.Message = "User Name or Password incorrect. " +  ex.ToString();
+                ViewBag.Message = "User Name or Password incorrect. " + ex.ToString();
                 return View();
             }
         }
 
         [HttpPost]
         [CustomAntiForgeryToken]
-        [AllowAnonymous]
         public async Task<JsonResult> EmpCreate(UserEmployeeViewModel model)
         {
             DatabaseEntities db = new DatabaseEntities();
+
             if (Session["LoggedInUserId"] == null)
             {
                 return Json("Error");
             }
-            else
+
+            try
             {
-                try
-                {
-                    var message = new StringBuilder();
-                    //if (ModelState.IsValid)
-                    //{
-                    using (DbContextTransaction objTrans = db.Database.BeginTransaction())
-                    {
-                        try
-                        {
-                            User usr = new User();
-                            if (model.UserName != null)
-                            {
-                                var exist = db.Users.Where(x => x.UserName == model.UserName).FirstOrDefault();
-                                if (exist == null)
-                                {
-                                    usr.UserName = model.UserName;
-                                    usr.UserPassword = MD5Hash(model.UserPassword);
-                                    usr.IsActive = true;
-                                    usr.UserType = model.UserType;
-                                    usr.CreatedDate = DateTime.Now;
-                                    usr.CreatedBy = Session["LoggedInUserId"].ToString();
-                                    db.Users.Add(usr);
-                                    db.SaveChanges();
+                var message = new StringBuilder();
 
-                                    Employee emp = new Employee();
-                                    emp.EmployeeName = model.EmployeeName;
-                                    emp.EmployeeEmail = model.EmployeeEmail;
-                                    emp.EmployeeAddress = model.EmployeeAddress;
-                                    emp.MobileNo = model.MobileNo;
-                                    emp.CityID = model.CityID;
-                                    emp.CountryID = model.CountryID;
-                                    emp.ProvinceID = model.ProvinceID;
-                                    emp.TitleDegrees = model.TitleDegrees;
-                                    emp.IsActive = true;
-                                    emp.Gender = model.Gender;
-                                    emp.Pincode = model.PinCode;
-                                    emp.UserID = usr.UserId;
-                                    emp.CreatedBy = Session["LoggedInUserId"].ToString();
-                                    emp.CreatedDate = DateTime.Now;
-                                    emp.IsStampingEngineer = model.IsStampingEngineer;
-                                    db.Employees.Add(emp);
-                                    db.SaveChanges();
-                                    objTrans.Commit();
-                                    return Json("Ok");
-                                }
-                                return Json("User already exist.");
-                            }
-                            return Json("Please enter user name.");
-                        }
-                        catch (Exception)
-                        {
-                            objTrans.Rollback();
-                            throw;
-                        }
-                    }
+                if (string.IsNullOrWhiteSpace(model.UserName))
+                    message.AppendLine("User Name is required.");
 
-                    // }
-                    //var mssge = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                    //return Json(mssge);
-                    //return Json(ModelState.Values.First().Errors[0].ErrorMessage);
-                }
-                catch (DbEntityValidationException ex)
+                if (string.IsNullOrWhiteSpace(model.EmployeeName))
+                    message.AppendLine("Employee Name is required.");
+
+                if (string.IsNullOrWhiteSpace(model.EmployeeEmail))
+                    message.AppendLine("Email is required.");
+
+                if (string.IsNullOrWhiteSpace(model.UserPassword))
+                    message.AppendLine("Password is required.");
+
+                if (string.IsNullOrWhiteSpace(model.TitleDegrees))
+                    message.AppendLine("Degree Title is required.");
+
+                if (model.UserType == 0)
+                    message.AppendLine("Please select User Type.");
+
+                if (model.IsStampingEngineer == null)
+                    message.AppendLine("Please select Stamping Engineer option.");
+
+                if (message.Length > 0)
                 {
-                    string errorMessage = "";
-                    foreach (var errors in ex.EntityValidationErrors)
-                    {
-                        foreach (var validationError in errors.ValidationErrors)
-                        {
-                            errorMessage = validationError.ErrorMessage;
-                        }
-                    }
-                    return Json(errorMessage);
+                    return Json(message.ToString());
                 }
+
+                using (DbContextTransaction objTrans = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var exist = db.Users.FirstOrDefault(x => x.UserName == model.UserName);
+
+                        if (exist != null)
+                        {
+                            return Json("User already exist.");
+                        }
+
+                        User usr = new User
+                        {
+                            UserName = model.UserName,
+                            UserPassword = MD5Hash(model.UserPassword),
+                            IsActive = true,
+                            UserType = model.UserType,
+                            CreatedDate = DateTime.Now,
+                            CreatedBy = Session["LoggedInUserId"].ToString()
+                        };
+
+                        db.Users.Add(usr);
+                        db.SaveChanges();
+
+                        Employee emp = new Employee
+                        {
+                            EmployeeName = model.EmployeeName,
+                            EmployeeEmail = model.EmployeeEmail,
+                            EmployeeAddress = model.EmployeeAddress,
+                            MobileNo = model.MobileNo,
+                            CityID = model.CityID,
+                            CountryID = model.CountryID,
+                            ProvinceID = model.ProvinceID,
+                            TitleDegrees = model.TitleDegrees,
+                            IsActive = true,
+                            Gender = model.Gender,
+                            Pincode = model.PinCode,
+                            UserID = usr.UserId,
+                            CreatedBy = Session["LoggedInUserId"].ToString(),
+                            CreatedDate = DateTime.Now,
+                            IsStampingEngineer = model.IsStampingEngineer
+                        };
+
+                        db.Employees.Add(emp);
+                        db.SaveChanges();
+
+                        objTrans.Commit();
+
+                        return Json("Ok");
+                    }
+                    catch (Exception)
+                    {
+                        objTrans.Rollback();
+                        throw;
+                    }
+                }
+            }
+            catch (DbEntityValidationException ex)
+            {
+                string errorMessage = "";
+                foreach (var errors in ex.EntityValidationErrors)
+                {
+                    foreach (var validationError in errors.ValidationErrors)
+                    {
+                        errorMessage = validationError.ErrorMessage;
+                    }
+                }
+                return Json(errorMessage);
             }
         }
 
@@ -386,6 +423,31 @@ namespace CamV4.Controllers
                     {
                         try
                         {
+                            var message = new StringBuilder();
+
+                            if (string.IsNullOrWhiteSpace(model.UserName))
+                                message.AppendLine("User Name is required.");
+
+                            if (string.IsNullOrWhiteSpace(model.EmployeeName))
+                                message.AppendLine("Employee Name is required.");
+
+                            if (string.IsNullOrWhiteSpace(model.EmployeeEmail))
+                                message.AppendLine("Email is required.");
+
+                            if (string.IsNullOrWhiteSpace(model.TitleDegrees))
+                                message.AppendLine("Degree Title is required.");
+
+                            if (model.UserType == 0)
+                                message.AppendLine("Please select User Type.");
+
+                            if (model.IsStampingEngineer == null)
+                                message.AppendLine("Please select Stamping Engineer option.");
+
+                            if (message.Length > 0)
+                            {
+                                return Json(message.ToString());
+                            }
+
                             var emp = db.Employees.Where(x => x.UserID == model.UserID).FirstOrDefault();
                             if (emp != null)
                             {
@@ -411,10 +473,10 @@ namespace CamV4.Controllers
                             }
                             return Json("Something went wrong.");
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
                             objTrans.Rollback();
-                            throw;
+                            return Json(ex.Message.ToString());
                         }
                     }
                 }
@@ -485,6 +547,7 @@ namespace CamV4.Controllers
         [HttpPost]
         public async Task<string> UploadLogo(Customer model)
         {
+            bool isExits = false;
             try
             {
                 var customer = db.Customers.Where(x => x.CustomerName == model.CustomerName).FirstOrDefault();
@@ -492,16 +555,30 @@ namespace CamV4.Controllers
                 {
                     if (model.CustomerId == 0)
                     {
-                        return "Company already exist.";
+                        //return "Company already exist.";
+                        isExits = true;
                     }
                     if (model.CustomerId != 0 && customer.CustomerId != model.CustomerId)
                     {
-                        return "Company already exist.";
+                        //return "Company already exist.";
+                        isExits = true;
                     }
                 }
                 if (model.CustomerName == null)
                 {
                     return "Please enter customer name.";
+                }
+                if (model.CountryID == null)
+                {
+                    return "Please select Country.";
+                }
+                if (model.ProvinceID == null)
+                {
+                    return "Please select Province.";
+                }
+                if (model.CityID == null)
+                {
+                    return "Please select City.";
                 }
                 if (model.user == null)
                 {
@@ -1324,10 +1401,11 @@ namespace CamV4.Controllers
             if (ModelState.IsValid)
             {
                 //var _se = DatabaseHelper.GetEmailInformation();
-
+                
                 try
                 {
-                    //FileContentResult attachmentFile = null;
+                    //FileContentResult attachmentFile = null;                    
+
                     string strMSG = "";
                     var iDetails = DatabaseHelper.getInspectionDetailsForSheet(model.InspectionId);
                     if (iDetails != null)
@@ -1336,10 +1414,36 @@ namespace CamV4.Controllers
 
                         List<string> strCCEmailslist = new List<string>();
                         List<string> toCustContact = new List<string>();
-                        strCCEmailslist.Add(iDetails.empModel.EmployeeEmail);
+                        strCCEmailslist.Add(iDetails.empModel.EmployeeEmail);                        
                         strCCEmailslist.Add("b.trivedi@camindustrial.net");
+                        List<EmployeeViewModel> objPMList = new List<EmployeeViewModel>();
+                        objPMList = DatabaseHelper.GetAllProjectManager();
+                        if (objPMList != null && objPMList.Count != 0)
+                        {
+                            foreach (var pm in objPMList)
+                            {
+                                if (!string.IsNullOrWhiteSpace(pm.EmployeeEmail))
+                                {
+                                    strCCEmailslist.Add(pm.EmployeeEmail);
+                                }
+                            }
+                        }
                         //strCCEmailslist.Add("nirav.m@siliconinfo.com");
 
+                        List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
+                        objSalesList = DatabaseHelper.GetAllSalesRep();
+                        foreach (var sales in objSalesList)
+                        {
+                            var customerArray = sales.SalesCompanyListing?.Split(',');
+
+                            if (customerArray != null && customerArray.Contains(iDetails.CustomerId.ToString()))
+                            {
+                                if (!string.IsNullOrWhiteSpace(sales.EmployeeEmail))
+                                {
+                                    strCCEmailslist.Add(sales.EmployeeEmail);
+                                }
+                            }
+                        }
                         if (model.LocationContactId != null)
                         {
                             string[] lContact = model.LocationContactId.Split(',');

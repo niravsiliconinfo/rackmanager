@@ -1,22 +1,23 @@
-﻿using System;
+﻿using CamV4.Helper;
+using CamV4.Models;
+using FirebaseAdmin;
+using iText.Html2pdf;
+using iText.Kernel.Pdf;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
-using CamV4.Helper;
-using CamV4.Models;
-using FirebaseAdmin;
-using iText.Html2pdf;
-using iText.Kernel.Pdf;
-using Newtonsoft.Json;
 
 namespace CamV4.Controllers
 {
@@ -55,12 +56,10 @@ namespace CamV4.Controllers
                 graph.DashboardActiveUserEmployeeCount = 0;
                 graph.DashboardActiveCompanyCount = 0;
 
-
                 //graph.PieYear = DatabaseHelper.getInspectionCountGraphByYear(userId, 2023);
                 using (DatabaseEntities db = new DatabaseEntities())
                 {
-                    var objDashboardResult = db.SP_Get_AdminDashboardCount(year);
-
+                    var objDashboardResult = db.SP_Get_AdminDashboardCountAll(userId, year);
                     foreach (var item in objDashboardResult)
                     {
                         switch (item.InspectionStatusId)
@@ -208,7 +207,17 @@ namespace CamV4.Controllers
                 return View();
             }
         }
-
+        public ActionResult ManageCustomerLocationHierarchy()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
         public ActionResult ManageShelving()
         {
             if (Session["LoggedInUserId"] == null)
@@ -482,6 +491,19 @@ namespace CamV4.Controllers
             }
         }
 
+        public ActionResult CustomerAddEdit()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+
         public ActionResult ManageDocumentTitle()
         {
             if (Session["LoggedInUserId"] == null)
@@ -628,7 +650,7 @@ namespace CamV4.Controllers
             }
         }
 
-        public ActionResult AddLocationContact(int? id)
+        public ActionResult ManageLocationContact(int? id)
         {
             if (Session["LoggedInUserId"] == null)
             {
@@ -1478,6 +1500,47 @@ namespace CamV4.Controllers
             {
                 string searchTerm = model.search?.value?.ToLower();
 
+                int userType = Convert.ToInt32(Session["LoggedInUserType"]);
+                int userId = Convert.ToInt32(Session["LoggedInUserId"]);
+
+                // Get EmployeeId from Employees table using UserId
+                int? employeeId = db.Employees
+                                    .Where(e => e.UserID == userId)
+                                    .Select(e => (int?)e.EmployeeID)
+                                    .FirstOrDefault();
+
+
+                //var query = (from i in db.Inspections
+                //             join c in db.Customers on i.CustomerId equals c.CustomerId into custJoin
+                //             from c in custJoin.DefaultIfEmpty()
+
+                //             join e in db.Employees on i.EmployeeId equals e.EmployeeID into empJoin
+                //             from e in empJoin.DefaultIfEmpty()
+
+                //             join loc in db.CustomerLocations on i.CustomerLocationId equals loc.CustomerLocationID into locJoin
+                //             from loc in locJoin.DefaultIfEmpty()
+
+                //             join area in db.CustomerAreas on i.CustomerAreaID equals area.AreaID into areaJoin
+                //             from area in areaJoin.DefaultIfEmpty()
+
+                //             join facility in db.CustomerFacilities on i.CustomerFacilityID equals facility.CustomerFacilityID into facilityJoin
+                //             from facility in facilityJoin.DefaultIfEmpty()
+
+                //             where i.IsActive == true
+                //             select new
+                //             {
+                //                 i.InspectionId,
+                //                 i.InspectionDocumentNo,
+                //                 i.InspectionDate,
+                //                 i.InspectionStatus,
+                //                 Customer = c.CustomerName,
+                //                 Employee = e.EmployeeName,
+                //                 Area = area.AreaName,
+                //                 Location = loc.LocationName,
+                //                 Facility = facility.FacilityName,
+                //                 i.InspectionPDFPath
+                //             }).AsQueryable();
+
                 var query = (from i in db.Inspections
                              join c in db.Customers on i.CustomerId equals c.CustomerId into custJoin
                              from c in custJoin.DefaultIfEmpty()
@@ -1491,6 +1554,9 @@ namespace CamV4.Controllers
                              join area in db.CustomerAreas on i.CustomerAreaID equals area.AreaID into areaJoin
                              from area in areaJoin.DefaultIfEmpty()
 
+                             join facility in db.CustomerFacilities on i.CustomerFacilityID equals facility.CustomerFacilityID into facilityJoin
+                             from facility in facilityJoin.DefaultIfEmpty()
+
                              where i.IsActive == true
                              select new
                              {
@@ -1502,8 +1568,15 @@ namespace CamV4.Controllers
                                  Employee = e.EmployeeName,
                                  Area = area.AreaName,
                                  Location = loc.LocationName,
-                                 i.InspectionPDFPath
+                                 Facility = facility.FacilityName,
+                                 i.InspectionPDFPath,
+                                 SalesRepId = c.SalesRepresentativeId 
                              }).AsQueryable();
+
+                if (userType == 5 && employeeId.HasValue)
+                {
+                    query = query.Where(x => x.SalesRepId == employeeId.Value);
+                }
 
                 int totalRecords = query.Count();
 
@@ -1569,6 +1642,7 @@ namespace CamV4.Controllers
                     Employee = d.Employee,
                     CustomerArea = d.Area,
                     CustomerLocation = d.Location,
+                    CustomerFacility = d.Facility,
                     InspectionPDFPath = d.InspectionPDFPath
                     // You can add StatusText or CSSClass here if needed
                 }).ToList();
@@ -1615,11 +1689,12 @@ namespace CamV4.Controllers
         //[Obsolete]
         public ActionResult ToPdfV2(int id)
         {
-            
+
             var iDetails = DatabaseHelper.getInspectionDetailsForSheet(id);
             if (iDetails != null)
             {
                 string host = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
+
                 //host = host.Replace("https", "http");
                 string strVar = " ";
                 int pageNo = 2;
@@ -1639,7 +1714,7 @@ namespace CamV4.Controllers
                     FullAddress.Add(iDetails.custModel.CustomerAddress);
                 }
                 CustomerFullAddress = string.Join(",", FullAddress);
-
+                Console.WriteLine(host + "Content/V2/images/mid-logo.jpg");
                 //strVar += "<section style='width:783px;height:1113px;background:blue;box-shadow:0 .2mm 2mm rgba(0,0,0,.3);margin:0mm 0mm 0mm 0mm;padding:0mm 0mm 0mm 0mm;box-sizing:border-box;border:5px solid #0070c0;'> ";
                 strVar += "<table width='100%' border='0' cellpadding='0' align='center' cellspacing='0'style='width:18.5cm;height:29.7cm;background:white;margin:0mm 0mm 0mm 0mm;padding:0mm 0mm 0mm 0mm;box-sizing:border-box;border:5px solid #0070c0;font-family: Arial, Helvetica, sans-serif;'> ";
                 strVar += "<tbody> ";
@@ -3384,7 +3459,10 @@ namespace CamV4.Controllers
                         }
                     }
                 }
-                //byte[] output;
+                string siteUrl = Request.Url.GetLeftPart(UriPartial.Authority) + "/";
+                string siteRoot = Server.MapPath("~/").Replace("\\", "/") + "/";
+
+                strVar = strVar.Replace(siteUrl, "file:///" + siteRoot);
 
                 using (var workStream = new MemoryStream())
                 using (var pdfWriter = new PdfWriter(workStream))
@@ -3392,9 +3470,45 @@ namespace CamV4.Controllers
                     using (var document = HtmlConverter.ConvertToDocument(strVar, pdfWriter))
                     {
                     }
-                    //Returns the written-to MemoryStream containing the PDF.   
-                    return File(workStream.ToArray(), "application/pdf", "" + iDetails.Customer?.Trim().Replace(" ", "_") + "_" + iDetails.InspectionDocumentNo.Trim() + "_RackInspection.pdf");
+
+                    return File(
+                        workStream.ToArray(),
+                        "application/pdf",
+                        iDetails.Customer?.Trim().Replace(" ", "_") + "_" +
+                        iDetails.InspectionDocumentNo.Trim() + "_RackInspection.pdf"
+                    );
                 }
+                //using (var workStream = new MemoryStream())
+                //using (var pdfWriter = new PdfWriter(workStream))
+                //{
+                //    using (var document = HtmlConverter.ConvertToDocument(strVar, pdfWriter))
+                //    {
+                //    }
+                //    //Returns the written-to MemoryStream containing the PDF.   
+                //    return File(workStream.ToArray(), "application/pdf", "" + iDetails.Customer?.Trim().Replace(" ", "_") + "_" + iDetails.InspectionDocumentNo.Trim() + "_RackInspection.pdf");
+                //}
+
+                //string siteUrl = Request.Url.GetLeftPart(UriPartial.Authority);
+                //string siteRoot = Server.MapPath("~/").Replace("\\", "/");
+
+                //strVar = strVar.Replace(siteUrl + "/", "file:///" + siteRoot);
+
+                //ConverterProperties props = new ConverterProperties();
+                //props.SetBaseUri(Request.Url.GetLeftPart(UriPartial.Authority));
+
+                //using (var workStream = new MemoryStream())
+                //using (var pdfWriter = new PdfWriter(workStream))
+                //{
+
+                //    System.Diagnostics.Trace.AutoFlush = true;
+                //    using (var document = HtmlConverter.ConvertToDocument(strVar, pdfWriter, props))
+                //    {
+                //    }
+                //    return File(workStream.ToArray(),
+                //        "application/pdf", "" + iDetails.Customer?.Trim().Replace(" ", "_") + "_" + iDetails.InspectionDocumentNo.Trim() + "_RackInspection.pdf");
+                //}
+
+
             }
             return null;
         }
@@ -3405,7 +3519,7 @@ namespace CamV4.Controllers
             strVar += "<tbody> ";
             strVar += "<tr> ";
             strVar += "<td valign='top' class='' style='padding: 2px;'> ";
-            strVar += "<div class='' style='border: 1px solid #0070c0;padding: 20px;height:25.6cm;position: relative;'> ";           
+            strVar += "<div class='' style='border: 1px solid #0070c0;padding: 20px;height:25.6cm;position: relative;'> ";
             if (isFirstPage)
             {
                 strVar += "<div> ";
@@ -5684,6 +5798,7 @@ namespace CamV4.Controllers
                 return View();
             }
         }
+                
         public ActionResult ManageHistoryLegacyDocuments()
         {
             if (Session["LoggedInUserId"] == null)
@@ -5773,6 +5888,27 @@ namespace CamV4.Controllers
             }
         }
         #endregion
+
+        public ActionResult InternalInspectionListing() {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public ActionResult InternalInspectionView() {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
     }
 
     //public class RotateTextEventHelper : PdfPageEventHelper

@@ -20,9 +20,7 @@
         <EntityTypeShape EntityType="admin_rackauditorModel.ConclusionRecommendation" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="admin_rackauditorModel.Country" Width="1.5" PointX="10.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="admin_rackauditorModel.CustomerLocation" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="admin_rackauditorModel.CustomerLocationContact" Width="1.5" PointX="4.75" PointY="12.75" IsExpanded="true" />
         <EntityTypeShape EntityType="admin_rackauditorModel.CustomerLocationHistoryLegacyFile" Width="1.5" PointX="12.75" PointY="5.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="admin_rackauditorModel.Customer" Width="1.5" PointX="6.75" PointY="12.75" IsExpanded="true" />
         <EntityTypeShape EntityType="admin_rackauditorModel.CustomersLocationsUser" Width="1.5" PointX="8.75" PointY="12.75" IsExpanded="true" />
         <EntityTypeShape EntityType="admin_rackauditorModel.CustomerUser" Width="1.5" PointX="12.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="admin_rackauditorModel.Deficiency" Width="1.5" PointX="0.75" PointY="13.75" IsExpanded="true" />
@@ -67,8 +65,16 @@
         <EntityTypeShape EntityType="admin_rackauditorModel.CustomerArea" Width="1.5" PointX="3.375" PointY="26.75" />
         <EntityTypeShape EntityType="admin_rackauditorModel.Inspection" Width="1.5" PointX="0.75" PointY="18.75" />
         <EntityTypeShape EntityType="admin_rackauditorModel.InspectionDeficiency" Width="1.5" PointX="26.75" PointY="12.75" />
-        <EntityTypeShape EntityType="admin_rackauditorModel.CustomerFacility" Width="1.5" PointX="7.375" PointY="18.75" />
-      </Diagram>
+        <EntityTypeShape EntityType="admin_rackauditorModel.CustomerFacility" Width="2.375" PointX="7.375" PointY="18.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.Customer" Width="1.5" PointX="0.75" PointY="26.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.CustomerLocationContact" Width="1.5" PointX="5.375" PointY="12.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.CustomersLocationsUserArea" Width="1.5" PointX="18.375" PointY="26.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.CustomersLocationsUserFacility" Width="1.5" PointX="26.375" PointY="19.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.InternalInspection" Width="1.5" PointX="26.375" PointY="23.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.InternalInspectionDeficiency" Width="1.5" PointX="27.375" PointY="0.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.InternalInspectionLevel" Width="1.5" PointX="27.375" PointY="5.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.InternalInspectionPhoto" Width="1.5" PointX="27.375" PointY="8.75" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

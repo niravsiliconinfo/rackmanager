@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 @functions{
@@ -20,7 +20,6 @@
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Customer Contact</li>
                 </ol>
                 <div class="float-sm-start">
-                    @* <a href="@Url.Action("EditCustomer", "Admin")?id=@Session["CustomerId"]"> *@
                     <a href="@Url.Action("EditCustomer", "Admin")?id=@ViewData["CustD"]">
                         <i class="fa fa-arrow-left"></i>
                     </a>
@@ -28,9 +27,8 @@
                 </div>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-                </div>
-                <ul class="navbar-nav  justify-content-end">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center"></div>
+                <ul class="navbar-nav justify-content-end">
                     <li class="nav-item d-flex align-items-center">
                         <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
                             <i class="fa fa-sign-out me-sm-1"></i>
@@ -41,9 +39,12 @@
             </div>
         </div>
     </nav>
+
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
+
+                <!-- ===================== ADD CONTACT ===================== -->
                 <div class="card my-4" ng-show="AddContactShow">
                     <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="pt-4 pb-4">
@@ -60,36 +61,14 @@
                     <div class="card-body">
                         <form class="">
                             <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
-                            @*<div class="row">
-                                    <div class="col-sm-2">
-                                        <span>User Name</span>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="input-group input-group-outline mb-3">
-                                            <input type="text" class="form-control" name="UserName" id="UserName" ng-model="userName">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <span>User Password</span>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="input-group input-group-outline mb-3">
-                                            <input type="password" class="form-control" name="UserPassword" id="UserPassword" ng-model="userPassword">
-                                        </div>
-                                    </div>
-                                </div>*@
                             <div class="row">
-                                <div class="col-sm-2">
-                                    <span>Contact Name <span class="error">*</span></span>
-                                </div>
+                                <div class="col-sm-2"><span>Contact Name <span class="error">*</span></span></div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
                                         <input type="text" class="form-control" name="ContactName" id="ContactName" ng-model="contactName" required>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
-                                    <span>Contact Email(User Name) <span class="error">*</span></span>
-                                </div>
+                                <div class="col-sm-2"><span>Contact Email(User Name) <span class="error">*</span></span></div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
                                         <input type="text" class="form-control" name="ContactEmail" id="ContactEmail" ng-model="contactEmail" required>
@@ -97,17 +76,13 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-2">
-                                    <span>Contact Phone</span>
-                                </div>
+                                <div class="col-sm-2"><span>Contact Phone</span></div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
                                         <input type="text" class="form-control" name="ContactPhone" id="ContactPhone" ng-model="contactPhone">
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
-                                    <span>Password <span class="error">*</span></span>
-                                </div>
+                                <div class="col-sm-2"><span>Password <span class="error">*</span></span></div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
                                         <input type="password" class="form-control" name="Password" id="Password" ng-model="userPassword" required>
@@ -115,17 +90,56 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-2">
-                                    <span>Location ID<span class="error">*</span></span>
-                                </div>
+                                <div class="col-sm-2"><span>Location ID <span class="error">*</span></span></div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3 scroller">
                                         <ul class="navbar-nav form-control">
                                             <li ng-repeat="f in getCustomerLocationByCustomerId" required>
-                                                <label for="chkCustomerLocationEdit_{{f.CustomerLocationID}}">
-                                                    <input id="chkCustomerLocationEdit_{{f.CustomerLocationID}}" type="checkbox" ng-model="f.selected" />
-                                                    @*{{f.LocationName}}({{f.City}})*@
+                                                <label for="chkAddLocation_{{f.CustomerLocationID}}">
+                                                    <input id="chkAddLocation_{{f.CustomerLocationID}}"
+                                                           type="checkbox"
+                                                           ng-model="f.selected"
+                                                           ng-change="onLocationChangeAdd()" />
                                                     {{ f.LocationName }}{{ f.City ? ' (' + f.City + ')' : '' }}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2"><span>Facility</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3 scroller">
+                                        <ul class="navbar-nav form-control">
+                                            @*<li ng-if="facilitiesForAdd.length == 0">
+                                                <span class="text-muted small">Select a location first</span>
+                                            </li>*@
+                                            <li ng-repeat="f in facilitiesForAdd">
+                                                <label for="chkAddFacility_{{f.CustomerFacilityID}}">
+                                                    <input id="chkAddFacility_{{f.CustomerFacilityID}}"
+                                                           type="checkbox"
+                                                           ng-model="f.selected"
+                                                           ng-change="onFacilityChangeAdd()" />
+                                                    {{ f.FacilityName }}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2"><span>Area</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3 scroller">
+                                        <ul class="navbar-nav form-control">
+                                            @*<li ng-if="areasForAdd.length == 0">
+                                                <span class="text-muted small">Select a location first</span>
+                                            </li>*@
+                                            <li ng-repeat="a in areasForAdd">
+                                                <label for="chkAddArea_{{a.AreaID}}">
+                                                    <input id="chkAddArea_{{a.AreaID}}"
+                                                           type="checkbox"
+                                                           ng-model="a.selected" />
+                                                    {{ a.AreaName }}
                                                 </label>
                                             </li>
                                         </ul>
@@ -148,63 +162,107 @@
                     </div>
                 </div>
 
+                <!-- ===================== EDIT CONTACT ===================== -->
                 <div class="card my-4" ng-show="EditContactShow">
                     <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="pt-4 pb-4">
-                            <h6 class="text-white text-capitalize ps-3 mt-2">Edit Contact</h6>
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mt-2">Edit Contact</h6>
+                                </div>
+                                <div class="col-6 text-end pe-4 d-flex align-items-center justify-content-end">
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-light mb-0"
+                                            ng-click="CancelEdit()">
+                                        <i class="material-icons text-sm me-1" style="vertical-align:middle;">arrow_back</i>
+                                        Cancel &amp; Add New
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
                         <form class="">
                             <input id="antiForgeryToken" ng-model="antiForgeryToken" type="hidden" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
                             <div class="row">
-                                <div class="col-sm-2">
-                                    <span>Contact Name *</span>
-                                </div>
+                                <div class="col-sm-2"><span>Contact Name *</span></div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
-                                        <input type="text" class="form-control" name="contactnameInEdit" id="contactnameInEdit" ng-model="contactnameInEdit" ng-value="contactnameInEdit">                                                                               
+                                        <input type="text" class="form-control" name="contactnameInEdit" id="contactnameInEdit" ng-model="contactnameInEdit">
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
-                                    <span>Contact Email(Username) *</span>
-                                </div>
+                                <div class="col-sm-2"><span>Contact Email(Username) *</span></div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
-                                        <input type="text" class="form-control" name="contactEmailInEdit" id="contactEmailInEdit" ng-model="contactEmailInEdit" ng-value="contactEmailInEdit">
+                                        <input type="text" class="form-control" name="contactEmailInEdit" id="contactEmailInEdit" ng-model="contactEmailInEdit">
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-2">
-                                    <span>Contact Phone</span>
-                                </div>
+                                <div class="col-sm-2"><span>Contact Phone</span></div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
-                                        <input type="text" class="form-control" name="contactPhoneInEdit" id="contactPhoneInEdit" ng-model="contactPhoneInEdit" ng-value="contactPhoneInEdit">
+                                        <input type="text" class="form-control" name="contactPhoneInEdit" id="contactPhoneInEdit" ng-model="contactPhoneInEdit">
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
-                                    <span>Password</span>
-                                </div>
+                                <div class="col-sm-2"><span>Password</span></div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
-                                        <input type="password" class="form-control" name="userPasswordInEdit" id="userPasswordInEdit" ng-model="userPasswordInEdit" ng-value="userPasswordInEdit">
+                                        <input type="password" class="form-control" name="userPasswordInEdit" id="userPasswordInEdit" ng-model="userPasswordInEdit">
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-2">
-                                    <span>Location ID<span class="error">*</span></span>
-                                </div>
+                                <div class="col-sm-2"><span>Location ID <span class="error">*</span></span></div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3 scroller">
                                         <ul class="navbar-nav form-control">
                                             <li ng-repeat="f in getCustomerLocationByCustomerId">
-                                                <label for="chkCustomerLocationEdit_{{f.CustomerLocationID}}">
-                                                    <input id="chkCustomerLocationEdit_{{f.CustomerLocationID}}" type="checkbox" ng-model="f.selected" />
-                                                    @*{{f.LocationName}}({{f.City}})*@
+                                                <label for="chkEditLocation_{{f.CustomerLocationID}}">
+                                                    <input id="chkEditLocation_{{f.CustomerLocationID}}"
+                                                           type="checkbox"
+                                                           ng-model="f.selected"
+                                                           ng-change="onLocationChangeEdit()" />
                                                     {{ f.LocationName }}{{ f.City ? ' (' + f.City + ')' : '' }}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2"><span>Facility</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3 scroller">
+                                        <ul class="navbar-nav form-control">
+                                            <li ng-if="facilitiesForEdit.length == 0">
+                                                <span class="text-muted small">Select a location first</span>
+                                            </li>
+                                            <li ng-repeat="f in facilitiesForEdit">
+                                                <label for="chkEditFacility_{{f.CustomerFacilityID}}">
+                                                    <input id="chkEditFacility_{{f.CustomerFacilityID}}"
+                                                           type="checkbox"
+                                                           ng-model="f.selected"
+                                                           ng-change="onFacilityChangeEdit()" />
+                                                    {{ f.FacilityName }}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2"><span>Area</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3 scroller">
+                                        <ul class="navbar-nav form-control">
+                                            <li ng-if="areasForEdit.length == 0">
+                                                <span class="text-muted small">Select a location first</span>
+                                            </li>
+                                            <li ng-repeat="a in areasForEdit">
+                                                <label for="chkEditArea_{{a.AreaID}}">
+                                                    <input id="chkEditArea_{{a.AreaID}}"
+                                                           type="checkbox"
+                                                           ng-model="a.selected" />
+                                                    {{ a.AreaName }}
                                                 </label>
                                             </li>
                                         </ul>
@@ -219,9 +277,9 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="text-center float-end">
-                                        <input type="hidden" class="form-control" name="useridEdit" id="useridEdit" ng-model="useridEdit" ng-value="useridEdit">
-                                        <input type="hidden" class="form-control" name="locationContactIdInEdit" id="locationContactIdInEdit" ng-model="locationContactIdInEdit" ng-value="locationContactIdInEdit">
-                                        <input type="hidden" class="form-control" name="customerid" id="customerid" ng-model="customerid" ng-value="customerid">
+                                        <input type="hidden" class="form-control" name="useridEdit" id="useridEdit" ng-model="useridEdit">
+                                        <input type="hidden" class="form-control" name="locationContactIdInEdit" id="locationContactIdInEdit" ng-model="locationContactIdInEdit">
+                                        <input type="hidden" class="form-control" name="customerid" id="customerid" ng-model="customerid">
                                         <button type="submit" ng-click="EditLocationContact(locationContactIdInEdit)" class="btn btn-md bg-gradient-info btn-lg w-100 mb-0">Update Contact</button>
                                     </div>
                                 </div>
@@ -231,6 +289,8 @@
                 </div>
 
                 <br />
+
+                
                 <div class="card my-4">
                     <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="pt-4 pb-4">
@@ -241,15 +301,16 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="card-body pb-2">
                         <div class="table-responsive p-0" ng-if="GetContactByLocationId">
-                            <table class="table align-items-center mb-0">
+                            <table class="table align-items-center mb-0" style="table-layout: fixed; width:100%;">
                                 <thead>
                                     <tr>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Contact Name</th>
-                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Email/Contact Phone</th>
-                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Location ID(City)</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Email / Phone</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:20%">Location ID(City)</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:20%">Facility</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:20%">Area</th>
                                         @*<th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Customer</th>*@
                                         <th class="text-secondary opacity-7"></th>
                                     </tr>
@@ -270,16 +331,20 @@
                                         <td>
                                             <p class="text-xs font-weight-bold mb-0">{{d.LinkedLocationNames}}</p>
                                         </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.LinkedFacilityNames || '-'}}</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.LinkedAreaNames || '-'}}</p>
+                                        </td>
                                         @*<td>
-                                            <p class="text-xs font-weight-bold mb-0">{{d.Customer}}</p>
-                                        </td>*@
+            <p class="text-xs font-weight-bold mb-0">{{d.Customer}}</p>
+        </td>*@
                                         <td class="align-middle">
-                                            <!-- Edit -->
-                                            <a href="javascript:void(0)" ng-click="EditContactClick(d.LocationContactId)">
+                                            <a href="javascript:void(0)" ng-click="EditContactClick(d.LocationContactId)" title="Edit">
                                                 <i class="material-icons text-sm">edit</i>
                                             </a>
-                                            <!-- Delete -->
-                                            <a href="javascript:void(0)" ng-click="DeleteContactClick(d.LocationContactId)">
+                                            <a href="javascript:void(0)" ng-click="DeleteContactClick(d.LocationContactId)" title="Delete">
                                                 <i class="material-icons text-sm">delete</i>
                                             </a>
                                         </td>
@@ -295,17 +360,22 @@
                                     <option>40</option>
                                     <option>50</option>
                                 </select> of {{GetContactByLocationIdcount}} Location Contact
-                                <pagination total-items="totalGetContactByLocationId" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
-                                            items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
+                                <pagination total-items="totalGetContactByLocationId"
+                                            ng-model="currentPage"
+                                            max-size="maxSize"
+                                            class="pagination"
+                                            rotate="false"
+                                            num-pages="numPages"
+                                            items-per-page="itemsPerPage"
+                                            previous-text="«"
+                                            next-text="»"></pagination>
                             </nav>
-
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
     @Html.Partial("_FooterLayout")
 </main>
-
-

@@ -120,7 +120,7 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
-                                    <span>Country</span>
+                                    <span>Country <span class="error">*</span></span>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
@@ -133,7 +133,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-2">
-                                    <span>Province</span>
+                                    <span>Province <span class="error">*</span></span>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
@@ -148,7 +148,7 @@
                                     }
                                 </div>
                                 <div class="col-sm-2">
-                                    <span>City</span>
+                                    <span>City <span class="error">*</span></span>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
@@ -191,8 +191,15 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
+                                    <span>Sales Representative</span>
                                 </div>
                                 <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="salesrepresentativeid" id="drpsalesrepresentativeid" class="form-control" ng-model="salesrepresentativeid" ng-init="salesrepresentativeid = '@Model.SalesRepresentativeId'">
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getAllSalesRep" value="{{d.EmployeeID}}">{{d.EmployeeName}}</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -261,7 +268,7 @@
                         </form>
                     </div>
                 </div>
-                <br />
+                @*<br />
                 <div class="card my-4">
                     <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="pt-4 pb-4">
@@ -307,11 +314,7 @@
                                             <a href="@Url.Action("AddCustomerArea", "Admin")?id={{d.CustomerLocationID}}" class="tooltip-new">
                                                 <i class="material-icons text-lg">location_city</i>
                                                 <span class="tooltiptext">Add Area</span>
-                                            </a>
-                                            @*<a href="@Url.Action("AddLocationContact", "Admin")?id={{d.CustomerLocationID}}" class="tooltip-new">
-            <i class="material-icons text-lg">contact_phone</i>
-            <span class="tooltiptext">Add Contact</span>
-        </a>*@
+                                            </a>              
                                             <a href="@Url.Action("EditCustLocation", "Admin")?id={{d.CustomerLocationID}}">
                                                 <i class="material-icons text-lg">edit</i>
                                             </a>
@@ -336,58 +339,7 @@
                             </nav>
                         </div>
                     </div>
-                </div>
-                @*<br />
-                    <div class="card my-4">
-                       <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
-                            <div class="pt-4 pb-4">
-                                <div class="row">
-                                    <div class="col-6 d-flex align-items-center">
-                                        <h6 class="text-white text-capitalize ps-3 mb-0">Manage Users</h6>
-                                    </div>
-                                    <div class="col-6 text-end">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>*@
-
-                @*<div class="card-body pb-2">
-                        <div class="table-responsive p-0" ng-if="getCustomerLocationByCustomerId">
-                            <table class="table align-items-center mb-0">
-                                <thead>
-                                    <tr>
-                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">User ID</th>
-                                        <th class="text-secondary opacity-7"></th>
-                                    </tr>
-                                </thead>
-                                <tbody ng-repeat="d in getCustomerLocationByCustomerId | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
-                                    <tr>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">{{d.LocationName}}</p>
-                                        </td>
-                                        <td class="align-middle">
-                                            <a href="@Url.Action("DeleteCustLocation", "Admin")?id={{d.CustomerLocationID}}">
-                                                <i class="material-icons text-lg">delete</i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <nav>
-                                Show <select ng-model="viewby" ng-change="setItemsPerPage(viewby)" style="height:25px">
-                                    <option>5</option>
-                                    <option>10</option>
-                                    <option>20</option>
-                                    <option>30</option>
-                                    <option>40</option>
-                                    <option>50</option>
-                                </select> of {{getCustomerLocationByCustomerIdcount}} Company Locations
-                                <pagination total-items="totalgetCustomerLocationByCustomerId" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
-                                            items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
-                            </nav>
-                        </div>
-                    </div>
-                        </div>*@
+                </div>*@               
             </div>
         </div>
     </div>

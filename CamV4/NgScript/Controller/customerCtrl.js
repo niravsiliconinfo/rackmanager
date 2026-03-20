@@ -102,6 +102,12 @@
             $scope.waiting = false;
         });
 
+        $http.get('/api/pageview/getAllSalesRep').then(function (response) {
+            $scope.getAllSalesRep = response.data;
+        }, function (response) {
+            $scope.waiting = false;
+        });
+
         $http.get('/api/pageview/getAllProvince').then(function (response) {
             $scope.getAllProvince = response.data;
             console.log('getAllProvince--', $scope.getAllProvince);
@@ -177,7 +183,7 @@
                     CustomerId: $scope.customer, CustomerName: $scope.customername, CustomerAddress: $scope.customeraddress, CityID: $scope.city, CountryID: $scope.country,
                     ProvinceID: $scope.province, Pincode: $scope.pin, CustomerNAVNo: $scope.customerNAVNo,
                     CustomerPhone: $scope.customerPhone, CustomerEmail: $scope.customerEmail, CustomerWebsite: $scope.customerWebsite, CustomerContactName: $scope.customercontactname,
-                    user: { UserName: $scope.userName, UserPassword: $scope.password }
+                    user: { UserName: $scope.userName, UserPassword: $scope.password }, SalesRepresentativeId: $scope.salesrepresentativeid
                 }
             }
             else {
@@ -186,11 +192,12 @@
                     CustomerId: $scope.customer, CustomerName: $scope.customername, CustomerAddress: $scope.customeraddress, CityID: $scope.city, CountryID: $scope.country,
                     ProvinceID: $scope.province, Pincode: $scope.pin, CustomerNAVNo: $scope.customerNAVNo, CustomerLogo: $scope.customerlogo.filename,
                     CustomerPhone: $scope.customerPhone, CustomerEmail: $scope.customerEmail, CustomerWebsite: $scope.customerWebsite, CustomerContactName: $scope.customercontactname,
-                    user: { UserName: $scope.userName, UserPassword: $scope.password }
+                    user: { UserName: $scope.userName, UserPassword: $scope.password }, SalesRepresentativeId: $scope.salesrepresentativeid
                 }
             }
 
             console.log('AddCustomer', config);
+            return;
             Upload.upload({
                 url: '/uploadImagetoLogoFolder',
                 data: {
@@ -210,6 +217,61 @@
                 });
             }, function (error) {
                 $scope.registermessage = error;
+            });
+        };
+
+        $scope.EditCustomer = function (id) {
+            var input = document.getElementById('getlogoid');
+            var file = input.files;
+            $scope.SelectedFiles = file;
+            console.log('123978-', $scope.SelectedFiles);
+            console.log('0000XXXXXXXXXXXXXXXXXx-', $scope.customercontactname);
+
+            if ($scope.customerlogo == undefined) {
+                console.log('2222-');
+                var config = {
+                    CustomerId: id, CustomerName: $scope.customername, CustomerAddress: $scope.customeraddress, CityID: $scope.city, CountryID: $scope.country,
+                    ProvinceID: $scope.province, Pincode: $scope.pin, CustomerNAVNo: $scope.customerNAVNo, user: { UserName: $scope.userName, UserPassword: $scope.password },
+                    CustomerPhone: $scope.customerPhone, CustomerEmail: $scope.customerEmail, CustomerWebsite: $scope.customerWebsite, CustomerContactName: $scope.customercontactname,
+                    SalesRepresentativeId: $scope.salesrepresentativeid
+                }
+            }
+            else {
+                console.log('3333-');
+                var config = {
+                    CustomerId: id, CustomerName: $scope.customername, CustomerAddress: $scope.customeraddress, CityID: $scope.city, CountryID: $scope.country,
+                    ProvinceID: $scope.province, Pincode: $scope.pin, CustomerNAVNo: $scope.customerNAVNo, CustomerLogo: $scope.customerlogo.filename,
+                    CustomerPhone: $scope.customerPhone, CustomerEmail: $scope.customerEmail, CustomerWebsite: $scope.customerWebsite, CustomerContactName: $scope.customercontactname,
+                    SalesRepresentativeId: $scope.salesrepresentativeid,
+                    user: { UserName: $scope.userName, UserPassword: $scope.password }
+                }
+            }
+
+            console.log('EditCustomer', config);
+
+            Upload.upload({
+                url: '/uploadImagetoLogoFolder',
+                data: {
+                    files: $scope.SelectedFiles,
+                    model: config
+                }
+            }).then(function (response) {
+                $timeout(function () {
+                    console.log('response.data edit customer--', response.data);
+                    if (response.data == "Ok") {
+                        console.log('ZZZZZZZZZZZZZZZZZ--');
+                        var url = '/Admin/ManageCustomer';
+                        window.location = url;
+                    }
+                    else {
+                        $scope.errorNot = response.data;
+                    }
+                });
+            }, function (response) {
+                if (response.status > 0) {
+                    var errorMsg = response.status + ': ' + response.data;
+                    alert(errorMsg);
+                }
             });
         };
 
@@ -268,59 +330,8 @@
                 alert(error);
             });
         }
-        $scope.EditCustomer = function (id) {
-            var input = document.getElementById('getlogoid');
-            var file = input.files;
-            $scope.SelectedFiles = file;
-            console.log('123978-', $scope.SelectedFiles);
-            console.log('0000XXXXXXXXXXXXXXXXXx-', $scope.customercontactname);
 
-            if ($scope.customerlogo == undefined) {
-                console.log('2222-');
-                var config = {
-                    CustomerId: id, CustomerName: $scope.customername, CustomerAddress: $scope.customeraddress, CityID: $scope.city, CountryID: $scope.country,
-                    ProvinceID: $scope.province, Pincode: $scope.pin, CustomerNAVNo: $scope.customerNAVNo, user: { UserName: $scope.userName, UserPassword: $scope.password },
-                    CustomerPhone: $scope.customerPhone, CustomerEmail: $scope.customerEmail, CustomerWebsite: $scope.customerWebsite, CustomerContactName: $scope.customercontactname
-                }
-            }
-            else {
-                console.log('3333-');
-                var config = {
-                    CustomerId: id, CustomerName: $scope.customername, CustomerAddress: $scope.customeraddress, CityID: $scope.city, CountryID: $scope.country,
-                    ProvinceID: $scope.province, Pincode: $scope.pin, CustomerNAVNo: $scope.customerNAVNo, CustomerLogo: $scope.customerlogo.filename,
-                    CustomerPhone: $scope.customerPhone, CustomerEmail: $scope.customerEmail, CustomerWebsite: $scope.customerWebsite, CustomerContactName: $scope.customercontactname,
-                    user: { UserName: $scope.userName, UserPassword: $scope.password }
-                }
-            }
-
-            console.log('EditCustomer', config);
-            Upload.upload({
-                url: '/uploadImagetoLogoFolder',
-                data: {
-                    files: $scope.SelectedFiles,
-                    model: config
-                }
-            }).then(function (response) {
-                $timeout(function () {
-                    console.log('response.data edit customer--', response.data);
-                    if (response.data == "Ok") {
-                        console.log('ZZZZZZZZZZZZZZZZZ--');
-                        var url = '/Admin/ManageCustomer';
-                        window.location = url;
-                    }
-                    else {
-                        $scope.errorNot = response.data;
-                    }
-                });
-            }, function (response) {
-                if (response.status > 0) {
-                    var errorMsg = response.status + ': ' + response.data;
-                    alert(errorMsg);
-                }
-            });
-        };
-
-        if (window.location.pathname == "/Admin/EditCustomer" || window.location.pathname == "/Customer/ManageContacts" || window.location.pathname == "/Employee/CustomerLocationDetails" || window.location.pathname == "/Admin/AddLocationContact") {
+        if (window.location.pathname == "/Admin/EditCustomer" || window.location.pathname == "/Customer/ManageContacts" || window.location.pathname == "/Employee/CustomerLocationDetails" || window.location.pathname == "/Admin/ManageLocationContact") {
             var para = window.location.search;
             para = para.replace('?id=', '');
             $http.get('/api/pageview/getCustomerLocationByCustomerId', {
@@ -334,7 +345,351 @@
             }, function (response) {
                 $scope.waiting = false;
             });
+
+            $http.get('/api/pageview/getCustomerFacilityByCustomerId', {
+                params: { id: para }
+            }).then(function (response) {
+                $scope.facilitiesForAdd = response.data;               
+            }, function (response) {
+                $scope.waiting = false;
+            });
+
+            $http.get('/api/pageview/getCustomerAreaByCustomerId', {
+                params: { id: para }
+            }).then(function (response) {
+                $scope.areasForAdd = response.data;
+            }, function (response) {
+                $scope.waiting = false;
+            });
+            
         }
+
+
+        // ============================================================
+        // ManageLocationContact Page
+        // ============================================================
+
+        if (window.location.pathname == "/Admin/ManageLocationContact" || window.location.pathname == "/Customer/ManageLocationContact") {
+
+            var custId = window.location.search.replace('?id=', '');
+            console.log(custId);
+            // ---- Init ----
+            $scope.AddContactShow = true;
+            $scope.EditContactShow = false;
+            $scope.facilitiesForAdd = [];
+            $scope.areasForAdd = [];
+            $scope.facilitiesForEdit = [];
+            $scope.areasForEdit = [];
+            $scope.allFacilities = [];
+            $scope.allAreas = [];
+
+            // ---- Load contact grid ----
+            var loadContactGrid = function () {
+                $http.get('/api/pageview/getLocationContactDetailsByCustomerId', {
+                    params: { CustomerId: custId }
+                }).then(function (response) {
+                    $scope.GetContactByLocationId = response.data;
+                    $scope.GetContactByLocationIdcount = $scope.GetContactByLocationId
+                        ? $scope.GetContactByLocationId.length : 0;
+                    $scope.totalGetContactByLocationId = $scope.GetContactByLocationIdcount;
+                }, function () { $scope.waiting = false; });
+            };
+            loadContactGrid();
+
+            // ---- Load location checklist ----
+            $http.get('/api/pageview/getCustomerLocationByCustomerId', {
+                params: { id: custId }
+            }).then(function (response) {
+                $scope.getCustomerLocationByCustomerId = response.data || [];
+            }, function () { $scope.waiting = false; });
+
+            // ---- Load all facilities for customer ----
+            $http.get('/api/pageview/getCustomerFacilityByCustomerId', {
+                params: { id: custId }
+            }).then(function (response) {
+                $scope.allFacilities = response.data || [];
+            }, function () { $scope.waiting = false; });
+
+            // ---- Load all areas for customer ----
+            $http.get('/api/pageview/getCustomerAreaByCustomerId', {
+                params: { id: custId }
+            }).then(function (response) {
+                $scope.allAreas = response.data || [];
+            }, function () { $scope.waiting = false; });
+
+            // ---- Checked ID helpers ----
+            $scope.GetCheckedLocationIds = function () {
+                var ids = [];
+                ($scope.getCustomerLocationByCustomerId || []).forEach(function (f) {
+                    if (f.selected) ids.push(f.CustomerLocationID);
+                });
+                $scope.checkedLocationIds = ids.join(',');
+            };
+
+            $scope.GetCheckedFacilityIds = function () {
+                var ids = [];
+                var source = $scope.EditContactShow ? $scope.facilitiesForEdit : $scope.facilitiesForAdd;
+                (source || []).forEach(function (f) {
+                    if (f.selected) ids.push(f.CustomerLocationID + '_' + f.CustomerFacilityID);
+                });
+                $scope.checkedFacilityIds = ids.join(',');
+            };
+
+            $scope.GetCheckedAreaIds = function () {
+                var ids = [];
+                var source = $scope.EditContactShow ? $scope.areasForEdit : $scope.areasForAdd;
+                (source || []).forEach(function (a) {
+                    if (a.selected) ids.push(a.CustomerLocationID + '_' + (a.CustomerFacilityID || 0) + '_' + a.AreaID);
+                });
+                $scope.checkedAreaIds = ids.join(',');
+            };
+
+            // ---- ADD form: location change ----
+            $scope.onLocationChangeAdd = function () {
+                var selectedLocIds = ($scope.getCustomerLocationByCustomerId || [])
+                    .filter(function (l) { return l.selected; })
+                    .map(function (l) { return l.CustomerLocationID; });
+
+                $scope.facilitiesForAdd = $scope.allFacilities.filter(function (f) {
+                    return selectedLocIds.indexOf(f.CustomerLocationID) !== -1;
+                });
+                $scope.facilitiesForAdd.forEach(function (f) { f.selected = false; });
+                $scope.areasForAdd = [];
+            };
+
+            // ---- ADD form: facility change ----
+            $scope.onFacilityChangeAdd = function () {
+                var selectedLocIds = ($scope.getCustomerLocationByCustomerId || [])
+                    .filter(function (l) { return l.selected; })
+                    .map(function (l) { return l.CustomerLocationID; });
+
+                var selectedFacIds = $scope.facilitiesForAdd
+                    .filter(function (f) { return f.selected; })
+                    .map(function (f) { return f.CustomerFacilityID; });
+
+                $scope.areasForAdd = $scope.allAreas.filter(function (a) {
+                    return selectedLocIds.indexOf(a.CustomerLocationID) !== -1
+                        && (a.CustomerFacilityID == 0 || a.CustomerFacilityID == null
+                            || selectedFacIds.indexOf(a.CustomerFacilityID) !== -1);
+                });
+                $scope.areasForAdd.forEach(function (a) { a.selected = false; });
+            };
+
+            // ---- EDIT form: location change ----
+            $scope.onLocationChangeEdit = function () {
+                var selectedLocIds = ($scope.getCustomerLocationByCustomerId || [])
+                    .filter(function (l) { return l.selected; })
+                    .map(function (l) { return l.CustomerLocationID; });
+
+                $scope.facilitiesForEdit = $scope.allFacilities.filter(function (f) {
+                    return selectedLocIds.indexOf(f.CustomerLocationID) !== -1;
+                });
+                $scope.facilitiesForEdit.forEach(function (f) {
+                    if (!f.hasOwnProperty('selected')) f.selected = false;
+                });
+
+                var selectedFacIds = $scope.facilitiesForEdit
+                    .filter(function (f) { return f.selected; })
+                    .map(function (f) { return f.CustomerFacilityID; });
+
+                $scope.areasForEdit = $scope.allAreas.filter(function (a) {
+                    return selectedLocIds.indexOf(a.CustomerLocationID) !== -1
+                        && (a.CustomerFacilityID == 0 || a.CustomerFacilityID == null
+                            || selectedFacIds.indexOf(a.CustomerFacilityID) !== -1);
+                });
+                $scope.areasForEdit.forEach(function (a) {
+                    if (!a.hasOwnProperty('selected')) a.selected = false;
+                });
+            };
+
+            // ---- EDIT form: facility change ----
+            $scope.onFacilityChangeEdit = function () {
+                var selectedLocIds = ($scope.getCustomerLocationByCustomerId || [])
+                    .filter(function (l) { return l.selected; })
+                    .map(function (l) { return l.CustomerLocationID; });
+
+                var selectedFacIds = $scope.facilitiesForEdit
+                    .filter(function (f) { return f.selected; })
+                    .map(function (f) { return f.CustomerFacilityID; });
+
+                $scope.areasForEdit = $scope.allAreas.filter(function (a) {
+                    return selectedLocIds.indexOf(a.CustomerLocationID) !== -1
+                        && (a.CustomerFacilityID == 0 || a.CustomerFacilityID == null
+                            || selectedFacIds.indexOf(a.CustomerFacilityID) !== -1);
+                });
+                $scope.areasForEdit.forEach(function (a) {
+                    if (!a.hasOwnProperty('selected')) a.selected = false;
+                });
+            };
+
+            // ---- Save new contact ----
+            $scope.SaveLocationContact = function (id) {
+                $scope.GetCheckedLocationIds();
+                $scope.GetCheckedFacilityIds();
+                $scope.GetCheckedAreaIds();
+
+                if (!$scope.contactName) {
+                    $scope.validationShow = "Enter Contact Name."; return;
+                }
+                if (!$scope.contactEmail) {
+                    $scope.validationShow = "Enter Contact Email(UserID)."; return;
+                }
+                if (!$scope.userPassword) {
+                    $scope.validationShow = "Enter Password."; return;
+                }
+                if (!$scope.checkedLocationIds || $scope.checkedLocationIds.length == 0) {
+                    $scope.validationShow = "Select at least one Location."; return;
+                }
+
+                var config = {
+                    CustomerId: id,
+                    ContactName: $scope.contactName,
+                    ContactEmail: $scope.contactEmail,
+                    ContactPhone: $scope.contactPhone,
+                    UserName: $scope.contactEmail,
+                    UserPassword: $scope.userPassword,
+                    LocationIds: $scope.checkedLocationIds,
+                    FacilityIds: $scope.checkedFacilityIds,
+                    AreaIds: $scope.checkedAreaIds
+                };
+
+                $http({
+                    url: '/api/pageview/saveLocationContactMultiple',
+                    method: 'POST',
+                    data: config,
+                    headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': $scope.antiForgeryToken }
+                }).then(function (response) {
+                    if (response.data == 'Ok') {
+                        $window.location.reload();
+                    } else {
+                        $scope.validationShow = response.data;
+                    }
+                }, function (error) { $scope.registermessage = error; });
+            };
+
+            // ---- Edit click — load contact into edit form ----
+            $scope.EditContactClick = function (Id) {
+                $scope.AddContactShow = false;
+                $scope.EditContactShow = true;
+
+                $http.get('/api/pageview/getLocationContactUserDetailsById', { params: { id: Id } })
+                    .then(function (response) {
+                        var d = response.data;
+
+                        $scope.contactnameInEdit = d.ContactName;
+                        $scope.locationContactIdInEdit = d.LocationContactId;
+                        $scope.contactEmailInEdit = d.ContactEmail;
+                        $scope.contactPhoneInEdit = d.ContactPhone;
+                        $scope.customerid = d.CustomerId;
+                        $scope.useridEdit = d.UserID;
+                        $scope.userPasswordInEdit = d.UserPassword;
+                        $scope.LinkedCustomerUserLocationIds = d.LinkedCustomerUserLocationIds;
+                        $scope.ContactIDInEditContact = d.LocationContactId;
+
+                        var linkedLocIds = d.LinkedCustomerLocationIDs || [];
+                        var linkedFacIds = d.LinkedFacilityIDs || [];
+                        var linkedAreaIds = d.LinkedAreaIDs || [];
+
+                        // Pre-check locations
+                        ($scope.getCustomerLocationByCustomerId || []).forEach(function (f) {
+                            f.selected = linkedLocIds.indexOf(f.CustomerLocationID) !== -1;
+                        });
+
+                        // Load and pre-check facilities
+                        $scope.facilitiesForEdit = $scope.allFacilities.filter(function (f) {
+                            return linkedLocIds.indexOf(f.CustomerLocationID) !== -1;
+                        });
+                        $scope.facilitiesForEdit.forEach(function (f) {
+                            f.selected = linkedFacIds.indexOf(f.CustomerFacilityID) !== -1;
+                        });
+
+                        // Load and pre-check areas
+                        $scope.areasForEdit = $scope.allAreas.filter(function (a) {
+                            return linkedLocIds.indexOf(a.CustomerLocationID) !== -1;
+                        });
+                        $scope.areasForEdit.forEach(function (a) {
+                            a.selected = linkedAreaIds.indexOf(a.AreaID) !== -1;
+                        });
+
+                    }, function () { $scope.waiting = false; });
+            };
+
+            // ---- Update existing contact ----
+            $scope.EditLocationContact = function (Id) {
+                $scope.GetCheckedLocationIds();
+                $scope.GetCheckedFacilityIds();
+                $scope.GetCheckedAreaIds();
+
+                if (!$scope.contactnameInEdit) {
+                    $scope.validationShow = "Enter Contact Name."; return;
+                }
+                if (!$scope.contactEmailInEdit) {
+                    $scope.validationShow = "Enter Contact Email(UserID)."; return;
+                }
+                if (!$scope.checkedLocationIds || $scope.checkedLocationIds.length == 0) {
+                    $scope.validationShow = "Select at least one Location."; return;
+                }
+
+                var config = {
+                    LocationContactId: Id,
+                    ContactName: $scope.contactnameInEdit,
+                    ContactEmail: $scope.contactEmailInEdit,
+                    ContactPhone: $scope.contactPhoneInEdit,
+                    LocationIds: $scope.checkedLocationIds,
+                    FacilityIds: $scope.checkedFacilityIds,
+                    AreaIds: $scope.checkedAreaIds,
+                    UserPassword: $scope.userPasswordInEdit,
+                    CustomerId: $scope.customerid,
+                    UserID: $scope.useridEdit,
+                    UserName: $scope.contactEmailInEdit
+                };
+
+                $http({
+                    url: '/api/pageview/editLocationContactMultiple',
+                    method: 'POST',
+                    data: config,
+                    headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': $scope.antiForgeryToken }
+                }).then(function (response) {
+                    if (response.data == 'Ok') {
+                        $window.location.reload();
+                    } else {
+                        $scope.validationShow = response.data;
+                    }
+                }, function (error) { $scope.registermessage = error; });
+            };
+
+            // ---- Delete contact ----
+            $scope.DeleteContactClick = function (LocationContactId) {
+                if (!confirm('Are you sure you want to delete this contact?')) return;
+                $http({
+                    url: '/api/pageview/removeLocationContact',
+                    method: 'POST',
+                    params: { id: LocationContactId },
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(function (response) {
+                    if (response.data != '0') {
+                        loadContactGrid();
+                    } else {
+                        alert('Failed to delete contact.');
+                    }
+                }, function () { alert('An error occurred.'); });
+            };
+
+            // ---- Cancel edit ----
+            $scope.CancelEdit = function () {
+                $scope.AddContactShow = true;
+                $scope.EditContactShow = false;
+                $scope.facilitiesForEdit = [];
+                $scope.areasForEdit = [];
+                $scope.facilitiesForAdd = [];
+                $scope.areasForAdd = [];
+                ($scope.getCustomerLocationByCustomerId || []).forEach(function (l) { l.selected = false; });
+                $scope.validationShow = '';
+            };
+        }
+        // ============================================================
+        // END ManageLocationContact Page
+        // ============================================================
 
         if (window.location.pathname == "/Customer/ManageContacts") {
             $http.get('/api/pageview/getCustomerLocationByUserId').then(function (response) {
@@ -691,7 +1046,7 @@
         };
 
 
-        
+
 
         if (window.location.pathname == "/Admin/AddCustomerArea" || window.location.pathname == "/Employee/CustomerAreaDetails") {
             var addCustURL = window.location.search;
@@ -742,64 +1097,136 @@
             $scope.checkedLocationIds = CustomerLocationID;
         }
 
-        $scope.AddContactShow = true;
-        $scope.EditContactShow = false;
-        $scope.SaveLocationContact = function (id) {
-            $scope.GetCheckedLocationIds();
-
-            if ($scope.contactName == null) {
-                $scope.validationShow = "Enter Contact Name."
-                return "Enter Contact Name.";
-            }
-            else if ($scope.contactEmail == null) {
-                $scope.validationShow = "Enter Contact Email(UserID)."
-                return "Enter Contact Email(UserID).";
-            }
-            else if ($scope.userPassword == null) {
-                $scope.validationShow = "Enter Password."
-                return "Enter Password.";
-            }
-            else if ($scope.checkedLocationIds.length == 0) {
-                $scope.validationShow = "Select atleast one Location.";
-                return "Select atleast one Location.";
-            }
-            else {
-
-                var config = {
-                    CustomerId: id, ContactName: $scope.contactName, ContactEmail: $scope.contactEmail, ContactPhone: $scope.contactPhone,
-                    UserName: $scope.contactEmail, UserPassword: $scope.userPassword, LocationIds: $scope.checkedLocationIds
+        $scope.GetCheckedFacilityIds = function () {
+            $scope.checkedFacilityIds = '';
+            var ids = [];
+            angular.forEach($scope.facilitiesForEdit, function (f) {
+                if (f.selected) {
+                    ids.push(f.CustomerLocationID + '_' + f.CustomerFacilityID);
                 }
-                console.log('SaveContact', config);
-                return $http({
-                    url: '/api/pageview/saveLocationContactMultiple',
-                    method: "POST",
-                    data: config,
-                    headers: {
-                        "Content-Type": "application/json",
-                        'RequestVerificationToken': $scope.antiForgeryToken
-                    }
-                }).then(function (response) {
-                    console.log('response SaveContact--', response);
-                    if (response.data != "Ok") {
-                        console.log('response.data SaveContact--', response.data);
-                        $scope.validationShow = response.data;
-                        $scope.ContactTableInAddContact = true;
-                    }
-                    else {
-                        $window.location.reload();
-                    }
-                }, function (error) {
-                    $scope.registermessage = error;
-                });
-            }
+            });
+            $scope.checkedFacilityIds = ids.join(',');
+        };
+
+        $scope.GetCheckedAreaIds = function () {
+            $scope.checkedAreaIds = '';
+            var ids = [];
+            angular.forEach($scope.areasForEdit, function (a) {
+                if (a.selected) {
+                    ids.push(a.CustomerLocationID + '_' + (a.CustomerFacilityID || 0) + '_' + a.AreaID);
+                }
+            });
+            $scope.checkedAreaIds = ids.join(',');
+        };
+
+        //$scope.AddContactShow = true;
+        //$scope.EditContactShow = false;
+
+        //$scope.SaveLocationContact = function (id) {
+        //    $scope.GetCheckedLocationIds();
+        //    $scope.GetCheckedFacilityIds();
+        //    $scope.GetCheckedAreaIds();
+
+        //    if ($scope.contactName == null) {
+        //        $scope.validationShow = "Enter Contact Name."
+        //        return "Enter Contact Name.";
+        //    }
+        //    else if ($scope.contactEmail == null) {
+        //        $scope.validationShow = "Enter Contact Email(UserID)."
+        //        return "Enter Contact Email(UserID).";
+        //    }
+        //    else if ($scope.userPassword == null) {
+        //        $scope.validationShow = "Enter Password."
+        //        return "Enter Password.";
+        //    }
+        //    else if ($scope.checkedLocationIds.length == 0) {
+        //        $scope.validationShow = "Select atleast one Location.";
+        //        return "Select atleast one Location.";
+        //    }
+        //    else {
+        //        var config = {
+        //            CustomerId: id,
+        //            ContactName: $scope.contactName,
+        //            ContactEmail: $scope.contactEmail,
+        //            ContactPhone: $scope.contactPhone,
+        //            UserName: $scope.contactEmail,
+        //            UserPassword: $scope.userPassword,
+        //            LocationIds: $scope.checkedLocationIds,
+        //            FacilityIds: $scope.checkedFacilityIds,
+        //            AreaIds: $scope.checkedAreaIds
+        //        }
+        //        console.log('SaveContact', config);
+        //        return $http({
+        //            url: '/api/pageview/saveLocationContactMultiple',
+        //            method: "POST",
+        //            data: config,
+        //            headers: {
+        //                "Content-Type": "application/json",
+        //                'RequestVerificationToken': $scope.antiForgeryToken
+        //            }
+        //        }).then(function (response) {
+        //            console.log('response SaveContact--', response);
+        //            if (response.data != "Ok") {
+        //                console.log('response.data SaveContact--', response.data);
+        //                $scope.validationShow = response.data;
+        //                $scope.ContactTableInAddContact = true;
+        //            }
+        //            else {
+        //                $window.location.reload();
+        //            }
+        //        }, function (error) {
+        //            $scope.registermessage = error;
+        //        });
+        //    }
+        //};
+
+        //$scope.EditContactClick = function (Id) {
+        //    $scope.AddContactShow = false;
+        //    $scope.EditContactShow = true;
+        //    $http.get('/api/pageview/getLocationContactUserDetailsById', { params: { id: Id } }).then(function (response) {
+        //        $scope.GetLocationContactDetailsById = response.data;
+        //        console.log('$scope.GetLocationContactDetailsById ----------------XXX', $scope.GetLocationContactDetailsById);
+        //        $scope.contactnameInEdit = $scope.GetLocationContactDetailsById.ContactName;
+        //        $scope.locationContactIdInEdit = $scope.GetLocationContactDetailsById.LocationContactId;
+        //        $scope.contactEmailInEdit = $scope.GetLocationContactDetailsById.ContactEmail;
+        //        $scope.contactPhoneInEdit = $scope.GetLocationContactDetailsById.ContactPhone;
+        //        $scope.customerid = $scope.GetLocationContactDetailsById.CustomerId;
+        //        $scope.useridEdit = $scope.GetLocationContactDetailsById.UserID;
+        //        $scope.userPasswordInEdit = $scope.GetLocationContactDetailsById.UserPassword;
+        //        $scope.LinkedCustomerUserLocationIds = $scope.GetLocationContactDetailsById.LinkedCustomerUserLocationIds;
+        //        var Userlocations = $scope.GetLocationContactDetailsById.LinkedCustomerLocationIDs || [];
+
+        //        console.log('$scope.LinkedCustomerUserLocationIds--------------', $scope.LinkedCustomerLocationIDs);
+        //        console.log('$scope.getCustomerLocationByCustomerId----------------Before---------------------', $scope.getCustomerLocationByCustomerId);
+        //        $scope.getCustomerLocationByCustomerId.forEach(function (f) {
+        //            console.log('selected location id :', f.CustomerLocationID);
+        //            f.selected = Userlocations.includes(f.CustomerLocationID);
+        //        });
+        //        console.log('$scope.getCustomerLocationByCustomerId-------------AFter-----------------', $scope.getCustomerLocationByCustomerId);
+        //        $scope.ContactIDInEditContact = $scope.GetLocationContactDetailsById.LocationContactId;
+        //        console.log('GetLocationContactDetailsById--', $scope.GetLocationContactDetailsById);
+        //    }, function (response) {
+        //        $scope.waiting = false;
+        //    });
+        //}
+
+        $scope.CancelEdit = function () {            
+            $scope.AddContactShow = true;
+            $scope.EditContactShow = false;
+            $scope.facilitiesForEdit = [];
+            $scope.areasForEdit = [];            
+            $scope.getCustomerLocationByCustomerId.forEach(function (l) { l.selected = false; });
+            $scope.facilitiesForAdd = [];
+            $scope.areasForAdd = [];
         };
 
         $scope.EditContactClick = function (Id) {
             $scope.AddContactShow = false;
             $scope.EditContactShow = true;
+
             $http.get('/api/pageview/getLocationContactUserDetailsById', { params: { id: Id } }).then(function (response) {
                 $scope.GetLocationContactDetailsById = response.data;
-                console.log('$scope.GetLocationContactDetailsById ----------------XXX', $scope.GetLocationContactDetailsById);
+
                 $scope.contactnameInEdit = $scope.GetLocationContactDetailsById.ContactName;
                 $scope.locationContactIdInEdit = $scope.GetLocationContactDetailsById.LocationContactId;
                 $scope.contactEmailInEdit = $scope.GetLocationContactDetailsById.ContactEmail;
@@ -808,21 +1235,37 @@
                 $scope.useridEdit = $scope.GetLocationContactDetailsById.UserID;
                 $scope.userPasswordInEdit = $scope.GetLocationContactDetailsById.UserPassword;
                 $scope.LinkedCustomerUserLocationIds = $scope.GetLocationContactDetailsById.LinkedCustomerUserLocationIds;
-                var Userlocations = $scope.GetLocationContactDetailsById.LinkedCustomerLocationIDs || [];
-
-                console.log('$scope.LinkedCustomerUserLocationIds--------------', $scope.LinkedCustomerLocationIDs);
-                console.log('$scope.getCustomerLocationByCustomerId----------------Before---------------------', $scope.getCustomerLocationByCustomerId);
-                $scope.getCustomerLocationByCustomerId.forEach(function (f) {
-                    console.log('selected location id :', f.CustomerLocationID);
-                    f.selected = Userlocations.includes(f.CustomerLocationID);
-                });
-                console.log('$scope.getCustomerLocationByCustomerId-------------AFter-----------------', $scope.getCustomerLocationByCustomerId);
                 $scope.ContactIDInEditContact = $scope.GetLocationContactDetailsById.LocationContactId;
-                console.log('GetLocationContactDetailsById--', $scope.GetLocationContactDetailsById);
+
+                var linkedLocIds = $scope.GetLocationContactDetailsById.LinkedCustomerLocationIDs || [];
+                var linkedFacIds = $scope.GetLocationContactDetailsById.LinkedFacilityIDs || [];
+                var linkedAreaIds = $scope.GetLocationContactDetailsById.LinkedAreaIDs || [];
+
+                // ---- Pre-check Locations ----
+                $scope.getCustomerLocationByCustomerId.forEach(function (f) {
+                    f.selected = linkedLocIds.includes(f.CustomerLocationID);
+                });
+
+                // ---- Load and pre-check Facilities for selected locations ----
+                $scope.facilitiesForEdit = $scope.allFacilities.filter(function (f) {
+                    return linkedLocIds.indexOf(f.CustomerLocationID) !== -1;
+                });
+                $scope.facilitiesForEdit.forEach(function (f) {
+                    f.selected = linkedFacIds.includes(f.CustomerFacilityID);
+                });
+
+                // ---- Load and pre-check Areas for selected locations ----
+                $scope.areasForEdit = $scope.allAreas.filter(function (a) {
+                    return linkedLocIds.indexOf(a.CustomerLocationID) !== -1;
+                });
+                $scope.areasForEdit.forEach(function (a) {
+                    a.selected = linkedAreaIds.includes(a.AreaID);
+                });
+
             }, function (response) {
                 $scope.waiting = false;
             });
-        }
+        };
 
         $scope.DeleteContactClick = function (LocationContactId) {
             if (confirm("Are you sure you want to delete this contact?")) {
@@ -834,7 +1277,8 @@
             console.log('edit Contact save--', Id);
 
             $scope.GetCheckedLocationIds();
-
+            $scope.GetCheckedFacilityIds();
+            $scope.GetCheckedAreaIds();
             if ($scope.contactnameInEdit == null) {
                 $scope.validationShow = "Enter Contact Name."
                 return "Enter Contact Name.";
@@ -847,10 +1291,19 @@
                 $scope.validationShow = "Select atleast one Location.";
                 return "Select atleast one Location.";
             }
-            else {
+            else {                
                 var config = {
-                    LocationContactId: Id, ContactName: $scope.contactnameInEdit, ContactEmail: $scope.contactEmailInEdit, ContactPhone: $scope.contactPhoneInEdit,
-                    LocationIds: $scope.checkedLocationIds, UserPassword: $scope.userPasswordInEdit, CustomerId: $scope.customerid, UserID: $scope.useridEdit, UserName: $scope.contactEmailInEdit
+                    LocationContactId: Id,
+                    ContactName: $scope.contactnameInEdit,
+                    ContactEmail: $scope.contactEmailInEdit,
+                    ContactPhone: $scope.contactPhoneInEdit,
+                    LocationIds: $scope.checkedLocationIds,
+                    FacilityIds: $scope.checkedFacilityIds,
+                    AreaIds: $scope.checkedAreaIds,
+                    UserPassword: $scope.userPasswordInEdit,
+                    CustomerId: $scope.customerid,
+                    UserID: $scope.useridEdit,
+                    UserName: $scope.contactEmailInEdit
                 }
                 console.log('EditLocationContact', config);
 
@@ -897,7 +1350,7 @@
                 }
             }).then(function (response) {
                 if (response.data != 0) {
-                    var url = '/Admin/AddLocationContact?id=' + response.data;
+                    var url = '/Admin/ManageLocationContact?id=' + response.data;
                     window.location = url;
                 }
             }, function (error) {
@@ -905,7 +1358,7 @@
             });
         }
 
-        if (window.location.pathname == "/Admin/AddLocationContact" || window.location.pathname == "/Customer/AddLocationContact") {
+        if (window.location.pathname == "/Admin/ManageLocationContact" || window.location.pathname == "/Customer/ManageLocationContact") {
             var custId = window.location.search;
             custId = custId.replace('?id=', '');
             console.log('url add customer contact-- getLocationContactDetailsByCustomerId ---', custId);

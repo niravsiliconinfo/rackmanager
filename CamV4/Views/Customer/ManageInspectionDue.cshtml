@@ -70,7 +70,7 @@
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Inspection Date</th>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Employee</th>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Inspection Type</th>
-                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Area and Location</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Area, Facility & Location</th>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Region</th>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Inspection status</th>
                                     </tr>
@@ -90,7 +90,14 @@
                                             <span class="text-secondary text-xs font-weight-bold">{{d.InspectionType}}</span>
                                         </td>
                                         <td>
-                                            <p class="text-xs font-weight-bold mb-0">{{d.CustomerArea}}<span ng-if="d.CustomerArea && d.CustomerLocation">,</span> {{d.CustomerLocation}}</p>
+                                            @*<p class="text-xs font-weight-bold mb-0">{{d.CustomerArea}}<span ng-if="d.CustomerArea && d.CustomerLocation">,</span> {{d.CustomerLocation}}</p>*@
+                                            <p class="text-xs font-weight-bold mb-0">
+                                                {{d.CustomerArea}}
+                                                <span ng-if="d.CustomerArea && (d.CustomerFacility || d.CustomerLocation)">,</span>
+                                                {{d.CustomerFacility}}
+                                                <span ng-if="d.CustomerFacility && d.CustomerLocation">,</span>
+                                                {{d.CustomerLocation}}
+                                            </p>
                                         </td>
                                         <td>
                                             <span class="text-secondary text-xs font-weight-bold">{{d.Region}}</span>

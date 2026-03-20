@@ -317,7 +317,7 @@
             });
         };
 
-        if (window.location.pathname == "/Admin/EditCustomer" || window.location.pathname == "/Customer/ManageContacts" || window.location.pathname == "/Employee/CustomerLocationDetails" || window.location.pathname == "/Admin/AddLocationContact") {
+        if (window.location.pathname == "/Admin/EditCustomer" || window.location.pathname == "/Customer/ManageContacts" || window.location.pathname == "/Employee/CustomerLocationDetails" || window.location.pathname == "/Admin/ManageLocationContact") {
             var para = window.location.search;
             para = para.replace('?id=', '');
             $http.get('/api/pageview/getCustomerLocationByCustomerId', {
@@ -787,7 +787,7 @@
                 }
             }).then(function (response) {
                 if (response.data != 0) {
-                    var url = '/Admin/AddLocationContact?id=' + response.data;
+                    var url = '/Admin/ManageLocationContact?id=' + response.data;
                     window.location = url;
                 }
             }, function (error) {
@@ -795,7 +795,7 @@
             });
         }
 
-        if (window.location.pathname == "/Admin/AddLocationContact" || window.location.pathname == "/Customer/AddLocationContact" || window.location.pathname == "/Customer/ManageAllUserContacts") {
+        if (window.location.pathname == "/Admin/ManageLocationContact" || window.location.pathname == "/Customer/ManageLocationContact" || window.location.pathname == "/Customer/ManageAllUserContacts") {
             var custId = window.location.search;
             custId = custId.replace('?id=', '');
             console.log('url add customer contact--', custId);

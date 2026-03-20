@@ -29,6 +29,7 @@ namespace CamV4.Models
         public string CustomerEmail { get; set; }
         public string CustomerWebsite { get; set; }
         public Nullable<long> UserID { get; set; }
+        public Nullable<long> SalesRepresentativeId { get; set; }
         public Nullable<bool> IsActive { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }

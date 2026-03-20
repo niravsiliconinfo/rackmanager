@@ -2,7 +2,7 @@
     const table = $('#inspectionTable').DataTable({
         processing: true,
         serverSide: true,
-        pageLength: 50,        
+        pageLength: 100,        
         ajax: {
             url: '/Admin/GetInspectionsForDataTable',
             type: 'POST'
@@ -40,8 +40,16 @@
             },
             {
                 data: null,
+                //render: function (data) {
+                //    const combined = `${data.CustomerArea || ''}${data.CustomerArea && data.CustomerLocation ? ', ' : ''}${data.CustomerLocation || ''}`;
+                //    return `<span class="text-secondary text-xs font-weight-bold">${combined}</span>`;
+                //}
                 render: function (data) {
-                    const combined = `${data.CustomerArea || ''}${data.CustomerArea && data.CustomerLocation ? ', ' : ''}${data.CustomerLocation || ''}`;
+                    // Collect the fields in order
+                    const fields = [data.CustomerArea, data.CustomerFacility, data.CustomerLocation];
+                    // Filter out empty/null/undefined values and join with comma
+                    const combined = fields.filter(f => f && f.trim() !== '').join(', ');
+
                     return `<span class="text-secondary text-xs font-weight-bold">${combined}</span>`;
                 }
             },
@@ -78,11 +86,28 @@
                     return `<a href="/Admin/ToPdfV2?id=${id}"><i class="material-icons text-dark">download</i></a>`;
                 }
             },
+            //{
+            //    data: 'InspectionId',
+            //    orderable: false,
+            //    render: function (id) {
+            //        return `<a href="/Admin/DeleteInspectionDue?id=${id}"><i class="material-icons text-danger">delete</i></a>`;
+            //    }
+            //}
             {
                 data: 'InspectionId',
                 orderable: false,
                 render: function (id) {
-                    return `<a href="/Admin/DeleteInspectionDue?id=${id}"><i class="material-icons text-danger">delete</i></a>`;
+                    if (userType === "1") {
+                        return `<a href="/Admin/DeleteInspectionDue?id=${id}" 
+                        onclick="event.stopPropagation();">
+                        <i class="material-icons text-danger">delete</i>
+                    </a>`;
+                    }
+                    else
+                    {
+                        return '';
+                    }
+                    
                 }
             }
         ]

@@ -1,0 +1,317 @@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@functions{
+    public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    }
+}
+<script src="~/NgScript/Controller/internalInspectionCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg"
+      ng-controller="internalInspectionCtrl">
+
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageCustomer", "Admin")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("adminInternalInspectionListing", "Admin")">Internal Inspections</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">View Inspection</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center"></div>
+                <ul class="navbar-nav justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4"
+         ng-init="inspectionId='@Request.QueryString["id"]'">
+        <input type="hidden" ng-model="antiForgeryToken" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+
+        <div ng-if="!inspection" class="text-center py-5">
+            <p class="text-sm text-muted">Loading inspection details...</p>
+        </div>
+
+        <div ng-if="inspection">
+
+            <!-- ===================== HEADER CARD ===================== -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card my-4">
+                        <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="pt-4 pb-4">
+                                <div class="row">
+                                    <div class="col-6 d-flex align-items-center">
+                                        <h6 class="text-white text-capitalize ps-3 mt-2">
+                                            Internal Inspection Report — {{inspection.InspectionNumber}}
+                                        </h6>
+                                    </div>
+                                    <div class="col-6 text-end pe-4 d-flex align-items-center justify-content-end">
+                                        <span class="badge bg-gradient-info me-2"    ng-if="inspection.Status == 'Draft'">Draft</span>
+                                        <span class="badge bg-gradient-primary me-2" ng-if="inspection.Status == 'Submitted'">Submitted</span>
+                                        <span class="badge bg-gradient-warning me-2" ng-if="inspection.Status == 'Reviewed'">Reviewed</span>
+                                        <span class="badge bg-gradient-success me-2" ng-if="inspection.Status == 'Closed'">Closed</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+
+                            <!-- Inspection Information -->
+                            <div class="table-responsive">
+                                <table class="table table-bordered mb-4">
+                                    <thead>
+                                        <tr style="background-color: #fbe9dc;">
+                                            <th colspan="4" class="text-danger text-sm">Inspection Information</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold" style="width:20%">Business Name</td>
+                                            <td class="text-sm" colspan="3">{{inspection.CustomerName}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold">Inspection Address</td>
+                                            <td class="text-sm" colspan="3">{{inspection.CustomerLocationAddress}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold">Location</td>
+                                            <td class="text-sm">{{inspection.CustomerLocationName}}</td>
+                                            <td class="text-sm font-weight-bold">Facility</td>
+                                            <td class="text-sm">{{inspection.CustomerFacilityName || '-'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold">Area</td>
+                                            <td class="text-sm" colspan="3">{{inspection.AreaName || '-'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold">Type of Rack(s)</td>
+                                            <td class="text-sm" colspan="3">{{inspection.TypeOfRack}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold">Inspection Number</td>
+                                            <td class="text-sm">{{inspection.InspectionNumber}}</td>
+                                            <td class="text-sm font-weight-bold">Inspection Date</td>
+                                            <td class="text-sm">{{inspection.InspectionDateFormatted}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold">Created Date</td>
+                                            <td class="text-sm">{{inspection.CreatedDate | date:'mediumDate'}}</td>
+                                            <td class="text-sm font-weight-bold">Created By</td>
+                                            <td class="text-sm">{{inspection.CreatedBy}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <!-- Location Details -->
+                                <table class="table table-bordered mb-4">
+                                    <thead>
+                                        <tr style="background-color: #e8f0fb;">
+                                            <th colspan="4" class="text-primary text-sm">Location Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold" style="width:20%">Area / Zone</td>
+                                            <td class="text-sm">{{inspection.Area || '-'}}</td>
+                                            <td class="text-sm font-weight-bold" style="width:20%">Row</td>
+                                            <td class="text-sm">{{inspection.Row || '-'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold">Aisle</td>
+                                            <td class="text-sm">{{inspection.Aisle || '-'}}</td>
+                                            <td class="text-sm font-weight-bold">Bay</td>
+                                            <td class="text-sm">{{inspection.Bay || '-'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold">Level(s)</td>
+                                            <td class="text-sm">{{inspection.LevelsDisplay || '-'}}</td>
+                                            <td class="text-sm font-weight-bold">Beam Location</td>
+                                            <td class="text-sm">{{inspection.BeamLocation || '-'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold">Frame Side</td>
+                                            <td class="text-sm" colspan="3">{{inspection.FrameSide || '-'}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <!-- Reported By + Summary -->
+                                <table class="table table-bordered mb-4">
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold" style="width:20%">Reported By</td>
+                                            <td class="text-sm">{{inspection.ReportedBy || '-'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold">Inspection Summary</td>
+                                            <td class="text-sm" style="white-space: pre-wrap;">{{inspection.InspectionSummary || '-'}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Photos -->
+                            <div ng-if="inspection.Photos && inspection.Photos.length > 0" class="mb-4">
+                                <h6 class="text-sm font-weight-bold mb-3">Inspection Photos</h6>
+                                <div class="row">
+                                    <div class="col-sm-2 mb-3" ng-repeat="p in inspection.Photos">
+                                        <a href="{{p.PhotoFullUrl}}" target="_blank">
+                                            <img ng-src="{{p.PhotoThumbFullUrl}}" alt="Inspection Photo"
+                                                 class="img-fluid rounded shadow-sm"
+                                                 style="width:100%; height:120px; object-fit:cover;" />
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================== DEFICIENCIES ===================== -->
+            <div class="row" ng-if="inspection.Deficiencies && inspection.Deficiencies.length > 0">
+                <div class="col-12">
+                    <div class="card my-4">
+                        <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="pt-4 pb-4">
+                                <h6 class="text-white text-capitalize ps-3 mt-2">
+                                    Deficiencies ({{inspection.DeficiencyCount}})
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-sm">#</th>
+                                            <th class="text-sm">Description</th>
+                                            <th class="text-sm">Severity</th>
+                                            <th class="text-sm">Recommended Action</th>
+                                            <th class="text-sm">Engineer Review</th>
+                                            <th class="text-sm">Cost</th>
+                                            <th class="text-sm">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="d in inspection.Deficiencies">
+                                            <td class="text-sm">{{$index + 1}}</td>
+                                            <td class="text-sm">{{d.DeficiencyDescription}}</td>
+                                            <td class="text-sm">
+                                                <span class="badge bg-gradient-success" ng-if="d.Severity == 'Low'">Low</span>
+                                                <span class="badge bg-gradient-warning" ng-if="d.Severity == 'Medium'">Medium</span>
+                                                <span class="badge bg-gradient-danger"  ng-if="d.Severity == 'High'">High</span>
+                                                <span class="badge bg-gradient-dark"    ng-if="d.Severity == 'Critical'">Critical</span>
+                                                <span ng-if="!d.Severity">-</span>
+                                            </td>
+                                            <td class="text-sm">{{d.RecommendedAction || '-'}}</td>
+                                            <td class="text-sm text-center">
+                                                <i class="material-icons text-sm text-success" ng-if="d.IsEngineerReviewRequested">check_circle</i>
+                                                <i class="material-icons text-sm text-secondary" ng-if="!d.IsEngineerReviewRequested">cancel</i>
+                                            </td>
+                                            <td class="text-sm">
+                                                <span ng-if="d.IsEngineerReviewRequested">${{d.EngineerReviewCost | number:2}}</span>
+                                                <span ng-if="!d.IsEngineerReviewRequested">-</span>
+                                            </td>
+                                            <td class="text-sm">
+                                                <span class="badge bg-gradient-warning" ng-if="d.Status == 'Open'">Open</span>
+                                                <span class="badge bg-gradient-info"    ng-if="d.Status == 'In Progress'">In Progress</span>
+                                                <span class="badge bg-gradient-success" ng-if="d.Status == 'Resolved'">Resolved</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot ng-if="inspection.EngineerReviewCount > 0">
+                                        <tr>
+                                            <td colspan="5" class="text-sm text-end font-weight-bold">
+                                                Total Engineer Review Cost ({{inspection.EngineerReviewCount}} deficiencies):
+                                            </td>
+                                            <td class="text-sm font-weight-bold" colspan="2">
+                                                ${{inspection.EngineerReviewTotalCost | number:2}}
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================== ADMIN STATUS UPDATE ===================== -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card my-4">
+                        <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="pt-4 pb-4">
+                                <h6 class="text-white text-capitalize ps-3 mt-2">Update Status</h6>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-2"><span>Change Status To</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select class="form-control" ng-model="newStatus">
+                                            <option value="">-- Select --</option>
+                                            <option value="Draft">Draft</option>
+                                            <option value="Submitted">Submitted</option>
+                                            <option value="Reviewed">Reviewed</option>
+                                            <option value="Closed">Closed</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 d-flex align-items-center">
+                                    <button type="button" class="btn bg-gradient-info btn-lg mb-0"
+                                            ng-click="UpdateStatus()"
+                                            ng-disabled="!newStatus || updatingStatus">
+                                        <span ng-if="!updatingStatus">Update Status</span>
+                                        <span ng-if="updatingStatus">Updating...</span>
+                                    </button>
+                                </div>
+                                <div class="col-sm-4 d-flex align-items-center">
+                                    <span class="text-success text-sm" ng-show="statusSuccess">{{statusSuccess}}</span>
+                                    <span class="text-danger text-sm" ng-show="statusError">{{statusError}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================== ACTIONS ===================== -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <a href="@Url.Action("adminInternalInspectionListing", "Admin")"
+                       class="btn bg-gradient-secondary btn-lg mt-2 mb-0">
+                        <i class="material-icons text-sm me-1" style="vertical-align:middle;">arrow_back</i>
+                        Back to List
+                    </a>
+                    <button type="button" class="btn bg-gradient-danger btn-lg mt-2 mb-0 ms-2"
+                            ng-click="DeleteInspection(inspection.InternalInspectionID)"
+                            ng-if="inspection.Status == 'Draft'">
+                        <i class="material-icons text-sm me-1" style="vertical-align:middle;">delete</i>
+                        Delete Inspection
+                    </button>
+                </div>
+            </div>
+
+        </div><!-- end ng-if inspection -->
+
+        @Html.Partial("_FooterLayout")
+    </div>
+</main>

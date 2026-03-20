@@ -5,12 +5,14 @@
 <script src="~/Scripts/ui-bootstrap-tpls-0.11.0.js"></script>
 @*<script src="~/Scripts/pdfmake/pdfmake.min.js"></script>*@
 @*<script src="~/Scripts/pdfmake/vfs_fonts.js"></script>*@
-<script src="~/Scripts/html2canvas.min.js"></script>
-<script src="~/NgScript/Controller/inspectionlistingCtrlDT.js"></script>
-
 @{
     var userType = Session["LoggedInUserType"].ToString();
 }
+<script>
+    var userType = '@userType';
+</script>
+<script src="~/Scripts/html2canvas.min.js"></script>
+<script src="~/NgScript/Controller/inspectionlistingCtrlDT.js"></script>
 <main class="main-content2 position-relative max-height-vh-100 h-100">
     <input type="hidden" name="GridHtml" id="GridHtml" />
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
@@ -67,7 +69,14 @@
                                     <h6 class="text-white text-capitalize ps-3 mb-0">Inspections</h6>
                                 </div>
                                 <div class="col-6 text-end">
-                                    <a class="btn bg-gradient-dark mb-0 mx-3" href="@Url.Action("AddInspectionDue", "Admin")"><i class="material-icons text-sm">add</i>&nbsp;&nbsp;Add New Inspection Due</a>
+                                    @if (userType == "1")
+                                    {
+                                        <a class="btn bg-gradient-dark mb-0 mx-3" href="@Url.Action("AddInspectionDue", "Admin")"><i class="material-icons text-sm">add</i>&nbsp;&nbsp;Add New Inspection Due</a>
+                                    }
+                                    else
+                                    {
+                                        @*<a class="btn bg-gradient-dark mb-0 mx-3" href="@Url.Action("AddInspectionDue", "Admin")"><i class="material-icons text-sm">add</i>&nbsp;&nbsp;Add New Inspection Due</a>*@
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -81,7 +90,7 @@
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Date</th>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Company</th>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Employee</th>
-                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Area and Location</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Area, Facility & Location</th>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Inspection status</th>
                                         <th class="text-secondary opacity-7"></th>
                                         <th class="text-secondary opacity-7"></th>

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -25,9 +26,35 @@ namespace CamV4.Controllers
         [HttpPost]
         public async Task<UserEmployeeViewModel> MobileLogin(LoginViewModel model)
         {
-            var user = DatabaseHelper.mobileLogin(model);
+            var user = DatabaseHelper.mobilelogin(model);
             return user;
         }
+
+        //var details = DatabaseHelper.getAllCustomers();
+        //return details;
+
+        //[System.Web.Http.Authorize]
+        //[Route("getAllCustomers")]
+        //[HttpGet]
+        //public async Task<IHttpActionResult> GetAllCustomer()
+        //{
+        //    //var identity = (ClaimsIdentity)User.Identity;
+
+        //    //var userId = identity
+        //    //    .FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        //    //if (userId == null)
+        //    //    return Unauthorized();
+
+        //    //var details = await Task.Run(() =>
+        //    //    DatabaseHelper.getAllCustomers());
+
+        //    var details = DatabaseHelper.getAllCustomers();
+        //    return details;
+
+        //    //return Ok(details);
+        //}
+
         [Route("mobileSignup")]
         [HttpPost]
         public async Task<string> MobileSignup(UserEmployeeViewModel model)
@@ -58,6 +85,14 @@ namespace CamV4.Controllers
         {
             List<EmployeeViewModel> details = DatabaseHelper.GetAllStampingEmployee();
             return details;
+        }
+
+        [Route("getAllSalesRep")]
+        [HttpGet]
+        public async Task<List<EmployeeSalesViewModel>> getAllSalesRep()
+        {
+            List<EmployeeSalesViewModel> lstEmployeeEngineer = DatabaseHelper.GetAllSalesRep();
+            return lstEmployeeEngineer;
         }
 
         [Route("getAllSalesPerson")]
@@ -281,11 +316,27 @@ namespace CamV4.Controllers
             return details;
         }
 
-        [Route("getLocationbyByCustomer")]
+        [Route("getLocationByCustomer")]
         [HttpGet]
-        public async Task<List<CustomerLocation>> GetLocationbyByCustomer()
+        public async Task<List<CustomerLocation>> getLocationByCustomer()
         {
-            var details = DatabaseHelper.GetLocationbyByCustomer();
+            var details = DatabaseHelper.GetLocationByCustomer();
+            return details;
+        }
+
+        [Route("getFacilityByCustomer")]
+        [HttpGet]
+        public async Task<List<CustomerFacility>> GetFacilityByCustomer()
+        {
+            var details = DatabaseHelper.GetFacilityByCustomer();
+            return details;
+        }
+
+        [Route("getAreaByCustomer")]
+        [HttpGet]
+        public async Task<List<CustomerArea>> GetAreaByCustomer()
+        {
+            var details = DatabaseHelper.GetAreaByCustomer();
             return details;
         }
 
@@ -457,13 +508,108 @@ namespace CamV4.Controllers
             return details;
         }
 
+
+        #region "For Customer user with location facility and area"
+
+        // ---- 1. Load contact grid ----
+        // JS: /api/pageview/getLocationContactDetailsByCustomerId?CustomerId=123
+        [Route("getLocationContactDetailsByCustomerId")]
+        [HttpGet]
+        public List<CustomerLocationContactViewModel> GetLocationContactDetailsByCustomerId(long CustomerId)
+        {
+            return DatabaseHelper.GetLocationContactDetailsByCustomerId(CustomerId);
+        }
+
+        // ---- 2. Load single contact for edit ----
+        // JS: /api/pageview/getLocationContactUserDetailsById?id=456
+        [Route("getLocationContactUserDetailsById")]
+        [HttpGet]
+        public CustomerLocationContactViewModel GetLocationContactUserDetailsById(long id)
+        {
+            return DatabaseHelper.getLocationContactUserDetailsById(id);
+        }
+
+        // ---- 3. Save new contact (Add form) ----
+        // JS: POST /api/pageview/saveLocationContactMultiple
+        [Route("saveLocationContactMultiple")]
+        [HttpPost]
+        public async Task<string> SaveLocationContactMultiple(CustomerLocationContactViewModel model)
+        {
+            return DatabaseHelper.saveLocationContactMultiple(model);
+        }
+
+        // ---- 4. Update existing contact (Edit form) ----
+        // JS: POST /api/pageview/editLocationContactMultiple
+        [Route("editLocationContactMultiple")]
+        [HttpPost]
+        public async Task<string> EditLocationContactMultiple(CustomerLocationContactViewModel model)
+        {
+            return DatabaseHelper.editLocationContactMultiple(model);
+        }
+
+        // ---- 5. Soft delete contact ----
+        // JS: POST /api/pageview/removeLocationContact?id=456
+        [Route("removeLocationContact")]
+        [HttpPost]
+        public string RemoveLocationContact(long id)
+        {
+            return DatabaseHelper.removeLocationContact(id);
+        }
+
+        // ---- 6. Load location checklist for Add/Edit forms ----
+        // JS: /api/pageview/getCustomerLocationByCustomerId?id=123
+        // Already exists — confirm it returns LocationName, CustomerLocationID, City fields
         [Route("getCustomerLocationByCustomerId")]
         [HttpGet]
-        public async Task<List<CustomerLocationViewModel>> GetCustomerLocationByCustomerId(int id)
+        public List<CustomerLocationViewModel> GetCustomerLocationByCustomerId(long id)
         {
-            var details = DatabaseHelper.getCustomerLocationByCustomerId(id);
-            return details;
+            return DatabaseHelper.getCustomerLocationByCustomerId(id);
         }
+
+        // ---- 7. Load facility checklist for Add/Edit forms ----
+        // JS: /api/pageview/getCustomerFacilityByCustomerId?id=123
+        [Route("getCustomerFacilityByCustomerId")]
+        [HttpGet]
+        public List<CustomerFacilityViewModel> GetCustomerFacilityByCustomerId(long id)
+        {
+            return DatabaseHelper.getCustomerFacilityByCustomerId(id);
+        }
+
+        // ---- 8. Load area checklist for Add/Edit forms ----
+        // JS: /api/pageview/getCustomerAreaByCustomerId?id=123
+        [Route("getCustomerAreaByCustomerId")]
+        [HttpGet]
+        public List<CustomerAreaViewModel> GetCustomerAreaByCustomerId(long id)
+        {
+            return DatabaseHelper.getCustomerAreaByCustomerId(id);
+        }
+
+        #endregion
+
+        //[Route("getCustomerLocationByCustomerId")]
+        //[HttpGet]
+        //public async Task<List<CustomerLocationViewModel>> GetCustomerLocationByCustomerId(int id)
+        //{
+        //    var details = DatabaseHelper.getCustomerLocationByCustomerId(id);
+        //    return details;
+        //}
+
+        //[Route("getCustomerFacilityByCustomerId")]
+        //[HttpGet]
+        //public async Task<List<CustomerFacilityViewModel>> GetCustomerFacilityByCustomerId(int id)
+        //{
+        //    var details = DatabaseHelper.getCustomerFacilityByCustomerId(id);
+        //    return details;
+        //}
+
+        //[Route("getCustomerAreaByCustomerId")]
+        //[HttpGet]
+        //public async Task<List<CustomerAreaViewModel>> GetCustomerAreaByCustomerId(int id)
+        //{
+        //    var details = DatabaseHelper.getCustomerAreaByCustomerId(id);
+        //    return details;
+        //}
+
 
         [Route("getCustomerLocationByCustomerIdCustomer")]
         [HttpGet]
@@ -571,13 +717,13 @@ namespace CamV4.Controllers
         }
 
 
-        [Route("getLocationContactUserDetailsById")]
-        [HttpGet]
-        public async Task<CustomerLocationContactViewModel> GetLocationContactUserDetailsById(long id)
-        {
-            var details = DatabaseHelper.getLocationContactUserDetailsById(id);
-            return details;
-        }
+        //[Route("getLocationContactUserDetailsById")]
+        //[HttpGet]
+        //public async Task<CustomerLocationContactViewModel> GetLocationContactUserDetailsById(long id)
+        //{
+        //    var details = DatabaseHelper.getLocationContactUserDetailsById(id);
+        //    return details;
+        //}
 
 
         [Route("getLocationContactDetailsByUserId")]
@@ -597,14 +743,14 @@ namespace CamV4.Controllers
             return customerlocationcontactlist;
         }
 
-        [Route("getLocationContactDetailsByCustomerId")]
-        [HttpGet]
-        public List<CustomerLocationContactViewModel> GetLocationContactDetailsByCustomerId(string CustomerId)
-        {
-            var cLId = Convert.ToInt64(CustomerId);
-            List<CustomerLocationContactViewModel> customerlocationcontactlist = DatabaseHelper.GetLocationContactDetailsByCustomerId(cLId);
-            return customerlocationcontactlist;
-        }
+        //[Route("getLocationContactDetailsByCustomerId")]
+        //[HttpGet]
+        //public List<CustomerLocationContactViewModel> GetLocationContactDetailsByCustomerId(string CustomerId)
+        //{
+        //    var cLId = Convert.ToInt64(CustomerId);
+        //    List<CustomerLocationContactViewModel> customerlocationcontactlist = DatabaseHelper.GetLocationContactDetailsByCustomerId(cLId);
+        //    return customerlocationcontactlist;
+        //}
 
         [Route("getLocationContactDetailsByLocationIdCustomer")]
         [HttpGet]
@@ -638,21 +784,21 @@ namespace CamV4.Controllers
             return details;
         }
 
-        [Route("saveLocationContactMultiple")]
-        [HttpPost]
-        public async Task<string> SaveLocationContactMultiple(CustomerLocationContactViewModel model)
-        {
-            var details = DatabaseHelper.saveLocationContactMultiple(model);
-            return details;
-        }
+        //[Route("saveLocationContactMultiple")]
+        //[HttpPost]
+        //public async Task<string> SaveLocationContactMultiple(CustomerLocationContactViewModel model)
+        //{
+        //    var details = DatabaseHelper.saveLocationContactMultiple(model);
+        //    return details;
+        //}
 
-        [Route("editLocationContactMultiple")]
-        [HttpPost]
-        public async Task<string> EditLocationContactMultiple(CustomerLocationContactViewModel model)
-        {
-            var details = DatabaseHelper.editLocationContactMultiple(model);
-            return details;
-        }
+        //[Route("editLocationContactMultiple")]
+        //[HttpPost]
+        //public async Task<string> EditLocationContactMultiple(CustomerLocationContactViewModel model)
+        //{
+        //    var details = DatabaseHelper.editLocationContactMultiple(model);
+        //    return details;
+        //}
 
         [Route("editLocationContact")]
         [HttpPost]
@@ -662,13 +808,13 @@ namespace CamV4.Controllers
             return details;
         }
 
-        [Route("removeLocationContact")]
-        [HttpPost]
-        public async Task<long> RemoveLocationContact(int id)
-        {
-            var details = DatabaseHelper.removeLocationContact(id);
-            return details;
-        }
+        //[Route("removeLocationContact")]
+        //[HttpPost]
+        //public async Task<string> RemoveLocationContact(int id)
+        //{
+        //    var details = DatabaseHelper.removeLocationContact(id);
+        //    return details;
+        //}
 
         [Route("getFacilityDetailsByLocationId")]
         [HttpGet]
@@ -3426,6 +3572,155 @@ namespace CamV4.Controllers
             var client = new StreamWriter(stream);
             clients.Add(client);
         }
+
+        // ============================================================
+        // PageViewController - Internal Inspection Module
+        // Endpoints only — no business logic
+        // ============================================================
+
+        // ============================================================
+        // PageViewController - Internal Inspection Module
+        // Endpoints only — no business logic
+        // ============================================================
+
+        #region "Internal Inspection"
+
+        // ---- 1. Get all inspections for a customer (Customer listing page) ----
+        // JS: GET /api/pageview/getInternalInspectionsByCustomerId?customerId=123
+        [Route("getInternalInspectionsByCustomerId")]
+        [HttpGet]
+        public IHttpActionResult GetInternalInspectionsByCustomerId(long customerId)
+        {
+            try
+            {
+                var result = DatabaseHelper.GetInternalInspectionsByCustomerId(customerId);
+                return Ok(result);
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // ---- 1b. Get inspections for currently logged-in customer (session-resolved) ----
+        // JS: GET /api/pageview/getMyInternalInspections
+        // Optional filter params: CustomerLocationID, CustomerFacilityID, AreaID, Region
+        [Route("getMyInternalInspections")]
+        [HttpGet]
+        public IHttpActionResult GetMyInternalInspections(
+            long? CustomerLocationID = null,
+            long? CustomerFacilityID = null,
+            long? AreaID = null,
+            string Region = null)
+        {
+            try
+            {
+                var result = DatabaseHelper.GetInternalInspectionsByCurrentCustomer(
+                    CustomerLocationID, CustomerFacilityID, AreaID, Region);
+                return Ok(result);
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // ---- 2. Get all inspections for Admin/Employee (with filters) ----
+        // JS: POST /api/pageview/getInternalInspectionsForAdmin
+        [Route("getInternalInspectionsForAdmin")]
+        [HttpPost]
+        public IHttpActionResult GetInternalInspectionsForAdmin(InternalInspectionSearchViewModel filter)
+        {
+            try
+            {
+                var result = DatabaseHelper.GetInternalInspectionsForAdmin(filter);
+                return Ok(result);
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // ---- 3. Get single inspection detail (View page) ----
+        // JS: GET /api/pageview/getInternalInspectionById?id=456
+        [Route("getInternalInspectionById")]
+        [HttpGet]
+        public IHttpActionResult GetInternalInspectionById(long id)
+        {
+            try
+            {
+                var result = DatabaseHelper.GetInternalInspectionById(id);
+                if (result == null) return NotFound();
+                return Ok(result);
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // ---- 4. Save new or update existing inspection ----
+        // JS: POST /api/pageview/saveInternalInspection
+        [Route("saveInternalInspection")]
+        [HttpPost]
+        public IHttpActionResult SaveInternalInspection(SaveInternalInspectionViewModel model)
+        {
+            try
+            {
+                var result = DatabaseHelper.SaveInternalInspection(model);
+                return Ok(result);
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // ---- 5. Upload photos for an inspection ----
+        // JS: POST /api/pageview/saveInternalInspectionPhotos
+        // Accepts multipart/form-data — file handling logic lives in DatabaseHelper
+        [Route("saveInternalInspectionPhotos")]
+        [HttpPost]
+        public async Task<IHttpActionResult> SaveInternalInspectionPhotos()
+        {
+            try
+            {
+                var result = await DatabaseHelper.SaveInternalInspectionPhotos(Request);
+                return Ok(result);
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // ---- 6. Soft delete an inspection ----
+        // JS: POST /api/pageview/deleteInternalInspection
+        [Route("deleteInternalInspection")]
+        [HttpPost]
+        public IHttpActionResult DeleteInternalInspection([FromBody] DeleteInspectionRequest request)
+        {
+            try
+            {
+                var result = DatabaseHelper.DeleteInternalInspection(request.id);
+                return Ok(result);
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // ---- 7. Update inspection status (Admin/Employee only) ----
+        // JS: POST /api/pageview/updateInternalInspectionStatus
+        [Route("updateInternalInspectionStatus")]
+        [HttpPost]
+        public IHttpActionResult UpdateInternalInspectionStatus([FromBody] UpdateInspectionStatusRequest request)
+        {
+            try
+            {
+                var result = DatabaseHelper.UpdateInternalInspectionStatus(request.id, request.status);
+                return Ok(result);
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // ---- Request helper classes ----
+        public class DeleteInspectionRequest
+        {
+            public long id { get; set; }
+        }
+
+        public class UpdateInspectionStatusRequest
+        {
+            public long id { get; set; }
+            public string status { get; set; }
+        }
+
+        #endregion
+
+
+
     }
 }
 

@@ -106,7 +106,7 @@
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'admin_rackauditor.dbo.ComponentPriceListDetailHistory' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'admin_rackauditor_live.dbo.ComponentPriceListDetailHistory' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ComponentPriceListDetailHistory">
           <Key>
             <PropertyRef Name="ComponentPriceDetailId" />
@@ -124,7 +124,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.ComponentPriceListDetailHist
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'admin_rackauditor.dbo.ComponentPriceListHistory' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'admin_rackauditor_live.dbo.ComponentPriceListHistory' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ComponentPriceListHistory">
           <Key>
             <PropertyRef Name="ComponentPriceId" />
@@ -244,7 +244,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.ComponentPriceListHistory' d
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'admin_rackauditor.dbo.ComponentSubType_Deleted' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'admin_rackauditor_live.dbo.ComponentSubType_Deleted' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ComponentSubType_Deleted">
           <Key>
             <PropertyRef Name="ComponentSubTypeName" />
@@ -288,13 +288,13 @@ warning 6002: The table/view 'admin_rackauditor.dbo.ComponentSubType_Deleted' do
           <Property Name="AreaID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CustomerID" Type="bigint" Nullable="false" />
           <Property Name="CustomerLocationID" Type="bigint" Nullable="false" />
-          <Property Name="CustomerFacilityID" Type="bigint" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="AreaName" Type="nvarchar" MaxLength="150" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
           <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="CustomerFacilityID" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="CustomerFacility">
           <Key>
@@ -381,6 +381,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.ComponentSubType_Deleted' do
           <Property Name="CustomerEmail" Type="nvarchar" MaxLength="150" />
           <Property Name="CustomerWebsite" Type="nvarchar" MaxLength="100" />
           <Property Name="UserID" Type="bigint" />
+          <Property Name="SalesRepresentativeId" Type="bigint" />
           <Property Name="IsActive" Type="bit" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
           <Property Name="CreatedDate" Type="datetime" />
@@ -399,6 +400,35 @@ warning 6002: The table/view 'admin_rackauditor.dbo.ComponentSubType_Deleted' do
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CustomersLocationsUserArea">
+          <Key>
+            <PropertyRef Name="CustomersLocationsUserAreaID" />
+          </Key>
+          <Property Name="CustomersLocationsUserAreaID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LocationContactId" Type="bigint" Nullable="false" />
+          <Property Name="CustomerId" Type="bigint" Nullable="false" />
+          <Property Name="CustomerLocationID" Type="bigint" Nullable="false" />
+          <Property Name="CustomerFacilityID" Type="bigint" />
+          <Property Name="AreaID" Type="bigint" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="ModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="CustomersLocationsUserFacility">
+          <Key>
+            <PropertyRef Name="CustomersLocationsUserFacilityID" />
+          </Key>
+          <Property Name="CustomersLocationsUserFacilityID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LocationContactId" Type="bigint" Nullable="false" />
+          <Property Name="CustomerId" Type="bigint" Nullable="false" />
+          <Property Name="CustomerLocationID" Type="bigint" Nullable="false" />
+          <Property Name="CustomerFacilityID" Type="bigint" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="ModifiedDate" Type="datetime" />
         </EntityType>
         <EntityType Name="CustomerUsers">
           <Key>
@@ -585,7 +615,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.ComponentSubType_Deleted' do
           <Property Name="InspectionId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="InspectionDocumentNo" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="InspectionDocumentNoRef" Type="nvarchar" MaxLength="50" />
-          <Property Name="InspectionType" Type="nvarchar" MaxLength="50" />
+          <Property Name="InspectionType" Type="nchar" MaxLength="4" />
           <Property Name="InspectionDate" Type="datetime" Nullable="false" />
           <Property Name="Reportdate" Type="datetime" />
           <Property Name="InspectionStatus" Type="int" Nullable="false" />
@@ -593,7 +623,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.ComponentSubType_Deleted' do
           <Property Name="InspectionEndOn" Type="datetime" />
           <Property Name="CustomerId" Type="bigint" Nullable="false" />
           <Property Name="CustomerLocationId" Type="bigint" Nullable="false" />
-          <Property Name="CustomerFacilityID" Type="bigint" />
           <Property Name="CustomerAreaID" Type="bigint" />
           <Property Name="EmployeeId" Type="bigint" Nullable="false" />
           <Property Name="StampingEngineerId" Type="bigint" />
@@ -613,6 +642,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.ComponentSubType_Deleted' do
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
           <Property Name="ModifiedDate" Type="datetime" />
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="CustomerFacilityID" Type="bigint" />
         </EntityType>
         <EntityType Name="InspectionDeficiency">
           <Key>
@@ -723,7 +753,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.ComponentSubType_Deleted' do
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'admin_rackauditor_live.dbo.InspectionStatus' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="InspectionStatus">
           <Key>
             <PropertyRef Name="InspectionStatusId" />
@@ -747,6 +777,75 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
           <Property Name="ModifiedDate" Type="datetime" />
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="InternalInspection">
+          <Key>
+            <PropertyRef Name="InternalInspectionID" />
+          </Key>
+          <Property Name="InternalInspectionID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InspectionNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="CustomerID" Type="bigint" Nullable="false" />
+          <Property Name="CustomerLocationID" Type="bigint" Nullable="false" />
+          <Property Name="CustomerFacilityID" Type="bigint" />
+          <Property Name="AreaID" Type="bigint" />
+          <Property Name="TypeOfRack" Type="nvarchar" MaxLength="100" />
+          <Property Name="InspectionDate" Type="datetime" />
+          <Property Name="Area" Type="nvarchar" MaxLength="150" />
+          <Property Name="Row" Type="nvarchar" MaxLength="50" />
+          <Property Name="Aisle" Type="nvarchar" MaxLength="50" />
+          <Property Name="Bay" Type="nvarchar" MaxLength="50" />
+          <Property Name="BeamLocation" Type="nvarchar" MaxLength="50" />
+          <Property Name="FrameSide" Type="nvarchar" MaxLength="50" />
+          <Property Name="ReportedBy" Type="nvarchar" MaxLength="150" />
+          <Property Name="InspectionSummary" Type="nvarchar(max)" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="ModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="InternalInspectionDeficiency">
+          <Key>
+            <PropertyRef Name="DeficiencyID" />
+          </Key>
+          <Property Name="DeficiencyID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InternalInspectionID" Type="bigint" Nullable="false" />
+          <Property Name="CustomerID" Type="bigint" Nullable="false" />
+          <Property Name="DeficiencyDescription" Type="nvarchar(max)" />
+          <Property Name="Severity" Type="nvarchar" MaxLength="50" />
+          <Property Name="RecommendedAction" Type="nvarchar(max)" />
+          <Property Name="IsEngineerReviewRequested" Type="bit" Nullable="false" />
+          <Property Name="EngineerReviewCost" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="ModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="InternalInspectionLevel">
+          <Key>
+            <PropertyRef Name="InternalInspectionLevelID" />
+          </Key>
+          <Property Name="InternalInspectionLevelID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InternalInspectionID" Type="bigint" Nullable="false" />
+          <Property Name="LevelNumber" Type="int" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="CreatedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="InternalInspectionPhoto">
+          <Key>
+            <PropertyRef Name="InternalInspectionPhotoID" />
+          </Key>
+          <Property Name="InternalInspectionPhotoID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InternalInspectionID" Type="bigint" Nullable="false" />
+          <Property Name="CustomerID" Type="bigint" Nullable="false" />
+          <Property Name="PhotoPath" Type="nvarchar" MaxLength="500" />
+          <Property Name="PhotoThumbPath" Type="nvarchar" MaxLength="500" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="CreatedDate" Type="datetime" />
         </EntityType>
         <EntityType Name="Manufacturers">
           <Key>
@@ -1151,6 +1250,10 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
         <Function Name="SP_Get_AdminDashboardCount" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="year" Type="int" Mode="In" />
         </Function>
+        <Function Name="SP_Get_AdminDashboardCountAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="USERID" Type="bigint" Mode="In" />
+          <Parameter Name="YEAR" Type="int" Mode="In" />
+        </Function>
         <Function Name="SP_Get_AllEmployeeDashboardCount" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="USERID" Type="bigint" Mode="In" />
           <Parameter Name="YEAR" Type="int" Mode="In" />
@@ -1167,8 +1270,16 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
         <Function Name="sp_getApprovedInspection_Count_New" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="YEAR" Type="int" Mode="In" />
         </Function>
+        <Function Name="sp_getApprovedInspection_Count_New_AllUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="USERID" Type="bigint" Mode="In" />
+          <Parameter Name="YEAR" Type="int" Mode="In" />
+        </Function>
         <Function Name="sp_getEmpInspection_Count" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="sp_getEmpInspection_Count_New" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="YEAR" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_getEmpInspection_Count_New_AllUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="USERID" Type="bigint" Mode="In" />
           <Parameter Name="YEAR" Type="int" Mode="In" />
         </Function>
         <Function Name="sp_GetIncidentReportsByCustomer" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -1202,6 +1313,8 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <EntitySet Name="CustomerLocationHistoryLegacyFile" EntityType="Self.CustomerLocationHistoryLegacyFile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Customers" EntityType="Self.Customers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CustomersLocationsUser" EntityType="Self.CustomersLocationsUser" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CustomersLocationsUserArea" EntityType="Self.CustomersLocationsUserArea" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CustomersLocationsUserFacility" EntityType="Self.CustomersLocationsUserFacility" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CustomerUsers" EntityType="Self.CustomerUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Deficiencies" EntityType="Self.Deficiencies" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DeficiencyCategory" EntityType="Self.DeficiencyCategory" Schema="dbo" store:Type="Tables" />
@@ -1222,6 +1335,10 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <EntitySet Name="InspectionDue" EntityType="Self.InspectionDue" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="InspectionFileDrawing" EntityType="Self.InspectionFileDrawing" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="InspectionType" EntityType="Self.InspectionType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="InternalInspection" EntityType="Self.InternalInspection" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="InternalInspectionDeficiency" EntityType="Self.InternalInspectionDeficiency" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="InternalInspectionLevel" EntityType="Self.InternalInspectionLevel" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="InternalInspectionPhoto" EntityType="Self.InternalInspectionPhoto" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Manufacturers" EntityType="Self.Manufacturers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Notification" EntityType="Self.Notification" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProcessOverview" EntityType="Self.ProcessOverview" Schema="dbo" store:Type="Tables" />
@@ -1512,23 +1629,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
         </EntityType>
-        <EntityType Name="CustomerLocationContact">
-          <Key>
-            <PropertyRef Name="LocationContactId" />
-          </Key>
-          <Property Name="LocationContactId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CustomerId" Type="Int64" Nullable="false" />
-          <Property Name="CustomerLocationID" Type="Int64" Nullable="false" />
-          <Property Name="ContactName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ContactEmail" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ContactPhone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="UserID" Type="Int64" />
-          <Property Name="IsActive" Type="Boolean" />
-          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
-        </EntityType>
         <EntityType Name="CustomerLocationHistoryLegacyFile">
           <Key>
             <PropertyRef Name="CustomerLocationHistoryLegacyFileId" />
@@ -1544,31 +1644,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="Customer">
-          <Key>
-            <PropertyRef Name="CustomerId" />
-          </Key>
-          <Property Name="CustomerId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CustomerName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="CustomerLogo" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="CustomerAddress" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
-          <Property Name="CustomerNAVNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="CustomerPharse" Type="String" MaxLength="800" FixedLength="false" Unicode="true" />
-          <Property Name="CityID" Type="Int32" />
-          <Property Name="ProvinceID" Type="Int32" />
-          <Property Name="CountryID" Type="Int32" />
-          <Property Name="Pincode" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
-          <Property Name="CustomerPhone" Type="String" MaxLength="20" FixedLength="true" Unicode="true" />
-          <Property Name="CustomerContactName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="CustomerEmail" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="CustomerWebsite" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="UserID" Type="Int64" />
-          <Property Name="IsActive" Type="Boolean" />
-          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="CustomersLocationsUser">
           <Key>
@@ -2068,9 +2143,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <EntitySet Name="ConclusionRecommendations" EntityType="Self.ConclusionRecommendation" />
           <EntitySet Name="Countries" EntityType="Self.Country" />
           <EntitySet Name="CustomerLocations" EntityType="Self.CustomerLocation" />
-          <EntitySet Name="CustomerLocationContacts" EntityType="Self.CustomerLocationContact" />
           <EntitySet Name="CustomerLocationHistoryLegacyFiles" EntityType="Self.CustomerLocationHistoryLegacyFile" />
-          <EntitySet Name="Customers" EntityType="Self.Customer" />
           <EntitySet Name="CustomersLocationsUsers" EntityType="Self.CustomersLocationsUser" />
           <EntitySet Name="CustomerUsers" EntityType="Self.CustomerUser" />
           <EntitySet Name="Deficiencies" EntityType="Self.Deficiency" />
@@ -2277,7 +2350,27 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <EntitySet Name="Inspections" EntityType="admin_rackauditorModel.Inspection" />
           <EntitySet Name="InspectionDeficiencies" EntityType="admin_rackauditorModel.InspectionDeficiency" />
           <EntitySet Name="CustomerFacilities" EntityType="admin_rackauditorModel.CustomerFacility" />
-        </EntityContainer>
+          <EntitySet Name="Customers" EntityType="admin_rackauditorModel.Customer" />
+          <EntitySet Name="CustomerLocationContacts" EntityType="admin_rackauditorModel.CustomerLocationContact" />
+          <EntitySet Name="CustomersLocationsUserAreas" EntityType="admin_rackauditorModel.CustomersLocationsUserArea" />
+          <EntitySet Name="CustomersLocationsUserFacilities" EntityType="admin_rackauditorModel.CustomersLocationsUserFacility" />
+          <FunctionImport Name="SP_Get_AdminDashboardCountAll" ReturnType="Collection(admin_rackauditorModel.SP_Get_AdminDashboardCountAll_Result)">
+            <Parameter Name="USERID" Mode="In" Type="Int64" />
+            <Parameter Name="YEAR" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_getApprovedInspection_Count_New_AllUser" ReturnType="Collection(admin_rackauditorModel.sp_getApprovedInspection_Count_New_AllUser_Result)">
+            <Parameter Name="USERID" Mode="In" Type="Int64" />
+            <Parameter Name="YEAR" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_getEmpInspection_Count_New_AllUser" ReturnType="Collection(admin_rackauditorModel.sp_getEmpInspection_Count_New_AllUser_Result)">
+            <Parameter Name="USERID" Mode="In" Type="Int64" />
+            <Parameter Name="YEAR" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="InternalInspections" EntityType="admin_rackauditorModel.InternalInspection" />
+          <EntitySet Name="InternalInspectionDeficiencies" EntityType="admin_rackauditorModel.InternalInspectionDeficiency" />
+          <EntitySet Name="InternalInspectionLevels" EntityType="admin_rackauditorModel.InternalInspectionLevel" />
+          <EntitySet Name="InternalInspectionPhotoes" EntityType="admin_rackauditorModel.InternalInspectionPhoto" />
+          </EntityContainer>
         <ComplexType Name="Get_DeficienciesBreakdownCategories_Result">
           <Property Type="Int32" Name="DeficiencyCategoryId" Nullable="false" />
           <Property Type="String" Name="DeficiencyCategoryName" Nullable="false" MaxLength="100" />
@@ -2818,7 +2911,7 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="InspectionId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="InspectionDocumentNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="InspectionDocumentNoRef" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="InspectionType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InspectionType" Type="String" MaxLength="4" FixedLength="true" Unicode="true" />
           <Property Name="InspectionDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Reportdate" Type="DateTime" Precision="3" />
           <Property Name="InspectionStatus" Type="Int32" Nullable="false" />
@@ -2892,7 +2985,162 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
           <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
         </EntityType>
-      </Schema>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+          </Key>
+          <Property Name="CustomerId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerLogo" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerAddress" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerNAVNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerPharse" Type="String" MaxLength="800" FixedLength="false" Unicode="true" />
+          <Property Name="CityID" Type="Int32" />
+          <Property Name="ProvinceID" Type="Int32" />
+          <Property Name="CountryID" Type="Int32" />
+          <Property Name="Pincode" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="CustomerPhone" Type="String" MaxLength="20" FixedLength="true" Unicode="true" />
+          <Property Name="CustomerContactName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerEmail" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerWebsite" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UserID" Type="Int64" />
+          <Property Name="SalesRepresentativeId" Type="Int64" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="CustomerLocationContact">
+          <Key>
+            <PropertyRef Name="LocationContactId" />
+          </Key>
+          <Property Name="LocationContactId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerId" Type="Int64" Nullable="false" />
+          <Property Name="CustomerLocationID" Type="Int64" Nullable="false" />
+          <Property Name="ContactName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ContactEmail" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ContactPhone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UserID" Type="Int64" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="CustomersLocationsUserArea">
+          <Key>
+            <PropertyRef Name="CustomersLocationsUserAreaID" />
+          </Key>
+          <Property Name="CustomersLocationsUserAreaID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LocationContactId" Type="Int64" Nullable="false" />
+          <Property Name="CustomerId" Type="Int64" Nullable="false" />
+          <Property Name="CustomerLocationID" Type="Int64" Nullable="false" />
+          <Property Name="CustomerFacilityID" Type="Int64" />
+          <Property Name="AreaID" Type="Int64" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="CustomersLocationsUserFacility">
+          <Key>
+            <PropertyRef Name="CustomersLocationsUserFacilityID" />
+          </Key>
+          <Property Name="CustomersLocationsUserFacilityID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LocationContactId" Type="Int64" Nullable="false" />
+          <Property Name="CustomerId" Type="Int64" Nullable="false" />
+          <Property Name="CustomerLocationID" Type="Int64" Nullable="false" />
+          <Property Name="CustomerFacilityID" Type="Int64" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <ComplexType Name="SP_Get_AdminDashboardCountAll_Result">
+          <Property Type="String" Name="InspectionStatus" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="InspectionStatusId" Nullable="false" />
+          <Property Type="Int32" Name="cnt" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_getApprovedInspection_Count_New_AllUser_Result">
+          <Property Type="String" Name="iMonth" Nullable="true" MaxLength="30" />
+          <Property Type="Int32" Name="iCount" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_getEmpInspection_Count_New_AllUser_Result">
+          <Property Type="Int64" Name="EmployeeId" Nullable="false" />
+          <Property Type="String" Name="EmployeeName" Nullable="false" MaxLength="250" />
+          <Property Type="Int32" Name="cnt" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="InternalInspection">
+          <Key>
+            <PropertyRef Name="InternalInspectionID" />
+          </Key>
+          <Property Name="InternalInspectionID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InspectionNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerID" Type="Int64" Nullable="false" />
+          <Property Name="CustomerLocationID" Type="Int64" Nullable="false" />
+          <Property Name="CustomerFacilityID" Type="Int64" />
+          <Property Name="AreaID" Type="Int64" />
+          <Property Name="TypeOfRack" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="InspectionDate" Type="DateTime" Precision="3" />
+          <Property Name="Area" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Row" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Aisle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Bay" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="BeamLocation" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FrameSide" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReportedBy" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="InspectionSummary" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="InternalInspectionDeficiency">
+          <Key>
+            <PropertyRef Name="DeficiencyID" />
+          </Key>
+          <Property Name="DeficiencyID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InternalInspectionID" Type="Int64" Nullable="false" />
+          <Property Name="CustomerID" Type="Int64" Nullable="false" />
+          <Property Name="DeficiencyDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Severity" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RecommendedAction" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsEngineerReviewRequested" Type="Boolean" Nullable="false" />
+          <Property Name="EngineerReviewCost" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="InternalInspectionLevel">
+          <Key>
+            <PropertyRef Name="InternalInspectionLevelID" />
+          </Key>
+          <Property Name="InternalInspectionLevelID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InternalInspectionID" Type="Int64" Nullable="false" />
+          <Property Name="LevelNumber" Type="Int32" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="InternalInspectionPhoto">
+          <Key>
+            <PropertyRef Name="InternalInspectionPhotoID" />
+          </Key>
+          <Property Name="InternalInspectionPhotoID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InternalInspectionID" Type="Int64" Nullable="false" />
+          <Property Name="CustomerID" Type="Int64" Nullable="false" />
+          <Property Name="PhotoPath" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="PhotoThumbPath" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -3126,24 +3374,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="CustomerLocationContacts">
-            <EntityTypeMapping TypeName="admin_rackauditorModel.CustomerLocationContact">
-              <MappingFragment StoreEntitySet="CustomerLocationContact">
-                <ScalarProperty Name="LocationContactId" ColumnName="LocationContactId" />
-                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
-                <ScalarProperty Name="CustomerLocationID" ColumnName="CustomerLocationID" />
-                <ScalarProperty Name="ContactName" ColumnName="ContactName" />
-                <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
-                <ScalarProperty Name="ContactPhone" ColumnName="ContactPhone" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="CustomerLocationHistoryLegacyFiles">
             <EntityTypeMapping TypeName="admin_rackauditorModel.CustomerLocationHistoryLegacyFile">
               <MappingFragment StoreEntitySet="CustomerLocationHistoryLegacyFile">
@@ -3158,32 +3388,6 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Customers">
-            <EntityTypeMapping TypeName="admin_rackauditorModel.Customer">
-              <MappingFragment StoreEntitySet="Customers">
-                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
-                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
-                <ScalarProperty Name="CustomerLogo" ColumnName="CustomerLogo" />
-                <ScalarProperty Name="CustomerAddress" ColumnName="CustomerAddress" />
-                <ScalarProperty Name="CustomerNAVNo" ColumnName="CustomerNAVNo" />
-                <ScalarProperty Name="CustomerPharse" ColumnName="CustomerPharse" />
-                <ScalarProperty Name="CityID" ColumnName="CityID" />
-                <ScalarProperty Name="ProvinceID" ColumnName="ProvinceID" />
-                <ScalarProperty Name="CountryID" ColumnName="CountryID" />
-                <ScalarProperty Name="Pincode" ColumnName="Pincode" />
-                <ScalarProperty Name="CustomerPhone" ColumnName="CustomerPhone" />
-                <ScalarProperty Name="CustomerContactName" ColumnName="CustomerContactName" />
-                <ScalarProperty Name="CustomerEmail" ColumnName="CustomerEmail" />
-                <ScalarProperty Name="CustomerWebsite" ColumnName="CustomerWebsite" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -4451,6 +4655,181 @@ warning 6002: The table/view 'admin_rackauditor.dbo.InspectionStatus' does not h
                 <ScalarProperty Name="CustomerLocationID" ColumnName="CustomerLocationID" />
                 <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
                 <ScalarProperty Name="CustomerFacilityID" ColumnName="CustomerFacilityID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Customers">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.Customer">
+              <MappingFragment StoreEntitySet="Customers">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="SalesRepresentativeId" ColumnName="SalesRepresentativeId" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="CustomerWebsite" ColumnName="CustomerWebsite" />
+                <ScalarProperty Name="CustomerEmail" ColumnName="CustomerEmail" />
+                <ScalarProperty Name="CustomerContactName" ColumnName="CustomerContactName" />
+                <ScalarProperty Name="CustomerPhone" ColumnName="CustomerPhone" />
+                <ScalarProperty Name="Pincode" ColumnName="Pincode" />
+                <ScalarProperty Name="CountryID" ColumnName="CountryID" />
+                <ScalarProperty Name="ProvinceID" ColumnName="ProvinceID" />
+                <ScalarProperty Name="CityID" ColumnName="CityID" />
+                <ScalarProperty Name="CustomerPharse" ColumnName="CustomerPharse" />
+                <ScalarProperty Name="CustomerNAVNo" ColumnName="CustomerNAVNo" />
+                <ScalarProperty Name="CustomerAddress" ColumnName="CustomerAddress" />
+                <ScalarProperty Name="CustomerLogo" ColumnName="CustomerLogo" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CustomerLocationContacts">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.CustomerLocationContact">
+              <MappingFragment StoreEntitySet="CustomerLocationContact">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ContactPhone" ColumnName="ContactPhone" />
+                <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
+                <ScalarProperty Name="ContactName" ColumnName="ContactName" />
+                <ScalarProperty Name="CustomerLocationID" ColumnName="CustomerLocationID" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="LocationContactId" ColumnName="LocationContactId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CustomersLocationsUserAreas">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.CustomersLocationsUserArea">
+              <MappingFragment StoreEntitySet="CustomersLocationsUserArea">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="AreaID" ColumnName="AreaID" />
+                <ScalarProperty Name="CustomerFacilityID" ColumnName="CustomerFacilityID" />
+                <ScalarProperty Name="CustomerLocationID" ColumnName="CustomerLocationID" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="LocationContactId" ColumnName="LocationContactId" />
+                <ScalarProperty Name="CustomersLocationsUserAreaID" ColumnName="CustomersLocationsUserAreaID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CustomersLocationsUserFacilities">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.CustomersLocationsUserFacility">
+              <MappingFragment StoreEntitySet="CustomersLocationsUserFacility">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CustomerFacilityID" ColumnName="CustomerFacilityID" />
+                <ScalarProperty Name="CustomerLocationID" ColumnName="CustomerLocationID" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="LocationContactId" ColumnName="LocationContactId" />
+                <ScalarProperty Name="CustomersLocationsUserFacilityID" ColumnName="CustomersLocationsUserFacilityID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_Get_AdminDashboardCountAll" FunctionName="admin_rackauditorModel.Store.SP_Get_AdminDashboardCountAll">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="admin_rackauditorModel.SP_Get_AdminDashboardCountAll_Result">
+                <ScalarProperty Name="InspectionStatus" ColumnName="InspectionStatus" />
+                <ScalarProperty Name="InspectionStatusId" ColumnName="InspectionStatusId" />
+                <ScalarProperty Name="cnt" ColumnName="cnt" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_getApprovedInspection_Count_New_AllUser" FunctionName="admin_rackauditorModel.Store.sp_getApprovedInspection_Count_New_AllUser">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="admin_rackauditorModel.sp_getApprovedInspection_Count_New_AllUser_Result">
+                <ScalarProperty Name="iMonth" ColumnName="iMonth" />
+                <ScalarProperty Name="iCount" ColumnName="iCount" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_getEmpInspection_Count_New_AllUser" FunctionName="admin_rackauditorModel.Store.sp_getEmpInspection_Count_New_AllUser">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="admin_rackauditorModel.sp_getEmpInspection_Count_New_AllUser_Result">
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+                <ScalarProperty Name="EmployeeName" ColumnName="EmployeeName" />
+                <ScalarProperty Name="cnt" ColumnName="cnt" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="InternalInspections">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.InternalInspection">
+              <MappingFragment StoreEntitySet="InternalInspection">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="InspectionSummary" ColumnName="InspectionSummary" />
+                <ScalarProperty Name="ReportedBy" ColumnName="ReportedBy" />
+                <ScalarProperty Name="FrameSide" ColumnName="FrameSide" />
+                <ScalarProperty Name="BeamLocation" ColumnName="BeamLocation" />
+                <ScalarProperty Name="Bay" ColumnName="Bay" />
+                <ScalarProperty Name="Aisle" ColumnName="Aisle" />
+                <ScalarProperty Name="Row" ColumnName="Row" />
+                <ScalarProperty Name="Area" ColumnName="Area" />
+                <ScalarProperty Name="InspectionDate" ColumnName="InspectionDate" />
+                <ScalarProperty Name="TypeOfRack" ColumnName="TypeOfRack" />
+                <ScalarProperty Name="AreaID" ColumnName="AreaID" />
+                <ScalarProperty Name="CustomerFacilityID" ColumnName="CustomerFacilityID" />
+                <ScalarProperty Name="CustomerLocationID" ColumnName="CustomerLocationID" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="InspectionNumber" ColumnName="InspectionNumber" />
+                <ScalarProperty Name="InternalInspectionID" ColumnName="InternalInspectionID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InternalInspectionDeficiencies">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.InternalInspectionDeficiency">
+              <MappingFragment StoreEntitySet="InternalInspectionDeficiency">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="EngineerReviewCost" ColumnName="EngineerReviewCost" />
+                <ScalarProperty Name="IsEngineerReviewRequested" ColumnName="IsEngineerReviewRequested" />
+                <ScalarProperty Name="RecommendedAction" ColumnName="RecommendedAction" />
+                <ScalarProperty Name="Severity" ColumnName="Severity" />
+                <ScalarProperty Name="DeficiencyDescription" ColumnName="DeficiencyDescription" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="InternalInspectionID" ColumnName="InternalInspectionID" />
+                <ScalarProperty Name="DeficiencyID" ColumnName="DeficiencyID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InternalInspectionLevels">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.InternalInspectionLevel">
+              <MappingFragment StoreEntitySet="InternalInspectionLevel">
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="LevelNumber" ColumnName="LevelNumber" />
+                <ScalarProperty Name="InternalInspectionID" ColumnName="InternalInspectionID" />
+                <ScalarProperty Name="InternalInspectionLevelID" ColumnName="InternalInspectionLevelID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InternalInspectionPhotoes">
+            <EntityTypeMapping TypeName="admin_rackauditorModel.InternalInspectionPhoto">
+              <MappingFragment StoreEntitySet="InternalInspectionPhoto">
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="PhotoThumbPath" ColumnName="PhotoThumbPath" />
+                <ScalarProperty Name="PhotoPath" ColumnName="PhotoPath" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="InternalInspectionID" ColumnName="InternalInspectionID" />
+                <ScalarProperty Name="InternalInspectionPhotoID" ColumnName="InternalInspectionPhotoID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -109,6 +109,36 @@
 
         $scope.AddUserEmployee = function () {
             console.log('Empplyee ma aayo');
+
+            if (!$scope.username) {
+                $scope.registermessage = "User Name is required";
+                return;
+            }
+
+            if (!$scope.employeename) {
+                $scope.registermessage = "Employee Name is required";
+                return;
+            }
+
+            if (!$scope.email) {
+                $scope.registermessage = "Email is required";
+                return;
+            }
+
+            if (!$scope.password) {
+                $scope.registermessage = "Password is required";
+                return;
+            }
+
+            if (!$scope.titledegree) {
+                $scope.registermessage = "Degree Title is required";
+                return;
+            }
+
+            if (!$scope.usertype) {
+                $scope.registermessage = "Please select user type";
+                return;
+            }
             var config = {
                 UserName: $scope.username, UserPassword: $scope.password, Active: $scope.Active, EmployeeName: $scope.employeename,
                 EmployeeEmail: $scope.email, EmployeeAddress: $scope.address, CityID: $scope.city, CountryID: $scope.country,

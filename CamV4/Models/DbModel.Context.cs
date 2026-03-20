@@ -42,9 +42,7 @@ namespace CamV4.Models
         public virtual DbSet<ConclusionRecommendation> ConclusionRecommendations { get; set; }
         public virtual DbSet<Country> Countries { get; set; }
         public virtual DbSet<CustomerLocation> CustomerLocations { get; set; }
-        public virtual DbSet<CustomerLocationContact> CustomerLocationContacts { get; set; }
         public virtual DbSet<CustomerLocationHistoryLegacyFile> CustomerLocationHistoryLegacyFiles { get; set; }
-        public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<CustomersLocationsUser> CustomersLocationsUsers { get; set; }
         public virtual DbSet<CustomerUser> CustomerUsers { get; set; }
         public virtual DbSet<Deficiency> Deficiencies { get; set; }
@@ -90,6 +88,14 @@ namespace CamV4.Models
         public virtual DbSet<Inspection> Inspections { get; set; }
         public virtual DbSet<InspectionDeficiency> InspectionDeficiencies { get; set; }
         public virtual DbSet<CustomerFacility> CustomerFacilities { get; set; }
+        public virtual DbSet<Customer> Customers { get; set; }
+        public virtual DbSet<CustomerLocationContact> CustomerLocationContacts { get; set; }
+        public virtual DbSet<CustomersLocationsUserArea> CustomersLocationsUserAreas { get; set; }
+        public virtual DbSet<CustomersLocationsUserFacility> CustomersLocationsUserFacilities { get; set; }
+        public virtual DbSet<InternalInspection> InternalInspections { get; set; }
+        public virtual DbSet<InternalInspectionDeficiency> InternalInspectionDeficiencies { get; set; }
+        public virtual DbSet<InternalInspectionLevel> InternalInspectionLevels { get; set; }
+        public virtual DbSet<InternalInspectionPhoto> InternalInspectionPhotoes { get; set; }
     
         public virtual int CloneInspectionData(Nullable<long> sourceInspectionId, Nullable<long> targetInspectionId, Nullable<int> userId)
         {
@@ -640,6 +646,45 @@ namespace CamV4.Models
                 new ObjectParameter("InspectionId", typeof(long));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetInspectionDetailsForSheet_Result>("GetInspectionDetailsForSheet", inspectionIdParameter);
+        }
+    
+        public virtual ObjectResult<SP_Get_AdminDashboardCountAll_Result> SP_Get_AdminDashboardCountAll(Nullable<long> uSERID, Nullable<int> yEAR)
+        {
+            var uSERIDParameter = uSERID.HasValue ?
+                new ObjectParameter("USERID", uSERID) :
+                new ObjectParameter("USERID", typeof(long));
+    
+            var yEARParameter = yEAR.HasValue ?
+                new ObjectParameter("YEAR", yEAR) :
+                new ObjectParameter("YEAR", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_Get_AdminDashboardCountAll_Result>("SP_Get_AdminDashboardCountAll", uSERIDParameter, yEARParameter);
+        }
+    
+        public virtual ObjectResult<sp_getApprovedInspection_Count_New_AllUser_Result> sp_getApprovedInspection_Count_New_AllUser(Nullable<long> uSERID, Nullable<int> yEAR)
+        {
+            var uSERIDParameter = uSERID.HasValue ?
+                new ObjectParameter("USERID", uSERID) :
+                new ObjectParameter("USERID", typeof(long));
+    
+            var yEARParameter = yEAR.HasValue ?
+                new ObjectParameter("YEAR", yEAR) :
+                new ObjectParameter("YEAR", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_getApprovedInspection_Count_New_AllUser_Result>("sp_getApprovedInspection_Count_New_AllUser", uSERIDParameter, yEARParameter);
+        }
+    
+        public virtual ObjectResult<sp_getEmpInspection_Count_New_AllUser_Result> sp_getEmpInspection_Count_New_AllUser(Nullable<long> uSERID, Nullable<int> yEAR)
+        {
+            var uSERIDParameter = uSERID.HasValue ?
+                new ObjectParameter("USERID", uSERID) :
+                new ObjectParameter("USERID", typeof(long));
+    
+            var yEARParameter = yEAR.HasValue ?
+                new ObjectParameter("YEAR", yEAR) :
+                new ObjectParameter("YEAR", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_getEmpInspection_Count_New_AllUser_Result>("sp_getEmpInspection_Count_New_AllUser", uSERIDParameter, yEARParameter);
         }
     }
 }

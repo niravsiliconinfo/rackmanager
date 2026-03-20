@@ -179,17 +179,7 @@ namespace CamV4.Controllers
             }
         }
 
-        public ActionResult ManageCustomerLocationHierarchy()
-        {
-            if (Session["LoggedInUserId"] == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-            else
-            {
-                return View();
-            }
-        }
+       
         
         public ActionResult InspectionDetails(int id)
         {
@@ -269,7 +259,7 @@ namespace CamV4.Controllers
                 return View();
             }
         }
-        public ActionResult AddLocationContact(int id)
+        public ActionResult ManageLocationContact(int id)
         {
             if (Session["LoggedInUserId"] == null)
             {
@@ -406,6 +396,42 @@ namespace CamV4.Controllers
             }
         }
         public ActionResult TrainingCenterAdditionalResources()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        public ActionResult customerInternalInspectionListing()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        public ActionResult customerInternalInspectionAddEdit()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        public ActionResult customerInternalInspectionView()
         {
             if (Session["LoggedInUserId"] == null)
             {
