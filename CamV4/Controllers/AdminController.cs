@@ -1570,7 +1570,7 @@ namespace CamV4.Controllers
                                  Location = loc.LocationName,
                                  Facility = facility.FacilityName,
                                  i.InspectionPDFPath,
-                                 SalesRepId = c.SalesRepresentativeId 
+                                 SalesRepId = c.SalesRepresentativeId
                              }).AsQueryable();
 
                 if (userType == 5 && employeeId.HasValue)
@@ -1694,7 +1694,12 @@ namespace CamV4.Controllers
             if (iDetails != null)
             {
                 string host = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
-
+                //string tmpURL = HttpContext.Current.Request.Url.AbsoluteUri;
+                //Uri url = new Uri(tmpURL);
+                //string host = url.GetLeftPart(UriPartial.Authority);
+                //string tmpURL = System.Web.HttpContext.Current.Request.Url.AbsoluteUri;
+                //Uri url = new Uri(tmpURL);
+                //string host = url.GetLeftPart(UriPartial.Authority) ;
                 //host = host.Replace("https", "http");
                 string strVar = " ";
                 int pageNo = 2;
@@ -1716,18 +1721,19 @@ namespace CamV4.Controllers
                 CustomerFullAddress = string.Join(",", FullAddress);
                 Console.WriteLine(host + "Content/V2/images/mid-logo.jpg");
                 //strVar += "<section style='width:783px;height:1113px;background:blue;box-shadow:0 .2mm 2mm rgba(0,0,0,.3);margin:0mm 0mm 0mm 0mm;padding:0mm 0mm 0mm 0mm;box-sizing:border-box;border:5px solid #0070c0;'> ";
+                //strVar += host + "/Content/V2/images/logos/CamLogo.png";
                 strVar += "<table width='100%' border='0' cellpadding='0' align='center' cellspacing='0'style='width:18.5cm;height:29.7cm;background:white;margin:0mm 0mm 0mm 0mm;padding:0mm 0mm 0mm 0mm;box-sizing:border-box;border:5px solid #0070c0;font-family: Arial, Helvetica, sans-serif;'> ";
                 strVar += "<tbody> ";
                 strVar += "<tr> ";
                 strVar += "<td valign='top' align='center' style='padding: 2px;'> ";
                 strVar += "<div class='' style='border: 1px solid #0070c0;padding: 20px;height:25.6cm;'> ";
                 strVar += "<div><div style='text-align: center;'><img src='" + host + "Content/V2/images/logos/CamLogo.png' style='width:300px;' /></div> ";
-                strVar += "<div style='font-size: 35px;text-decoration: underline;text-transform: uppercase;'>RACKING INSPECTION REPORT</div></div> ";
+                strVar += "<div style='font-size: 35px;text-decoration: underline;text-transform: uppercase;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "</div></div> ";
                 strVar += "<div class='' style='height:150px;padding-top: 50px;font-size: 24px;line-height:35px;position: relative;'> ";
                 //strVar += "<div>" + iDetails.Customer + "</div> <div style='font-size:14px;'>" + iDetails.CustomerArea + " " + iDetails.CustomerLocation + "</div><div style='font-size:14px;'>" + iDetails.custModel.CustomerAddress + "</div><div class='customer-logo'><img src='" + iDetails.custModel.CustomerLogo + "' style='width:150px;height:auto;' /></div></div> ";
                 strVar += "<div>" + iDetails.Customer + "</div> <div style='font-size:14px;'>" + CustomerFullAddress + "</div><div class='customer-logo'><img src='" + iDetails.custModel.CustomerLogo + "' style='width:150px;height:auto;' /></div></div> ";
                 strVar += "<div><img src='" + host + "Content/V2/images/mid-logo.jpg' style='width: 250px;margin:50px 0px 50px 0px;' /></div> <div class=''> ";
-                strVar += "<div style='float:left;text-align:left;color:#005aab;font-weight:bold;line-height:30px;'><p style='margin: 0px;'>Inspection & Report By</p> <p style='margin: 0px;'>" + iDetails.Employee + ", " + iDetails.empModel.TitleDegrees + "</p> ";
+                strVar += "<div style='float:left;text-align:left;color:#005aab;font-weight:bold;line-height:30px;'><p style='margin: 0px;'>Inspection & Report By,</p> <p style='margin: 0px;'>" + iDetails.Employee + ", " + iDetails.empModel.TitleDegrees + "</p> ";
                 strVar += "<p style='margin: 0px;'>" + iDetails.empModel.EmployeeEmail + "</p> <p style='color: #999;margin: 0px;'>" + iDetails.empModel.MobileNo + "</p> </div> ";
                 strVar += "<div style='float: right;text-align: left;color: #005aab;font-weight: bold;line-height: 30px;'> <p style='margin: 0px;'>Inspection Date:" + Convert.ToDateTime(iDetails.InspectionDate).ToString("dd MMM yyyy") + "</p> <p style='margin: 0px;'>Report Date:" + Convert.ToDateTime(iDetails.Reportdate).ToString("dd MMM yyyy") + "</p> </div> <div style='clear: both'></div> </div> ";
                 strVar += "<div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> <div style='margin: 0px auto;float: none;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width:250px;'/></div><div style='clear: both'></div></div> </div> ";
@@ -1896,7 +1902,7 @@ namespace CamV4.Controllers
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
                 //}
 
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -1930,7 +1936,7 @@ namespace CamV4.Controllers
                 strVar += "							inspection program done quarterly, semi-annually, or annually. ";
                 strVar += "						</p> ";
                 strVar += "                     <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "                     <div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "                     <div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "                     <div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "                     <div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "                     <div style='clear: both'></div> ";
@@ -1968,45 +1974,49 @@ namespace CamV4.Controllers
                 strVar += "				*Adopted from Section 10.7, Rules for the Measurement and Classification of Damage to Uprights and Bracing ";
                 strVar += "				Members, published by the Fédération Européenne de la Manutention, Section X, FEM 10.2.04, Guidelines for the Safe Use of Static Steel Racking and Shelving, User Code, November 2001 ";
                 strVar += "			</p> ";
-                strVar += "			<table width='100%' border='1' cellspacing='0' cellpadding='0' style='margin: 0;color: #000;font-size: 12px;font-family: Arial, Helvetica, sans-serif;line-height: normal;background: #e0e0e0;border-width:1px;'> ";
-                strVar += "				<tr> ";
-                strVar += "					<td height='30' colspan='3' align='center' bgcolor='#c6d9f1' style='border-width: 1px;font-family: Arial, Helvetica, sans-serif;'><strong>Racking Inspection – Frame Damage Classification</strong></td> ";
-                strVar += "				</tr> ";
-                strVar += "				<tr> ";
-                strVar += "					<td height='30' align='center' bgcolor='#ffffcc' style='padding:2px;border-width:1px;font-family: Arial, Helvetica, sans-serif;'><strong>Classification</strong></td> ";
-                strVar += "					<td height='30' align='center' bgcolor='#ffffcc' style='padding:2px;border-width:1px;font-family: Arial, Helvetica, sans-serif;'><strong>Damage Threshold</strong></td> ";
-                strVar += "					<td height='30' align='center' bgcolor='#ffffcc' style='padding:2px;border-width:1px;font-family: Arial, Helvetica, sans-serif;'><strong>Action</strong></td> ";
-                strVar += "				</tr> ";
-                strVar += "				<tr> ";
-                strVar += "					<td align='center' bgcolor='#00cc00' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Minor (1-3)</td> ";
-                strVar += "					<td align='center' bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'> ";
-                strVar += "						<p>1. < or = 5mm</p> ";
-                strVar += "						<p>2. < or = 3mm</p> ";
-                strVar += "						<p>3. < or = 10mm</p> ";
-                strVar += "					</td> ";
-                strVar += "					<td bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Mark for observation in subsequent inspections to ensure damage does not worsen or affect other areas</td> ";
-                strVar += "				</tr> ";
-                strVar += "				<tr> ";
-                strVar += "					<td align='center' bgcolor='#ffff00' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Intermediate (4-7)</td> ";
-                strVar += "					<td align='center' bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'> ";
-                strVar += "						<p>1. 6mm to 10mm</p> ";
-                strVar += "						<p>2. 4mm to 6mm</p> ";
-                strVar += "						<p>3. 11mm to 20mm</p> ";
-                strVar += "					</td> ";
-                strVar += "					<td bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Mark for replacement of component. Replace or repair component as soon as possible.</td> ";
-                strVar += "				</tr> ";
-                strVar += "				<tr> ";
-                strVar += "					<td align='center' bgcolor='#ff0000' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Major (8-10)</td> ";
-                strVar += "					<td align='center' bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'> ";
-                strVar += "						<p>1. > 10mm</p> ";
-                strVar += "						<p>2. > 6mm</p> ";
-                strVar += "						<p>3. > 20mm</p> ";
-                strVar += "					</td> ";
-                strVar += "					<td bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Mark for replacement of component. Evaluate for immediate action such as offloading affected area or quarantine connecting areas</td> ";
-                strVar += "				</tr> ";
-                strVar += "			</table> ";
+                strVar += "         <p style='text-align: center;'> ";
+                strVar += "     	<img src='" + host + "Content/V2/images/inspectionprocedurecorrected.jpg' width='520' /> ";
+                //strVar += "         <div style='font-size: 15px;line-height: 24px;margin: 10px 0px;text-align: center;font-family: Arial, Helvetica, sans-serif;'>Figure 1: Inspection procedure Racking frame damage classification (with damage thresholds)</div> ";
+                strVar += "         </p> ";
+                //strVar += "			<table width='100%' border='1' cellspacing='0' cellpadding='0' style='margin: 0;color: #000;font-size: 12px;font-family: Arial, Helvetica, sans-serif;line-height: normal;background: #e0e0e0;border-width:1px;'> ";
+                //strVar += "				<tr> ";
+                //strVar += "					<td height='30' colspan='3' align='center' bgcolor='#c6d9f1' style='border-width: 1px;font-family: Arial, Helvetica, sans-serif;'><strong>Racking Inspection – Frame Damage Classification</strong></td> ";
+                //strVar += "				</tr> ";
+                //strVar += "				<tr> ";
+                //strVar += "					<td height='30' align='center' bgcolor='#ffffcc' style='padding:2px;border-width:1px;font-family: Arial, Helvetica, sans-serif;'><strong>Classification</strong></td> ";
+                //strVar += "					<td height='30' align='center' bgcolor='#ffffcc' style='padding:2px;border-width:1px;font-family: Arial, Helvetica, sans-serif;'><strong>Damage Threshold</strong></td> ";
+                //strVar += "					<td height='30' align='center' bgcolor='#ffffcc' style='padding:2px;border-width:1px;font-family: Arial, Helvetica, sans-serif;'><strong>Action</strong></td> ";
+                //strVar += "				</tr> ";
+                //strVar += "				<tr> ";
+                //strVar += "					<td align='center' bgcolor='#00cc00' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Minor (1-3)</td> ";
+                //strVar += "					<td align='center' bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'> ";
+                //strVar += "						<p>1. < or = 5mm</p> ";
+                //strVar += "						<p>2. < or = 3mm</p> ";
+                //strVar += "						<p>3. < or = 10mm</p> ";
+                //strVar += "					</td> ";
+                //strVar += "					<td bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Mark for observation in subsequent inspections to ensure damage does not worsen or affect other areas</td> ";
+                //strVar += "				</tr> ";
+                //strVar += "				<tr> ";
+                //strVar += "					<td align='center' bgcolor='#ffff00' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Intermediate (4-7)</td> ";
+                //strVar += "					<td align='center' bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'> ";
+                //strVar += "						<p>1. 6mm to 10mm</p> ";
+                //strVar += "						<p>2. 4mm to 6mm</p> ";
+                //strVar += "						<p>3. 11mm to 20mm</p> ";
+                //strVar += "					</td> ";
+                //strVar += "					<td bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Mark for replacement of component. Replace or repair component as soon as possible.</td> ";
+                //strVar += "				</tr> ";
+                //strVar += "				<tr> ";
+                //strVar += "					<td align='center' bgcolor='#ff0000' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Major (8-10)</td> ";
+                //strVar += "					<td align='center' bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'> ";
+                //strVar += "						<p>1. > 10mm</p> ";
+                //strVar += "						<p>2. > 6mm</p> ";
+                //strVar += "						<p>3. > 20mm</p> ";
+                //strVar += "					</td> ";
+                //strVar += "					<td bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Mark for replacement of component. Evaluate for immediate action such as offloading affected area or quarantine connecting areas</td> ";
+                //strVar += "				</tr> ";
+                //strVar += "			</table> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "				<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "				<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "							<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += " <div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "							<div style='clear: both'></div> ";
@@ -2035,15 +2045,16 @@ namespace CamV4.Controllers
                 strVar += "	Damage to frame posts is not acceptable (refer to Figure 1). Posts of storage rack frames are ";
                 strVar += "	performance structural members and altering their shape with damage can have a significant ";
                 strVar += "	effect on their ability to carry compressive loads. As a general rule, frame posts should be ";
-                strVar += "	maintained in a “like new” condition. Therefore, any damage to frame posts should warrant ";
-                strVar += "	replacement of the frame post if it is a bolted type or an entire frame if it is a welded type. ";
+                strVar += "	maintained in a “like new” condition. Depending upon damage severity ranging from yellow to red, ";
+                strVar += "	any qualifying damage to frame posts warrants replacement of the frame post if it is a bolted type, ";
+                strVar += " or the entire frame if it is a welded type.";
                 strVar += "</p> ";
                 strVar += "<p style='text-align: center;'> ";
                 strVar += "	<img src='" + host + "Content/V2/images/Farme-img.png' width='520' /> ";
                 strVar += "</p> ";
                 strVar += "<div style='font-size: 15px;line-height: 24px;margin: 10px 0px;text-align: center;font-family: Arial, Helvetica, sans-serif;'>Figure 1: Measurement method of damages to the frame components</div> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -2105,7 +2116,7 @@ namespace CamV4.Controllers
                 strVar += "</li> ";
                 strVar += "</ul> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -2159,7 +2170,7 @@ namespace CamV4.Controllers
                 //strVar += "and recommendations, please view the Racking Inspection Deficiency List. ";
                 strVar += "</p> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -2192,7 +2203,7 @@ namespace CamV4.Controllers
 
                 strVar += "</ul> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -2428,36 +2439,40 @@ namespace CamV4.Controllers
                 //    strVar += "</div> ";
                 //    strVar += "<h2 style='text-align: left;margin: 10px 0px 0px 0px;font-size: 18px;text-transform: none;display: inline-block;border-bottom: 2px solid #212121;font-family: Arial, Helvetica, sans-serif;'>3A. CONCLUSION AND RECOMMENDATIONS</h2> ";
                 //}
-                strVar += "<ul style='margin: 0px 0px 25px 0px; padding: 0; '> ";
-                strVar += "<li style='list-style: none;font-size: 15px;padding-left: 0px;margin-left: 50px;line-height: 20px;font-family: Arial, Helvetica, sans-serif;'> ";
-                strVar += "<p>" + iSrNo.ToString() + ". In certain cases, it is possible that existing damages were not visible due to obstacles that may have obstructed the view of the inspector. We recommend keeping the aisle spacing as clear as possible. According to CSA A344-24: 8.1.4 “The inspection should also make note of poor operating practices such as:</p> ";
-                strVar += "    <ul> ";
-                strVar += "        <li style='list-style: none;'> ";
-                strVar += "            <p><span style='font-weight:bold;'>h)</span> Housekeeping items such as shrink wrap and debris on the floor.</p> ";
-                strVar += "            <p><span style='font-weight:bold;'>i)</span> Encroachment of clearance.</p> ";
-                strVar += "            <p><span style='font-weight:bold;'>j)</span> Pallets encroaching into the clearance required for sprinkler deflectors.</p> ";
-                strVar += "        </li> ";
-                strVar += "    </ul> ";
-                strVar += "</li> ";
+                if (iDetails.InspectionTypeCode != "MI")
+                {
+                    strVar += "<ul style='margin: 0px 0px 25px 0px; padding: 0; '> ";
+                    strVar += "<li style='list-style: none;font-size: 15px;padding-left: 0px;margin-left: 50px;line-height: 20px;font-family: Arial, Helvetica, sans-serif;'> ";
+                    strVar += "<p>" + iSrNo.ToString() + ". In certain cases, it is possible that existing damages were not visible due to obstacles that may have obstructed the view of the inspector. We recommend keeping the aisle spacing as clear as possible. According to CSA A344-24: 8.1.4 “The inspection should also make note of poor operating practices such as:</p> ";
+                    strVar += "    <ul> ";
+                    strVar += "        <li style='list-style: none;'> ";
+                    strVar += "            <p><span style='font-weight:bold;'>h)</span> Housekeeping items such as shrink wrap and debris on the floor.</p> ";
+                    strVar += "            <p><span style='font-weight:bold;'>i)</span> Encroachment of clearance.</p> ";
+                    strVar += "            <p><span style='font-weight:bold;'>j)</span> Pallets encroaching into the clearance required for sprinkler deflectors.</p> ";
+                    strVar += "        </li> ";
+                    strVar += "    </ul> ";
+                    strVar += "</li> ";
 
-                iSrNo += 1;
+                    iSrNo += 1;
 
-                strVar += "<li style='list-style: none;font-size: 15px;padding-left: 0px;margin-left: 50px;line-height: 20px;font-family: Arial, Helvetica, sans-serif;'> ";
-                strVar += "<p>" + iSrNo.ToString() + ". We recommend a few  " + iDetails.Customer + " employees to be trained to perform routine internal inspections.  According to CSA A344-24: 8.1.6 “The frequency of both routine and expert inspections should be determined by a risk assessment done by a health and safety professional, the rack vendor, or engineering consultant specialized in rack inspection. In general, the routine inspections should be conducted monthly, and the expert inspections performed annually. The frequency should, as a minimum, ensure compliance with local regulations. Note: The frequency of inspections can change over time depending on the outcome and findings of successive inspections. </p> ";
-                strVar += "<p>The risk assessment should consider the following items when establishing frequency:</p> ";
-                strVar += "<p> a) nature of the environment in which the pallet rack is situated.</p> ";
-                strVar += "<p> b) prior incidence of damage.</p> ";
-                strVar += "<p> c) vulnerability to damage and failure due to damage.</p> ";
-                strVar += "<p> d) nature of the operation including equipment used around the racks.</p> ";
-                strVar += "<p> e) competency and training of the lift truck operators.</p> ";
-                strVar += "<p> f) size of the facility;”</p> ";
-                strVar += "</li> ";
-                strVar += "</ul> ";
+                    strVar += "<li style='list-style: none;font-size: 15px;padding-left: 0px;margin-left: 50px;line-height: 20px;font-family: Arial, Helvetica, sans-serif;'> ";
+                    strVar += "<p>" + iSrNo.ToString() + ". We recommend a few  " + iDetails.Customer + " employees to be trained to perform routine internal inspections.  According to CSA A344-24: 8.1.6 “The frequency of both routine and expert inspections should be determined by a risk assessment done by a health and safety professional, the rack vendor, or engineering consultant specialized in rack inspection. In general, the routine inspections should be conducted monthly, and the expert inspections performed annually. The frequency should, as a minimum, ensure compliance with local regulations. Note: The frequency of inspections can change over time depending on the outcome and findings of successive inspections. </p> ";
+                    strVar += "<p>The risk assessment should consider the following items when establishing frequency:</p> ";
+                    strVar += "<p> a) nature of the environment in which the pallet rack is situated.</p> ";
+                    strVar += "<p> b) prior incidence of damage.</p> ";
+                    strVar += "<p> c) vulnerability to damage and failure due to damage.</p> ";
+                    strVar += "<p> d) nature of the operation including equipment used around the racks.</p> ";
+                    strVar += "<p> e) competency and training of the lift truck operators.</p> ";
+                    strVar += "<p> f) size of the facility;”</p> ";
+                    strVar += "</li> ";
+                    strVar += "</ul> ";
+                }
+
                 strVar += "<div style='margin: 0px 0px 30px 0px; padding: 0; '> ";
                 strVar += "<p>The recommendations and corrective actions provided are based on the inspector’s previous experience, incorporating several factors, and therefore have a subjective component. Cam Industrial Supply understands that users of rack have varying tolerance levels with respect to damages and may differ or disagree with the inspector’s findings.</p> ";
                 strVar += "</div> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -2545,7 +2560,7 @@ namespace CamV4.Controllers
                 strVar += "<div class='containerEngineerNotes' style='display: flex;justify-content: space-between;align-items: center;margin-bottom: 20px;'> ";
                 strVar += "<div class='sectionEngineerNotes' style='flex-basis: 55%;font-family: Arial, Helvetica, sans-serif;font-size: 15px;'> ";
                 strVar += "    <p>Yours truly,</p> ";
-                strVar += "    <p>Inspection & Report By</p> ";
+                strVar += "    <p>Inspection & Report By,</p> ";
                 strVar += "    <div>" + iDetails.empModel.EmployeeName + "," + iDetails.empModel.TitleDegrees + "</div> ";
                 strVar += "    <div>Cam Industrial</div> ";
                 //strVar += "    <div class='logoEngineerNotes'> ";
@@ -2567,7 +2582,7 @@ namespace CamV4.Controllers
                 strVar += "</div> ";
 
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -2708,7 +2723,7 @@ namespace CamV4.Controllers
                 }
                 strVar += "</table> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -2765,7 +2780,7 @@ namespace CamV4.Controllers
                     strVar += "<td style='padding:2px;font-size:9px;'>" + iDetails.Customer + "</td> ";
                     strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>Document Number:</td> ";
                     strVar += "<td style='padding:2px;font-size:9px;'>" + iDetails.InspectionDocumentNo + "</td> ";
-                    strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>Type of Racking:</td> ";
+                    strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>Type of Inspection:</td> ";
                     strVar += "<td style='padding:2px;font-size:9px;'>" + iDetails.InspectionType + "</td> ";
                     strVar += "</tr> ";
                     strVar += "<tr> ";
@@ -2821,10 +2836,12 @@ namespace CamV4.Controllers
                     strVar += "</tr> ";
                     strVar += "<tr bgcolor='#ffffcc'> ";
                     strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Item ID</div></td> ";
-                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Row Number</div></td> ";
-                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Bay ID/ Number</div></td> ";
-                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Bay/ Frame Side</div></td> ";
-                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Beam/ Frame Level</div></td> ";
+
+                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>" + (iDetails.InspectionTypeCode == "MI" ? "Packing Number" : "Row Number") + "</div></td> ";
+                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>" + (iDetails.InspectionTypeCode == "MI" ? "Lot Number" : "Bay ID/ Number") + "</div></td> ";
+                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>" + (iDetails.InspectionTypeCode == "MI" ? "Skid Number" : "Bay/ Frame Side") + "</div></td> ";
+                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>" + (iDetails.InspectionTypeCode == "MI" ? "Pallet Number" : "Beam/ Frame Level") + "</div></td> ";
+
                     strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px;font-size:9px;'>Title</td> ";
                     strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px;font-size:9px;'>Title</td> ";
                     //strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Refer report for more detail</div></td> ";
@@ -3010,7 +3027,7 @@ namespace CamV4.Controllers
                     strVar += "<tr> ";
                     strVar += "<td width='100' bgcolor='#ffffcc' style='padding:2px 10px;font-size:9px;'>Client:</td> ";
                     strVar += "<td colspan='4' style='padding:2px;font-size:9px;'>" + iDetails.Customer + "</td> ";
-                    strVar += "<td width='100' align='center' bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>Type of Racking:</td> ";
+                    strVar += "<td width='100' align='center' bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>Type of Inspection:</td> ";
                     strVar += "<td colspan='3' style='padding:2px 10px;font-size:9px;'>" + iDetails.InspectionType + "</td> ";
                     strVar += "</tr> ";
                     strVar += "<tr> ";
@@ -3161,6 +3178,7 @@ namespace CamV4.Controllers
                         //checklistVM.ShelvingCheckListSize = "WIDTH " + checklist.ShelvingCheckListSizeWidthIn + " X DEPTH " + checklist.ShelvingCheckListSizeDepthIn + " X HEIGHT " + checklist.ShelvingCheckListSizeHeightIn;
                         //checklistVM.ShelvingCheckListPost = "WIDTH " + checklist.PostWidthIn + " X DEPTH " + checklist.PostDepthIn + " X THICKNESS " + checklist.PostThicknessIn;
                         //checklistVM.ShelvingCheckListShelfBeam = "HEIGHT " + checklist.PostDepthIn + " X THICKNESS " + checklist.PostThicknessIn;
+                        //checklistVM.ShelvingCheckListShelfBeam =  "HEIGHT " + checklist.ShelfBeamHeightIn + " X THICKNESS " + checklist.ShelfBeamThicknessIn;
                         //checklistVM.ShelvingCheckListFrameConnector = checklist.FrameConnectorQty + " /FRAME" ?? "";
                         //checklistVM.ShelvingCheckListTieBar = Convert.ToString(checklist.TieBarQty) + " /LEVEL" ?? "";
                         //checklistVM.ShelvingCheckListCapacity = Convert.ToString(checklist.CapacityLbsPerBay) + " LBS/BAY" ?? "";
@@ -3309,7 +3327,7 @@ namespace CamV4.Controllers
                             strVar += "        <tr>";
                             strVar += "            <td align='left' valign='top' style='padding: 5px 5px;;font-family: Arial, Helvetica, sans-serif;'>";
                             strVar += "                <div style='width: 20%; float: left; line-height: 22px;font-size: 16px;'><b>Your Reference</b><br>" + iDetails.objQuotation.YourReference + "</div>";
-                            strVar += "                <div style='width: 20%; float: left; line-height: 22px;font-size: 16px;'><b>Valid to</b><br>" + iDetails.objQuotation.ValidTo + "</div>";
+                            strVar += "                <div style='width: 20%; float: left; line-height: 22px;font-size: 16px;'><b>Quotation Valid For</b><br>" + iDetails.objQuotation.ValidTo + "</div>";
                             strVar += "                <div style='width: 20%; float: left; text-align: left;font-size: 16px;'><b>Salesperson</b><br>" + iDetails.objQuotation.QuotationSalesPersonName + "</div>";
                             strVar += "                <div style='width: 20%; float: left; text-align: left;font-size: 16px;'><b>Payment Terms</b><br>" + iDetails.objQuotation.PaymentTerms + "</div>";
                             strVar += "                <div style='width: 20%; float: left; text-align: left;font-size: 16px;'><b>Shipment Method</b><br> " + iDetails.objQuotation.ShipmentMethod + "</div>";
@@ -3462,7 +3480,8 @@ namespace CamV4.Controllers
                 string siteUrl = Request.Url.GetLeftPart(UriPartial.Authority) + "/";
                 string siteRoot = Server.MapPath("~/").Replace("\\", "/") + "/";
 
-                strVar = strVar.Replace(siteUrl, "file:///" + siteRoot);
+                //strVar = strVar.Replace(siteUrl, "file:///" + siteRoot);
+                strVar = strVar.Replace("src='" + siteUrl, "src='file:///" + siteRoot);
 
                 using (var workStream = new MemoryStream())
                 using (var pdfWriter = new PdfWriter(workStream))
@@ -3583,12 +3602,12 @@ namespace CamV4.Controllers
                 strVar += "<td valign='top' align='center' style='padding: 2px;'> ";
                 strVar += "<div class='' style='border: 1px solid #0070c0;padding: 20px;height:25.6cm;'> ";
                 strVar += "<div><div style='text-align: center;'><img src='" + host + "Content/V2/images/logos/CamLogo.png' style='width:300px;' /></div> ";
-                strVar += "<div style='font-size: 35px;text-decoration: underline;text-transform: uppercase;'>RACKING INSPECTION REPORT</div></div> ";
+                strVar += "<div style='font-size: 35px;text-decoration: underline;text-transform: uppercase;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "</div></div> ";
                 strVar += "<div class='' style='height:150px;padding-top: 50px;font-size: 24px;line-height:35px;position: relative;'> ";
                 //strVar += "<div>" + iDetails.Customer + "</div> <div style='font-size:14px;'>" + iDetails.CustomerArea + " " + iDetails.CustomerLocation + "</div><div style='font-size:14px;'>" + iDetails.custModel.CustomerAddress + "</div><div class='customer-logo'><img src='" + iDetails.custModel.CustomerLogo + "' style='width:150px;height:auto;' /></div></div> ";
                 strVar += "<div>" + iDetails.Customer + "</div> <div style='font-size:14px;'>" + CustomerFullAddress + "</div><div class='customer-logo'><img src='" + iDetails.custModel.CustomerLogo + "' style='width:150px;height:auto;' /></div></div> ";
                 strVar += "<div><img src='" + host + "Content/V2/images/mid-logo.jpg' style='width: 250px;margin:50px 0px 50px 0px;' /></div> <div class=''> ";
-                strVar += "<div style='float:left;text-align:left;color:#005aab;font-weight:bold;line-height:30px;'><p style='margin: 0px;'>Inspection & Report By</p> <p style='margin: 0px;'>" + iDetails.Employee + ", " + iDetails.empModel.TitleDegrees + "</p> ";
+                strVar += "<div style='float:left;text-align:left;color:#005aab;font-weight:bold;line-height:30px;'><p style='margin: 0px;'>Inspection & Report By,</p> <p style='margin: 0px;'>" + iDetails.Employee + ", " + iDetails.empModel.TitleDegrees + "</p> ";
                 strVar += "<p style='margin: 0px;'>" + iDetails.empModel.EmployeeEmail + "</p> <p style='color: #999;margin: 0px;'>" + iDetails.empModel.MobileNo + "</p> </div> ";
                 strVar += "<div style='float: right;text-align: left;color: #005aab;font-weight: bold;line-height: 30px;'> <p style='margin: 0px;'>Inspection Date:" + Convert.ToDateTime(iDetails.InspectionDate).ToString("dd MMM yyyy") + "</p> <p style='margin: 0px;'>Report Date:" + Convert.ToDateTime(iDetails.Reportdate).ToString("dd MMM yyyy") + "</p> </div> <div style='clear: both'></div> </div> ";
                 strVar += "<div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> <div style='margin: 0px auto;float: none;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width:250px;'/></div><div style='clear: both'></div></div> </div> ";
@@ -3757,7 +3776,7 @@ namespace CamV4.Controllers
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
                 //}
 
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -3791,7 +3810,7 @@ namespace CamV4.Controllers
                 strVar += "							inspection program done quarterly, semi-annually, or annually. ";
                 strVar += "						</p> ";
                 strVar += "                     <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "                     <div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "                     <div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "                     <div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "                     <div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "                     <div style='clear: both'></div> ";
@@ -3829,45 +3848,51 @@ namespace CamV4.Controllers
                 strVar += "				*Adopted from Section 10.7, Rules for the Measurement and Classification of Damage to Uprights and Bracing ";
                 strVar += "				Members, published by the Fédération Européenne de la Manutention, Section X, FEM 10.2.04, Guidelines for the Safe Use of Static Steel Racking and Shelving, User Code, November 2001 ";
                 strVar += "			</p> ";
-                strVar += "			<table width='100%' border='1' cellspacing='0' cellpadding='0' style='margin: 0;color: #000;font-size: 12px;font-family: Arial, Helvetica, sans-serif;line-height: normal;background: #e0e0e0;border-width:1px;'> ";
-                strVar += "				<tr> ";
-                strVar += "					<td height='30' colspan='3' align='center' bgcolor='#c6d9f1' style='border-width: 1px;font-family: Arial, Helvetica, sans-serif;'><strong>Racking Inspection – Frame Damage Classification</strong></td> ";
-                strVar += "				</tr> ";
-                strVar += "				<tr> ";
-                strVar += "					<td height='30' align='center' bgcolor='#ffffcc' style='padding:2px;border-width:1px;font-family: Arial, Helvetica, sans-serif;'><strong>Classification</strong></td> ";
-                strVar += "					<td height='30' align='center' bgcolor='#ffffcc' style='padding:2px;border-width:1px;font-family: Arial, Helvetica, sans-serif;'><strong>Damage Threshold</strong></td> ";
-                strVar += "					<td height='30' align='center' bgcolor='#ffffcc' style='padding:2px;border-width:1px;font-family: Arial, Helvetica, sans-serif;'><strong>Action</strong></td> ";
-                strVar += "				</tr> ";
-                strVar += "				<tr> ";
-                strVar += "					<td align='center' bgcolor='#00cc00' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Minor (1-3)</td> ";
-                strVar += "					<td align='center' bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'> ";
-                strVar += "						<p>1. < or = 5mm</p> ";
-                strVar += "						<p>2. < or = 3mm</p> ";
-                strVar += "						<p>3. < or = 10mm</p> ";
-                strVar += "					</td> ";
-                strVar += "					<td bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Mark for observation in subsequent inspections to ensure damage does not worsen or affect other areas</td> ";
-                strVar += "				</tr> ";
-                strVar += "				<tr> ";
-                strVar += "					<td align='center' bgcolor='#ffff00' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Intermediate (4-7)</td> ";
-                strVar += "					<td align='center' bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'> ";
-                strVar += "						<p>1. 6mm to 10mm</p> ";
-                strVar += "						<p>2. 4mm to 6mm</p> ";
-                strVar += "						<p>3. 11mm to 20mm</p> ";
-                strVar += "					</td> ";
-                strVar += "					<td bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Mark for replacement of component. Replace or repair component as soon as possible.</td> ";
-                strVar += "				</tr> ";
-                strVar += "				<tr> ";
-                strVar += "					<td align='center' bgcolor='#ff0000' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Major (8-10)</td> ";
-                strVar += "					<td align='center' bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'> ";
-                strVar += "						<p>1. > 10mm</p> ";
-                strVar += "						<p>2. > 6mm</p> ";
-                strVar += "						<p>3. > 20mm</p> ";
-                strVar += "					</td> ";
-                strVar += "					<td bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Mark for replacement of component. Evaluate for immediate action such as offloading affected area or quarantine connecting areas</td> ";
-                strVar += "				</tr> ";
-                strVar += "			</table> ";
+
+                strVar += "         <p style='text-align: center;'> ";
+                strVar += "     	<img src='" + host + "Content/V2/images/inspectionprocedurecorrected.jpg' width='520' /> ";
+                //strVar += "         <div style='font-size: 15px;line-height: 24px;margin: 10px 0px;text-align: center;font-family: Arial, Helvetica, sans-serif;'>Figure 1: Inspection procedure Racking frame damage classification (with damage thresholds)</div> ";
+                strVar += "         </p> ";
+
+                //strVar += "			<table width='100%' border='1' cellspacing='0' cellpadding='0' style='margin: 0;color: #000;font-size: 12px;font-family: Arial, Helvetica, sans-serif;line-height: normal;background: #e0e0e0;border-width:1px;'> ";
+                //strVar += "				<tr> ";
+                //strVar += "					<td height='30' colspan='3' align='center' bgcolor='#c6d9f1' style='border-width: 1px;font-family: Arial, Helvetica, sans-serif;'><strong>Racking Inspection – Frame Damage Classification</strong></td> ";
+                //strVar += "				</tr> ";
+                //strVar += "				<tr> ";
+                //strVar += "					<td height='30' align='center' bgcolor='#ffffcc' style='padding:2px;border-width:1px;font-family: Arial, Helvetica, sans-serif;'><strong>Classification</strong></td> ";
+                //strVar += "					<td height='30' align='center' bgcolor='#ffffcc' style='padding:2px;border-width:1px;font-family: Arial, Helvetica, sans-serif;'><strong>Damage Threshold</strong></td> ";
+                //strVar += "					<td height='30' align='center' bgcolor='#ffffcc' style='padding:2px;border-width:1px;font-family: Arial, Helvetica, sans-serif;'><strong>Action</strong></td> ";
+                //strVar += "				</tr> ";
+                //strVar += "				<tr> ";
+                //strVar += "					<td align='center' bgcolor='#00cc00' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Minor (1-3)</td> ";
+                //strVar += "					<td align='center' bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'> ";
+                //strVar += "						<p>1. < or = 5mm</p> ";
+                //strVar += "						<p>2. < or = 3mm</p> ";
+                //strVar += "						<p>3. < or = 10mm</p> ";
+                //strVar += "					</td> ";
+                //strVar += "					<td bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Mark for observation in subsequent inspections to ensure damage does not worsen or affect other areas</td> ";
+                //strVar += "				</tr> ";
+                //strVar += "				<tr> ";
+                //strVar += "					<td align='center' bgcolor='#ffff00' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Intermediate (4-7)</td> ";
+                //strVar += "					<td align='center' bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'> ";
+                //strVar += "						<p>1. 6mm to 10mm</p> ";
+                //strVar += "						<p>2. 4mm to 6mm</p> ";
+                //strVar += "						<p>3. 11mm to 20mm</p> ";
+                //strVar += "					</td> ";
+                //strVar += "					<td bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Mark for replacement of component. Replace or repair component as soon as possible.</td> ";
+                //strVar += "				</tr> ";
+                //strVar += "				<tr> ";
+                //strVar += "					<td align='center' bgcolor='#ff0000' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Major (8-10)</td> ";
+                //strVar += "					<td align='center' bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'> ";
+                //strVar += "						<p>1. > 10mm</p> ";
+                //strVar += "						<p>2. > 6mm</p> ";
+                //strVar += "						<p>3. > 20mm</p> ";
+                //strVar += "					</td> ";
+                //strVar += "					<td bgcolor='#ffffff' style='padding: 2px; border-width: 1px;font-family: Arial, Helvetica, sans-serif;'>Mark for replacement of component. Evaluate for immediate action such as offloading affected area or quarantine connecting areas</td> ";
+                //strVar += "				</tr> ";
+                //strVar += "			</table> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "				<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "				<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "							<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += " <div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "							<div style='clear: both'></div> ";
@@ -3896,15 +3921,18 @@ namespace CamV4.Controllers
                 strVar += "	Damage to frame posts is not acceptable (refer to Figure 1). Posts of storage rack frames are ";
                 strVar += "	performance structural members and altering their shape with damage can have a significant ";
                 strVar += "	effect on their ability to carry compressive loads. As a general rule, frame posts should be ";
-                strVar += "	maintained in a “like new” condition. Therefore, any damage to frame posts should warrant ";
-                strVar += "	replacement of the frame post if it is a bolted type or an entire frame if it is a welded type. ";
+                //strVar += "	maintained in a “like new” condition. Therefore, any damage to frame posts should warrant ";
+                //strVar += "	replacement of the frame post if it is a bolted type or an entire frame if it is a welded type. ";
+                strVar += "	maintained in a “like new” condition. Depending upon damage severity ranging from yellow to red, ";
+                strVar += "	any qualifying damage to frame posts warrants replacement of the frame post if it is a bolted type, ";
+                strVar += " or the entire frame if it is a welded type.";
                 strVar += "</p> ";
                 strVar += "<p style='text-align: center;'> ";
-                strVar += "	<img src='" + host + "Content/V2/images/Farme-img.png' width='520' /> ";
+                strVar += "	<img src='" + host + "Content/V2/images/Farme-img.png' width='520' /> ";                
                 strVar += "</p> ";
-                strVar += "<div style='font-size: 15px;line-height: 24px;margin: 10px 0px;text-align: center;font-family: Arial, Helvetica, sans-serif;'>Figure 1: Measurement method of damages to the frame components</div> ";
+                strVar += "<div style='font-size: 15px;line-height: 24px;margin: 10px 0px;text-align: center;font-family: Arial, Helvetica, sans-serif;'>Figure 1: Measurement method of damages to the frame components</div> ";                
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -3915,8 +3943,6 @@ namespace CamV4.Controllers
                 strVar += "</tbody> ";
                 strVar += "</table> ";
                 //strVar += "</section> ";
-
-
 
                 strVar = strVar.Replace("i1DPageNo", pageNo.ToString());
 
@@ -3966,7 +3992,7 @@ namespace CamV4.Controllers
                 strVar += "</li> ";
                 strVar += "</ul> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -4020,7 +4046,7 @@ namespace CamV4.Controllers
                 //strVar += "and recommendations, please view the Racking Inspection Deficiency List. ";
                 strVar += "</p> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -4053,7 +4079,7 @@ namespace CamV4.Controllers
 
                 strVar += "</ul> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -4149,7 +4175,7 @@ namespace CamV4.Controllers
                         }
                         strVar += "</ul> ";
                         strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                        strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                        strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                         strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                         strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                         strVar += "<div style='clear: both'></div> ";
@@ -4176,36 +4202,41 @@ namespace CamV4.Controllers
                     strVar += "</div> ";
                     strVar += "<h2 style='text-align: left;margin: 10px 0px 0px 0px;font-size: 18px;text-transform: none;display: inline-block;border-bottom: 2px solid #212121;font-family: Arial, Helvetica, sans-serif;'>3A. CONCLUSION AND RECOMMENDATIONS</h2> ";
                 }
-                strVar += "<ul style='margin: 0px 0px 25px 0px; padding: 0; '> ";
-                strVar += "<li style='list-style: none;font-size: 15px;padding-left: 0px;margin-left: 50px;line-height: 20px;font-family: Arial, Helvetica, sans-serif;'> ";
-                strVar += "<p>" + iSrNo.ToString() + ". In certain cases, it is possible that existing damages were not visible due to obstacles that may have obstructed the view of the inspector. We recommend keeping the aisle spacing as clear as possible. According to CSA A344-24: 8.1.4 “The inspection should also make note of poor operating practices such as:</p> ";
-                strVar += "    <ul> ";
-                strVar += "        <li style='list-style: none;'> ";
-                strVar += "            <p><span style='font-weight:bold;'>h)</span> Housekeeping items such as shrink wrap and debris on the floor.</p> ";
-                strVar += "            <p><span style='font-weight:bold;'>i)</span> Encroachment of clearance.</p> ";
-                strVar += "            <p><span style='font-weight:bold;'>j)</span> Pallets encroaching into the clearance required for sprinkler deflectors.</p> ";
-                strVar += "        </li> ";
-                strVar += "    </ul> ";
-                strVar += "</li> ";
 
-                iSrNo += 1;
+                if (iDetails.InspectionTypeCode != "MI")
+                {
+                    strVar += "<ul style='margin: 0px 0px 25px 0px; padding: 0; '> ";
+                    strVar += "<li style='list-style: none;font-size: 15px;padding-left: 0px;margin-left: 50px;line-height: 20px;font-family: Arial, Helvetica, sans-serif;'> ";
+                    strVar += "<p>" + iSrNo.ToString() + ". In certain cases, it is possible that existing damages were not visible due to obstacles that may have obstructed the view of the inspector. We recommend keeping the aisle spacing as clear as possible. According to CSA A344-24: 8.1.4 “The inspection should also make note of poor operating practices such as:</p> ";
+                    strVar += "    <ul> ";
+                    strVar += "        <li style='list-style: none;'> ";
+                    strVar += "            <p><span style='font-weight:bold;'>h)</span> Housekeeping items such as shrink wrap and debris on the floor.</p> ";
+                    strVar += "            <p><span style='font-weight:bold;'>i)</span> Encroachment of clearance.</p> ";
+                    strVar += "            <p><span style='font-weight:bold;'>j)</span> Pallets encroaching into the clearance required for sprinkler deflectors.</p> ";
+                    strVar += "        </li> ";
+                    strVar += "    </ul> ";
+                    strVar += "</li> ";
 
-                strVar += "<li style='list-style: none;font-size: 15px;padding-left: 0px;margin-left: 50px;line-height: 20px;font-family: Arial, Helvetica, sans-serif;'> ";
-                strVar += "<p>" + iSrNo.ToString() + ". We recommend a few  " + iDetails.Customer + " employees to be trained to perform routine internal inspections.  According to CSA A344-24: 8.1.6 “The frequency of both routine and expert inspections should be determined by a risk assessment done by a health and safety professional, the rack vendor, or engineering consultant specialized in rack inspection. In general, the routine inspections should be conducted monthly, and the expert inspections performed annually. The frequency should, as a minimum, ensure compliance with local regulations. Note: The frequency of inspections can change over time depending on the outcome and findings of successive inspections. </p> ";
-                strVar += "<p>The risk assessment should consider the following items when establishing frequency:</p> ";
-                strVar += "<p> a) nature of the environment in which the pallet rack is situated.</p> ";
-                strVar += "<p> b) prior incidence of damage.</p> ";
-                strVar += "<p> c) vulnerability to damage and failure due to damage.</p> ";
-                strVar += "<p> d) nature of the operation including equipment used around the racks.</p> ";
-                strVar += "<p> e) competency and training of the lift truck operators.</p> ";
-                strVar += "<p> f) size of the facility;”</p> ";
-                strVar += "</li> ";
-                strVar += "</ul> ";
+                    iSrNo += 1;
+
+                    strVar += "<li style='list-style: none;font-size: 15px;padding-left: 0px;margin-left: 50px;line-height: 20px;font-family: Arial, Helvetica, sans-serif;'> ";
+                    strVar += "<p>" + iSrNo.ToString() + ". We recommend a few  " + iDetails.Customer + " employees to be trained to perform routine internal inspections.  According to CSA A344-24: 8.1.6 “The frequency of both routine and expert inspections should be determined by a risk assessment done by a health and safety professional, the rack vendor, or engineering consultant specialized in rack inspection. In general, the routine inspections should be conducted monthly, and the expert inspections performed annually. The frequency should, as a minimum, ensure compliance with local regulations. Note: The frequency of inspections can change over time depending on the outcome and findings of successive inspections. </p> ";
+                    strVar += "<p>The risk assessment should consider the following items when establishing frequency:</p> ";
+                    strVar += "<p> a) nature of the environment in which the pallet rack is situated.</p> ";
+                    strVar += "<p> b) prior incidence of damage.</p> ";
+                    strVar += "<p> c) vulnerability to damage and failure due to damage.</p> ";
+                    strVar += "<p> d) nature of the operation including equipment used around the racks.</p> ";
+                    strVar += "<p> e) competency and training of the lift truck operators.</p> ";
+                    strVar += "<p> f) size of the facility;”</p> ";
+                    strVar += "</li> ";
+                    strVar += "</ul> ";
+                }
+
                 strVar += "<div style='margin: 0px 0px 30px 0px; padding: 0; '> ";
                 strVar += "<p>The recommendations and corrective actions provided are based on the inspector’s previous experience, incorporating several factors, and therefore have a subjective component. Cam Industrial Supply understands that users of rack have varying tolerance levels with respect to damages and may differ or disagree with the inspector’s findings.</p> ";
                 strVar += "</div> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -4336,7 +4367,7 @@ namespace CamV4.Controllers
                 strVar += "<div class='containerEngineerNotes' style='display: flex;justify-content: space-between;align-items: center;margin-bottom: 20px;'> ";
                 strVar += "<div class='sectionEngineerNotes' style='flex-basis: 55%;font-family: Arial, Helvetica, sans-serif;font-size: 15px;'> ";
                 strVar += "    <p>Yours truly,</p> ";
-                strVar += "    <p>Inspection & Report By</p> ";
+                strVar += "    <p>Inspection & Report By,</p> ";
                 strVar += "    <div>" + iDetails.empModel.EmployeeName + "," + iDetails.empModel.TitleDegrees + "</div> ";
                 strVar += "    <div>Cam Industrial</div> ";
                 //strVar += "    <div class='logoEngineerNotes'> ";
@@ -4358,7 +4389,7 @@ namespace CamV4.Controllers
                 strVar += "</div> ";
 
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -4520,7 +4551,7 @@ namespace CamV4.Controllers
                 }
                 strVar += "</table> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
-                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>RACKING INSPECTION REPORT<span> - " + iDetails.Customer + "</span></div> ";
+                strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
                 strVar += "<div style='float: right;width: 5%;font-size: 16px;font-weight: bold;text-align: right;position: relative;'>" + pageNo++ + "</div> ";
                 strVar += "<div style='clear: both'></div> ";
@@ -4621,7 +4652,7 @@ namespace CamV4.Controllers
                     strVar += "<td style='padding:2px;font-size:9px;'>" + iDetails.Customer + "</td> ";
                     strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>Document Number:</td> ";
                     strVar += "<td style='padding:2px;font-size:9px;'>" + iDetails.InspectionDocumentNo + "</td> ";
-                    strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>Type of Racking:</td> ";
+                    strVar += "<td bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>Type of Inspection:</td> ";
                     strVar += "<td style='padding:2px;font-size:9px;'>" + iDetails.InspectionType + "</td> ";
                     strVar += "</tr> ";
                     strVar += "<tr> ";
@@ -4677,10 +4708,17 @@ namespace CamV4.Controllers
                     strVar += "</tr> ";
                     strVar += "<tr bgcolor='#ffffcc'> ";
                     strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Item ID</div></td> ";
-                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Row Number</div></td> ";
-                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Bay ID/ Number</div></td> ";
-                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Bay/ Frame Side</div></td> ";
-                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Beam/ Frame Level</div></td> ";
+                    //strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Row Number</div></td> ";
+                    //strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Bay ID/ Number</div></td> ";
+                    //strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Bay/ Frame Side</div></td> ";
+                    //strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Beam/ Frame Level</div></td> ";
+
+                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>" + (iDetails.InspectionTypeCode == "MI" ? "Packing Number" : "Row Number") + "</div></td> ";
+                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>" + (iDetails.InspectionTypeCode == "MI" ? "Lot Number" : "Bay ID/ Number") + "</div></td> ";
+                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>" + (iDetails.InspectionTypeCode == "MI" ? "Skid Number" : "Bay/ Frame Side") + "</div></td> ";
+                    strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>" + (iDetails.InspectionTypeCode == "MI" ? "Pallet Number" : "Beam/ Frame Level") + "</div></td> ";
+
+
                     strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px;font-size:9px;'>Title</td> ";
                     strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px;font-size:9px;'>Title</td> ";
                     //strVar += "<td valign='middle' style='width:2rem;text-align:center;padding:2px'><div style='position: relative;font-size:9px'>Refer report for more detail</div></td> ";
@@ -4820,7 +4858,11 @@ namespace CamV4.Controllers
                     //strVar += "<div style='page-break-after: auto;'></div> ";
                     //iDSrNo += 1;                    
                 }
+                string siteUrl = Request.Url.GetLeftPart(UriPartial.Authority) + "/";
+                string siteRoot = Server.MapPath("~/").Replace("\\", "/") + "/";
 
+                //strVar = strVar.Replace(siteUrl, "file:///" + siteRoot);
+                strVar = strVar.Replace("src='" + siteUrl, "src='file:///" + siteRoot);
                 using (var workStream = new MemoryStream())
                 using (var pdfWriter = new PdfWriter(workStream))
                 {
@@ -4906,7 +4948,7 @@ namespace CamV4.Controllers
                     strVar += "<tr> ";
                     strVar += "<td width='100' bgcolor='#ffffcc' style='padding:2px 10px;font-size:9px;'>Client:</td> ";
                     strVar += "<td colspan='4' style='padding:2px;font-size:9px;'>" + iDetails.Customer + "</td> ";
-                    strVar += "<td width='100' align='center' bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>Type of Racking:</td> ";
+                    strVar += "<td width='100' align='center' bgcolor='#ffffcc' style='padding:2px;font-size:9px;'>Type of Inspection:</td> ";
                     strVar += "<td colspan='3' style='padding:2px 10px;font-size:9px;'>" + iDetails.InspectionType + "</td> ";
                     strVar += "</tr> ";
                     strVar += "<tr> ";
@@ -5262,7 +5304,7 @@ namespace CamV4.Controllers
                             strVar += "        <tr>";
                             strVar += "            <td align='left' valign='top' style='padding: 5px 5px;;font-family: Arial, Helvetica, sans-serif;'>";
                             strVar += "                <div style='width: 20%; float: left; line-height: 22px;font-size: 16px;'><b>Your Reference</b><br>" + iDetails.objQuotation.YourReference + "</div>";
-                            strVar += "                <div style='width: 20%; float: left; line-height: 22px;font-size: 16px;'><b>Valid to</b><br>" + iDetails.objQuotation.ValidTo + "</div>";
+                            strVar += "                <div style='width: 20%; float: left; line-height: 22px;font-size: 16px;'><b>Quotation Valid For</b><br>" + iDetails.objQuotation.ValidTo + "</div>";
                             strVar += "                <div style='width: 20%; float: left; text-align: left;font-size: 16px;'><b>Salesperson</b><br>" + iDetails.objQuotation.QuotationSalesPersonName + "</div>";
                             strVar += "                <div style='width: 20%; float: left; text-align: left;font-size: 16px;'><b>Payment Terms</b><br>" + iDetails.objQuotation.PaymentTerms + "</div>";
                             strVar += "                <div style='width: 20%; float: left; text-align: left;font-size: 16px;'><b>Shipment Method</b><br> " + iDetails.objQuotation.ShipmentMethod + "</div>";
@@ -5798,7 +5840,7 @@ namespace CamV4.Controllers
                 return View();
             }
         }
-                
+
         public ActionResult ManageHistoryLegacyDocuments()
         {
             if (Session["LoggedInUserId"] == null)
@@ -5889,7 +5931,8 @@ namespace CamV4.Controllers
         }
         #endregion
 
-        public ActionResult InternalInspectionListing() {
+        public ActionResult InternalInspectionListing()
+        {
             if (Session["LoggedInUserId"] == null)
             {
                 return RedirectToAction("Login", "Account");
@@ -5899,7 +5942,8 @@ namespace CamV4.Controllers
                 return View();
             }
         }
-        public ActionResult InternalInspectionView() {
+        public ActionResult InternalInspectionView()
+        {
             if (Session["LoggedInUserId"] == null)
             {
                 return RedirectToAction("Login", "Account");
@@ -5909,6 +5953,112 @@ namespace CamV4.Controllers
                 return View();
             }
         }
+        public ActionResult TrainingCenterCourses()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public ActionResult TrainingCenterRegistration()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public ActionResult TrainingCenterPersonStatus()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public ActionResult TrainingCenterAdditionalResources()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public ActionResult TrainingCenterTechnicalTalk()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        #region "Inventory Excel"
+
+        public ActionResult SpareMaterialFiles()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public ActionResult SpareMaterialGrid()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        public ActionResult AuditLog()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        public ActionResult InventoryGrid()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        #endregion
     }
 
     //public class RotateTextEventHelper : PdfPageEventHelper

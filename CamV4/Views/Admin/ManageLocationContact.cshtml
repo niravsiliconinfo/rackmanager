@@ -23,7 +23,7 @@
                     <a href="@Url.Action("EditCustomer", "Admin")?id=@ViewData["CustD"]">
                         <i class="fa fa-arrow-left"></i>
                     </a>
-                    <span class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</span>
+                    <span class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</span>
                 </div>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
@@ -111,8 +111,8 @@
                                     <div class="input-group input-group-outline mb-3 scroller">
                                         <ul class="navbar-nav form-control">
                                             @*<li ng-if="facilitiesForAdd.length == 0">
-                                                <span class="text-muted small">Select a location first</span>
-                                            </li>*@
+                                                    <span class="text-muted small">Select a location first</span>
+                                                </li>*@
                                             <li ng-repeat="f in facilitiesForAdd">
                                                 <label for="chkAddFacility_{{f.CustomerFacilityID}}">
                                                     <input id="chkAddFacility_{{f.CustomerFacilityID}}"
@@ -132,8 +132,8 @@
                                     <div class="input-group input-group-outline mb-3 scroller">
                                         <ul class="navbar-nav form-control">
                                             @*<li ng-if="areasForAdd.length == 0">
-                                                <span class="text-muted small">Select a location first</span>
-                                            </li>*@
+                                                    <span class="text-muted small">Select a location first</span>
+                                                </li>*@
                                             <li ng-repeat="a in areasForAdd">
                                                 <label for="chkAddArea_{{a.AreaID}}">
                                                     <input id="chkAddArea_{{a.AreaID}}"
@@ -161,7 +161,6 @@
                         </form>
                     </div>
                 </div>
-
                 <!-- ===================== EDIT CONTACT ===================== -->
                 <div class="card my-4" ng-show="EditContactShow">
                     <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
@@ -290,7 +289,7 @@
 
                 <br />
 
-                
+
                 <div class="card my-4">
                     <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="pt-4 pb-4">
@@ -338,8 +337,8 @@
                                             <p class="text-xs font-weight-bold mb-0">{{d.LinkedAreaNames || '-'}}</p>
                                         </td>
                                         @*<td>
-            <p class="text-xs font-weight-bold mb-0">{{d.Customer}}</p>
-        </td>*@
+                                                <p class="text-xs font-weight-bold mb-0">{{d.Customer}}</p>
+                                            </td>*@
                                         <td class="align-middle">
                                             <a href="javascript:void(0)" ng-click="EditContactClick(d.LocationContactId)" title="Edit">
                                                 <i class="material-icons text-sm">edit</i>
@@ -367,8 +366,8 @@
                                             rotate="false"
                                             num-pages="numPages"
                                             items-per-page="itemsPerPage"
-                                            previous-text="«"
-                                            next-text="»"></pagination>
+                                            previous-text="<"
+                                            next-text=">"></pagination>
                             </nav>
                         </div>
                     </div>

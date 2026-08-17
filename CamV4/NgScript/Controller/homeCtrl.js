@@ -53,7 +53,7 @@
     homeCtrl.$inject = ['$scope', '$http', '$filter', '$window', '$timeout', 'Upload', '$document', '$location', '$interval'];
 
     function homeCtrl($scope, $http, $filter, $window, $timeout, Upload, $document, $location, $interval, $rootScope) {
-
+        console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXX-------In /Admin/Index--------------------------------------------------');
         $scope.viewby = '50';
         $scope.currentPage = '1';
         $scope.itemsPerPage = $scope.viewby;
@@ -208,17 +208,32 @@
             });
         }
 
+        //if (window.location.pathname == "/Admin/Index") {
+        //    var min = 2022,
+        //        max = new Date().getFullYear();
+        //    var range = [];
+           
+        //    for (var i = max; i >= min; i--) {
+        //        $('#selectedYear').append($('<option />').val(i).html(i));
+        //    }
+
+        //    $scope.years = range;
+        //    console.log('Selected Year: Admin', $scope.years);
+
+        //}
+       
         if (window.location.pathname == "/Admin/Index") {
+
             var min = 2022,
                 max = new Date().getFullYear();
-            var range = [];
+            console.log('Selected Year: Admin', '000000000000000000000000');
+            $scope.years = [];
 
             for (var i = max; i >= min; i--) {
-                $('#selectedYear').append($('<option />').val(i).html(i));
+                $scope.years.push(i);
             }
-
-            $scope.years = range;
         }
+
         if (window.location.pathname == "/Customer/Index") {
             var min = 2022,
                 max = new Date().getFullYear();

@@ -94,8 +94,19 @@ namespace CamV4.Models
         public virtual DbSet<CustomersLocationsUserFacility> CustomersLocationsUserFacilities { get; set; }
         public virtual DbSet<InternalInspection> InternalInspections { get; set; }
         public virtual DbSet<InternalInspectionDeficiency> InternalInspectionDeficiencies { get; set; }
-        public virtual DbSet<InternalInspectionLevel> InternalInspectionLevels { get; set; }
         public virtual DbSet<InternalInspectionPhoto> InternalInspectionPhotoes { get; set; }
+        public virtual DbSet<TrainingBlog> TrainingBlogs { get; set; }
+        public virtual DbSet<TrainingCourse> TrainingCourses { get; set; }
+        public virtual DbSet<TrainingRegistration> TrainingRegistrations { get; set; }
+        public virtual DbSet<TrainingRegistrationPerson> TrainingRegistrationPersons { get; set; }
+        public virtual DbSet<TrainingTechnicalTalk> TrainingTechnicalTalks { get; set; }
+        public virtual DbSet<TrainingWebinar> TrainingWebinars { get; set; }
+        public virtual DbSet<InventoryAuditLog> InventoryAuditLogs { get; set; }
+        public virtual DbSet<InventoryColumn> InventoryColumns { get; set; }
+        public virtual DbSet<InventoryFile> InventoryFiles { get; set; }
+        public virtual DbSet<InventoryItem> InventoryItems { get; set; }
+        public virtual DbSet<InventoryItemValue> InventoryItemValues { get; set; }
+        public virtual DbSet<AccountDeletionRequest> AccountDeletionRequests { get; set; }
     
         public virtual int CloneInspectionData(Nullable<long> sourceInspectionId, Nullable<long> targetInspectionId, Nullable<int> userId)
         {
@@ -685,6 +696,492 @@ namespace CamV4.Models
                 new ObjectParameter("YEAR", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_getEmpInspection_Count_New_AllUser_Result>("sp_getEmpInspection_Count_New_AllUser", uSERIDParameter, yEARParameter);
+        }
+    
+        public virtual int SP_GetCustomerDashboard_All(Nullable<long> uSERID, Nullable<int> yEAR, Nullable<int> locationId, Nullable<int> facilityId)
+        {
+            var uSERIDParameter = uSERID.HasValue ?
+                new ObjectParameter("USERID", uSERID) :
+                new ObjectParameter("USERID", typeof(long));
+    
+            var yEARParameter = yEAR.HasValue ?
+                new ObjectParameter("YEAR", yEAR) :
+                new ObjectParameter("YEAR", typeof(int));
+    
+            var locationIdParameter = locationId.HasValue ?
+                new ObjectParameter("LocationId", locationId) :
+                new ObjectParameter("LocationId", typeof(int));
+    
+            var facilityIdParameter = facilityId.HasValue ?
+                new ObjectParameter("FacilityId", facilityId) :
+                new ObjectParameter("FacilityId", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_GetCustomerDashboard_All", uSERIDParameter, yEARParameter, locationIdParameter, facilityIdParameter);
+        }
+    
+        public virtual ObjectResult<SP_GetCustomerDashboard_AllAdmin_Result> SP_GetCustomerDashboard_AllAdmin(Nullable<long> uSERID, Nullable<int> yEAR, Nullable<int> locationId, Nullable<int> facilityId)
+        {
+            var uSERIDParameter = uSERID.HasValue ?
+                new ObjectParameter("USERID", uSERID) :
+                new ObjectParameter("USERID", typeof(long));
+    
+            var yEARParameter = yEAR.HasValue ?
+                new ObjectParameter("YEAR", yEAR) :
+                new ObjectParameter("YEAR", typeof(int));
+    
+            var locationIdParameter = locationId.HasValue ?
+                new ObjectParameter("LocationId", locationId) :
+                new ObjectParameter("LocationId", typeof(int));
+    
+            var facilityIdParameter = facilityId.HasValue ?
+                new ObjectParameter("FacilityId", facilityId) :
+                new ObjectParameter("FacilityId", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_GetCustomerDashboard_AllAdmin_Result>("SP_GetCustomerDashboard_AllAdmin", uSERIDParameter, yEARParameter, locationIdParameter, facilityIdParameter);
+        }
+    
+        public virtual ObjectResult<SP_GetCustomerDashboard_All_v2_Result> SP_GetCustomerDashboard_All_v2(Nullable<long> uSERID, Nullable<int> yEAR, Nullable<long> locationId, Nullable<long> facilityId)
+        {
+            var uSERIDParameter = uSERID.HasValue ?
+                new ObjectParameter("USERID", uSERID) :
+                new ObjectParameter("USERID", typeof(long));
+    
+            var yEARParameter = yEAR.HasValue ?
+                new ObjectParameter("YEAR", yEAR) :
+                new ObjectParameter("YEAR", typeof(int));
+    
+            var locationIdParameter = locationId.HasValue ?
+                new ObjectParameter("LocationId", locationId) :
+                new ObjectParameter("LocationId", typeof(long));
+    
+            var facilityIdParameter = facilityId.HasValue ?
+                new ObjectParameter("FacilityId", facilityId) :
+                new ObjectParameter("FacilityId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_GetCustomerDashboard_All_v2_Result>("SP_GetCustomerDashboard_All_v2", uSERIDParameter, yEARParameter, locationIdParameter, facilityIdParameter);
+        }
+    
+        public virtual ObjectResult<GetInspectionCustomerWithFiltersNew_Result> GetInspectionCustomerWithFiltersNew(Nullable<long> customerId, string inspectionTypeId, Nullable<int> provinceId, string region, Nullable<int> cityId, Nullable<long> customerLocationId, Nullable<long> customerFacilityId, Nullable<long> customerAreaId, string inspectionStatusList)
+        {
+            var customerIdParameter = customerId.HasValue ?
+                new ObjectParameter("CustomerId", customerId) :
+                new ObjectParameter("CustomerId", typeof(long));
+    
+            var inspectionTypeIdParameter = inspectionTypeId != null ?
+                new ObjectParameter("InspectionTypeId", inspectionTypeId) :
+                new ObjectParameter("InspectionTypeId", typeof(string));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            var cityIdParameter = cityId.HasValue ?
+                new ObjectParameter("CityId", cityId) :
+                new ObjectParameter("CityId", typeof(int));
+    
+            var customerLocationIdParameter = customerLocationId.HasValue ?
+                new ObjectParameter("CustomerLocationId", customerLocationId) :
+                new ObjectParameter("CustomerLocationId", typeof(long));
+    
+            var customerFacilityIdParameter = customerFacilityId.HasValue ?
+                new ObjectParameter("CustomerFacilityId", customerFacilityId) :
+                new ObjectParameter("CustomerFacilityId", typeof(long));
+    
+            var customerAreaIdParameter = customerAreaId.HasValue ?
+                new ObjectParameter("CustomerAreaId", customerAreaId) :
+                new ObjectParameter("CustomerAreaId", typeof(long));
+    
+            var inspectionStatusListParameter = inspectionStatusList != null ?
+                new ObjectParameter("InspectionStatusList", inspectionStatusList) :
+                new ObjectParameter("InspectionStatusList", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetInspectionCustomerWithFiltersNew_Result>("GetInspectionCustomerWithFiltersNew", customerIdParameter, inspectionTypeIdParameter, provinceIdParameter, regionParameter, cityIdParameter, customerLocationIdParameter, customerFacilityIdParameter, customerAreaIdParameter, inspectionStatusListParameter);
+        }
+    
+        public virtual ObjectResult<GetCustomerAreas_Result> GetCustomerAreas(Nullable<long> userId, Nullable<long> customerLocationId, Nullable<long> customerFacilityId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            var customerLocationIdParameter = customerLocationId.HasValue ?
+                new ObjectParameter("CustomerLocationId", customerLocationId) :
+                new ObjectParameter("CustomerLocationId", typeof(long));
+    
+            var customerFacilityIdParameter = customerFacilityId.HasValue ?
+                new ObjectParameter("CustomerFacilityId", customerFacilityId) :
+                new ObjectParameter("CustomerFacilityId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerAreas_Result>("GetCustomerAreas", userIdParameter, customerLocationIdParameter, customerFacilityIdParameter);
+        }
+    
+        public virtual ObjectResult<GetCustomerCities_Result> GetCustomerCities(Nullable<long> userId, Nullable<int> provinceId, string region)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerCities_Result>("GetCustomerCities", userIdParameter, provinceIdParameter, regionParameter);
+        }
+    
+        public virtual ObjectResult<GetCustomerFacilities_Result> GetCustomerFacilities(Nullable<long> userId, Nullable<long> customerLocationId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            var customerLocationIdParameter = customerLocationId.HasValue ?
+                new ObjectParameter("CustomerLocationId", customerLocationId) :
+                new ObjectParameter("CustomerLocationId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerFacilities_Result>("GetCustomerFacilities", userIdParameter, customerLocationIdParameter);
+        }
+    
+        public virtual ObjectResult<GetCustomerLocations_Result> GetCustomerLocations(Nullable<long> userId, string region, Nullable<int> provinceId, Nullable<int> cityId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            var cityIdParameter = cityId.HasValue ?
+                new ObjectParameter("CityId", cityId) :
+                new ObjectParameter("CityId", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerLocations_Result>("GetCustomerLocations", userIdParameter, regionParameter, provinceIdParameter, cityIdParameter);
+        }
+    
+        public virtual ObjectResult<GetCustomerProvinces_Result> GetCustomerProvinces(Nullable<long> userId, string region)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerProvinces_Result>("GetCustomerProvinces", userIdParameter, regionParameter);
+        }
+    
+        public virtual ObjectResult<string> GetCustomerRegions(Nullable<long> userId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("GetCustomerRegions", userIdParameter);
+        }
+    
+        public virtual ObjectResult<GetDocumentListing_Result> GetDocumentListing(Nullable<long> userId, string region, Nullable<int> provinceId, Nullable<int> cityId, Nullable<long> customerLocationId, Nullable<long> customerFacilityId, Nullable<long> customerAreaId, Nullable<bool> includeInspectionDocuments, Nullable<bool> includeHistoricalDocuments, string inspectionCategoryList, string historicalCategoryList)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            var cityIdParameter = cityId.HasValue ?
+                new ObjectParameter("CityId", cityId) :
+                new ObjectParameter("CityId", typeof(int));
+    
+            var customerLocationIdParameter = customerLocationId.HasValue ?
+                new ObjectParameter("CustomerLocationId", customerLocationId) :
+                new ObjectParameter("CustomerLocationId", typeof(long));
+    
+            var customerFacilityIdParameter = customerFacilityId.HasValue ?
+                new ObjectParameter("CustomerFacilityId", customerFacilityId) :
+                new ObjectParameter("CustomerFacilityId", typeof(long));
+    
+            var customerAreaIdParameter = customerAreaId.HasValue ?
+                new ObjectParameter("CustomerAreaId", customerAreaId) :
+                new ObjectParameter("CustomerAreaId", typeof(long));
+    
+            var includeInspectionDocumentsParameter = includeInspectionDocuments.HasValue ?
+                new ObjectParameter("IncludeInspectionDocuments", includeInspectionDocuments) :
+                new ObjectParameter("IncludeInspectionDocuments", typeof(bool));
+    
+            var includeHistoricalDocumentsParameter = includeHistoricalDocuments.HasValue ?
+                new ObjectParameter("IncludeHistoricalDocuments", includeHistoricalDocuments) :
+                new ObjectParameter("IncludeHistoricalDocuments", typeof(bool));
+    
+            var inspectionCategoryListParameter = inspectionCategoryList != null ?
+                new ObjectParameter("InspectionCategoryList", inspectionCategoryList) :
+                new ObjectParameter("InspectionCategoryList", typeof(string));
+    
+            var historicalCategoryListParameter = historicalCategoryList != null ?
+                new ObjectParameter("HistoricalCategoryList", historicalCategoryList) :
+                new ObjectParameter("HistoricalCategoryList", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetDocumentListing_Result>("GetDocumentListing", userIdParameter, regionParameter, provinceIdParameter, cityIdParameter, customerLocationIdParameter, customerFacilityIdParameter, customerAreaIdParameter, includeInspectionDocumentsParameter, includeHistoricalDocumentsParameter, inspectionCategoryListParameter, historicalCategoryListParameter);
+        }
+    
+        public virtual ObjectResult<string> GetHistoricalDocumentCategories()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("GetHistoricalDocumentCategories");
+        }
+    
+        public virtual ObjectResult<GetIncidentListing_Result> GetIncidentListing(Nullable<long> userId, string incidentType, string region, Nullable<int> provinceId, Nullable<int> cityId, Nullable<long> customerLocationId, Nullable<long> customerFacilityId, Nullable<long> customerAreaId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            var incidentTypeParameter = incidentType != null ?
+                new ObjectParameter("IncidentType", incidentType) :
+                new ObjectParameter("IncidentType", typeof(string));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            var cityIdParameter = cityId.HasValue ?
+                new ObjectParameter("CityId", cityId) :
+                new ObjectParameter("CityId", typeof(int));
+    
+            var customerLocationIdParameter = customerLocationId.HasValue ?
+                new ObjectParameter("CustomerLocationId", customerLocationId) :
+                new ObjectParameter("CustomerLocationId", typeof(long));
+    
+            var customerFacilityIdParameter = customerFacilityId.HasValue ?
+                new ObjectParameter("CustomerFacilityId", customerFacilityId) :
+                new ObjectParameter("CustomerFacilityId", typeof(long));
+    
+            var customerAreaIdParameter = customerAreaId.HasValue ?
+                new ObjectParameter("CustomerAreaId", customerAreaId) :
+                new ObjectParameter("CustomerAreaId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetIncidentListing_Result>("GetIncidentListing", userIdParameter, incidentTypeParameter, regionParameter, provinceIdParameter, cityIdParameter, customerLocationIdParameter, customerFacilityIdParameter, customerAreaIdParameter);
+        }
+    
+        public virtual ObjectResult<string> GetInspectionDocumentCategories()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("GetInspectionDocumentCategories");
+        }
+    
+        public virtual ObjectResult<GetInspectionListing_Result> GetInspectionListing(Nullable<long> userId, string inspectionTypeId, string region, Nullable<int> provinceId, Nullable<int> cityId, Nullable<long> customerLocationId, Nullable<long> customerFacilityId, Nullable<long> customerAreaId, string inspectionStatusIdList)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            var inspectionTypeIdParameter = inspectionTypeId != null ?
+                new ObjectParameter("InspectionTypeId", inspectionTypeId) :
+                new ObjectParameter("InspectionTypeId", typeof(string));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            var cityIdParameter = cityId.HasValue ?
+                new ObjectParameter("CityId", cityId) :
+                new ObjectParameter("CityId", typeof(int));
+    
+            var customerLocationIdParameter = customerLocationId.HasValue ?
+                new ObjectParameter("CustomerLocationId", customerLocationId) :
+                new ObjectParameter("CustomerLocationId", typeof(long));
+    
+            var customerFacilityIdParameter = customerFacilityId.HasValue ?
+                new ObjectParameter("CustomerFacilityId", customerFacilityId) :
+                new ObjectParameter("CustomerFacilityId", typeof(long));
+    
+            var customerAreaIdParameter = customerAreaId.HasValue ?
+                new ObjectParameter("CustomerAreaId", customerAreaId) :
+                new ObjectParameter("CustomerAreaId", typeof(long));
+    
+            var inspectionStatusIdListParameter = inspectionStatusIdList != null ?
+                new ObjectParameter("InspectionStatusIdList", inspectionStatusIdList) :
+                new ObjectParameter("InspectionStatusIdList", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetInspectionListing_Result>("GetInspectionListing", userIdParameter, inspectionTypeIdParameter, regionParameter, provinceIdParameter, cityIdParameter, customerLocationIdParameter, customerFacilityIdParameter, customerAreaIdParameter, inspectionStatusIdListParameter);
+        }
+    
+        public virtual ObjectResult<GetInternalInspectionListing_Result> GetInternalInspectionListing(Nullable<long> userId, string status, string region, Nullable<int> provinceId, Nullable<int> cityId, Nullable<long> customerLocationId, Nullable<long> customerFacilityId, Nullable<long> customerAreaId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            var statusParameter = status != null ?
+                new ObjectParameter("Status", status) :
+                new ObjectParameter("Status", typeof(string));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            var cityIdParameter = cityId.HasValue ?
+                new ObjectParameter("CityId", cityId) :
+                new ObjectParameter("CityId", typeof(int));
+    
+            var customerLocationIdParameter = customerLocationId.HasValue ?
+                new ObjectParameter("CustomerLocationId", customerLocationId) :
+                new ObjectParameter("CustomerLocationId", typeof(long));
+    
+            var customerFacilityIdParameter = customerFacilityId.HasValue ?
+                new ObjectParameter("CustomerFacilityId", customerFacilityId) :
+                new ObjectParameter("CustomerFacilityId", typeof(long));
+    
+            var customerAreaIdParameter = customerAreaId.HasValue ?
+                new ObjectParameter("CustomerAreaId", customerAreaId) :
+                new ObjectParameter("CustomerAreaId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetInternalInspectionListing_Result>("GetInternalInspectionListing", userIdParameter, statusParameter, regionParameter, provinceIdParameter, cityIdParameter, customerLocationIdParameter, customerFacilityIdParameter, customerAreaIdParameter);
+        }
+    
+        public virtual ObjectResult<GetAreaAll_Result> GetAreaAll(Nullable<long> userId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetAreaAll_Result>("GetAreaAll", userIdParameter);
+        }
+    
+        public virtual ObjectResult<GetAreas_Result> GetAreas(Nullable<long> userId, Nullable<long> locationId, Nullable<long> facilityId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            var locationIdParameter = locationId.HasValue ?
+                new ObjectParameter("LocationId", locationId) :
+                new ObjectParameter("LocationId", typeof(long));
+    
+            var facilityIdParameter = facilityId.HasValue ?
+                new ObjectParameter("FacilityId", facilityId) :
+                new ObjectParameter("FacilityId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetAreas_Result>("GetAreas", userIdParameter, locationIdParameter, facilityIdParameter);
+        }
+    
+        public virtual ObjectResult<GetCities_Result> GetCities(Nullable<long> userId, Nullable<int> provinceId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCities_Result>("GetCities", userIdParameter, provinceIdParameter);
+        }
+    
+        public virtual ObjectResult<GetCityAll_Result> GetCityAll(Nullable<long> userId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCityAll_Result>("GetCityAll", userIdParameter);
+        }
+    
+        public virtual ObjectResult<GetFacilities_Result> GetFacilities(Nullable<long> userId, Nullable<long> locationId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            var locationIdParameter = locationId.HasValue ?
+                new ObjectParameter("LocationId", locationId) :
+                new ObjectParameter("LocationId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFacilities_Result>("GetFacilities", userIdParameter, locationIdParameter);
+        }
+    
+        public virtual ObjectResult<GetFacilityAll_Result> GetFacilityAll(Nullable<long> userId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFacilityAll_Result>("GetFacilityAll", userIdParameter);
+        }
+    
+        public virtual ObjectResult<GetLocationAll_Result> GetLocationAll(Nullable<long> userId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetLocationAll_Result>("GetLocationAll", userIdParameter);
+        }
+    
+        public virtual ObjectResult<GetLocations_Result> GetLocations(Nullable<long> userId, string region, Nullable<int> provinceId, Nullable<int> cityId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            var cityIdParameter = cityId.HasValue ?
+                new ObjectParameter("CityId", cityId) :
+                new ObjectParameter("CityId", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetLocations_Result>("GetLocations", userIdParameter, regionParameter, provinceIdParameter, cityIdParameter);
+        }
+    
+        public virtual ObjectResult<GetProvinces_Result> GetProvinces(Nullable<long> userId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetProvinces_Result>("GetProvinces", userIdParameter);
+        }
+    
+        public virtual ObjectResult<string> GetRegions(Nullable<long> userId)
+        {
+            var userIdParameter = userId.HasValue ?
+                new ObjectParameter("UserId", userId) :
+                new ObjectParameter("UserId", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("GetRegions", userIdParameter);
         }
     }
 }

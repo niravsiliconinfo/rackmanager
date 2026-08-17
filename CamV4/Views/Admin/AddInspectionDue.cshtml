@@ -29,7 +29,7 @@
                     }
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Inspection Due</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -95,11 +95,11 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
-                                    <span>Facility<span class="error">*</span></span>
+                                    <span>Customer Facility<span class="error">*</span></span>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
-                                        <select name="CustomerFacilityId" id="CustomerFacilityId" class="form-control" ng-model="CustomerFacilityID" ng-change="GetAreaByLocationIdDrpd(CustomerFacilityID)" required>
+                                        <select name="CustomerFacilityId" id="CustomerFacilityId" class="form-control" ng-model="customerFacilityId" ng-change="GetAreaByFacilityIdDrpd(customerFacilityId)" required>
                                             <option value="">-- Select --</option>
                                             <option ng-repeat="d in getFacilityDetailsByLocationId" value="{{d.CustomerFacilityID}}">{{d.FacilityName}}</option>
                                         </select>

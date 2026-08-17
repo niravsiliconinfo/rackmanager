@@ -23,7 +23,7 @@
                     <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageInspectionDue", "Admin")">Manage Inspection Due</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Inspection Due</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -71,10 +71,10 @@
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
                                         @*<select name="CustomerId" id="CustomerId" class="form-control" ng-model="customerId"
-                                                    ng-change="GetCustomerLocationByCustomerIdDrpd(customerId)" required>
-                                                <option value="">-- Select --</option>
-                                                <option ng-repeat="d in getAllCustomers" value="{{d.CustomerID}}">{{d.CustomerName}}</option>
-                                            </select>*@
+                            ng-change="GetCustomerLocationByCustomerIdDrpd(customerId)" required>
+                        <option value="">-- Select --</option>
+                        <option ng-repeat="d in getAllCustomers" value="{{d.CustomerID}}">{{d.CustomerName}}</option>
+                    </select>*@
                                         <select name="CustomerId" id="CustomerId" class="form-control" ng-model="customerId"
                                                 ng-change="GetCustomerLocationByCustomerIdDrpd(customerId)" required>
                                             <option value="">-- Select --</option>
@@ -90,29 +90,65 @@
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
                                         @*<select name="CustomerLocationId" id="CustomerLocationId" class="form-control" ng-model="customerLocationId"
-                                                    ng-change="GetAreaByLocationIdDrpd(customerLocationId)" required>
-                                                <option value="">-- Select --</option>
-                                                <option ng-repeat="d in getCustomerLocationByCustomerIdDrpd" value="{{d.CustomerLocationID}}">{{d.LocationName}}</option>
-                                            </select>*@
-                                        <select name="CustomerLocationId" id="CustomerLocationId" class="form-control" ng-model="customerLocationId"
                                                 ng-change="GetAreaByLocationIdDrpd(customerLocationId)" required>
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getCustomerLocationByCustomerIdDrpd" value="{{d.CustomerLocationID}}">{{d.LocationName}}</option>
+                                        </select>*@
+                                        <select name="CustomerLocationId" id="CustomerLocationId" class="form-control" ng-model="customerLocationId"
+                                                ng-change="GetAreaByLocationIdDrpd(customerLocationId); GetFacilityByLocationIdDrpd(customerLocationId);" required>
                                             <option value="">-- Select --</option>
                                             <option ng-repeat="d in getCustomerLocationByCustomerIdDrpd" ng-value="d.CustomerLocationID">{{d.LocationName}}</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
+                                    <span>Facility<span class="error">*</span></span>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="customerFacilityId"
+                                                id="customerFacilityId"
+                                                class="form-control"
+                                                ng-model="customerFacilityId"
+                                                ng-change="GetAreaByFacilityIdDrpd(customerFacilityId)"
+                                                required>
+                                            <option value="">-- Select --</option>
+                                            <option ng-repeat="d in getFacilityDetailsByLocationId"
+                                                    ng-value="d.customerFacilityId">
+                                                {{d.FacilityName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
                                     <span>Customer Area</span>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
-                                        @*<select name="CustomerAreaID" id="CustomerAreaID" class="form-control" ng-model="customerAreaId">
-                                                <option value="">-- Select --</option>
-                                                <option ng-repeat="d in getAreaDetailsByLocationId" value="{{d.AreaID}}">{{d.AreaName}}</option>
-                                            </select>*@
-                                        <select name="CustomerAreaID" id="CustomerAreaID" class="form-control" ng-model="customerAreaId">
+                                        @*<select name="CustomerAreaID" id="CustomerAreaID" class="form-control" ng-model="CustomerAreaID">
+                    <option value="">-- Select --</option>
+                    <option ng-repeat="d in getAreaDetailsByLocationId" value="{{d.AreaID}}">{{d.AreaName}}</option>
+                </select>*@
+                                        <select name="CustomerAreaID" id="CustomerAreaID" class="form-control" ng-model="CustomerAreaID">
                                             <option value="">-- Select --</option>
                                             <option ng-repeat="d in getAreaDetailsByLocationId" ng-value="d.AreaID">{{d.AreaName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Status</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select name="InspectionStatus" id="InspectionStatus" class="form-control" ng-model="inspectionStatus">
+                                            <option value="">-- Select --</option>
+                                            <option value="1">Due</option>
+                                            <option value="2">In Progress</option>
+                                            <option value="3">Sent for Approval</option>
+                                            <option value="4">Approved & Complete</option>
                                         </select>
                                     </div>
                                 </div>
@@ -124,9 +160,9 @@
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
                                         @*<select name="EmployeeId" id="EmployeeId" class="form-control" ng-model="employeeId" required>
-                                                <option value="">-- Select --</option>
-                                                <option ng-repeat="d in getAllEmployee" value="{{d.EmployeeID}}">{{d.EmployeeName}}</option>
-                                            </select>*@
+                        <option value="">-- Select --</option>
+                        <option ng-repeat="d in getAllEmployee" value="{{d.EmployeeID}}">{{d.EmployeeName}}</option>
+                    </select>*@
                                         <select name="EmployeeId" id="EmployeeId" class="form-control" ng-model="employeeId" required>
                                             <option value="">-- Select --</option>
                                             <option ng-repeat="d in getAllEmployee" ng-value="d.EmployeeID">{{d.EmployeeName}}</option>
@@ -146,22 +182,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-2">
-                                    <span>Status</span>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <select name="InspectionStatus" id="InspectionStatus" class="form-control" ng-model="inspectionStatus">
-                                            <option value="">-- Select --</option>
-                                            <option value="1">Due</option>
-                                            <option value="2">In Progress</option>
-                                            <option value="3">Sent for Approval</option>
-                                            <option value="4">Approved & Complete</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
+
                             <div class="row">
                                 <div class="col-sm-2">
                                     <span>Facilities Areas</span>

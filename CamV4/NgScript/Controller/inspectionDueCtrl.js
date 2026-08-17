@@ -149,19 +149,37 @@
         };
 
         // Function to get areas by location ID
-        $scope.GetAreaByLocationIdDrpd = function (locationId) {
-            console.log('GetAreaByLocationIdDrpd', locationId);
-            if (locationId) {
-                $http.get('/api/pageview/getAreaDetailsByLocationId', { params: { LocationId: locationId } }).then(function (response) {
+        //$scope.GetAreaByLocationIdDrpd = function (locationId) {
+        //    console.log('GetAreaByLocationIdDrpd', locationId);
+        //    if (locationId) {
+        //        $http.get('/api/pageview/getAreaDetailsByLocationId', { params: { LocationId: locationId } }).then(function (response) {
+        //            $scope.getAreaDetailsByLocationId = response.data;
+        //            console.log('Areas loaded:', $scope.getAreaDetailsByLocationId);
+        //        }, function (response) {
+        //            $scope.waiting = false;
+        //        });
+        //    } else {
+        //        $scope.getAreaDetailsByLocationId = [];
+        //    }
+        //};
+        $scope.GetAreaByLocationIdDrpd = function (id) {
+
+            return $http.get('/api/pageview/getAreaDetailsByLocationId',
+                { params: { id: id } })
+                .then(function (response) {
                     $scope.getAreaDetailsByLocationId = response.data;
-                    console.log('Areas loaded:', $scope.getAreaDetailsByLocationId);
-                }, function (response) {
-                    $scope.waiting = false;
                 });
-            } else {
-                $scope.getAreaDetailsByLocationId = [];
-            }
         };
+        $scope.GetAreaByFacilityIdDrpd = function (id) {
+
+            return $http.get('/api/pageview/getAreaDetailsByFacilityId',
+                { params: { id: id } })
+                .then(function (response) {
+                    $scope.getAreaDetailsByLocationId = response.data;
+                });
+        };
+
+        
 
         if (window.location.pathname === "/Admin/EditInspectionDue") {
 
@@ -191,7 +209,7 @@
                 $scope.waiting = false;
             });
 
-           
+
 
 
             // Load NON-dependent lists + inspection data
@@ -223,14 +241,17 @@
                 $scope.cADDocuments = d.CADDocuments;
 
                 // Set the inspection type - keep as-is from API
-                $scope.inspectionType = d.InspectionType;
+                //$scope.inspectionType = d.InspectionType;
+                $scope.inspectionType = d.InspectionType
+                    ? d.InspectionType.trim()
+                    : '';
                 console.log('Set inspectionType:', $scope.inspectionType);
 
                 // Set employee ID - keep as-is from API
-               
+
                 // Load all employees
                 $http.get('/api/pageview/getAllEmployee').then(function (response) {
-                    $scope.getAllEmployee = response.data;                    
+                    $scope.getAllEmployee = response.data;
                     $scope.employeeId = d.EmployeeId;
                     console.log('Set employeeId:', $scope.employeeId);
                 }, function (response) {
@@ -275,8 +296,8 @@
 
                 //                // Set the customer area ID after areas are loaded
                 //                if (d.CustomerAreaID) {
-                //                    $scope.customerAreaId = d.CustomerAreaID;
-                //                    console.log('Set customerAreaId:', $scope.customerAreaId);
+                //                    $scope.CustomerAreaID = d.CustomerAreaID;
+                //                    console.log('Set CustomerAreaID:', $scope.CustomerAreaID);
                 //                }
                 //            }, function (response) {
                 //                console.error('Error loading areas:', response);
@@ -304,6 +325,9 @@
                         $scope.customerLocationId = d.CustomerLocationId;
                         console.log('Set customerLocationId:', $scope.customerLocationId);
 
+                        //$scope.GetFacilityByLocationIdDrpd(d.CustomerLocationId, d.customerFacilityId);                        
+                        $scope.GetFacilityByLocationIdDrpd(d.CustomerLocationId,d.customerFacilityId,d.CustomerAreaID);
+
                         // Load areas based on location ID
                         if (d.CustomerLocationId) {
                             $http.get('/api/pageview/getAreaDetailsByLocationId', { params: { LocationId: d.CustomerLocationId } }).then(function (response) {
@@ -312,8 +336,8 @@
 
                                 // Set the customer area ID after areas are loaded
                                 if (d.CustomerAreaID) {
-                                    $scope.customerAreaId = d.CustomerAreaID;
-                                    console.log('Set customerAreaId:', $scope.customerAreaId);
+                                    $scope.CustomerAreaID = d.CustomerAreaID;
+                                    console.log('Set CustomerAreaID:', $scope.CustomerAreaID);
                                 }
                             }, function (response) {
                                 console.error('Error loading areas:', response);
@@ -353,6 +377,67 @@
             });
         }
 
+        //$scope.GetFacilityByLocationIdDrpd = function (id, selectedFacilityId) {
+
+        //    $http.get('/api/pageview/getFacilityByLocationId',
+        //        { params: { id: id } })
+        //        .then(function (response) {
+
+        //            $scope.getFacilityDetailsByLocationId = response.data;
+
+        //            $scope.customerFacilityId = selectedFacilityId;
+
+        //            if (selectedFacilityId) {
+        //                $scope.GetAreaByFacilityIdDrpd(selectedFacilityId);
+        //            }
+        //        });
+        //}
+
+        $scope.GetFacilityByLocationIdDrpd = function (locationId, selectedFacilityId, selectedAreaId) {
+
+            console.log('getFacilityByLocationId', locationId);
+
+            return $http.get('/api/pageview/getFacilityByLocationId', {
+                params: { id: locationId }
+            }).then(function (response) {
+
+                $scope.getFacilityDetailsByLocationId = response.data;
+
+                // Select the saved facility
+                $scope.customerFacilityId = selectedFacilityId;
+
+                // Load Area based on whether a Facility exists
+                //if (selectedFacilityId) {
+
+                //    return $scope.GetAreaByFacilityIdDrpd(selectedFacilityId)
+                //        .then(function () {
+                //            $scope.CustomerAreaID = selectedAreaId;
+                //        });
+
+                //} else {
+
+                //    return $scope.GetAreaByLocationIdDrpd(locationId)
+                //        .then(function () {
+                //            $scope.CustomerAreaID = selectedAreaId;
+                //        });
+                //}
+
+                $scope.LoadAreaDropdown(locationId, selectedFacilityId)
+                    .then(function () {
+                        $scope.CustomerAreaID = selectedAreaId;
+                    });
+
+            });
+        };
+
+        $scope.LoadAreaDropdown = function (locationId, facilityId) {
+
+            if (facilityId) {
+                return $scope.GetAreaByFacilityIdDrpd(facilityId);
+            }
+
+            return $scope.GetAreaByLocationIdDrpd(locationId);
+        };
         $scope.GetCheckedFacilitiesAndProcess = function () {
             var checkedFacilities = '';
             $scope.getAllFacilitiesArea.forEach(function (f) {
@@ -449,7 +534,7 @@
 
             }
             var config = {
-                CustomerId: $scope.customerId, CustomerLocationId: $scope.customerLocationId, CustomerAreaID: $scope.customerAreaId,
+                CustomerId: $scope.customerId, CustomerLocationId: $scope.customerLocationId, CustomerAreaID: $scope.CustomerAreaID, CustomerFacilityID: $scope.customerFacilityId,
                 EmployeeId: $scope.employeeId, InspectionDate: $scope.inspectionDate, InspectionType: $scope.inspectionType,
                 CADDocuments: $scope.cADDocuments, FacilitiesAreasIds: $scope.checkedFacilitiesId, ProcessOverviewIds: $scope.checkedProcessId,
                 ReferenceDocumentIds: $scope.checkedDocumentId, inspectionFileDrawing: PdfList
@@ -513,7 +598,7 @@
             }
 
             var config = {
-                CustomerId: $scope.customerId, CustomerLocationId: $scope.customerLocationId, CustomerAreaID: $scope.customerAreaId,
+                CustomerId: $scope.customerId, CustomerLocationId: $scope.customerLocationId, CustomerAreaID: $scope.CustomerAreaID,
                 EmployeeId: $scope.employeeId, InspectionDate: $scope.inspectionDate, InspectionType: $scope.inspectionType, InspectionId: Id,
                 CADDocuments: $scope.cADDocuments, FacilitiesAreasIds: $scope.checkedFacilitiesId, ProcessOverviewIds: $scope.checkedProcessId,
                 InspectionStatus: $scope.inspectionStatus, ReferenceDocumentIds: $scope.checkedDocumentId, inspectionFileDrawing: PdfList

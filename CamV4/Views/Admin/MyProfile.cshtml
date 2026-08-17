@@ -10,7 +10,7 @@
         return cookieToken + ":" + formToken;
     }
 }
-
+<script src="~/NgScript/Controller/homeCtrl.js"></script>
 <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg " ng-app="myApp" ng-controller="homeCtrl">
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
         <div class="container-fluid py-1 px-3">
@@ -19,7 +19,7 @@
                     <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index", "Admin")">Dashboard</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">My Profile</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">

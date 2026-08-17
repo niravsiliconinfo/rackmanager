@@ -20,7 +20,7 @@
                     <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index", "Customer")">Dashboard</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Inspection</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -85,19 +85,21 @@
                                             <span class="text-secondary text-xs font-weight-bold">{{d.InspectionDate | date:'dd MMM yyyy'}}</span>
                                         </td>
                                         <td class="align-middle text-sm">
-                                            <span class="text-secondary text-xs font-weight-bold">{{d.Employee}}</span>
+                                            <span class="text-secondary text-xs font-weight-bold">{{d.EmployeeName}}</span>
                                         </td>
                                         <td class="align-middle text-sm">
                                             <span class="text-secondary text-xs font-weight-bold">{{d.InspectionType}}</span>
                                         </td>
                                         <td>
-                                            @*<p class="text-xs font-weight-bold mb-0">{{d.CustomerArea}}<span ng-if="d.CustomerArea && d.CustomerLocation">,</span> {{d.CustomerLocation}}</p>*@
+                                            @*<p class="text-xs font-weight-bold mb-0">{{d.CustomerArea}}<span ng-if="d.CustomerArea && d.CustomerLocation">,</span> {{d.CustomerLocation}}</p>*@                                            
                                             <p class="text-xs font-weight-bold mb-0">
-                                                {{d.CustomerArea}}
-                                                <span ng-if="d.CustomerArea && (d.CustomerFacility || d.CustomerLocation)">,</span>
-                                                {{d.CustomerFacility}}
-                                                <span ng-if="d.CustomerFacility && d.CustomerLocation">,</span>
-                                                {{d.CustomerLocation}}
+                                                {{d.AreaName}}
+                                                <span ng-if="d.AreaName && (d.FacilityName || d.LocationName)">, </span>
+                                                <span ng-if="d.FacilityName">
+                                                    {{d.FacilityName}}
+                                                    <span ng-if="d.LocationName">, </span>
+                                                </span>
+                                                {{d.LocationName}}
                                             </p>
                                         </td>
                                         <td class="align-middle text-sm">
@@ -131,7 +133,7 @@
                                     <option>50</option>
                                 </select> of {{getAllInspectionByCustomerIdcount}} Inspections
                                 <pagination total-items="totalgetAllInspectionByCustomerId" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
-                                            items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
+                                            items-per-page="itemsPerPage" previous-text="<" next-text=">"></pagination>
                             </nav>
                         </div>
                     </div>

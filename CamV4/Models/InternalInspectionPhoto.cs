@@ -15,8 +15,8 @@ namespace CamV4.Models
     public partial class InternalInspectionPhoto
     {
         public long InternalInspectionPhotoID { get; set; }
+        public long InternalInspectionDeficiencyID { get; set; }
         public long InternalInspectionID { get; set; }
-        public long CustomerID { get; set; }
         public string PhotoPath { get; set; }
         public string PhotoThumbPath { get; set; }
         public bool IsActive { get; set; }

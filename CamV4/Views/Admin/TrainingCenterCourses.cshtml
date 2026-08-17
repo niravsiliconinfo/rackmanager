@@ -1,0 +1,168 @@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="~/NgScript/Controller/trainingCenterCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg"
+      ng-controller="trainingCenterCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Dashboard","Admin")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Training Center - Courses</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+
+        <div class="alert alert-success text-sm" ng-show="courseSuccess">{{courseSuccess}}</div>
+
+        <!-- Course Form Modal-style inline panel -->
+        <div class="row" ng-if="showCourseForm">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white ps-3 mt-2">
+                                {{courseForm.TrainingCourseID > 0 ? 'Edit Course' : 'Add Course'}}
+                            </h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-2"><span>Course Name <span class="error">*</span></span></div>
+                            <div class="col-sm-10">
+                                <div class="input-group input-group-outline mb-3">
+                                    <input type="text" class="form-control" ng-model="courseForm.CourseName" maxlength="200" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2"><span>Course Code <span class="error">*</span></span></div>
+                            <div class="col-sm-4">
+                                <div class="input-group input-group-outline mb-3">
+                                    <input type="text" class="form-control" ng-model="courseForm.CourseCode"
+                                           maxlength="10" placeholder="e.g. A or B" />
+                                </div>
+                            </div>
+                            <div class="col-sm-2"><span>Price ($) <span class="error">*</span></span></div>
+                            <div class="col-sm-4">
+                                <div class="input-group input-group-outline mb-3">
+                                    <input type="number" class="form-control" ng-model="courseForm.Price"
+                                           min="0" step="0.01" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2"><span>Description</span></div>
+                            <div class="col-sm-10">
+                                <div class="input-group input-group-outline mb-3">
+                                    <textarea class="form-control" ng-model="courseForm.Description" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2"><span>Active</span></div>
+                            <div class="col-sm-10 d-flex align-items-center mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" ng-model="courseForm.IsActive"
+                                           id="courseActive" />
+                                    <label class="form-check-label text-sm" for="courseActive">Active</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-danger text-sm mb-2" ng-show="courseError">{{courseError}}</div>
+                        <div class="text-center float-end">
+                            <button type="button" class="btn bg-gradient-info btn-lg mb-0" ng-click="SaveCourse()">Save Course</button>
+                            <button type="button" class="btn bg-gradient-secondary btn-lg mb-0 ms-2" ng-click="CloseCourseForm()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Listing -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white ps-3 mt-2">Course Master</h6>
+                                </div>
+                                <div class="col-6 text-end pe-4 d-flex align-items-center justify-content-end">
+                                    <button type="button" class="btn bg-gradient-dark mb-0 mx-3"
+                                            ng-click="OpenCourseForm(null)">
+                                        <i class="material-icons text-sm me-1" style="vertical-align:middle;">add</i>
+                                        Add Course
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Code</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Name</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Price</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Status</th>
+                                        <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-if="!courseList || courseList.length == 0">
+                                        <td colspan="5" class="text-center text-sm py-3">No courses found.</td>
+                                    </tr>
+                                    <tr ng-repeat="c in courseList">
+                                        <td><span class="badge bg-gradient-dark ps-2">{{c.CourseCode}}</span></td>
+                                        <td>
+                                            <p class="text-sm font-weight-bold mb-0">{{c.CourseName}}</p>
+                                            <p class="text-sm text-muted mb-0">{{c.Description}}</p>
+                                        </td>
+                                        <td><p class="text-sm font-weight-bold mb-0">{{c.PriceFormatted}}</p></td>
+                                        <td>
+                                            <span class="badge bg-gradient-success" ng-if="c.IsActive">Active</span>
+                                            <span class="badge bg-gradient-secondary" ng-if="!c.IsActive">Inactive</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="javascript:void(0)" ng-click="OpenCourseForm(c)" class="me-2" title="Edit">
+                                                <i class="material-icons text-sm">edit</i>
+                                            </a>
+                                            <a href="javascript:void(0)" ng-click="ToggleCourse(c.TrainingCourseID)"
+                                               title="{{c.IsActive ? 'Deactivate' : 'Activate'}}">
+                                                <i class="material-icons text-sm" ng-if="c.IsActive">toggle_on</i>
+                                                <i class="material-icons text-sm text-secondary" ng-if="!c.IsActive">toggle_off</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @Html.Partial("_FooterLayout")
+    </div>
+</main>

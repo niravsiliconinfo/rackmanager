@@ -384,6 +384,29 @@ namespace CamV4.Controllers
                 return View();
             }
         }
+        public ActionResult TrainingCenterTechnicalTalk()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public ActionResult TrainingCenterCourseStatus()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        
         public ActionResult TrainingCenterCourses()
         {
             if (Session["LoggedInUserId"] == null)
@@ -442,5 +465,58 @@ namespace CamV4.Controllers
                 return View();
             }
         }
+
+        public ActionResult customerSpareMaterialListing()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public ActionResult customerSpareMaterialGrid()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public ActionResult InventoryGrid()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+       
+
+        public ActionResult ChangeHistory()
+        {
+            if (Session["LoggedInUserId"] == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        
+
+
+
+
     }
 }

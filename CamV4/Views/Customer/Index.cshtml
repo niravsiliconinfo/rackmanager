@@ -4,7 +4,10 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<main class="main-content position-relative max-height-vh-100 h-100 " ng-app="myApp" ng-controller="customerdashboardCtrl">
+
+
+<main class="main-content position-relative max-height-vh-100 h-100" ng-app="myApp" ng-controller="customerdashboardCtrl">
+
     <!-- Navbar -->
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
         <div class="container-fluid py-1 px-3">
@@ -13,21 +16,45 @@
                     <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Home</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Dashboard</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
+
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center gap-2">
                     <div class="input-group input-group-outline">
-                        @*<select class="form-control" id="selectedYear" name="year" ng-model="selectedYear" ng-change="chartDataByYearCustomerAngular()" onchange="ChartDataByYearCustomer(this.value)">
-                                <option value="" disabled>-- Select Year --</option>
-                                <option ng-repeat="year in years" ng-value="year.value">{{ year.label }}</option>
-                            </select>*@
-                        <select class="form-control" id="selectedYearCustomer" name="year" onchange="ChartDataByYearCustomer(this.value);">
-                            @*<option value  disabled>-- Select Year --</option> ng-options="year.value as year.label for year in years" ng-model="year"*@
+                        <select class="form-control" id="selectedYearCustomer" name="year"
+                                onchange="ChartDataByYearCustomer(this.value);">
+                        </select>
+                    </div>
+                    <div class="input-group input-group-outline">
+                        <select class="form-control" style=" min-width: 150px;"
+                                id="custDash_locationDropdown"
+                                ng-model="custDash_selectedLocationId"
+                                ng-change="custDash_OnLocationChange()"
+                                ng-disabled="custDash_isLoading">
+                            <option value="">All Locations</option>
+                            <option ng-repeat="loc in custDash_locationList"
+                                    ng-value="loc.CustomerLocationID">
+                                {{loc.LocationName}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="input-group input-group-outline">
+                        <select class="form-control" style=" min-width: 150px;"
+                                id="custDash_facilityDropdown"
+                                ng-model="custDash_selectedFacilityId"
+                                ng-change="custDash_OnFacilityChange()"
+                                ng-disabled="custDash_isLoading">
+                            <option value="">All Facilities</option>
+                            <option ng-repeat="fac in custDash_facilityList"
+                                    ng-value="fac.CustomerFacilityID">
+                                {{fac.FacilityName}}
+                            </option>
                         </select>
                     </div>
                 </div>
-                <ul class="navbar-nav  justify-content-end">
+
+                <ul class="navbar-nav justify-content-end">
                     <li class="nav-item d-flex align-items-center">
                         <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
                             <i class="fa fa-sign-out me-sm-1"></i>
@@ -43,202 +70,231 @@
                             </div>
                         </a>
                     </li>
-
                 </ul>
             </div>
         </div>
     </nav>
     <!-- End Navbar -->
+
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col mb-3">
                 <div class="card-dashboard">
                     <div class="card-header p-1 pt-2">
-                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
-                            <img src="~/Content/V2/images/d_InspectionsDue.png" style="height: 64px;width: 64px;" />
+                        <div class="icon icon-lg icon-shape text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_InspectionsDue.png" style="height:64px;width:64px;" />
                         </div>
                         <div class="text-end pt-1">
-                            <h4 class="mb-0" id="InspectionDueCount">@Model.InspectionDueCount</h4>
+                            <h4 class="mb-0">
+                                <span ng-if="!custDash_isLoading || custDash_cnt.InspectionsDue > 0"
+                                      ng-bind="custDash_cnt.InspectionsDue"></span>
+                                <span ng-if="custDash_isLoading && custDash_cnt.InspectionsDue === 0"
+                                      class="custdash-counter-skeleton"></span>
+                            </h4>
                             <p class="text-sm mb-0 text-capitalize">Inspections Due</p>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
                     <div class="card-footer p-1">
-                        <p class="text-sm mb-0 text-capitalize">
-                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
-                        </p>
+                        <p class="text-sm mb-0 text-capitalize"><span class="text-dark text-sm font-weight-bolder">&nbsp;</span></p>
                     </div>
                 </div>
             </div>
             <div class="col mb-3">
                 <div class="card-dashboard">
                     <div class="card-header p-1 pt-2">
-                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
-                            <img src="~/Content/V2/images/d_InProgress.png" style="height: 64px;width: 64px;" />
+                        <div class="icon icon-lg icon-shape text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_InProgress.png" style="height:64px;width:64px;" />
                         </div>
                         <div class="text-end pt-1">
-                            <h4 class="mb-0" id="InProgressCount">@Model.InProgressCount</h4>
+                            <h4 class="mb-0">
+                                <span ng-if="!custDash_isLoading || custDash_cnt.InProgress > 0"
+                                      ng-bind="custDash_cnt.InProgress"></span>
+                                <span ng-if="custDash_isLoading && custDash_cnt.InProgress === 0"
+                                      class="custdash-counter-skeleton"></span>
+                            </h4>
                             <p class="text-sm mb-0 text-capitalize">In Progress</p>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
                     <div class="card-footer p-1">
-                        <p class="text-sm mb-0 text-capitalize">
-                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
-                        </p>
+                        <p class="text-sm mb-0 text-capitalize"><span class="text-dark text-sm font-weight-bolder">&nbsp;</span></p>
                     </div>
                 </div>
             </div>
             <div class="col mb-3">
                 <div class="card-dashboard">
                     <div class="card-header p-1 pt-2">
-                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
-                            <img src="~/Content/V2/images/d_SentForApproval.png" style="height: 64px;width: 64px;" />
+                        <div class="icon icon-lg icon-shape text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_SentForApproval.png" style="height:64px;width:64px;" />
                         </div>
                         <div class="text-end pt-1">
-                            <h4 class="mb-0" id="SentforApprovalCount">@Model.SentforApprovalCount</h4>
+                            <h4 class="mb-0">
+                                <span ng-if="!custDash_isLoading || custDash_cnt.SentForApproval > 0"
+                                      ng-bind="custDash_cnt.SentForApproval"></span>
+                                <span ng-if="custDash_isLoading && custDash_cnt.SentForApproval === 0"
+                                      class="custdash-counter-skeleton"></span>
+                            </h4>
                             <p class="text-sm mb-0 text-capitalize">Sent for Approval</p>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
                     <div class="card-footer p-1">
-                        <p class="text-sm mb-0 text-capitalize">
-                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
-                        </p>
+                        <p class="text-sm mb-0 text-capitalize"><span class="text-dark text-sm font-weight-bolder">&nbsp;</span></p>
                     </div>
                 </div>
             </div>
             <div class="col mb-3">
                 <div class="card-dashboard">
                     <div class="card-header p-1 pt-2">
-                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
-                            <img src="~/Content/V2/images/d_ReportComplete.png" style="height: 64px;width: 64px;" />
+                        <div class="icon icon-lg icon-shape text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_ReportComplete.png" style="height:64px;width:64px;" />
                         </div>
                         <div class="text-end pt-1">
-                            <h4 class="mb-0" id="ApprovedCompletedCount">@Model.ApprovedCompletedCount</h4>
+                            <h4 class="mb-0">
+                                <span ng-if="!custDash_isLoading || custDash_cnt.ReportComplete > 0"
+                                      ng-bind="custDash_cnt.ReportComplete"></span>
+                                <span ng-if="custDash_isLoading && custDash_cnt.ReportComplete === 0"
+                                      class="custdash-counter-skeleton"></span>
+                            </h4>
                             <p class="text-sm mb-0 text-capitalize">Report Complete</p>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
                     <div class="card-footer p-1">
-                        <p class="text-sm mb-0 text-capitalize">
-                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
-                        </p>
+                        <p class="text-sm mb-0 text-capitalize"><span class="text-dark text-sm font-weight-bolder">&nbsp;</span></p>
                     </div>
                 </div>
             </div>
             <div class="col mb-3">
                 <div class="card-dashboard">
                     <div class="card-header p-1 pt-2">
-                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
-                            <img src="~/Content/V2/images/d_QuotationRequested.png" style="height: 64px;width: 64px;" />
+                        <div class="icon icon-lg icon-shape text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_QuotationRequested.png" style="height:64px;width:64px;" />
                         </div>
                         <div class="text-end pt-1">
-                            <h4 class="mb-0" id="QuotationRequestedCount">@Model.QuotationRequestedCount</h4>
+                            <h4 class="mb-0">
+                                <span ng-if="!custDash_isLoading || custDash_cnt.QuotationRequested > 0"
+                                      ng-bind="custDash_cnt.QuotationRequested"></span>
+                                <span ng-if="custDash_isLoading && custDash_cnt.QuotationRequested === 0"
+                                      class="custdash-counter-skeleton"></span>
+                            </h4>
                             <p class="text-sm mb-0 text-capitalize">Quotation Requested</p>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
                     <div class="card-footer p-1">
-                        <p class="text-sm mb-0 text-capitalize">
-                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
-                        </p>
+                        <p class="text-sm mb-0 text-capitalize"><span class="text-dark text-sm font-weight-bolder">&nbsp;</span></p>
                     </div>
                 </div>
             </div>
             <div class="col mb-3">
                 <div class="card-dashboard">
                     <div class="card-header p-1 pt-2">
-                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
-                            <img src="~/Content/V2/images/d_AwaitingApproval.png" style="height: 64px;width: 64px;" />
+                        <div class="icon icon-lg icon-shape text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_AwaitingApproval.png" style="height:64px;width:64px;" />
                         </div>
                         <div class="text-end pt-1">
-                            <h4 class="mb-0" id="AwaitingApprovalCount">@Model.AwaitingApprovalCount</h4>
+                            <h4 class="mb-0">
+                                <span ng-if="!custDash_isLoading || custDash_cnt.AwaitingApproval > 0"
+                                      ng-bind="custDash_cnt.AwaitingApproval"></span>
+                                <span ng-if="custDash_isLoading && custDash_cnt.AwaitingApproval === 0"
+                                      class="custdash-counter-skeleton"></span>
+                            </h4>
                             <p class="text-sm mb-0 text-capitalize">Awaiting Approval</p>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
                     <div class="card-footer p-1">
-                        <p class="text-sm mb-0 text-capitalize">
-                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
-                        </p>
+                        <p class="text-sm mb-0 text-capitalize"><span class="text-dark text-sm font-weight-bolder">&nbsp;</span></p>
                     </div>
                 </div>
             </div>
             <div class="col mb-3">
                 <div class="card-dashboard">
                     <div class="card-header p-1 pt-2">
-                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
-                            <img src="~/Content/V2/images/d_QuotationApproved.png" style="height: 64px;width: 64px;" />
+                        <div class="icon icon-lg icon-shape text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_QuotationApproved.png" style="height:64px;width:64px;" />
                         </div>
                         <div class="text-end pt-1">
-                            <h4 class="mb-0" id="QuotationApprovedCount">@Model.QuotationApprovedCount</h4>
+                            <h4 class="mb-0">
+                                <span ng-if="!custDash_isLoading || custDash_cnt.QuotationApproved > 0"
+                                      ng-bind="custDash_cnt.QuotationApproved"></span>
+                                <span ng-if="custDash_isLoading && custDash_cnt.QuotationApproved === 0"
+                                      class="custdash-counter-skeleton"></span>
+                            </h4>
                             <p class="text-sm mb-0 text-capitalize">Quotation Approved</p>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
                     <div class="card-footer p-1">
-                        <p class="text-sm mb-0 text-capitalize">
-                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
-                        </p>
+                        <p class="text-sm mb-0 text-capitalize"><span class="text-dark text-sm font-weight-bolder">&nbsp;</span></p>
                     </div>
                 </div>
             </div>
             <div class="col mb-3">
                 <div class="card-dashboard">
                     <div class="card-header p-1 pt-2">
-                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
-                            <img src="~/Content/V2/images/d_RepairCompleted.png" style="height: 64px;width: 64px;" />
+                        <div class="icon icon-lg icon-shape text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_RepairCompleted.png" style="height:64px;width:64px;" />
                         </div>
                         <div class="text-end pt-1">
-                            <h4 class="mb-0" id="RepairCompletedCount">@Model.RepairCompletedCount</h4>
+                            <h4 class="mb-0">
+                                <span ng-if="!custDash_isLoading || custDash_cnt.RepairCompleted > 0"
+                                      ng-bind="custDash_cnt.RepairCompleted"></span>
+                                <span ng-if="custDash_isLoading && custDash_cnt.RepairCompleted === 0"
+                                      class="custdash-counter-skeleton"></span>
+                            </h4>
                             <p class="text-sm mb-0 text-capitalize">Repair Completed</p>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
                     <div class="card-footer p-1">
-                        <p class="text-sm mb-0 text-capitalize">
-                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
-                        </p>
+                        <p class="text-sm mb-0 text-capitalize"><span class="text-dark text-sm font-weight-bolder">&nbsp;</span></p>
                     </div>
                 </div>
             </div>
             <div class="col mb-3">
                 <div class="card-dashboard">
                     <div class="card-header p-1 pt-2">
-                        <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
-                            <img src="~/Content/V2/images/d_Finished.png" style="height: 64px;width: 64px;" />
+                        <div class="icon icon-lg icon-shape text-center mt-n4 position-absolute">
+                            <img src="~/Content/V2/images/d_Finished.png" style="height:64px;width:64px;" />
                         </div>
                         <div class="text-end pt-1">
-                            <h4 class="mb-0" id="InspectionFinishedCount">@Model.InspectionFinishedCount</h4>
+                            <h4 class="mb-0">
+                                <span ng-if="!custDash_isLoading || custDash_cnt.Finished > 0"
+                                      ng-bind="custDash_cnt.Finished"></span>
+                                <span ng-if="custDash_isLoading && custDash_cnt.Finished === 0"
+                                      class="custdash-counter-skeleton"></span>
+                            </h4>
                             <p class="text-sm mb-0 text-capitalize">Finished</p>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
                     <div class="card-footer p-1">
-                        <p class="text-sm mb-0 text-capitalize">
-                            <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
-                        </p>
+                        <p class="text-sm mb-0 text-capitalize"><span class="text-dark text-sm font-weight-bolder">&nbsp;</span></p>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="row mt-4">
             <div class="col-lg-4 col-md-6 mt-4 mb-4">
-                <div class="card z-index-2 ">
+                <div class="card z-index-2">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                         <div class="bg-gradient-light shadow-info py-3 pe-1">
                             <div class="chart">
-                                @*<canvas id="chart-bars" class="chart-canvas" height="170"></canvas>*@
-                                <canvas id="pie-chart-customer" width="800" height="450"></canvas>
+                                <canvas id="custdash-pie-chart" width="800" height="450"></canvas>
+                                <canvas id="pie-chart-customer" width="1" height="1" style="display:none;"></canvas>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h6 class="mb-0 ">Deficiencies By Severity</h6>
+                        <h6 class="mb-0">Deficiencies By Severity</h6>
                         <hr class="dark horizontal">
-                        <div class="d-flex ">
+                        <div class="d-flex align-items-center">
+                            <span ng-show="custDash_isLoading" class="text-xs text-secondary">
+                                <i class="fa fa-spinner fa-spin me-1"></i>Updating…
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -253,6 +309,9 @@
                                         <h6 class="text-white text-capitalize ps-3 mb-0">Deficiencies Breakdown Based On Categories</h6>
                                     </div>
                                     <div class="col-6 text-end">
+                                        <span ng-show="custDash_isLoading" class="text-white text-xs pe-3">
+                                            <i class="fa fa-spinner fa-spin"></i>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -269,10 +328,10 @@
                                             <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2 text-center">Count</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="deficiencyTableBody" ng-repeat="d in getDeficienciesBreakdownCategorieslist">
+                                    <tbody ng-repeat="d in custDash_categoryBreakdownList">
                                         <tr>
                                             <td class="align-middle text-left text-sm">
-                                                <span class="text-secondary text-xs font-weight-bold">{{d.DeficiencyCategoryName}}</span>
+                                                <span class="text-secondary text-xs font-weight-bold">{{d.DeficiencyCategory}}</span>
                                             </td>
                                             <td class="align-middle text-center text-sm">
                                                 <span class="text-secondary text-xs font-weight-bold">{{d.MinorCnt}}</span>
@@ -284,7 +343,14 @@
                                                 <span class="text-secondary text-xs font-weight-bold">{{d.MajorCnt}}</span>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <span class="text-secondary text-xs font-weight-bold">{{d.DeficiencyCategoryCount}}</span>
+                                                <span class="text-secondary text-xs font-weight-bold">{{d.TotalCnt}}</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody ng-if="custDash_categoryBreakdownList.length === 0 && !custDash_isLoading">
+                                        <tr>
+                                            <td colspan="5" class="text-center text-xs text-secondary py-3">
+                                                No deficiency data for selected filters.
                                             </td>
                                         </tr>
                                     </tbody>
@@ -302,19 +368,18 @@
                                     <div class="col-6 d-flex align-items-center">
                                         <h6 class="text-white text-capitalize ps-3 mb-0">Deficiencies Trend From Previous Years</h6>
                                     </div>
-                                    <div class="col-6 text-end">
-                                    </div>
+                                    <div class="col-6 text-end"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body pb-2">
-                            <canvas id="deficiencyChart" width="400" height="200"></canvas>
+                            <canvas id="custdash-trend-chart" width="400" height="200"></canvas>
+                            <canvas id="deficiencyChart" width="1" height="1" style="display:none;"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="row mt-4">
             <div class="row mb-4">
                 <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
@@ -323,23 +388,8 @@
                             <div class="row">
                                 <div class="col-lg-6 col-7">
                                     <h6>Recent Inspection Status</h6>
-                                    @*<p class="text-sm mb-0">
-                                            <i class="fa fa-check text-info" aria-hidden="true"></i>
-                                            <span class="font-weight-bold ms-1">{{}} done</span> this month
-                                        </p>*@
                                 </div>
-                                <div class="col-lg-6 col-5 my-auto text-end">
-                                    @*<div class="dropdown float-lg-end pe-4">
-                                            <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="fa fa-ellipsis-v text-secondary"></i>
-                                            </a>
-                                            <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
-                                                <li><a class="dropdown-item" href="javascript:;">Action</a></li>
-                                                <li><a class="dropdown-item" href="javascript:;">Another action</a></li>
-                                                <li><a class="dropdown-item" href="javascript:;">Something else here</a></li>
-                                            </ul>
-                                        </div>*@
-                                </div>
+                                <div class="col-lg-6 col-5 my-auto text-end"></div>
                             </div>
                         </div>
                         <div class="card-body px-0 pb-2">
@@ -363,7 +413,7 @@
                                                 <p class="text-xs font-weight-bold mb-0">{{d.Employee}}</p>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <span class="text-xs font-weight-bold">{{d.Reportdate| date:'dd MMM yyyy'}}</span>
+                                                <span class="text-xs font-weight-bold">{{d.Reportdate | date:'dd MMM yyyy'}}</span>
                                             </td>
                                             <td class="align-middle text-center text-sm">
                                                 <h6 class="badge badge-sm bg-gradient-finished" ng-show="d.InspectionStatus == 9">Finished</h6>
@@ -378,7 +428,6 @@
                                             </td>
                                         </tr>
                                     </tbody>
-
                                 </table>
                             </div>
                         </div>
@@ -408,15 +457,13 @@
                 </div>
             </div>
         </div>
-        <footer class="footer py-4  ">
+        <footer class="footer py-4">
             <div class="container-fluid">
                 <div class="row align-items-center justify-content-lg-between">
                     <div class="col-lg-6 mb-lg-0 mb-4">
                         <div class="copyright text-center text-sm text-muted text-lg-start">
                             ©
-                            <script>
-                                document.write(new Date().getFullYear())
-                            </script>
+                            <script>document.write(new Date().getFullYear())</script>
                             <a href="https://camindustrial.net/" class="font-weight-bold" target="_blank">Cam Industrial</a>
                         </div>
                     </div>
@@ -425,6 +472,12 @@
         </footer>
     </div>
 </main>
+
+<div id="custdash-progress-bar"></div>
+
+<div id="custdash-error-toast">
+    <i class="fa fa-exclamation-circle me-1"></i> Failed to load dashboard data. Retrying…
+</div>
 
 <!--   Core JS Files   -->
 <script src="~/assets/js/core/popper.min.js"></script>
@@ -436,381 +489,91 @@
 <script src="~/NgScript/Controller/customerdashboardCtrl.js"></script>
 
 <script>
-    var dataList = [];
+    //  Wire up AngularJS loader state → DOM progress bar + error toast
+    //
+    //   We use a MutationObserver on a hidden sentinel <span> that AngularJS
+    //   adds/removes the class "ng-hide" to.  This is simpler and more reliable
+    //   than an Angular $watch exposed to vanilla JS.
+    //
+    //   Alternatively, the controller calls custDash_uiShowLoader() /
+    //   custDash_uiHideLoader() directly (see below).
+    //
+
+    var custDash_progressBar  = document.getElementById('custdash-progress-bar');
+    var custDash_errorToast   = document.getElementById('custdash-error-toast');
+    var custDash_errorTimer   = null;
+
+    // Exposed so the AngularJS controller can call them directly
+    window.custDash_uiShowLoader = function () {
+        custDash_progressBar.classList.add('custdash-loading');
+        custDash_errorToast.style.display = 'none';
+        if (custDash_errorTimer) { clearTimeout(custDash_errorTimer); }
+    };
+
+    window.custDash_uiHideLoader = function () {
+        custDash_progressBar.classList.remove('custdash-loading');
+    };
+
+    window.custDash_uiShowError = function () {
+        custDash_progressBar.classList.remove('custdash-loading');
+        custDash_errorToast.style.display = 'block';
+        custDash_errorTimer = setTimeout(function () {
+            custDash_errorToast.style.display = 'none';
+        }, 5000);
+    };
+
+    //  Legacy pie/counter (year-only, unchanged)
+    var dataList  = [];
     var lableList = [];
     var colorList = [];
-     @if (Model.PieCusomter != null)
-     {
-          foreach (var dataInput in Model.PieCusomter.ToList())
-          {
-                var inspectionDeficiencyCnt = dataInput.InspectionDeficiencyCnt ?? 0;  // Default to 0 if null
-                var classifications = dataInput.Classifications ?? "Unknown";  // Default to "Unknown" if null
-                var classificationsColor = dataInput.ClassificationsColor ?? "#FFFFFF";  // Default to white color if null
-
-
-                @:dataList.push("@inspectionDeficiencyCnt");
-                @:lableList.push("@classifications");
-                @:colorList.push("@dataInput.ClassificationsColor");
-          }
-     }
-
-    @*@foreach (var dataInput in Model.Pie.ToList())
+    @if (Model.PieCusomter != null)
     {
-        //var modifiedLabel = dataInput.InspectionStatusName.Replace("&amp;", " & ");
-        @:dataList.push("@dataInput.cnt");
-        @:lableList.push("@dataInput.InspectionStatusName");
-        @:colorList.push("@dataInput.InspectionStatusColor");
-    }*@
+        foreach (var dataInput in Model.PieCusomter.ToList())
+        {
+            var inspectionDeficiencyCnt = dataInput.InspectionDeficiencyCnt ?? 0;
+            var classifications         = dataInput.Classifications ?? "Unknown";
+            var classificationsColor    = dataInput.ClassificationsColor ?? "#FFFFFF";
 
+            @:dataList.push("@inspectionDeficiencyCnt");
+            @:lableList.push("@classifications");
+            @:colorList.push("@classificationsColor");
+        }
+    }
 
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {
-        var options = {
-            damping: '0.5'
-        }
-        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), { damping: '0.5' });
     }
 
-    const data = {
-        labels: lableList,
-        datasets: [{
-            label: "Inspections",
-            backgroundColor: colorList,
-            data: dataList
-        }
-        ]
-    }
-    // config block
-    const config = {
+    // Build against the hidden canvas – no conflict with new charts
+    var legacyPieConfig = {
         type: 'pie',
-        data,
-        options: {
-            title: {
-                display: true,
-                text: ''
-            }
-        }
+        data: { labels: lableList, datasets: [{ label: "Inspections", backgroundColor: colorList, data: dataList }] },
+        options: { title: { display: true, text: '' } }
     };
-
-    //init block (render)
-    let myChart = new Chart(
-        document.getElementById("pie-chart-customer"),
-        config
-    );
+    var myChart = new Chart(document.getElementById("pie-chart-customer"), legacyPieConfig);
 
     function ChartDataByYearCustomer(value) {
-        //pie-chart-customer
         var year = value.replace('number:', '');
-        //chartDataByYearCustomerAngular();
+
         jQuery.ajax({
             type: "GET",
             url: '/api/pageview/getDeficienciesbySeverityCustomer',
             data: { year: year },
-            contentType: "application/json; charset-utf-8",
             success: function (response) {
-                dataList = response.map(element => element.InspectionDeficiencyCnt);
-                lableList = response.map(element => element.Classifications);
-                colorList = response.map(element => element.ClassificationsColor);
-
+                dataList  = response.map(function (e) { return e.InspectionDeficiencyCnt; });
+                lableList = response.map(function (e) { return e.Classifications; });
+                colorList = response.map(function (e) { return e.ClassificationsColor; });
                 myChart.destroy();
-                //let newStr = lableList.replace(/&amp;/g, '&');
-                //console.log('newStr-----',newStr);
-                myChart.config.data.labels = lableList;
-                myChart.config.data.datasets[0].data = dataList;
-                myChart.config.data.datasets[0].backgroundColor = colorList;
-
-                myChart = new Chart(
-                    document.getElementById("pie-chart-customer"),
-                    config
-                );
-                console.log('dddkmkkkkkkk--', config);
-                //myChart.update();
-            },
-            failure: function (msg) {
-                alert(msg);
-            }
-
-        });
-
-        jQuery.ajax({
-            type: "GET",
-            url: '/api/pageview/getCustomerDashboardCountByYear',
-            data: { year: year },
-            contentType: "application/json; charset-utf-8",
-            success: function (response) {
-                console.log('lllllsss', response);
-                $('#InspectionDueCount').html(response.InspectionDueCount);
-                $('#InProgressCount').html(response.InProgressCount);
-                $('#SentforApprovalCount').html(response.SentforApprovalCount);
-                $('#ApprovedCompletedCount').html(response.ApprovedCompletedCount);
-                $('#QuotationRequestedCount').html(response.QuotationRequestedCount);
-                $('#AwaitingApprovalCount').html(response.AwaitingApprovalCount);
-                $('#QuotationApprovedCount').html(response.QuotationApprovedCount);
-                $('#RepairCompletedCount').html(response.RepairCompletedCount);
-                $('#InspectionFinishedCount').html(response.InspectionFinishedCount);
-            },
-            failure: function (msg) {
-                alert(msg);
+                legacyPieConfig.data.labels                      = lableList;
+                legacyPieConfig.data.datasets[0].data            = dataList;
+                legacyPieConfig.data.datasets[0].backgroundColor = colorList;
+                myChart = new Chart(document.getElementById("pie-chart-customer"), legacyPieConfig);
             }
         });
 
-        //let deficiencies = [];
-        //jQuery.ajax({
-        //    type: "GET",
-        //    url: '/api/pageview/getDeficienciesBreakdownCategories',
-        //    data: { year: value },
-        //    contentType: "application/json; charset-utf-8",
-        //    success: function (response) {
-        //       console.log(response);
-        //       deficiencies = response;
-        //       const tableBody = document.getElementById('deficiencyTableBody');
-        //       tableBody.innerHTML = '';
-
-        //       deficiencies.forEach(category => {
-        //           const row = document.createElement('tr');
-
-        //           // Create the first cell (Deficiency Category)
-        //           const categoryCell = document.createElement('td');
-        //           categoryCell.classList.add('align-middle', 'text-left', 'text-sm');
-        //           categoryCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryName}</span>`;
-        //           row.appendChild(categoryCell);
-
-        //           // Create the second cell (Count)
-        //           const countCell = document.createElement('td');
-        //           countCell.classList.add('align-middle', 'text-center', 'text-sm');
-        //           countCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryCount}</span>`;
-        //           row.appendChild(countCell);
-
-        //           // Append the row to the table body
-        //           tableBody.appendChild(row);
-        //       });
-        //       //myChart.update();
-        //    },
-        //    failure: function (msg) {
-        //       alert(msg);
-        //    }
-        //});
-
-        //jQuery.ajax({
-        //    type: "GET",
-        //    url: '/api/pageview/getDeficienciesBreakdownCategories',
-        //    data: { year: year },
-        //    contentType: "application/json; charset-utf-8",
-        //    success: function (response) {
-        //       console.log('response------response', response);
-        //       $scope.getDeficienciesBreakdownCategorieslist = response.data;
-        //    },
-        //    failure: function (msg) {
-        //       alert(msg);
-        //    }
-        //});
-    }
-
-    $(document).ready(function () {
-
-        $.ajax({
-            url: '/api/pageview/getDeficienciesTrendFromPreviousYears',
-            type: 'GET',
-            success: function (response) {
-                const years = [...new Set(response.map(item => item.Years))];
-                console.log('Unique Years:', years);
-
-                // Prepare data for Chart.js
-                const data = {
-                    labels: years,
-                    datasets: [
-                        {
-                            label: 'Minor',
-                            data: years.map(year => {
-                                const entry = response.find(item => item.Years == year && item.Classifications === 'Minor');
-                                return entry ? entry.InspectionDeficiencyCnt : 0;
-                            }),
-                            backgroundColor: '#00CC00'
-                        },
-                        {
-                            label: 'Intermediate',
-                            data: years.map(year => {
-                                const entry = response.find(item => item.Years == year && item.Classifications === 'Intermediate');
-                                return entry ? entry.InspectionDeficiencyCnt : 0;
-                            }),
-                            backgroundColor: '#FFFF00'
-                        },
-                        {
-                            label: 'Major',
-                            data: years.map(year => {
-                                const entry = response.find(item => item.Years == year && item.Classifications === 'Major');
-                                return entry ? entry.InspectionDeficiencyCnt : 0;
-                            }),
-                            backgroundColor: '#FF0000'
-                        }
-                    ]
-                };
-
-
-                // Create the chart
-                const ctx = document.getElementById('deficiencyChart').getContext('2d');
-                const deficiencyChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: data,
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Inspection Deficiency Count'
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Years'
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top'
-                            }
-                        },
-                        responsive: true,
-                        maintainAspectRatio: false
-                    }
-                });
-            },
-            error: function (error) {
-                console.log("Error fetching data:", error);
-            }
-        });
-
-        //var curryear = new Date().getFullYear();
-        //let deficiencies = [];
-        //const tableBody = document.getElementById('deficiencyTableBody');
-
-        //jQuery.ajax({
-        //    type: "GET",
-        //    url: '/api/pageview/getDeficienciesBreakdownCategories',
-        //    data: { year: curryear },
-        //    contentType: "application/json; charset-utf-8",
-        //    success: function (response) {
-        //       console.log(response);
-        //       deficiencies = response;
-
-        //       tableBody.innerHTML = '';
-
-        //       deficiencies.forEach(category => {
-        //           const row = document.createElement('tr');
-
-        //           // Create the first cell (Deficiency Category)
-        //           const categoryCell = document.createElement('td');
-        //           categoryCell.classList.add('align-middle', 'text-left', 'text-sm');
-        //           categoryCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryName}</span>`;
-        //           row.appendChild(categoryCell);
-
-        //           // Create the second cell (Count)
-        //           const countCell = document.createElement('td');
-        //           countCell.classList.add('align-middle', 'text-center', 'text-sm');
-        //           countCell.innerHTML = `<span class="text-secondary text-xs font-weight-bold">${category.DeficiencyCategoryCount}</span>`;
-        //           row.appendChild(countCell);
-
-        //           // Append the row to the table body
-        //           tableBody.appendChild(row);
-        //       });
-        //       //myChart.update();
-        //    },
-        //    failure: function (msg) {
-        //       alert(msg);
-        //    }
-        //});
-
-        //$.ajax({
-        //    url: '/api/pageview/getDeficienciesTrendFromPreviousYears',
-        //    type: 'GET',
-        //    success: function (response) {
-        //       // Process the response
-        //       console.log('---------------------On Load -- response -------------------------', response);
-        //       const years = [new Set(response.map(item => item.Years))]; // Unique years
-        //       console.log('---------------------On Load -- Year -------------------------', years);
-        //       const data = {
-        //           labels: years,
-        //           datasets: [
-        //               {
-        //                   label: 'Minor',
-        //                   data: years.map(year => {
-        //                       const entry = response.find(item => item.Years == year && item.Classifications === 'Minor');
-        //                       return entry ? entry.InspectionDeficiencyCnt : 0;
-        //                   }),
-        //                   backgroundColor: '#00CC00'
-        //               },
-        //               {
-        //                   label: 'Intermediate',
-        //                   data: years.map(year => {
-        //                       const entry = response.find(item => item.Years == year && item.Classifications === 'Intermediate');
-        //                       return entry ? entry.InspectionDeficiencyCnt : 0;
-        //                   }),
-        //                   backgroundColor: '#FFFF00'
-        //               },
-        //               {
-        //                   label: 'Major',
-        //                   data: years.map(year => {
-        //                       const entry = response.find(item => item.Years == year && item.Classifications === 'Major');
-        //                       return entry ? entry.InspectionDeficiencyCnt : 0;
-        //                   }),
-        //                   backgroundColor: '#FF0000'
-        //               }
-        //           ]
-        //       };
-
-        //       // Create the chart
-        //       const ctx = document.getElementById('deficiencyChart').getContext('2d');
-        //       const deficiencyChart = new Chart(ctx, {
-        //           type: 'bar',
-        //           data: data,
-        //           options: {
-        //               scales: {
-        //                   y: {
-        //                       beginAtZero: true,
-        //                       title: {
-        //                           display: true,
-        //                           text: 'Inspection Deficiency Count'
-        //                       }
-        //                   },
-        //                   x: {
-        //                       title: {
-        //                           display: true,
-        //                           text: 'Years'
-        //                       }
-        //                   }
-        //               },
-        //               plugins: {
-        //                   legend: {
-        //                       display: true,
-        //                       position: 'top'
-        //                   }
-        //               },
-        //               responsive: true,
-        //               maintainAspectRatio: false
-        //           }
-        //       });
-        //    },
-        //    error: function (error) {
-        //       console.log("Error fetching data:", error);
-        //    }
-        //});
-    });
-</script>
-<script>
-    var win = navigator.platform.indexOf('Win') > -1;
-    if (win && document.querySelector('#sidenav-scrollbar')) {
-        var options = {
-            damping: '0.5'
-        }
-        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+        // Counter cards are now driven by AngularJS – no jQuery .html() needed
     }
 </script>
-<!-- Github buttons -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
-<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="~/assets/js/material-dashboard.min.js?v=3.0.2"></script>
-

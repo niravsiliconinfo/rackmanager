@@ -53,10 +53,10 @@
         $scope.getAllInspectionByCustomerId = [];
         $scope.getAllHistoryDocument = [];
 
-        $scope.scheduleFilter = sharedFilterService.getScheduleFilter() || {};
-        $scope.statusFilter = sharedFilterService.getStatusFilter() || {};
-        $scope.docsFilter = sharedFilterService.getDocsFilter() || {};
-
+        //$scope.scheduleFilter = sharedFilterService.getScheduleFilter() || {};
+        //$scope.statusFilter = sharedFilterService.getStatusFilter() || {};
+        $scope.docsFilter = sharedFilterService.getDocumentFilters() || {};
+        
 
         $scope.viewby = '50';
         $scope.currentPage = '1';
@@ -76,7 +76,7 @@
         init();
 
         function init() {
-            var docs = sharedFilterService.getDocsFilter();
+            var docs = sharedFilterService.getDocumentFilters();
             if (window.location.pathname == "/Customer/ManageHistoryLegacyDocuments") {
                 {
                     if (docs && Object.keys(docs).length > 0) {
@@ -90,6 +90,14 @@
                 }
             }
         }
+
+        $scope.$on(
+            'documentFiltersUpdated',
+            function (event, filters) {
+
+                loadDocuments(filters);
+
+            });
 
         function loadDocuments(filter) {
             const filters = filter;
@@ -112,7 +120,7 @@
         };
 
         $rootScope.$on('docsFilterUpdated', function () {
-            const filters = sharedFilterService.getDocsFilter();
+            const filters = sharedFilterService.getDocumentFilters();
             console.log("Load function when click on button for statusFilterUpdated on getDocsFilter", filters);
             loadDocuments(filters);
         });

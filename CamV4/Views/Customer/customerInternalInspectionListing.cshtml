@@ -1,31 +1,22 @@
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-@functions{
-    public string GetAntiForgeryToken()
-    {
-        string cookieToken, formToken;
-        AntiForgery.GetTokens(null, out cookieToken, out formToken);
-        return cookieToken + ":" + formToken;
-    }
-}
 <script src="~/NgScript/Controller/internalInspectionCtrl.js"></script>
-
 <main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg"
       ng-controller="internalInspectionCtrl">
-
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
         <div class="container-fluid py-1 px-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Dashboard", "Customer")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index","Customer")">Dashboard</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Internal Inspections</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-                <div class="ms-md-auto pe-md-3 d-flex align-items-center"></div>
-                <ul class="navbar-nav justify-content-end">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
                     <li class="nav-item d-flex align-items-center">
                         <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
                             <i class="fa fa-sign-out me-sm-1"></i>
@@ -45,50 +36,45 @@
                         <div class="pt-4 pb-4">
                             <div class="row">
                                 <div class="col-6 d-flex align-items-center">
-                                    <h6 class="text-white text-capitalize ps-3 mt-2">Internal Inspections</h6>
+                                    <h6 class="text-white text-capitalize ps-3 mt-2">My Internal Inspections</h6>
                                 </div>
                                 <div class="col-6 text-end pe-4 d-flex align-items-center justify-content-end">
-                                    <a href="@Url.Action("customerInternalInspectionAddEdit", "Customer")"
-                                       class="btn btn-sm btn-outline-light mb-0">
+                                    <a href="@Url.Action("customerInternalInspectionAddEdit","Customer")"
+                                       class="btn bg-gradient-dark mb-0 mx-3">
                                         <i class="material-icons text-sm me-1" style="vertical-align:middle;">add</i>
-                                        Add New Inspection
+                                        New Inspection
                                     </a>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card-body pb-2">
-
                         <!-- Active filter banner -->
                         <div class="alert alert-info d-flex justify-content-between align-items-center py-2 mb-3"
                              ng-if="filterApplied">
                             <span class="text-sm">
                                 <i class="material-icons text-sm me-1" style="vertical-align:middle;">filter_list</i>
-                                Filter active —
+                                Filter active -
                                 <span ng-if="activeFilter.Region">Region: <strong>{{activeFilter.Region}}</strong></span>
-                                <span ng-if="activeFilter.location">&nbsp;| Location ID: <strong>{{activeFilter.location}}</strong></span>
-                                <span ng-if="activeFilter.facility">&nbsp;| Facility ID: <strong>{{activeFilter.facility}}</strong></span>
-                                <span ng-if="activeFilter.area">&nbsp;| Area ID: <strong>{{activeFilter.area}}</strong></span>
+                                <span ng-if="activeFilter.location">&nbsp;| Location: <strong>{{activeFilter.location}}</strong></span>
+                                <span ng-if="activeFilter.facility">&nbsp;| Facility: <strong>{{activeFilter.facility}}</strong></span>
+                                <span ng-if="activeFilter.area">&nbsp;| Area: <strong>{{activeFilter.area}}</strong></span>
                             </span>
                             <button type="button" class="btn btn-sm btn-outline-secondary mb-0 py-1"
                                     ng-click="ClearInternalFilter()">
-                                <i class="material-icons text-sm" style="vertical-align:middle;">clear</i>
-                                Clear Filter
+                                <i class="material-icons text-sm" style="vertical-align:middle;">clear</i> Clear Filter
                             </button>
                         </div>
-
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
                                         <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Inspection #</th>
                                         <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Date</th>
-                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Location</th>
-                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Type of Rack</th>
-                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Reported By</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Prepared By</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Area,Facility,Location</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Region</th>
                                         <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Deficiencies</th>
-                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Eng. Review</th>
-                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Est. Cost</th>
                                         <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Status</th>
                                         <th class="text-secondary opacity-7"></th>
                                     </tr>
@@ -98,51 +84,43 @@
                                         <td colspan="10" class="text-center text-sm py-3">No inspections found.</td>
                                     </tr>
                                     <tr ng-repeat="d in inspectionList | startFrom:(liPaging.current-1)*liPaging.size | limitTo:liPaging.size">
+                                        <td><p class="text-sm font-weight-bold mb-0 ps-2">{{d.InternalInspectionNumber}}</p></td>
+                                        <td><p class="text-sm mb-0">{{d.InternalInspectionDateFormatted || '-'}}</p></td>
+                                        <td><p class="text-sm mb-0">{{d.ReportedByName || '-'}}</p></td>
                                         <td>
-                                            <p class="text-sm font-weight-bold mb-0 ps-2">{{d.InspectionNumber}}</p>
+                                            <p class="text-sm mb-0">
+                                                <span class="text-secondary text-xs">
+                                                    {{d.CustomerAreaName}}
+                                                    <span ng-if="d.CustomerAreaName && (d.CustomerFacilityName || d.CustomerLocationName)">, </span>
+                                                    <span ng-if="d.CustomerFacilityName">
+                                                        {{d.CustomerFacilityName}}
+                                                        <span ng-if="d.CustomerLocationName">, </span>
+                                                    </span>
+                                                    {{d.CustomerLocationName}}
+                                                </span>
+                                            </p>
                                         </td>
+                                        <td><p class="text-sm mb-0">{{d.Region || '-'}}</p></td>                                        
+                                        <td class="text-center"><span class="badge bg-gradient-secondary">{{d.DeficiencyCount}}</span></td>
                                         <td>
-                                            <p class="text-sm mb-0">{{d.InspectionDateFormatted || '-'}}</p>
-                                        </td>
-                                        <td>
-                                            <p class="text-sm mb-0">{{d.CustomerLocationName}}</p>
-                                        </td>
-                                        <td>
-                                            <p class="text-sm mb-0">{{d.TypeOfRack || '-'}}</p>
-                                        </td>
-                                        <td>
-                                            <p class="text-sm mb-0">{{d.ReportedBy || '-'}}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="badge bg-gradient-secondary">{{d.DeficiencyCount}}</span>
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="badge bg-gradient-warning">{{d.EngineerReviewCount}}</span>
-                                        </td>
-                                        <td>
-                                            <p class="text-sm mb-0">${{d.EngineerReviewTotalCost | number:2}}</p>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-gradient-info" ng-if="d.Status == 'Draft'">Draft</span>
-                                            <span class="badge bg-gradient-primary" ng-if="d.Status == 'Submitted'">Submitted</span>
-                                            <span class="badge bg-gradient-warning" ng-if="d.Status == 'Reviewed'">Reviewed</span>
-                                            <span class="badge bg-gradient-success" ng-if="d.Status == 'Closed'">Closed</span>
+                                            <span class="badge bg-gradient-info" ng-if="d.Status=='Draft'">Draft</span>
+                                            <span class="badge bg-gradient-primary" ng-if="d.Status=='Submitted'">Submitted</span>
+                                            <span class="badge bg-gradient-warning" ng-if="d.Status=='Reviewed'">Reviewed</span>
+                                            <span class="badge bg-gradient-success" ng-if="d.Status=='Closed'">Closed</span>
                                         </td>
                                         <td class="align-middle">
                                             <a href="/Customer/customerInternalInspectionView?id={{d.InternalInspectionID}}" title="View">
                                                 <i class="material-icons text-sm">visibility</i>
                                             </a>
                                             &nbsp;
-                                            <a href="/Customer/customerInternalInspectionAddEdit?id={{d.InternalInspectionID}}" title="Edit"
-                                               ng-if="d.Status == 'Draft' || d.Status == 'Submitted'">
+                                            <a href="/Customer/customerInternalInspectionAddEdit?id={{d.InternalInspectionID}}"
+                                               title="Edit" ng-if="d.Status=='Draft'||d.Status=='Submitted'">
                                                 <i class="material-icons text-sm">edit</i>
                                             </a>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-
-                            <!-- Paging -->
                             <div class="d-flex justify-content-between align-items-center mt-3 px-2"
                                  ng-if="inspectionList && inspectionList.length > liPaging.size">
                                 <span class="text-sm">
@@ -151,16 +129,15 @@
                                     of {{inspectionList.length}}
                                 </span>
                                 <ul class="pagination pagination-sm mb-0">
-                                    <li class="page-item" ng-class="{disabled: liPaging.current == 1}">
+                                    <li class="page-item" ng-class="{disabled: liPaging.current==1}">
                                         <a class="page-link" href="javascript:void(0)" ng-click="prevPage(liPaging)">&#8249;</a>
                                     </li>
-                                    <li class="page-item"
-                                        ng-repeat="p in getPages(inspectionList.length, liPaging.size) track by $index"
-                                        ng-class="{active: liPaging.current == p}">
-                                        <a class="page-link" href="javascript:void(0)" ng-click="setPage(liPaging, p)">{{p}}</a>
+                                    <li class="page-item" ng-repeat="p in getPages(inspectionList.length, liPaging.size) track by $index"
+                                        ng-class="{active: liPaging.current==p}">
+                                        <a class="page-link" href="javascript:void(0)" ng-click="setPage(liPaging,p)">{{p}}</a>
                                     </li>
-                                    <li class="page-item" ng-class="{disabled: liPaging.current == getPages(inspectionList.length, liPaging.size).length}">
-                                        <a class="page-link" href="javascript:void(0)" ng-click="nextPage(liPaging, inspectionList.length)">&#8250;</a>
+                                    <li class="page-item" ng-class="{disabled: liPaging.current==getPages(inspectionList.length,liPaging.size).length}">
+                                        <a class="page-link" href="javascript:void(0)" ng-click="nextPage(liPaging,inspectionList.length)">&#8250;</a>
                                     </li>
                                 </ul>
                             </div>
@@ -169,7 +146,6 @@
                 </div>
             </div>
         </div>
-
         @Html.Partial("_FooterLayout")
     </div>
 </main>

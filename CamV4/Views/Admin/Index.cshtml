@@ -13,13 +13,21 @@
                     <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Home</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Dashboard</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                     <div class="input-group input-group-outline">
-                        <select class="form-control" id="selectedYear" name="year" onchange="ChartDataByYear(this.value)">
-                            @*<option value  disabled>-- Select Year --</option> ng-options="year.value as year.label for year in years" ng-model="year"*@
+                        @*<select class="form-control" id="selectedYear" name="year" onchange="ChartDataByYear(this.value)">
+
+                            </select>*@
+                        <select class="form-control"
+                                id="selectedYear"
+                                ng-model="selectedYear"
+                                onchange="ChartDataByYear(this.value)">
+
+                            <option value="">-- Select Year --</option>
+                            <option ng-repeat="y in years" value="{{y}}">{{y}}</option>
                         </select>
                     </div>
                 </div>
@@ -256,7 +264,7 @@
                         <p class="text-sm mb-0 text-capitalize">
                             <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
                         </p>
-                    </div>                    
+                    </div>
                 </div>
             </div>
             <div class="col mb-3">
@@ -267,7 +275,7 @@
                         </div>
                         <div class="text-end pt-1">
                             <h4 class="mb-0">@Model.DashboardActiveInventoryCount</h4>
-                            <p class="text-sm mb-0 text-capitalize">Inventory</p>
+                            <p class="text-sm mb-0 text-capitalize">Spare Material</p>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
@@ -275,7 +283,7 @@
                         <p class="text-sm mb-0 text-capitalize">
                             <span class="text-dark text-sm font-weight-bolder">&nbsp;</span>
                         </p>
-                    </div>                    
+                    </div>
                 </div>
             </div>
         </div>
@@ -317,7 +325,7 @@
                                     Admin <span class="text-dark text-sm font-weight-bolder">@Model.DashboardActiveUserAdminCount</span> |
                                     Employees <span class="text-dark text-sm font-weight-bolder">@Model.DashboardActiveUserEmployeeCount</span>
                                 </p>
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -439,7 +447,7 @@
                                 <script>
                                     document.write(new Date().getFullYear())
                                 </script>
-                                <a href="https://camindustrial.net/" class="font-weight-bold" target="_blank">Cam Industrial -- Version 5.00.07</a>
+                                <a href="https://camindustrial.net/" class="font-weight-bold" target="_blank">Cam Industrial -- Version 5.00.43</a>
                             </div>
                         </div>
                     </div>
@@ -457,7 +465,7 @@
 <script src="~/assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="~/assets/js/plugins/chartjs.min.js"></script>
-
+<script src="~/NgScript/Controller/homeCtrl.js?v=1.1"></script>
 <script>
 
     var dataList = [];
@@ -704,21 +712,61 @@
         doneconfig
     );
 
+    function authFetch(url) {
+        return fetch(url, {
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            }
+        }).then(res => {
+            if (res.status === 401 || res.status === 403) {
+                console.error("Unauthorized - token issue");
+            }
+            return res.json();
+        });
+    }
     async function ChartDataByYear(year) {
-      
+
         try {
             // Fetch all data in parallel
-           
+            //alert('hi');
+            //const [
+            //    inspectionData,
+            //    approvedInspectionData,
+            //    doneEmpInspectionData,
+            //    dashboardData
+            //] = await Promise.all([
+            //    jQuery.ajax({
+            //        type: "GET", url: '/api/pageview/getInspectionCountGraphByYear', data: { year }, contentType: "application/json; charset-utf-8", xhrFields: {
+            //            withCredentials: true
+            //        }}),
+            //    jQuery.ajax({
+            //        type: "GET", url: '/api/pageview/getApprovedInspectionCountByYear', data: { year }, contentType: "application/json; charset-utf-8", xhrFields: {
+            //            withCredentials: true
+            //        }
+            //    }),
+            //    jQuery.ajax({
+            //        type: "GET", url: '/api/pageview/getDoneEmpInspectionCountByYear', data: { year }, contentType: "application/json; charset-utf-8", xhrFields: {
+            //            withCredentials: true
+            //        }
+            //    }),
+            //    jQuery.ajax({
+            //        type: "GET", url: '/api/pageview/getDashboardCountByYear', data: { year }, contentType: "application/json; charset-utf-8", xhrFields: {
+            //            withCredentials: true
+            //        }
+            //    })
+            //]);
             const [
                 inspectionData,
                 approvedInspectionData,
                 doneEmpInspectionData,
                 dashboardData
             ] = await Promise.all([
-                jQuery.ajax({ type: "GET", url: '/api/pageview/getInspectionCountGraphByYear', data: { year }, contentType: "application/json; charset-utf-8" }),
-                jQuery.ajax({ type: "GET", url: '/api/pageview/getApprovedInspectionCountByYear', data: { year }, contentType: "application/json; charset-utf-8" }),
-                jQuery.ajax({ type: "GET", url: '/api/pageview/getDoneEmpInspectionCountByYear', data: { year }, contentType: "application/json; charset-utf-8" }),
-                jQuery.ajax({ type: "GET", url: '/api/pageview/getDashboardCountByYear', data: { year }, contentType: "application/json; charset-utf-8" })
+
+                authFetch(`/api/pageview/getInspectionCountGraphByYear?year=${year}`),
+                authFetch(`/api/pageview/getApprovedInspectionCountByYear?year=${year}`),
+                authFetch(`/api/pageview/getDoneEmpInspectionCountByYear?year=${year}`),
+                authFetch(`/api/pageview/getDashboardCountByYear?year=${year}`)
+
             ]);
             console.log("ChartDataByYear", year, inspectionData, approvedInspectionData, doneEmpInspectionData, dashboardData);
             // Update Inspection Count Graph Chart
@@ -765,7 +813,7 @@
     }
 
 
-    //function ChartDataByYear(value) {        
+    //function ChartDataByYear(value) {
     //    //var year = value.replace('number:', '');
     //    var year = value;
     //    jQuery.ajax({

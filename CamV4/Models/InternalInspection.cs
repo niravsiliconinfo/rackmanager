@@ -15,21 +15,13 @@ namespace CamV4.Models
     public partial class InternalInspection
     {
         public long InternalInspectionID { get; set; }
-        public string InspectionNumber { get; set; }
+        public string InternalInspectionNumber { get; set; }
+        public System.DateTime InternalInspectionDate { get; set; }
         public long CustomerID { get; set; }
         public long CustomerLocationID { get; set; }
         public Nullable<long> CustomerFacilityID { get; set; }
-        public Nullable<long> AreaID { get; set; }
-        public string TypeOfRack { get; set; }
-        public Nullable<System.DateTime> InspectionDate { get; set; }
-        public string Area { get; set; }
-        public string Row { get; set; }
-        public string Aisle { get; set; }
-        public string Bay { get; set; }
-        public string BeamLocation { get; set; }
-        public string FrameSide { get; set; }
+        public Nullable<long> CustomerAreaID { get; set; }
         public string ReportedBy { get; set; }
-        public string InspectionSummary { get; set; }
         public string Status { get; set; }
         public bool IsActive { get; set; }
         public string CreatedBy { get; set; }

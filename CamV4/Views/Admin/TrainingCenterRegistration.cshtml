@@ -1,0 +1,124 @@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="~/NgScript/Controller/trainingCenterCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg"
+      ng-controller="trainingCenterCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Dashboard","Admin")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Training Center - Registrations</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-7 d-flex align-items-center">
+                                    <h6 class="text-white ps-3 mt-2">All Training Registrations</h6>
+                                </div>
+                                <div class="col-5 text-end pe-4 d-flex align-items-center justify-content-end">
+                                    <select class="form-control form-control-sm" style="width:160px;"
+                                            ng-model="statusFilter" ng-change="FilterByStatus()">
+                                        <option value="">All Statuses</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Confirmed">Confirmed</option>
+                                        <option value="Enrolled">Enrolled</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Customer</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Email</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Date</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Persons</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Total</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Status</th>
+                                        <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-if="!filteredList || filteredList.length == 0">
+                                        <td colspan="7" class="text-center text-sm py-3">No registrations found.</td>
+                                    </tr>
+                                    <tr ng-repeat="r in filteredList | startFrom:(paging.current-1)*paging.size | limitTo:paging.size">
+                                        <td><p class="text-sm font-weight-bold mb-0 ps-2">{{r.CustomerName}}</p></td>
+                                        <td><p class="text-sm mb-0">{{r.CustomerEmail}}</p></td>
+                                        <td><p class="text-sm mb-0">{{r.RegistrationDateFormatted}}</p></td>
+                                        <td class="text-center"><span class="badge bg-gradient-secondary">{{r.PersonCount}}</span></td>
+                                        <td><p class="text-sm font-weight-bold mb-0">{{r.TotalPriceFormatted}}</p></td>
+                                        <td>
+                                            <span class="badge bg-gradient-warning" ng-if="r.Status=='Pending'">Pending</span>
+                                            <span class="badge bg-gradient-info"    ng-if="r.Status=='Confirmed'">Confirmed</span>
+                                            <span class="badge bg-gradient-primary" ng-if="r.Status=='Enrolled'">Enrolled</span>
+                                            <span class="badge bg-gradient-success" ng-if="r.Status=='Completed'">Completed</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="/Admin/TrainingCenterPersonStatus?id={{r.TrainingRegistrationID}}"
+                                               title="Manage">
+                                                <i class="material-icons text-sm">manage_accounts</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Paging -->
+                            <div class="d-flex justify-content-between align-items-center mt-3 px-2"
+                                 ng-if="filteredList && filteredList.length > paging.size">
+                                <span class="text-sm">
+                                    Showing {{(paging.current-1)*paging.size+1}} -
+                                    {{paging.current*paging.size > filteredList.length ? filteredList.length : paging.current*paging.size}}
+                                    of {{filteredList.length}}
+                                </span>
+                                <ul class="pagination pagination-sm mb-0">
+                                    <li class="page-item" ng-class="{disabled: paging.current==1}">
+                                        <a class="page-link" href="javascript:void(0)" ng-click="prevPage()">&#8249;</a>
+                                    </li>
+                                    <li class="page-item"
+                                        ng-repeat="p in getPages(filteredList.length, paging.size) track by $index"
+                                        ng-class="{active: paging.current==p}">
+                                        <a class="page-link" href="javascript:void(0)" ng-click="setPage(p)">{{p}}</a>
+                                    </li>
+                                    <li class="page-item" ng-class="{disabled: paging.current==getPages(filteredList.length,paging.size).length}">
+                                        <a class="page-link" href="javascript:void(0)" ng-click="nextPage(filteredList.length)">&#8250;</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.Partial("_FooterLayout")
+    </div>
+</main>

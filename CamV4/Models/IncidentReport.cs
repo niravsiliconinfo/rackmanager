@@ -33,5 +33,7 @@ namespace CamV4.Models
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
+        public Nullable<long> CustomerFacilityID { get; set; }
+        public Nullable<long> CustomerAreaID { get; set; }
     }
 }

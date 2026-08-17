@@ -67,7 +67,7 @@
                     <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageInspection", "Admin")">Back(Inspection Listing)</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Inspection</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -118,7 +118,7 @@
                                     Preview Inspection Sheet - {{getInspectionDetailsForSheet.InspectionDocumentNo}} - {{getInspectionDetailsForSheet.InspectionStatusName}}
                                 </div>
                                 <div class="col-6 text-end">
-                                    <a href="@Url.Action("ToPdfV2", "Admin")?id={{getInspectionDetailsForSheet.InspectionId}}"><i style="color: #fff; padding: 2px 40px; font-size: 2.225rem !important;" class="material-icons text-lg">download</i></a>
+                                    @*<a href="@Url.Action("ToPdfV2", "Admin")?id={{getInspectionDetailsForSheet.InspectionId}}"><i style="color: #fff; padding: 2px 40px; font-size: 2.225rem !important;" class="material-icons text-lg">download</i></a>*@
                                 </div>
                             </div>
                         </div>
@@ -367,7 +367,7 @@
                                                     <div style="border: 1px solid #0070c0; padding: 20px; height: 28.4cm;">
                                                         <div>
                                                             <div style="text-align: center;"><img src="~/Content/V2/images/logos/CamLogo.png" style="width:300px;"></div>
-                                                            <div style='font-size: 35px;text-decoration: underline;text-transform: uppercase;'>RACKING INSPECTION REPORT</div>
+                                                            <div style='font-size: 35px;text-decoration: underline;text-transform: uppercase;'>{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'MATERIAL INSPECTION REPORT' : 'RACKING INSPECTION REPORT'}}</div>
                                                         </div>
                                                         <div class="" style="padding-top: 50px;font-size: 26px;line-height: 40px;">
                                                             <div class="name">{{getInspectionDetailsForSheet.Customer}}</div>
@@ -379,7 +379,7 @@
                                                         <div><img src="~/Content/V2/images/mid-logo.jpg" style="width: 300px;margin: 0px 0px;"></div>
                                                         <div class="">
                                                             <div style="float: left;text-align: left;color: #005aab;font-weight: bold;line-height: 30px;">
-                                                                <p style="margin: 0px;">Inspection & Report By</p>
+                                                                <p style="margin: 0px;">Inspection & Report By,</p>
                                                                 <p style="margin: 0px;">{{getInspectionDetailsForSheet.Employee}}, {{getInspectionDetailsForSheet.empModel.TitleDegrees}}</p>
                                                                 <p style="margin: 0px;">{{getInspectionDetailsForSheet.empModel.EmployeeEmail}}</p>
                                                                 <p style="color: #999;margin: 0px;">{{getInspectionDetailsForSheet.empModel.MobileNo}}</p>
@@ -494,7 +494,7 @@
 
                                                         <h2 style="text-align: left;margin: 10px 0px 0px 0px;font-size: 16px;text-transform: none;display: inline-block;border-bottom: 2px solid #212121;">1A. Introduction</h2>
                                                         <p style="font-size: 14px;line-height: 24px;margin: 10px 0px;">{{getInspectionDetailsForSheet.Customer}} has requested Cam Industrial to perform a detailed inspection to identify, report, and address all the damages and deficiencies within their {{getInspectionDetailsForSheet.CustomerArea}} {{getInspectionDetailsForSheet.CustomerLocation}} facility. The following report fulfills this request and additionally provides suggestions that could be used to prevent future damages.</p>
-                                                        <p style="font-size: 14px;line-height: 24px;margin: 10px 0px;">Pallet Racking Damage Inspection Report for the purpose of providing detailed information of the condition of the existing pallet racking systems. According to A344-24 Section 5.5.6 "Users should retain and maintain documents that establish the capacity of racking structures. Various regulations (i.e., OHS acts, codes, and regulations) require the capacity of equipment be known. Given that the structural adequacy of the rack affects the safety of the user and the workplace, the pallet rack capacity should be established by an engineer who is familiar with this Guide.</p>
+                                                        <p style="font-size: 14px;line-height: 24px;margin: 10px 0px;">Pallet Racking Damage Inspection Report for the purpose of providing detailed information of the condition of the existing pallet racking systems. According to A344-24 Section 5.5.6 "Users should retain and maintain documents that establish the capacity of racking structures. Various regulations (i.e., OHS acts, codes, and regulations) require the capacity of equipment be known. Given that the structural adequacy of the rack affects the safety of the user and the workplace, the pallet rack capacity should be established by an engineer who is familiar with this Guide."</p>
 
                                                         <h2 style="text-align: left;margin: 10px 0px 0px 0px;font-size: 16px;text-transform: none;display: inline-block;border-bottom: 2px solid #212121;" style="text-align: left;margin: 10px 0px 0px 0px;font-size: 16px;text-transform: none;display: inline-block;border-bottom: 2px solid #212121;">1B. Scope of Work</h2>
                                                         <h4 style="font-size: 15px;font-weight: bold;line-height: 24px;margin: 10px 0px;">Process Overview</h4>
@@ -505,7 +505,7 @@
                                                         </ul>
                                                         <div style="margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;">
                                                             <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">
-                                                                RACKING INSPECTION REPORT<span> - {{getInspectionDetailsForSheet.Customer}}</span>
+                                                                {{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'MATERIAL INSPECTION REPORT' : 'RACKING INSPECTION REPORT'}}<span> - {{getInspectionDetailsForSheet.Customer}}</span>
                                                             </div>
                                                             <div style="text-align: center;float: left;width: 70%;"><img src="/Content/V2/images/footer-logo.jpg" style="width: 70%;"></div>
                                                             <div style="float: right;width: 10%;font-size: 16px;font-weight: bold;line-height: 26px;text-align: right;position: relative;">2</div>
@@ -544,7 +544,7 @@
                                                             inspection program done quarterly, semi-annually, or annually.
                                                         </p>
                                                         <div style="margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;">
-                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">RACKING INSPECTION REPORT<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
+                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'MATERIAL INSPECTION REPORT' : 'RACKING INSPECTION REPORT'}}<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
                                                             <div style="text-align: center;float: left;width: 70%;"><img src="/Content/V2/images/footer-logo.jpg" style="width: 70%;"></div>
                                                             <div style="float: right;width: 10%;font-size: 16px;font-weight: bold;line-height: 26px;text-align: right;position: relative;">3</div>
                                                             <div style="clear: both"></div>
@@ -576,9 +576,11 @@
                                                             *Adopted from Section 10.7, Rules for the Measurement and Classification of Damage to Uprights and Bracing
                                                             Members, published by the Fédération Européenne de la Manutention, Section X, FEM 10.2.04, Guidelines for the Safe Use of Static Steel Racking and Shelving, User Code, November 2001
                                                         </p>
-
-
-                                                        <table width="100%" border="1" cellspacing="0" cellpadding="0" style="margin: 0;color: #000;font-size: 12px;font-family: Arial;line-height: normal;background: #e0e0e0;border-width:1px;">
+                                                        <p style="text-align: center;">
+                                                            <img src="~/Content/V2/images/inspectionprocedurecorrected.jpg" width="720" />
+                                                            @*<h4 style="font-size: 15px;font-weight: bold;line-height: 24px;margin: 10px 0px;text-align:center;"><span>Inspection procedure Racking frame damage classification (with damage thresholds)</span></h4>*@
+                                                        </p>
+                                                        <table width="100%" border="1" cellspacing="0" cellpadding="0" style="margin: 0;color: #000;font-size: 12px;font-family: Arial;line-height: normal;background: #e0e0e0;border-width:1px;display:none;">
                                                             <tr>
                                                                 <td height="30" colspan="3" align="center" bgcolor="#c6d9f1" style="border-width: 1px;"><strong>Racking Inspection – Frame Damage Classification</strong></td>
                                                             </tr>
@@ -619,7 +621,7 @@
                                                         </table>
 
                                                         <div style="margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;">
-                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">RACKING INSPECTION REPORT<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
+                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'MATERIAL INSPECTION REPORT' : 'RACKING INSPECTION REPORT'}}<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
                                                             <div style="text-align: center;float: left;width: 70%;"><img src="/Content/V2/images/footer-logo.jpg" style="width: 70%;"></div>
                                                             <div style="float: right;width: 10%;font-size: 16px;font-weight: bold;line-height: 26px;text-align: right;position: relative;">4</div>
                                                             <div style="clear: both"></div>
@@ -648,15 +650,16 @@
                                                             Damage to frame posts is not acceptable (refer to Figure 1). Posts of storage rack frames are
                                                             performance structural members and altering their shape with damage can have a significant
                                                             effect on their ability to carry compressive loads. As a general rule, frame posts should be
-                                                            maintained in a “like new” condition. Therefore, any damage to frame posts should warrant
-                                                            replacement of the frame post if it is a bolted type or an entire frame if it is a welded type.
+                                                            maintained in a “like new” condition. Depending upon damage severity ranging from yellow to red,
+                                                            any qualifying damage to frame posts warrants replacement of the frame post if it is a bolted type,
+                                                            or the entire frame if it is a welded type.
                                                         </p>
                                                         <p style="text-align: center;">
                                                             <img src="~/Content/V2/images/Farme-img.png" width="720" />
                                                         </p>
                                                         <h4 style="font-size: 15px;font-weight: bold;line-height: 24px;margin: 10px 0px;text-align:center;">Figure 1:<span>Measurement method of damages to the frame components</span></h4>
                                                         <div style="margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;">
-                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">RACKING INSPECTION REPORT<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
+                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'MATERIAL INSPECTION REPORT' : 'RACKING INSPECTION REPORT'}}<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
                                                             <div style="text-align: center;float: left;width: 70%;"><img src="/Content/V2/images/footer-logo.jpg" style="width: 70%;"></div>
                                                             <div style="float: right;width: 10%;font-size: 16px;font-weight: bold;line-height: 26px;text-align: right;position: relative;">5</div>
                                                             <div style="clear: both"></div>
@@ -715,7 +718,7 @@
                                                             </li>
                                                         </ul>
                                                         <div style="margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;">
-                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">RACKING INSPECTION REPORT<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
+                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'MATERIAL INSPECTION REPORT' : 'RACKING INSPECTION REPORT'}}<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
                                                             <div style="text-align: center;float: left;width: 70%;"><img src="/Content/V2/images/footer-logo.jpg" style="width: 70%;"></div>
                                                             <div style="float: right;width: 10%;font-size: 16px;font-weight: bold;line-height: 26px;text-align: right;position: relative;">6</div>
                                                             <div style="clear: both"></div>
@@ -763,17 +766,17 @@
                                                             Based on the racking layout at the time of inspection, the following deficiencies were documented and recommendations made accordingly for repair or replacement. For a detailed list of all deficiencies, comments and recommendations, please view the Racking Inspection Deficiency List.
                                                         </p>
                                                         @*<ul style="margin: 0;padding: 0;">
-                                            <li style="list-style: decimal;font-size: 14px;padding-left: 0px;margin-left: 50px;line-height: 31px;">Ensuring the work was conducted by a trained inspector.</li>
-                                            <li style="list-style: decimal;font-size: 14px;padding-left: 0px;margin-left: 50px;line-height: 31px;">The inspection was conducted using a documented process.</li>
-                                            <li style="list-style: decimal;font-size: 14px;padding-left: 0px;margin-left: 50px;line-height: 31px;">
-                                                The decisions, recommendations, or comments that were documented are reasonable,
-                                                based on the information being reviewed. The engineer will rely on the Inspector’s on-site
-                                                evaluation and accept it as being accurate where photographs do not fully capture the
-                                                severity of the damage.
-                                            </li>
-                                        </ul>*@
+                                                                <li style="list-style: decimal;font-size: 14px;padding-left: 0px;margin-left: 50px;line-height: 31px;">Ensuring the work was conducted by a trained inspector.</li>
+                                                                <li style="list-style: decimal;font-size: 14px;padding-left: 0px;margin-left: 50px;line-height: 31px;">The inspection was conducted using a documented process.</li>
+                                                                <li style="list-style: decimal;font-size: 14px;padding-left: 0px;margin-left: 50px;line-height: 31px;">
+                                                                    The decisions, recommendations, or comments that were documented are reasonable,
+                                                                    based on the information being reviewed. The engineer will rely on the Inspector’s on-site
+                                                                    evaluation and accept it as being accurate where photographs do not fully capture the
+                                                                    severity of the damage.
+                                                                </li>
+                                                            </ul>*@
                                                         <div style="margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;">
-                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">RACKING INSPECTION REPORT<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
+                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'MATERIAL INSPECTION REPORT' : 'RACKING INSPECTION REPORT'}}<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
                                                             <div style="text-align: center;float: left;width: 70%;"><img src="/Content/V2/images/footer-logo.jpg" style="width: 70%;"></div>
                                                             <div style="float: right;width: 10%;font-size: 16px;font-weight: bold;line-height: 26px;text-align: right;position: relative;">7</div>
                                                             <div style="clear: both"></div>
@@ -808,7 +811,7 @@
                                                             </li>
                                                         </ul>
                                                         <div style="margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;">
-                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">RACKING INSPECTION REPORT<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
+                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'MATERIAL INSPECTION REPORT' : 'RACKING INSPECTION REPORT'}}<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
                                                             <div style="text-align: center;float: left;width: 70%;"><img src="/Content/V2/images/footer-logo.jpg" style="width: 70%;"></div>
                                                             <div style="float: right;width: 10%;font-size: 16px;font-weight: bold;line-height: 26px;text-align: right;position: relative;">9</div>
                                                             <div style="clear: both"></div>
@@ -859,9 +862,9 @@
                                                                 {{deficiency.DeficiencyInfo}}. <p>{{deficiency.DeficiencyDescription}}</p>
                                                             </li>
                                                             @*<li *ngIf="getInspectionDetailsForSheet?.ShelvingChecklistComments?.trim()"
-            style="list-style: decimal; font-size: 14px; font-weight: bold; padding-left: 0px; margin-left: 50px; line-height: 31px;">
-            <p>{{ getInspectionDetailsForSheet.ShelvingChecklistComments }}</p>
-        </li>*@
+                                                                    style="list-style: decimal; font-size: 14px; font-weight: bold; padding-left: 0px; margin-left: 50px; line-height: 31px;">
+                                                                    <p>{{ getInspectionDetailsForSheet.ShelvingChecklistComments }}</p>
+                                                                </li>*@
                                                             <li ng-if="getInspectionDetailsForSheet.ShelvingChecklistComments && getInspectionDetailsForSheet.ShelvingChecklistComments.trim().length > 0" style="list-style: decimal; font-size: 14px; font-weight: bold; padding-left: 0px; margin-left: 50px; line-height: 31px;">
                                                                 <p>{{ getInspectionDetailsForSheet.ShelvingChecklistComments }}</p>
                                                             </li>
@@ -898,7 +901,7 @@
                                                             <p>The recommendations and corrective actions provided are based on the inspector’s previous experience, incorporating several factors, and therefore have a subjective component. Cam Industrial Supply understands that users of rack have varying tolerance levels with respect to damages and may differ or disagree with the inspector’s findings.</p>
                                                         </div>
                                                         <div style="margin: 100px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;">
-                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">RACKING INSPECTION REPORT<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
+                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'MATERIAL INSPECTION REPORT' : 'RACKING INSPECTION REPORT'}}<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
                                                             <div style="text-align: center;float: left;width: 70%;"><img src="/Content/V2/images/footer-logo.jpg" style="width: 70%;"></div>
                                                             <div style="float: right;width: 10%;font-size: 16px;font-weight: bold;line-height: 26px;text-align: right;position: relative;">8</div>
                                                             <div style="clear: both"></div>
@@ -984,7 +987,7 @@
                                                         <div class="containerEngineerNotes" style="">
                                                             <div class="sectionEngineerNotes">
                                                                 <p>Yours truly,</p>
-                                                                <p>Inspection & Report By</p>
+                                                                <p>Inspection & Report By,</p>
                                                                 <div>{{getInspectionDetailsForSheet.empModel.EmployeeName}},{{getInspectionDetailsForSheet.empModel.TitleDegrees}}</div>
                                                                 <div>Cam Industrial</div>
                                                                 <div class="logoEngineerNotes">
@@ -1002,7 +1005,7 @@
                                                             </div>
                                                         </div>
                                                         <div style="margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;">
-                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">RACKING INSPECTION REPORT<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
+                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'MATERIAL INSPECTION REPORT' : 'RACKING INSPECTION REPORT'}}<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
                                                             <div style="text-align: center;float: left;width: 70%;"><img src="/Content/V2/images/footer-logo.jpg" style="width: 70%;"></div>
                                                             <div style="float: right;width: 10%;font-size: 16px;font-weight: bold;line-height: 26px;text-align: right;position: relative;">10</div>
                                                             <div style="clear: both"></div>
@@ -1068,13 +1071,13 @@
                                                                 <td bgcolor="#ffffff" style="padding: 2px; border-width: 1px; " ng-if="(k.FacilitiesAreaId == 2) || (k.FacilitiesAreaId == 3)">{{getInspectionDetailsForSheet.InspectionDocumentNo}}</td>
                                                             </tr>
                                                             @*<tr ng-show="getInspectionDetailsForSheet.CapacityTable">
-                                                <td bgcolor="#ffffff" style="padding: 20px; border-width: 1px; ">Capacity Table</td>
-                                                <td bgcolor="#ffffff" style="padding: 2px; border-width: 1px; ">{{getInspectionDetailsForSheet.InspectionDocumentNo}}</td>
-                                            </tr>
-                                            <tr ng-show="getInspectionDetailsForSheet.PlanElevationDrawing">
-                                                <td bgcolor="#ffffff" style="padding: 20px; border-width: 1px; ">Plan and Elevation Drawing</td>
-                                                <td bgcolor="#ffffff" style="padding: 2px; border-width: 1px; ">{{getInspectionDetailsForSheet.InspectionDocumentNo}}</td>
-                                            </tr>*@
+                                                                    <td bgcolor="#ffffff" style="padding: 20px; border-width: 1px; ">Capacity Table</td>
+                                                                    <td bgcolor="#ffffff" style="padding: 2px; border-width: 1px; ">{{getInspectionDetailsForSheet.InspectionDocumentNo}}</td>
+                                                                </tr>
+                                                                <tr ng-show="getInspectionDetailsForSheet.PlanElevationDrawing">
+                                                                    <td bgcolor="#ffffff" style="padding: 20px; border-width: 1px; ">Plan and Elevation Drawing</td>
+                                                                    <td bgcolor="#ffffff" style="padding: 2px; border-width: 1px; ">{{getInspectionDetailsForSheet.InspectionDocumentNo}}</td>
+                                                                </tr>*@
                                                             <tr ng-repeat="items in getInspectionDetailsForSheet.ListInspectionFileDrawing">
                                                                 <td bgcolor="#ffffff" style="padding: 20px; border-width: 1px; ">{{items.FileCategory}}</td>
                                                                 <td style="border-width: 1px;background-color:white">
@@ -1095,7 +1098,7 @@
                                                             </tr>
                                                         </table>
                                                         <div style="margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;">
-                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">RACKING INSPECTION REPORT<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
+                                                            <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'MATERIAL INSPECTION REPORT' : 'RACKING INSPECTION REPORT'}}<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
                                                             <div style="text-align: center;float: left;width: 70%;"><img src="/Content/V2/images/footer-logo.jpg" style="width: 70%;"></div>
                                                             <div style="float: right;width: 10%;font-size: 16px;font-weight: bold;line-height: 26px;text-align: right;position: relative;">11</div>
                                                             <div style="clear: both"></div>
@@ -1150,13 +1153,14 @@
                                                                                 <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.Customer}}</td>
                                                                                 <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Document Number</td>
                                                                                 <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.InspectionDocumentNo}}</td>
-                                                                                <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Type of Racking</td>
+                                                                                <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Type of Inspection</td>
                                                                                 <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.InspectionType}}</td>
                                                                             </tr>
                                                                             <tr>
                                                                                 <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Location/ Address</td>
                                                                                 <td style="padding:2px;border-width: 1px;"> {{getInspectionDetailsForSheet.CustomerFullAddress}}</td>
                                                                                 <!--{{getInspectionDetailsForSheet.CustomerArea}}, {{getInspectionDetailsForSheet.CustomerLocation}}, {{getInspectionDetailsForSheet.custModel.CustomerAddress}}-->
+                                                                                di
                                                                                 <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Date of Inspection</td>
                                                                                 <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.InspectionDate| date:'MMMM dd, yyyy'}}        </td>
                                                                                 <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Total Inspection Deficiencies</td>
@@ -1195,16 +1199,16 @@
                                                                             </tr>
                                                                             <tr bgcolor="#ffffcc">
                                                                                 <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Item ID</div></td>
-                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Row Number</div></td>
-                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Bay ID/ Number</div></td>
-                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Bay/ Frame Side</div></td>
-                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Beam/ Frame Level</div></td>
+                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'Packing Number' : 'Row Number'}}</div></td>
+                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'Lot Number' : 'Bay ID/ Number'}}</div></td>
+                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'Skid Number' : 'Bay/ Frame Side'}}</div></td>
+                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'Pallet Number' : 'Beam/ Frame Level'}}</div></td>
                                                                                 <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">Title</td>
                                                                                 <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">Title</td>
                                                                                 @*<td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Refer report for more detail</div></td>
-                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">monitor</div></td>
-                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">replace component</div></td>
-                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">repair component</div></td>*@
+                                                                                    <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">monitor</div></td>
+                                                                                    <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">replace component</div></td>
+                                                                                    <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">repair component</div></td>*@
                                                                                 <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Proposed Action</div></td>
                                                                                 <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Severity Index Number</div></td>
                                                                                 <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Reference Images</div></td>
@@ -1225,13 +1229,13 @@
                                                                                     <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">{{d.DeficiencyType}}</td>
                                                                                     <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">{{d.DeficiencyInfo}}</td>
                                                                                     @*<td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_ReferReport == true">✓</td>
-                                                                    <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_ReferReport == false">✗</td>
-                                                                    <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Monitor == true">✓</td>
-                                                                    <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Monitor == false">✗</td>
-                                                                    <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Replace == true">✓</td>
-                                                                    <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Replace == false">✗</td>
-                                                                    <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Repair == true">✓</td>
-                                                                    <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Repair == false">✗</td>*@
+                                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_ReferReport == false">✗</td>
+                                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Monitor == true">✓</td>
+                                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Monitor == false">✗</td>
+                                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Replace == true">✓</td>
+                                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Replace == false">✗</td>
+                                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Repair == true">✓</td>
+                                                                                        <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;" ng-if="d.Action_Repair == false">✗</td>*@
                                                                                     <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;">{{d.ActionTaken}}</td>
                                                                                     <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;background:#00CC00;color:#000000;" ng-if="d.Severity_IndexNo >= 1 && d.Severity_IndexNo <= 3">{{d.Severity_IndexNo}}</td>
                                                                                     <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;background:#FFFF00;color:#000000;" ng-if="d.Severity_IndexNo >=4 && d.Severity_IndexNo <= 7">{{d.Severity_IndexNo}}</td>
@@ -1309,7 +1313,7 @@
                                                             <tr>
                                                                 <td width="175" bgcolor="#ffffcc" style="padding:2px 5px;border-width: 1px;">Client</td>
                                                                 <td colspan="4" style="padding: 2px 5px;border-width: 1px;">{{getInspectionDetailsForSheet.Customer}}</td>
-                                                                <td width="150" align="center" bgcolor="#ffffcc" style="padding: 2px 5px; border-width: 1px;">Type of Racking</td>
+                                                                <td width="150" align="center" bgcolor="#ffffcc" style="padding: 2px 5px; border-width: 1px;">Type of Inspection</td>
                                                                 <td colspan="3" style="padding: 2px 5px;border-width: 1px;">{{getInspectionDetailsForSheet.InspectionType}}</td>
                                                             </tr>
                                                             <tr>
@@ -1520,7 +1524,7 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                </section>                           
+                                </section>
 
                             </div>
                         </div>

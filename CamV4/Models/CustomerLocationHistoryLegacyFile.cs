@@ -25,5 +25,7 @@ namespace CamV4.Models
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
+        public Nullable<long> CustomerFacilityID { get; set; }
+        public Nullable<long> CustomerAreaID { get; set; }
     }
 }

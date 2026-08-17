@@ -1,0 +1,236 @@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@{
+    var userType = Session["LoggedInUserType"] != null ? Session["LoggedInUserType"].ToString() : "1";
+    var fileId   = Request.QueryString["fileId"];
+}
+
+@* Luckysheet CDN must load before the controller *@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/css/pluginsCss.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/plugins.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/css/luckysheet.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/assets/iconfont/iconfont.css" />
+<script src="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/plugins/js/plugin.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/luckysheet@2.1.13/dist/luckysheet.umd.js"></script>
+<script src="~/NgScript/Controller/customerInventoryGridCtrl.js"></script>
+
+<style>
+#luckysheet-container {
+    width: 100%;
+    height: 65vh;
+    min-height: 460px;
+    position: relative;
+}
+.grid-toolbar {
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    padding: 8px 14px; background: #f6f8fa;
+    border-bottom: 1px solid #d0d7de;
+}
+.grid-toolbar .tsep {
+    width: 1px; height: 22px; background: #d0d7de; margin: 0 4px;
+}
+.grid-footer {
+    padding: 5px 14px; background: #f6f8fa;
+    border-top: 1px solid #d0d7de; border-radius: 0 0 6px 6px;
+    font-size: 12px; color: #57606a;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 6px;
+}
+.unsaved-banner {
+    background: #fff8e1; border-left: 4px solid #f5a623;
+    padding: 8px 14px; font-size: 13px; margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-radius: 0 4px 4px 0;
+}
+.dot-unsaved {
+    display: inline-block; width: 8px; height: 8px;
+    background: #f5a623; border-radius: 50%; margin-right: 5px;
+    vertical-align: middle;
+}
+</style>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100"
+      ng-app="myApp" ng-controller="customerInventoryGridCtrl">
+
+    <input type="hidden" ng-model="fileId" ng-init="fileId='@fileId'" />
+
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none"
+         id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm">
+                        <a class="opacity-5 text-dark"
+                           href="@Url.Action("Index","Admin")">Dashboard</a>
+                    </li>
+                    <li class="breadcrumb-item text-sm">
+                        <a class="opacity-5 text-dark"
+                           href="@Url.Action("customerInventoryListing", "Customer")">Inventory</a>                                
+                    </li>
+                    <li class="breadcrumb-item text-sm text-dark active"
+                        aria-current="page">
+                        {{currentFile.FileName || 'Grid Editor'}}
+                    </li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <ul class="navbar-nav ms-auto justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login","Account")"
+                           class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+
+        @* Alerts *@
+        <div ng-if="gridError" class="alert alert-danger mb-3">{{gridError}}</div>
+        <div ng-if="gridSuccess" class="alert alert-success mb-3">{{gridSuccess}}</div>
+
+        @* File info *@
+        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2"
+             ng-if="currentFile.FileName">
+            <div>
+                <i class="material-icons opacity-10"
+                   style="font-size:16px;vertical-align:middle">grid_on</i>
+                <strong class="text-sm ms-1">{{currentFile.FileName}}</strong>
+                <span class="text-xs text-secondary ms-2"
+                      ng-if="currentFile.LocationName">
+                    | <i class="material-icons opacity-10"
+                         style="font-size:12px;vertical-align:middle">place</i>
+                    {{currentFile.LocationName}}
+                    <span ng-if="currentFile.FacilityName"> » {{currentFile.FacilityName}}</span>
+                    <span ng-if="currentFile.AreaName"> » {{currentFile.AreaName}}</span>
+                </span>
+                <span class="badge badge-sm bg-gradient-info ms-2">
+                    {{rowCount | number}} rows
+                </span>
+                <span class="badge badge-sm bg-gradient-secondary ms-1">
+                    {{headers.length}} cols
+                </span>
+            </div>
+            <a href="javascript:history.back()"
+               class="btn btn-sm bg-gradient-secondary mb-0">
+                <i class="material-icons opacity-10"
+                   style="font-size:14px;vertical-align:middle">arrow_back</i>
+                Back to Spare Material
+            </a>
+        </div>
+
+        @* Unsaved banner *@
+        <div class="unsaved-banner" ng-if="hasUnsavedChanges">
+            <span>
+                <span class="dot-unsaved"></span>
+                <strong>Unsaved changes</strong> — your edits are not yet saved.
+            </span>
+            <div class="d-flex gap-2">
+                <button type="button" ng-click="DiscardChanges()"
+                        class="btn btn-sm bg-gradient-secondary mb-0">
+                    Discard
+                </button>
+                <button type="button" ng-click="SaveAll()"
+                        class="btn btn-sm bg-gradient-success mb-0"
+                        ng-disabled="saving">
+                    <i class="material-icons opacity-10"
+                       style="font-size:14px;vertical-align:middle">save</i>
+                    {{saving ? 'Saving...' : 'Save Changes'}}
+                </button>
+            </div>
+        </div>
+
+        @* Loading spinner *@
+        <div ng-if="loading"
+             style="padding:80px;text-align:center;background:#fff;
+                    border-radius:8px;border:1px solid #d0d7de;">
+            <div class="spinner-border text-success" role="status"
+                 style="width:3rem;height:3rem;"></div>
+            <p class="text-sm text-secondary mt-3 mb-0">
+                Loading spreadsheet data...
+            </p>
+        </div>
+
+        @* Grid wrapper (only shown when loaded) *@
+        <div ng-if="!loading"
+             style="border:1px solid #d0d7de;border-radius:6px;overflow:hidden;
+                    box-shadow:0 2px 8px rgba(0,0,0,.08);">
+
+            @* Toolbar *@
+            <div class="grid-toolbar">
+                @* Row operations *@
+                <button type="button" ng-click="AddRow()"
+                        class="btn btn-sm bg-gradient-secondary mb-0"
+                        title="Append a blank row">
+                    <i class="material-icons opacity-10"
+                       style="font-size:14px;vertical-align:middle">add</i>
+                    Add Row
+                </button>
+                <button type="button" ng-click="DeleteSelectedRows()"
+                        class="btn btn-sm bg-gradient-danger mb-0"
+                        title="Delete selected rows (select rows in grid first)">
+                    <i class="material-icons opacity-10"
+                       style="font-size:14px;vertical-align:middle">delete</i>
+                    Delete Row(s)
+                </button>
+
+                <div class="tsep"></div>
+
+                @* Save / Discard *@
+                <button type="button" ng-click="SaveAll()"
+                        class="btn btn-sm bg-gradient-success mb-0"
+                        ng-disabled="saving || !hasUnsavedChanges"
+                        title="Save all changes to the database">
+                    <i class="material-icons opacity-10"
+                       style="font-size:14px;vertical-align:middle">save</i>
+                    {{saving ? 'Saving...' : 'Save'}}
+                </button>
+                <button type="button" ng-click="DiscardChanges()"
+                        class="btn btn-sm bg-gradient-secondary mb-0"
+                        ng-show="hasUnsavedChanges"
+                        title="Revert to last saved state">
+                    Discard
+                </button>
+
+                <div class="tsep"></div>
+
+                @* Export *@
+                <button type="button" ng-click="ExportGrid()"
+                        class="btn btn-sm bg-gradient-info mb-0"
+                        title="Download current data as .xlsx">
+                    <i class="material-icons opacity-10"
+                       style="font-size:14px;vertical-align:middle">download</i>
+                    Export Excel
+                </button>
+            </div>
+
+            @* Luckysheet renders here *@
+            <div id="luckysheet-container"></div>
+
+            @* Footer *@
+            <div class="grid-footer">
+                <span>
+                    {{rowCount | number}} rows &nbsp;·&nbsp; {{headers.length}} columns
+                    <span ng-if="hasUnsavedChanges" style="color:#f5a623;font-weight:600;">
+                        &nbsp;·&nbsp; ● Unsaved changes
+                    </span>
+                </span>
+                <span>
+                    Tip: Click a cell to edit.
+                    <strong>Tab</strong> → next column &nbsp;
+                    <strong>Enter</strong> → next row &nbsp;
+                    <strong>Ctrl+Z</strong> to undo
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+    @Html.Partial("_FooterLayout")
+</main>

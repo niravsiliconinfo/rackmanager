@@ -10,14 +10,13 @@
 namespace CamV4.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class InternalInspectionLevel
+    public partial class SP_GetCustomerDashboard_AllAdmin_Result
     {
-        public long InternalInspectionLevelID { get; set; }
-        public long InternalInspectionID { get; set; }
-        public int LevelNumber { get; set; }
-        public string CreatedBy { get; set; }
-        public Nullable<System.DateTime> CreatedDate { get; set; }
+        public string DeficiencyCategoryName { get; set; }
+        public Nullable<int> MinorCnt { get; set; }
+        public Nullable<int> IntermediateCnt { get; set; }
+        public Nullable<int> MajorCnt { get; set; }
+        public Nullable<int> DeficiencyCategoryCount { get; set; }
     }
 }

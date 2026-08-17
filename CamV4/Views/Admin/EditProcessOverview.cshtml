@@ -19,7 +19,7 @@
                     <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageProcessOverview", "Admin")">Dashboard</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Process Overview</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -59,13 +59,23 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
-                                    <span>Gender</span>
+                                    <span>Is Shelving Checklist?</span>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="input-group input-group-outline mb-3">
-                                        Yes &nbsp;<input type="radio" name="isshelvingchecklist" ng-model="IsShelvingChecklist" value="1" ng-init="IsShelvingChecklist = '@Model.IsShelvingChecklist'" />
-                                        &nbsp;&nbsp;&nbsp;
-                                        No  &nbsp;<input type="radio" name="isshelvingchecklist" ng-model="IsShelvingChecklist" value="0" ng-init="IsShelvingChecklist = '@Model.IsShelvingChecklist'" />
+                                    <div ng-init="IsShelvingChecklist=@(Model.IsShelvingChecklist == true ? "true" : "false")">
+
+                                        Yes
+                                        <input type="radio"
+                                               name="isshelvingchecklist"
+                                               ng-model="IsShelvingChecklist"
+                                               ng-value="true" />
+
+                                        No
+                                        <input type="radio"
+                                               name="isshelvingchecklist"
+                                               ng-model="IsShelvingChecklist"
+                                               ng-value="false" />
+
                                     </div>
                                 </div>
                             </div>

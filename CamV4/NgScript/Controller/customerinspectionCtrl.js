@@ -50,10 +50,10 @@
 
     function customerinspectionCtrl($scope, $http, sharedFilterService, $rootScope) {
         console.log('-----------customerinspectionCtrl--------------');
-        $scope.getAllInspectionDueByCustomerId = [];
+        //$scope.getAllInspectionDueByCustomerId = [];
         $scope.getAllInspectionByCustomerId = [];        
 
-        $scope.scheduleFilter = sharedFilterService.getScheduleFilter() || {};
+        //$scope.scheduleFilter = sharedFilterService.getScheduleFilter() || {};
         $scope.statusFilter = sharedFilterService.getStatusFilter() || {};
 
         $scope.viewby = '50';
@@ -105,23 +105,25 @@
 
         function init() {
             // Get filters from shared memory
-            var schedule = sharedFilterService.getScheduleFilter();
+            //var schedule = sharedFilterService.getScheduleFilter();
             var status = sharedFilterService.getStatusFilter();            
-
+            console.log('Customer Inspection init', status);
             if (window.location.pathname == "/Customer/ManageInspectionDue") {
-                //loadDueInspections();
-                if (schedule && Object.keys(schedule).length > 0) {
-                    console.log('from init for LoadInpsectionsDue');
-                    $scope.scheduleFilter = schedule;
-                    loadInspectionDue(schedule);
-                } else {
-                    console.log('from init for LoadInpsectionsDue');
-                    loadInspectionDue(); // Load default data
-                }
+                ////loadDueInspections();
+                //if (schedule && Object.keys(schedule).length > 0) {
+                //    console.log('from init for LoadInpsectionsDue');
+                //    $scope.scheduleFilter = schedule;
+                //    loadInspectionDue(schedule);
+                //} else {
+                //    console.log('from init for LoadInpsectionsDue');
+                //    loadInspectionDue(); // Load default data
+                //}
             } else if (window.location.pathname == "/Customer/ManageInspection") {
                 //loadAllInspections();
+                console.log('from init for LoadInpsections');
                 if (status && Object.keys(status).length > 0) {
-                    console.log('from init for LoadInpsections');
+                    console.log('from init for LoadInpsections', status);
+                    console.log('inspectionFiltersUpdated received', status);
                     $scope.statusFilter = status;
                     loadInspections(status);
                 } else {
@@ -130,6 +132,18 @@
                 }
             }            
         }
+
+        $scope.$on(
+            'inspectionFiltersUpdated',
+            function (event, filters) {
+
+                console.log(
+                    'inspectionFiltersUpdated received',
+                    filters);
+
+                loadInspections(filters);
+
+            });
 
         function loadInspectionDue(filter) {
             console.log('Calling ----> loadInspectionDue');
@@ -143,14 +157,18 @@
                 });
         }
 
-        function loadInspections(filter) {            
+        function loadInspections(filter) {
             const filters = filter;
-            console.log('Calling ----> loadInspections---------------------------', filters);
-            $http.post('/api/pageview/getAllInspectionsCustomerFilters', filters)
+            console.log('Calling ----> loadInspections', filters);
+            $http.post('/api/pageview/getInspectionListing', filters)
                 .then(function (response) {
+                    console.log("SUCCESS");
+                    console.log(response);
                     $scope.getAllInspectionByCustomerId = response.data;
-                }, function (error) {
-                    console.error("Error loading all inspections:", error);
+                })
+                .catch(function (error) {
+                    console.log("ERROR");
+                    console.log(error);
                 });
         }
 

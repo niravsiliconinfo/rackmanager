@@ -6,6 +6,15 @@
         .controller('employeeCtrl', employeeCtrl);
     //app.controller('employeeCtrl', employeeCtrl);
 
+    app.filter('startFrom', function () {
+        return function (input, start) {
+            if (input) {
+                start = +start;
+                return input.slice(start);
+            }
+            return [];
+        };
+    });
     employeeCtrl.$inject = ['$scope', '$http'];
 
     function employeeCtrl($scope, $http) {
@@ -22,13 +31,13 @@
             $scope.itemsPerPage = num;
             $scope.currentPage = 1; //reset to first page
         }
-
+        
         $http.get('/api/pageview/getAllEmployee').then(function (response) {
             $scope.getAllEmployee = response.data;
-            console.log('$scope.getAllEmployee', $scope.getAllEmployee);
+            console.log('-----------------$scope.getAllEmployee---------------', $scope.getAllEmployee);
             if ($scope.getAllEmployee != null) { $scope.getAllEmployeecount = $scope.getAllEmployee.length; }
             else { $scope.getAllEmployeecount = 0; }
-            $scope.totalemployee = $scope.getAllEmployeecount;
+            $scope.totalgetAllEmployee = $scope.getAllEmployeecount;
         }, function (response) {
             $scope.waiting = false;
         });

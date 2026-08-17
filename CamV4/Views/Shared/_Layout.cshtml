@@ -1,12 +1,12 @@
 ﻿<!DOCTYPE html>
 <html ng-app="myApp">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" />    
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="apple-touch-icon" sizes="76x76" href="~/Content/V2/images/apple-icon.png">
     <link rel="icon" type="image/png" href="~/Content/V2/images/CamIndusIcon.png">
     @*<title>Rack Manager - Rack Management Tool - cam|industrial</title>*@
-    <title>@(ViewBag.Title ?? "Rack Management Tool - Cam Industrial - Version 5.00.07")</title>
+    <title>@(ViewBag.Title ?? "Rack Management Tool - Cam Industrial - Version 5.00.43")</title>
     <!-- Font Awesome Icons -->
     <script src="~/Scripts/font_awesome42d5adcbca.js"></script>
     <!-- Material Icons -->
@@ -43,12 +43,97 @@
     @*<script type="text/javascript" src="https://code.jquery.com/jquery-1.7.2.min.js"></script>*@
     <script type="text/javascript" src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
     <script src="~/NgScript/Controller/app.js"></script>
-    <script src="~/NgScript/Controller/homeCtrl.js?v=1"></script>
     <script src="~/NgScript/Controller/myService.js"></script>
     <script src="~/NgScript/Controller/sharedFilterService.js"></script>
     <script src="~/NgScript/Controller/menuCtrl.js"></script>
+    <script>
+        $.ajaxSetup({
+            beforeSend: function (xhr) {
+                var token = localStorage.getItem("token");
+
+                if (token) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                }
+            }
+        });
+    </script>
 </head>
-<body class="g-sidenav-show  bg-gray-200">
+
+<style>
+    #custdash-progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: linear-gradient(90deg, #1A73E8, #42a5f5);
+        z-index: 9999;
+        transition: width 0.3s ease, opacity 0.4s ease;
+        opacity: 0;
+    }
+
+        #custdash-progress-bar.custdash-loading {
+            opacity: 1;
+            animation: custdash-slide 1.4s ease-in-out infinite;
+        }
+
+    @@keyframes custdash-slide {
+        0% {
+            width: 0%;
+            left: 0;
+        }
+
+        50% {
+            width: 70%;
+            left: 0;
+        }
+
+        100% {
+            width: 100%;
+            left: 0;
+            opacity: 0;
+        }
+    }
+
+    /*  Error toast  */
+    #custdash-error-toast {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        background: #d32f2f;
+        color: #fff;
+        padding: 10px 18px;
+        border-radius: 6px;
+        font-size: 13px;
+        z-index: 9999;
+        box-shadow: 0 3px 10px rgba(0,0,0,.25);
+        display: none;
+    }
+
+    /*  Skeleton shimmer for counters while loading  */
+    .custdash-counter-skeleton {
+        display: inline-block;
+        width: 36px;
+        height: 22px;
+        background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+        background-size: 200% 100%;
+        animation: custdash-shimmer 1.2s infinite;
+        border-radius: 4px;
+        vertical-align: middle;
+    }
+
+    @@keyframes custdash-shimmer {
+        0% {
+            background-position: 200% 0;
+        }
+
+        100% {
+            background-position: -200% 0;
+        }
+    }
+
+</style>
+<body class="g-sidenav-show  bg-gray-200">    
     @RenderBody()
     <!--   Core JS Files   -->
     <script src="~/Content/V2/js/core/popper.min.js"></script>

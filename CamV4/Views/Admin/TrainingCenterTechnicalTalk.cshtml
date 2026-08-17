@@ -1,0 +1,341 @@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="~/NgScript/Controller/trainingCenterCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg"
+      ng-controller="trainingCenterCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index","Admin")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Technical Talk</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center"></div>
+                <ul class="navbar-nav justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+
+        <!-- ============================================================ -->
+        <!-- ANSWER PANEL (slides in when admin clicks Answer button)     -->
+        <!-- ============================================================ -->
+        <div class="row" ng-if="answerForm">
+            <div class="col-12">
+                <div class="card my-4 border border-2 border-info">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-3 pb-3 d-flex align-items-center justify-content-between pe-3">
+                            <h6 class="text-white ps-3 mb-0">
+                                <i class="material-icons text-sm me-2" style="vertical-align:middle;">rate_review</i>
+                                Answer Customer Question
+                            </h6>
+                            <button type="button" class="btn btn-sm btn-outline-light mb-0"
+                                    ng-click="CloseAnswerForm()">
+                                <i class="material-icons text-sm" style="vertical-align:middle;">close</i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="alert alert-success text-sm" ng-show="answerSuccess">
+                            <i class="material-icons text-sm me-1" style="vertical-align:middle;">check_circle</i>
+                            {{answerSuccess}}
+                        </div>
+                        <div class="alert alert-danger text-sm" ng-show="answerError">{{answerError}}</div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p class="text-xs text-uppercase text-secondary font-weight-bolder mb-1">Customer</p>
+                                <p class="text-sm font-weight-bold mb-0">{{answerForm.CustomerName}}</p>
+                            </div>
+                            <div class="col-md-9">
+                                <p class="text-xs text-uppercase text-secondary font-weight-bolder mb-1">Question</p>
+                                <p class="text-sm mb-0">{{answerForm.Question}}</p>
+                            </div>
+                        </div>
+
+                        <hr class="horizontal dark my-3" />
+
+                        <div class="mb-3">
+                            <label class="form-label text-sm font-weight-bold">
+                                Your Answer <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group input-group-outline">
+                                <textarea class="form-control" ng-model="answerForm.Answer"
+                                          rows="4" maxlength="3000"
+                                          placeholder="Type your answer here..."></textarea>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn bg-gradient-success btn-sm mb-0"
+                                ng-click="SubmitAnswer()">
+                            <i class="material-icons text-sm me-1" style="vertical-align:middle;">check_circle</i>
+                            Save &amp; Notify Customer
+                        </button>
+                        <button type="button" class="btn bg-gradient-secondary btn-sm mb-0 ms-2"
+                                ng-click="CloseAnswerForm()">
+                            Cancel
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ADD / EDIT ADMIN Q&A FORM (knowledge base entries)          -->
+        <!-- ============================================================ -->
+        <div class="row" ng-if="showTalkForm">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-3 pb-3 d-flex align-items-center justify-content-between pe-3">
+                            <h6 class="text-white ps-3 mb-0">
+                                <i class="material-icons text-sm me-2" style="vertical-align:middle;">edit_note</i>
+                                {{talkForm.TrainingTechnicalTalkID == 0 ? 'Add New Q&A Entry' : 'Edit Q&A Entry'}}
+                            </h6>
+                            <button type="button" class="btn btn-sm btn-outline-light mb-0"
+                                    ng-click="CloseTalkForm()">
+                                <i class="material-icons text-sm" style="vertical-align:middle;">close</i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="alert alert-success text-sm" ng-show="talkSuccess">{{talkSuccess}}</div>
+                        <div class="alert alert-danger  text-sm" ng-show="talkError">{{talkError}}</div>
+
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label text-sm font-weight-bold">
+                                    Question <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group input-group-outline">
+                                    <textarea class="form-control" ng-model="talkForm.Question"
+                                              rows="3" maxlength="2000"
+                                              placeholder="Enter question..."></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label text-sm font-weight-bold">Display Order</label>
+                                <div class="input-group input-group-outline">
+                                    <input type="number" class="form-control" ng-model="talkForm.DisplayOrder"
+                                           min="0" placeholder="0" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-sm font-weight-bold">Answer</label>
+                            <div class="input-group input-group-outline">
+                                <textarea class="form-control" ng-model="talkForm.Answer"
+                                          rows="4" maxlength="3000"
+                                          placeholder="Enter answer..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-auto mb-3 d-flex align-items-center">
+                                <div class="form-check form-switch mb-0 me-3">
+                                    <input class="form-check-input" type="checkbox" ng-model="talkForm.IsPublished"
+                                           id="chkPublished" />
+                                    <label class="form-check-label text-sm ms-1" for="chkPublished">Published</label>
+                                </div>
+                                <div class="form-check form-switch mb-0">
+                                    <input class="form-check-input" type="checkbox" ng-model="talkForm.IsActive"
+                                           id="chkActive" />
+                                    <label class="form-check-label text-sm ms-1" for="chkActive">Active</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn bg-gradient-info btn-sm mb-0"
+                                ng-click="SaveTalk()">
+                            <i class="material-icons text-sm me-1" style="vertical-align:middle;">save</i>
+                            Save
+                        </button>
+                        <button type="button" class="btn bg-gradient-secondary btn-sm mb-0 ms-2"
+                                ng-click="CloseTalkForm()">
+                            Cancel
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- MAIN Q&A MANAGEMENT TABLE                                    -->
+        <!-- ============================================================ -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="row pt-3 pb-3">
+                            <div class="col-6 d-flex align-items-center ps-4">
+                                <h6 class="text-white mb-0">
+                                    <i class="material-icons text-sm me-2" style="vertical-align:middle;">question_answer</i>
+                                    Technical Talk Management
+                                </h6>
+                            </div>
+                            <div class="col-6 text-end pe-4 d-flex align-items-center justify-content-end">
+                                <button type="button" class="btn btn-sm btn-outline-light mb-0"
+                                        ng-click="OpenTalkForm(null)">
+                                    <i class="material-icons text-sm me-1" style="vertical-align:middle;">add</i>
+                                    Add Q&amp;A
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body pb-2">
+
+                        <!-- Filter tabs -->
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-sm mb-0 me-2"
+                                    ng-class="talkFilter == 'all' ? 'bg-gradient-dark' : 'bg-gradient-secondary'"
+                                    ng-click="SetTalkFilter('all')">
+                                All ({{talkList.length}})
+                            </button>
+                            <button type="button" class="btn btn-sm mb-0 me-2"
+                                    ng-class="talkFilter == 'unanswered' ? 'bg-gradient-warning' : 'bg-gradient-secondary'"
+                                    ng-click="SetTalkFilter('unanswered')">
+                                <i class="material-icons text-sm me-1" style="vertical-align:middle;">pending</i>
+                                Unanswered
+                            </button>
+                            <button type="button" class="btn btn-sm mb-0 me-2"
+                                    ng-class="talkFilter == 'answered' ? 'bg-gradient-success' : 'bg-gradient-secondary'"
+                                    ng-click="SetTalkFilter('answered')">
+                                <i class="material-icons text-sm me-1" style="vertical-align:middle;">check_circle</i>
+                                Answered
+                            </button>
+                            <button type="button" class="btn btn-sm mb-0"
+                                    ng-class="talkFilter == 'admin' ? 'bg-gradient-info' : 'bg-gradient-secondary'"
+                                    ng-click="SetTalkFilter('admin')">
+                                <i class="material-icons text-sm me-1" style="vertical-align:middle;">admin_panel_settings</i>
+                                Knowledge Base
+                            </button>
+                        </div>
+
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Source</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Customer</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Question</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Answer</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Published</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Order</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Date</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-if="!filteredTalkList || filteredTalkList.length == 0">
+                                        <td colspan="8" class="text-center text-sm py-4 text-muted">
+                                            No entries found for this filter.
+                                        </td>
+                                    </tr>
+                                    <tr ng-repeat="t in filteredTalkList">
+
+                                        <!-- Source badge -->
+                                        <td class="align-middle">
+                                            <span class="badge badge-sm bg-gradient-info"
+                                                  ng-if="t.IsAdminCreated">Admin</span>
+                                            <span class="badge badge-sm bg-gradient-secondary"
+                                                  ng-if="!t.IsAdminCreated">Customer</span>
+                                        </td>
+
+                                        <!-- Customer name (only for customer-submitted) -->
+                                        <td class="align-middle">
+                                            <p class="text-sm mb-0" ng-if="!t.IsAdminCreated">{{t.CustomerName}}</p>
+                                            <p class="text-sm text-muted mb-0" ng-if="t.IsAdminCreated">-</p>
+                                        </td>
+
+                                        <!-- Question -->
+                                        <td class="align-middle" style="max-width:240px;">
+                                            <p class="text-sm mb-0">{{t.Question}}</p>
+                                        </td>
+
+                                        <!-- Answer -->
+                                        <td class="align-middle" style="max-width:240px;">
+                                            <p class="text-sm text-muted mb-0" ng-if="!t.Answer"><em>-</em></p>
+                                            <p class="text-sm mb-0" ng-if="t.Answer">{{t.Answer}}</p>
+                                        </td>
+
+                                        <!-- Published -->
+                                        <td class="align-middle">
+                                            <span class="badge badge-sm bg-gradient-success" ng-if="t.IsPublished">Yes</span>
+                                            <span class="badge badge-sm bg-gradient-warning" ng-if="!t.IsPublished">No</span>
+                                        </td>
+
+                                        <!-- Display order -->
+                                        <td class="align-middle">
+                                            <p class="text-sm mb-0 text-center">{{t.DisplayOrder}}</p>
+                                        </td>
+
+                                        <!-- Date -->
+                                        <td class="align-middle">
+                                            <p class="text-sm mb-0 text-nowrap">
+                                                {{t.CreatedDate | date:'MMM d, y'}}
+                                            </p>
+                                        </td>
+
+                                        <!-- Actions -->
+                                        <td class="align-middle text-end pe-3">
+                                            <!-- Customer-submitted: show Answer button -->
+                                            <button type="button"
+                                                    class="btn btn-sm mb-0 me-1"
+                                                    ng-class="t.Answer ? 'bg-gradient-secondary' : 'bg-gradient-warning'"
+                                                    ng-if="!t.IsAdminCreated"
+                                                    ng-click="OpenAnswerForm(t)">
+                                                <i class="material-icons text-sm me-1" style="vertical-align:middle;">rate_review</i>
+                                                {{t.Answer ? 'Edit Answer' : 'Answer'}}
+                                            </button>
+                                            <!-- All entries: edit -->
+                                            <button type="button" class="btn bg-gradient-info btn-sm mb-0 me-1"
+                                                    ng-click="OpenTalkForm(t)">
+                                                <i class="material-icons text-sm" style="vertical-align:middle;">edit</i>
+                                            </button>
+                                            <!-- All entries: delete -->
+                                            <button type="button" class="btn bg-gradient-danger btn-sm mb-0"
+                                                    ng-click="DeleteTalk(t.TrainingTechnicalTalkID)">
+                                                <i class="material-icons text-sm" style="vertical-align:middle;">delete</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @Html.Partial("_FooterLayout")
+    </div>
+</main>

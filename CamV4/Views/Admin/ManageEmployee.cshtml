@@ -2,11 +2,8 @@
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-
-
 <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>
 <script src="~/NgScript/Controller/employeeCtrl.js"></script>
-
 <main class="main-content2 position-relative max-height-vh-100 h-100" ng-app="myApp" ng-controller="employeeCtrl">
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
         <div class="container-fluid py-1 px-3">
@@ -15,7 +12,7 @@
                     <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index", "Admin")">Dashboard</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Manage Employee</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -60,7 +57,7 @@
                         </div>
                     </div>
                     <div class="card-body pb-2">
-                        <div class="table-responsive p-0" ng-if="getAllEmployeeUser">
+                        <div class="table-responsive p-0" ng-if="getAllEmployeeUser && getAllEmployeeUser.length > 0">
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
@@ -72,13 +69,13 @@
                                         <th class="text-secondary opacity-7"></th>
                                     </tr>
                                 </thead>
-                                <tbody ng-repeat="d in getAllEmployeeUser | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
-                                    <tr>
+                                <tbody>
+                                    <tr ng-repeat="d in getAllEmployeeUser | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
                                         <td>
                                             <div class="d-flex px-2 py-1">
                                                 <div class="d-flex flex-column justify-content-center">
                                                     <h6 class="mb-0 text-sm">{{d.EmployeeName}}</h6>
-                                                    <p class="text-xs text-secondary mb-0">{{d.Email}}</p>
+                                                    <p class="text-xs text-secondary mb-0">{{d.EmployeeEmail}}</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -88,6 +85,8 @@
                                             <p class="text-xs font-weight-bold mb-0" ng-if="d.UserType==3">Technician</p>
                                             <p class="text-xs font-weight-bold mb-0" ng-if="d.UserType==4">Company User</p>
                                             <p class="text-xs font-weight-bold mb-0" ng-if="d.UserType==5">Sales</p>
+                                            <p class="text-xs font-weight-bold mb-0" ng-if="d.UserType==6">Project Manager</p>
+                                            <p class="text-xs font-weight-bold mb-0" ng-if="d.UserType==7">Consultant</p>                                            
                                         </td>
                                         <td>
                                             <p class="text-xs font-weight-bold mb-0">{{d.TitleDegrees}}</p>
@@ -124,9 +123,12 @@
                                     <option>30</option>
                                     <option>40</option>
                                     <option>50</option>
-                                </select> of {{getAllEmployeecount}} Employee
-                                <pagination total-items="totalemployee" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
-                                            items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
+                                </select> of {{getAllEmployeeUsercount}} Employee
+                                <pagination total-items="totalemployee"
+                                            ng-model="currentPage"
+                                            max-size="maxSize"
+                                            items-per-page="itemsPerPage">
+                                </pagination>
                             </nav>
                         </div>
                     </div>
@@ -168,8 +170,8 @@
             <option>30</option>
             <option>40</option>
             <option>50</option>
-        </select> of {{getAllEmployeecount}} Employee
+        </select> of {{getAllEmployeeUsercount}} Employee
         <pagination total-items="totalemployee" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
-                    items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
+                    items-per-page="itemsPerPage" previous-text="<" next-text=">"></pagination>
 
     </nav>*@

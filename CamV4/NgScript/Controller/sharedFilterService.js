@@ -1,188 +1,280 @@
-﻿;(function () {
-    'use strict';
-    angular.module('myApp')
-        .factory('sharedFilterService', function ($rootScope) {
+﻿app.factory('sharedFilterService', function ($rootScope) {
 
-            var scheduleFilter = {};
-            var statusFilter = {};
-            var docsFilter = {};
-            var incidentFilter = {};
-            var internalFilter = {}; 
+    var service = {};
 
-            return {
-                // ---- Schedule Filter ----
-                setScheduleFilter: function (filter) {
-                    scheduleFilter = angular.copy(filter);
-                    $rootScope.$broadcast('scheduleFilterUpdated');
-                },
-                getScheduleFilter: function () {
-                    return scheduleFilter;
-                },
+    // =====================================
+    // INSPECTION FILTERS
+    // =====================================
 
-                // ---- Status Filter ----
-                setStatusFilter: function (filter) {
-                    statusFilter = angular.copy(filter);
-                    $rootScope.$broadcast('statusFilterUpdated');
-                },
-                getStatusFilter: function () {
-                    return statusFilter;
-                },
+    var inspectionFilters = {
+        InspectionTypeId: '',
+        SelectedStatusIds: [],
+        Region: '',
+        ProvinceId: null,
+        CityId: null,
+        CustomerLocationId: null,
+        CustomerFacilityId: null,
+        CustomerAreaId: null
+    };
 
-                // ---- Docs Filter ----
-                setDocsFilter: function (filter) {
-                    docsFilter = angular.copy(filter);
-                    $rootScope.$broadcast('docsFilterUpdated');
-                },
-                getDocsFilter: function () {
-                    return docsFilter;
-                },
+    // =====================================
+    // DOCUMENT FILTERS
+    // =====================================
 
-                // ---- Incident Filter ----
-                setIncidentFilter: function (filter) {
-                    incidentFilter = angular.copy(filter);
-                    $rootScope.$broadcast('incidentFilterUpdated');
-                },
-                getIncidentFilter: function () {
-                    return incidentFilter;
-                },
+    var documentFilters = {
+        Region: '',
+        ProvinceId: null,
+        CityId: null,
+        CustomerLocationId: null,
+        CustomerFacilityId: null,
+        CustomerAreaId: null,
 
-                // ---- Internal Inspections Filter ----
-                setInternalFilter: function (filter) {
-                    internalFilter = angular.copy(filter);
-                    $rootScope.$broadcast('internalFilterUpdated');
-                },
-                getInternalFilter: function () {
-                    return internalFilter;
-                }
-            };
-        });
-})();
-//; (function () {
-//    'use strict';
-//    angular.module('myApp')
-//        .factory('sharedFilterService', function ($rootScope) {
-//            var scheduleFilter = {};
-//            var statusFilter = {};
-//            var docsFilter = {};
-//            var incidentFilter = {};
+        IncludeInspectionDocuments: true,
+        IncludeHistoricalDocuments: true,
 
-//            return {
-//                // Schedule Filter
-//                setScheduleFilter: function (filter) {
-//                    scheduleFilter = angular.copy(filter);
-//                    $rootScope.$broadcast('scheduleFilterUpdated');
-//                },
-//                getScheduleFilter: function () {
-//                    return scheduleFilter;
-//                },
+        InspectionCategories: [],
+        HistoricalCategories: []
+    };
 
-//                // Status Filter
-//                setStatusFilter: function (filter) {
-//                    statusFilter = angular.copy(filter);
-//                    $rootScope.$broadcast('statusFilterUpdated');
-//                },
-//                getStatusFilter: function () {
-//                    return statusFilter;
-//                },
+    // =====================================
+    // INCIDENT FILTERS
+    // =====================================
 
-//                // Docs Filter
-//                setDocsFilter: function (filter) {
-//                    docsFilter = angular.copy(filter);
-//                    $rootScope.$broadcast('docsFilterUpdated');
-//                },
-//                getDocsFilter: function () {
-//                    return docsFilter;
-//                },
-//                //Incident Filter
-//                setIncidentFilter: function (filter) {
-//                    incidentFilter = angular.copy(filter);
-//                    $rootScope.$broadcast('incidentFilterUpdated');
-//                },
-//                getIncidentFilter: function () {
-//                    return incidentFilter;
-//                }
-//            };
-//        });
-    //angular.module('myApp').factory('sharedFilterService', function () {
-    //    var filterStore = {
-    //       schedule: {},
-    //       status: {},
-    //       docs: {}
-    //    };
+    var incidentFilters = {
+        IncidentType: '',
+        Region: '',
+        ProvinceId: null,
+        CityId: null,
+        CustomerLocationId: null,
+        CustomerFacilityId: null,
+        CustomerAreaId: null
+    };
 
-    //    return {
-    //       setScheduleFilter: function (filter) {
-    //           filterStore.schedule = filter;
-    //       },
-    //       getScheduleFilter: function () {
-    //           return filterStore.schedule;
-    //       },
-    //       setStatusFilter: function (filter) {
-    //           filterStore.status = filter;
-    //       },
-    //       getStatusFilter: function () {
-    //           return filterStore.status;
-    //       },
-    //       setDocsFilter: function (filter) {
-    //           filterStore.docs = filter;
-    //       },
-    //       getDocsFilter: function () {
-    //           return filterStore.docs;
-    //       }
-    //    };
-    //});
-//})();
-        //// Service for Inspection Due
-        //.factory('sharedInspectionDueFilterService', function () {
-        //    var filterData = {};
+    // =====================================
+    // INTERNAL INSPECTION FILTERS
+    // =====================================
 
-        //    return {
-        //       get: function () {
-        //           return filterData;
-        //       },
-        //       set: function (data) {
-        //           filterData = data;
-        //           console.log('Inspection Due Filter Set:', filterData);
-        //       },
-        //       reset: function () {
-        //           filterData = {};
-        //       }
-        //    };
-        //})
+    var internalInspectionFilters = {
+        Status: '',
+        Region: '',
+        ProvinceId: null,
+        CityId: null,
+        CustomerLocationId: null,
+        CustomerFacilityId: null,
+        CustomerAreaId: null
+    };
 
-        //// Service for Inspection Status (All Inspections) - Fixed typo
-        //.factory('sharedInspectionFilterService', function () {
-        //    var filterData = {};
+    // =====================================
+    // INTERNAL INVENTORY FILTERS
+    // =====================================
 
-        //    return {
-        //       get: function () {
-        //           return filterData;
-        //       },
-        //       set: function (data) {
-        //           filterData = data;
-        //           console.log('Inspection Filter Set:', filterData);
-        //       },
-        //       reset: function () {
-        //           filterData = {};
-        //       }
-        //    };
-        //})
+    var internalInventoryFilters = {
+        Region: '',
+        ProvinceId: null,
+        CityId: null,
+        CustomerLocationId: null,
+        CustomerFacilityId: null,
+        CustomerAreaId: null
+    };
 
-        //// Service for Documents
-        //.factory('sharedDocumentFilterService', function () {
-        //    var filterData = {};
 
-        //    return {
-        //       get: function () {
-        //           return filterData;
-        //       },
-        //       set: function (data) {
-        //           filterData = data;
-        //           console.log('Document Filter Set:', filterData);
-        //       },
-        //       reset: function () {
-        //           filterData = {};
-        //       }
-        //    };
-        //});
 
+    // =====================================
+    // INSPECTION FILTERS METHODS
+    // =====================================
+
+    service.setInspectionFilters = function (filters) {
+        console.log('Broadcasting inspectionFiltersUpdated', filters);
+        inspectionFilters = angular.copy(filters);
+        $rootScope.$broadcast(
+            'inspectionFiltersUpdated',
+            inspectionFilters);
+    };
+
+    service.getInspectionFilters = function () {
+        return angular.copy(inspectionFilters);
+    };
+
+    // Alias methods (if controller uses singular form)
+    service.setInspectionFilter = function (filters) {
+        service.setInspectionFilters(filters);
+    };
+
+    service.getInspectionFilter = function () {
+        return service.getInspectionFilters();
+    };
+
+    // =====================================
+    // DOCUMENT FILTERS METHODS
+    // =====================================
+
+    service.setDocumentFilters = function (filters) {
+        documentFilters = angular.copy(filters);
+        $rootScope.$broadcast(
+            'documentFiltersUpdated',
+            documentFilters
+        );
+    };
+
+    service.getDocumentFilters = function () {
+        return angular.copy(documentFilters);
+    };
+
+    // Alias methods (if controller uses singular form)
+    service.setDocumentFilter = function (filters) {
+        service.setDocumentFilters(filters);
+    };
+
+    service.getDocumentFilter = function () {
+        return service.getDocumentFilters();
+    };
+
+    // =====================================
+    // INCIDENT FILTERS METHODS
+    // =====================================
+
+    service.setIncidentFilters = function (filters) {
+        incidentFilters = angular.copy(filters);
+        $rootScope.$broadcast(
+            'incidentFiltersUpdated',
+            incidentFilters
+        );
+    };
+
+    service.getIncidentFilters = function () {
+        return angular.copy(incidentFilters);
+    };
+
+    // Alias methods (if controller uses singular form) - THIS FIXES YOUR ERROR
+    service.setIncidentFilter = function (filters) {
+        service.setIncidentFilters(filters);
+    };
+
+    service.getIncidentFilter = function () {
+        return service.getIncidentFilters();
+    };
+
+    // =====================================
+    // INTERNAL INSPECTION FILTERS METHODS
+    // =====================================
+
+    service.setInternalInspectionFilters = function (filters) {
+        internalInspectionFilters = angular.copy(filters);
+        $rootScope.$broadcast(
+            'internalInspectionFiltersUpdated',
+            internalInspectionFilters
+        );
+    };
+
+    service.getInternalInspectionFilters = function () {
+        return angular.copy(internalInspectionFilters);
+    };
+
+    // Alias methods (if controller uses singular form)
+    service.setInternalInspectionFilter = function (filters) {
+        service.setInternalInspectionFilters(filters);
+    };
+
+    service.getInternalInspectionFilter = function () {
+        return service.getInternalInspectionFilters();
+    };
+
+    // =====================================
+    // INTERNAL INVENTORY FILTERS METHODS
+    // =====================================
+
+    service.setInternalInventoryFilters = function (filters) {
+        internalInventoryFilters = angular.copy(filters);
+        $rootScope.$broadcast(
+            'internalInventoryFiltersUpdated',
+            internalInventoryFilters
+        );
+    };
+
+    service.getInternalInventoryFilters = function () {
+        return angular.copy(internalInventoryFilters);
+    };
+
+    // Alias methods (if controller uses singular form)
+    service.setInternalInventoryFilter = function (filters) {
+        service.setInternalInventoryFilters(filters);
+    };
+
+    service.getInternalInventoryFilter = function () {
+        return service.getInternalInventoryFilters();
+    };
+
+    // =====================================
+    // RESET ALL FILTERS
+    // =====================================
+
+    service.clearAll = function () {
+        inspectionFilters = {
+            InspectionTypeId: '',
+            SelectedStatusIds: [],
+            Region: '',
+            ProvinceId: null,
+            CityId: null,
+            CustomerLocationId: null,
+            CustomerFacilityId: null,
+            CustomerAreaId: null
+        };
+
+        documentFilters = {
+            Region: '',
+            ProvinceId: null,
+            CityId: null,
+            CustomerLocationId: null,
+            CustomerFacilityId: null,
+            CustomerAreaId: null,
+            IncludeInspectionDocuments: true,
+            IncludeHistoricalDocuments: true,
+            InspectionCategories: [],
+            HistoricalCategories: []
+        };
+
+        incidentFilters = {
+            IncidentType: '',
+            Region: '',
+            ProvinceId: null,
+            CityId: null,
+            CustomerLocationId: null,
+            CustomerFacilityId: null,
+            CustomerAreaId: null
+        };
+
+        internalInspectionFilters = {
+            Status: '',
+            Region: '',
+            ProvinceId: null,
+            CityId: null,
+            CustomerLocationId: null,
+            CustomerFacilityId: null,
+            CustomerAreaId: null
+        };
+
+        internalInventoryFilters = {
+            Region: '',
+            ProvinceId: null,
+            CityId: null,
+            CustomerLocationId: null,
+            CustomerFacilityId: null,
+            CustomerAreaId: null
+        };
+    };
+
+    // =====================================
+    // STATUS FILTER CONVENIENCE METHODS
+    // =====================================
+
+    service.setStatusFilter = function (filters) {
+        console.log('In Shared Filter Services setStatusFilter', filters);
+        service.setInspectionFilters(filters);
+    };
+
+    service.getStatusFilter = function () {
+        return service.getInspectionFilters();
+    };
+
+    return service;
+});

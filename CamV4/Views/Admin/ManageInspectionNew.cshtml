@@ -30,7 +30,7 @@
 
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Inspection</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -71,7 +71,7 @@
                                 <div class="col-6 text-end">
                                     @if (userType == "1")
                                     {
-                                        <a class="btn bg-gradient-dark mb-0 mx-3" href="@Url.Action("AddInspectionDue", "Admin")"><i class="material-icons text-sm">add</i>&nbsp;&nbsp;Add New Inspection Due</a>
+                                        @*<a class="btn bg-gradient-dark mb-0 mx-3" href="@Url.Action("AddInspectionDue", "Admin")"><i class="material-icons text-sm">add</i>&nbsp;&nbsp;Add New Inspection Due</a>*@
                                     }
                                     else
                                     {

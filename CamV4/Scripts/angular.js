@@ -6942,17 +6942,17 @@ function $BrowserProvider() {
  * @param {string} cacheId Name or id of the newly created cache.
  * @param {object=} options Options object that specifies the cache behavior. Properties:
  *
- *   - `{number=}` `capacity` — turns the cache into LRU cache.
+ *   - `{number=}` `capacity` - turns the cache into LRU cache.
  *
  * @returns {object} Newly created cache object with the following set of methods:
  *
- * - `{object}` `info()` — Returns id, size, and options of cache.
- * - `{{*}}` `put({string} key, {*} value)` — Puts a new key-value pair into the cache and returns
+ * - `{object}` `info()` - Returns id, size, and options of cache.
+ * - `{{*}}` `put({string} key, {*} value)` - Puts a new key-value pair into the cache and returns
  *   it.
- * - `{{*}}` `get({string} key)` — Returns cached value for `key` or undefined for cache miss.
- * - `{void}` `remove({string} key)` — Removes a key-value pair from the cache.
- * - `{void}` `removeAll()` — Removes all cached values.
- * - `{void}` `destroy()` — Removes references to this cache from $cacheFactory.
+ * - `{{*}}` `get({string} key)` - Returns cached value for `key` or undefined for cache miss.
+ * - `{void}` `remove({string} key)` - Removes a key-value pair from the cache.
+ * - `{void}` `removeAll()` - Removes all cached values.
+ * - `{void}` `destroy()` - Removes references to this cache from $cacheFactory.
  *
  * @example
    <example module="cacheExampleApp" name="cache-factory">
@@ -12484,7 +12484,7 @@ function $HttpProvider() {
      *
      *
      * ## General usage
-     * The `$http` service is a function which takes a single argument — a {@link $http#usage configuration object} —
+     * The `$http` service is a function which takes a single argument - a {@link $http#usage configuration object} -
      * that is used to generate an HTTP request and returns  a {@link ng.$q promise} that is
      * resolved (request success) or rejected (request failure) with a
      * {@link ng.$http#$http-returns response} object.
@@ -28620,10 +28620,10 @@ var ngCloakDirective = ngDirective({
  *
  * MVC components in angular:
  *
- * * Model — Models are the properties of a scope; scopes are attached to the DOM where scope properties
+ * * Model - Models are the properties of a scope; scopes are attached to the DOM where scope properties
  *   are accessed through bindings.
- * * View — The template (HTML with data bindings) that is rendered into the View.
- * * Controller — The `ngController` directive specifies a Controller class; the class contains business
+ * * View - The template (HTML with data bindings) that is rendered into the View.
+ * * Controller - The `ngController` directive specifies a Controller class; the class contains business
  *   logic behind the application to decorate the scope with functions and values
  *
  * Note that you can also attach controllers to the DOM by declaring it in a route definition

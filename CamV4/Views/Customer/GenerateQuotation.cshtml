@@ -22,7 +22,7 @@
                     <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageInspection", "Admin")">Back(Inspection Listing)</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Inspection</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -177,7 +177,7 @@
                                             <div style="border: 1px solid #0070c0; padding: 20px; height: 28.4cm;">
                                                 <div>
                                                     <div style="text-align: center;"><img src="~/Content/V2/images/logos/CamLogo.png" style="width:300px;"></div>
-                                                    <div style='font-size: 35px;text-decoration: underline;text-transform: uppercase;'>RACKING INSPECTION REPORT</div>
+                                                    <div style='font-size: 35px;text-decoration: underline;text-transform: uppercase;'>{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'MATERIAL INSPECTION REPORT' : 'RACKING INSPECTION REPORT'}}</div>
                                                 </div>
                                                 <div class="" style="padding-top: 50px;font-size: 26px;line-height: 40px;">
                                                     <div class="name">{{getInspectionDetailsForSheet.Customer}}</div>
@@ -189,7 +189,7 @@
                                                 <div><img src="~/Content/V2/images/mid-logo.jpg" style="width: 300px;margin: 0px 0px;"></div>
                                                 <div class="">
                                                     <div style="float: left;text-align: left;color: #005aab;font-weight: bold;line-height: 30px;">
-                                                        <p style="margin: 0px;">Inspection & Report By</p>
+                                                        <p style="margin: 0px;">Inspection & Report By,</p>
                                                         <p style="margin: 0px;">{{getInspectionDetailsForSheet.Employee}}, {{getInspectionDetailsForSheet.empModel.TitleDegrees}}</p>
                                                         <p style="margin: 0px;">{{getInspectionDetailsForSheet.empModel.EmployeeEmail}}</p>
                                                         <p style="color: #999;margin: 0px;">{{getInspectionDetailsForSheet.empModel.MobileNo}}</p>
@@ -234,7 +234,7 @@
                                                                         <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.Customer}}</td>
                                                                         <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Document Number</td>
                                                                         <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.InspectionDocumentNo}}</td>
-                                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Type of Racking</td>
+                                                                        <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Type of Inspection</td>
                                                                         <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.InspectionType}}</td>
                                                                     </tr>
                                                                     <tr>

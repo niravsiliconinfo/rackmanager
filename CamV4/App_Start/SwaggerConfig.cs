@@ -13,13 +13,9 @@ namespace CamV4
     {
         public static void Register()
         {
-#if !DEBUG
-        return; // Swagger disabled in Release
-#endif
             bool isSwaggerEnabled = ConfigurationManager.AppSettings["IsSwaggerEnabled"] != null ?
             bool.Parse(ConfigurationManager.AppSettings["IsSwaggerEnabled"]) : true;
-            
-            
+                        
             if (!isSwaggerEnabled)
                 return;
 

@@ -25,6 +25,8 @@
             });
         });
     });
+
+
 </script>
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 my-3 fixed-start ms-3 bg-gradient-info" id="sidenav-main" ng-controller="menuCtrl">
     @{
@@ -32,36 +34,46 @@
         var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
 
         var isSchedule = currentController == "Customer" && currentAction == "ManageInspectionDue";
-        var isPeopleAdmin = currentController == "Admin" && currentAction == "ManageCustomer" || currentAction == "ManageEmployee";
+        var isPeopleAdmin = currentController == "Admin" && (currentAction == "ManageCustomer" || currentAction == "ManageEmployee");
         var isAdminDocuments = currentController == "Admin" && currentAction == "ManageDocumentTitle" || currentAction == "ManageHistoryLegacyDocuments";
-        var isAdminDeficiency = currentController == "Admin" && currentAction == "ManageDeficiency" || currentAction == "ManageDeficiencySummary" || currentAction == "ManageDeficiencyCategory" || currentAction == "ManageShelvingCheckListDeficiencies" || currentAction == "EditShelvingCheckListDeficiencies" || currentAction == "ManageShelvingCheckListType" ||  currentAction == "EditShelvingCheckListType";
+        var isAdminDeficiency = currentController == "Admin" && currentAction == "ManageDeficiency" || currentAction == "ManageDeficiencySummary" || currentAction == "ManageDeficiencyCategory" || currentAction == "ManageShelvingCheckListDeficiencies" || currentAction == "EditShelvingCheckListDeficiencies" || currentAction == "ManageShelvingCheckListType" || currentAction == "EditShelvingCheckListType";
         var isAdminComponent = currentController == "Admin" && currentAction == "ManageComponent" || currentAction == "ManageComponentPropertyType" || currentAction == "ManageRackingType" || currentAction == "ManageIdentifyRackingProfile" || currentAction == "ImportPrice";
         var isAdminFP = currentController == "Admin" && currentAction == "ManageFacilitiesArea" || currentAction == "ManageProcessOverview";
         var isAdminManufacturer = currentController == "Admin" && currentAction == "ManageManufacturer" || currentAction == "ManageConclusionRecommendations";
+        var isAdminTrainingCenter = currentController == "Admin" && (currentAction == "TrainingCenter" || currentAction == "TrainingCenterCourses" || currentAction == "TrainingCenterRegistration" || currentAction == "TrainingCenterPersonStatus" || currentAction == "TrainingCenterAdditionalResources" || currentAction == "TrainingCenterTechnicalTalk");
         var isAdminSystem = currentController == "Admin" && currentAction == "NotificationPage" || currentAction == "ImportantSettings";
         var isAdminUserSettings = currentController == "Admin" && currentAction == "MyProfile" || currentAction == "ManagePassword";
-        var isStatus = currentController == "Customer" && currentAction == "ManageInspection" || currentAction == "ManageInspectionStatus";
+        var isStatus = currentController == "Customer" && (currentAction == "ManageInspection" || currentAction == "ManageInspectionStatus");
         var isDocs = currentController == "Customer" && currentAction == "ManageHistoryLegacyDocuments";
-        var isIncident = currentController == "Customer" && currentAction == "IncidentReport" || currentAction == "IncidentReportNew";
-        var isInternal = currentController == "Customer" && currentAction == "InternalInspections" || currentAction == "InternalInspections";
-        var isTraining = currentController == "Customer" && (currentAction == "TrainingCenter" || currentAction == "TrainingCenter" ||
-        currentAction == "TrainingCenterRegistration" ||
-        currentAction == "TrainingCenterCourses" ||
-        currentAction == "TrainingCenterAdditionalResources");
+        var isIncident = currentController == "Customer" && (currentAction == "IncidentReport" || currentAction == "IncidentReportNew");
+        //var isInternal = currentController == "Customer" && currentAction == "InternalInspections" || currentAction == "InternalInspections";
+        var isInternal = currentController == "Customer" && (currentAction == "customerInternalInspectionListing" || currentAction == "customerInternalInspectionAddEdit" || currentAction == "customerInternalInspectionView");
+        var isInventory = currentController == "Customer" && (currentAction == "customerSpareMaterialListing" || currentAction == "customerInventoryAddEdit" || currentAction == "customerInventoryAddEditView");
+        var isTraining = currentController == "Customer" && (currentAction == "TrainingCenterRegistration" || currentAction == "TrainingCenterCourseStatus" || currentAction == "TrainingCenterAdditionalResources" || currentAction == "TrainingCenterTechnicalTalk");
+
         var isTrainingRegistration = currentController == "Customer" && currentAction == "TrainingCenterRegistration";
-        var isTrainingCourses = currentController == "Customer" && currentAction == "TrainingCenterCourses";
-        var isTrainingAdditionalResources = currentController == "Customer" && currentAction == "TrainingCenterAdditionalResources";
+        var isTrainingCourseStatus = currentController == "Customer" && currentAction == "TrainingCenterCourseStatus";
+        var isTrainingResources = currentController == "Customer" && currentAction == "TrainingCenterAdditionalResources";
+        var isTrainingQA = currentController == "Customer" && currentAction == "TrainingCenterTechnicalTalk";
+
+        //        var isTraining = currentController == "Customer" && (currentAction == "TrainingCenter" || currentAction == "TrainingCenter" ||
+        //currentAction == "TrainingCenterRegistration" ||
+        //currentAction == "TrainingCenterCourses" ||
+        //currentAction == "TrainingCenterAdditionalResources");
+        //        var isTrainingRegistration = currentController == "Customer" && currentAction == "TrainingCenterRegistration";
+        //        var isTrainingCourses = currentController == "Customer" && currentAction == "TrainingCenterCourses";
+        //        var isTrainingAdditionalResources = currentController == "Customer" && currentAction == "TrainingCenterAdditionalResources";
         //       || currentAction == "TrainingCenter" ||
         //currentAction == "TrainingCenterRegistration" ||
         //currentAction == "TrainingCenterCourses" ||
         //currentAction == "TrainingCenterAdditionalResources");
 
         var isAccountCustomer = currentController == "Customer" && (
-currentAction == "ManageProfile" ||
-currentAction == "ManagePassword" ||
-currentAction == "ManageContacts" ||
-currentAction == "ManageAllUserContacts"
-);
+        currentAction == "ManageProfile" ||
+        currentAction == "ManagePassword" ||
+        currentAction == "ManageContacts" ||
+        currentAction == "ManageAllUserContacts"
+        );
     }
     <div class="sidenav-header bg-white">
         <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
@@ -107,7 +119,7 @@ currentAction == "ManageAllUserContacts"
                         </div>
                         <span class="nav-link-text ms-1">Manage Inspection Due</span>
                     </a>
-                </li>                
+                </li>
                 <!-- Company MANAGEMENT -->
                 <li class="nav-item">
                     <a class="nav-link text-white " href="@Url.Action("ManageCustomer", "Admin")">
@@ -187,7 +199,9 @@ currentAction == "ManageAllUserContacts"
 
                 <!-- MANUFACTURER & RECOMMENDATIONS -->
                 <li class="nav-item">
-                    <a href="@Url.Action("ManageManufacturer", "Admin")" class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isAdminManufacturer ? "active" : "")" data-bs-toggle="collapse" data-bs-target="#collapseManufacturer"
+                    <a href="@Url.Action("ManageManufacturer", "Admin")" class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isAdminManufacturer ? "active" : "")"
+                       data-bs-toggle="collapse"
+                       data-bs-target="#collapseManufacturer"
                        aria-expanded="@isAdminManufacturer.ToString().ToLower()"
                        aria-controls="collapseManufacturer">
                         <i class="material-icons opacity-10 me-2">precision_manufacturing</i>
@@ -202,7 +216,72 @@ currentAction == "ManageAllUserContacts"
                 </div>
 
                 <li class="nav-item">
-                    <a class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isAdminSystem ? "active" : "")" data-bs-toggle="collapse"
+                    <a href="@Url.Action("TrainingCenterCourses", "Admin")" class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isAdminTrainingCenter ? "active" : "")"
+                       data-bs-toggle="collapse"
+                       data-bs-target="#collapseTrainingCenter"
+                       aria-expanded="@isAdminTrainingCenter.ToString().ToLower()"
+                       aria-controls="collapseTrainingCenter">
+                        <i class="material-icons opacity-10 me-2">school</i>
+                        <span class="nav-link-text">Training Center</span>
+                    </a>
+                </li>
+
+                <div id="collapseTrainingCenter" class="accordion-collapse collapse @(isAdminTrainingCenter ? "show" : "")" data-bs-parent="#sidebarAccordion">
+                    <ul class="nav flex-column">
+                        @*<li class="nav-item">
+                    <a class="nav-link text-white" href="@Url.Action("TrainingCenter", "Admin")">
+                        Training Center Dashboard
+                    </a>
+                </li>*@
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="@Url.Action("TrainingCenterCourses", "Admin")">
+                                Courses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="@Url.Action("TrainingCenterRegistration", "Admin")">
+                                Registration
+                            </a>
+                        </li>
+                        @*<li class="nav-item">
+                            <a class="nav-link text-white" href="@Url.Action("TrainingCenterPersonStatus", "Admin")">
+                                Person Status
+                            </a>
+                        </li>*@
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="@Url.Action("TrainingCenterAdditionalResources", "Admin")">
+                                Additional Resources
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="@Url.Action("TrainingCenterTechnicalTalk", "Admin")">
+                                Technical Talk
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                @*<div class="sidebar-section">
+                    <div class="sidebar-section-label">Inventory</div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="@Url.Action("Admin_InventoryFileCreate", "Admin")">
+                                <span class="icon">📁</span> Inventory Files
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Admin_InventoryFiles", "Admin")">
+                                <span class="icon">📊</span> File
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Admin_InventoryGrid", "Admin")">
+                                <span class="icon">📊</span> Grid Editor
+                            </a>
+                        </li>                        
+                    </ul>
+                </div>*@
+                <li class="nav-item">
+                    <a href="@Url.Action("ImportantSettings", "Admin")"  class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isAdminSystem ? "active" : "")" data-bs-toggle="collapse"
                        data-bs-target="#collapseSystemAlerts"
                        aria-expanded="@isAdminSystem.ToString().ToLower()"
                        aria-controls="collapseSystemAlerts">
@@ -347,7 +426,7 @@ currentAction == "ManageAllUserContacts"
                     </ul>
                 </div>
                 <li class="nav-item">
-                    <a class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isAdminSystem ? "active" : "")" data-bs-toggle="collapse"
+                    <a href="@Url.Action("ImportantSettings", "Admin")" class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isAdminSystem ? "active" : "")" data-bs-toggle="collapse"
                        data-bs-target="#collapseSystemAlerts"
                        aria-expanded="@isAdminSystem.ToString().ToLower()"
                        aria-controls="collapseSystemAlerts">
@@ -384,6 +463,7 @@ currentAction == "ManageAllUserContacts"
                         <span class="nav-link-text ms-1">Manage Password</span>
                     </a>
                 </li>
+
                 <li class="nav-item">
                     <a class="nav-link text-white " href="@Url.Action("Login", "Account")">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -399,10 +479,9 @@ currentAction == "ManageAllUserContacts"
             <div class="sidebar sidebar-dark">
                 <div class="sidebar-wrapper">
                     <ul class="navbar-nav" id="sidebarAccordion">
-
                         <!--
-        Dashboard
-    -->
+                            Dashboard
+                        -->
                         <li class="nav-item">
                             <a class="nav-link text-white d-flex align-items-center w-100 @(currentAction == "Index" ? "active" : "")"
                                href="@Url.Action("Index")">
@@ -412,9 +491,9 @@ currentAction == "ManageAllUserContacts"
                         </li>
 
                         <!--
-        Inspection Due
-        Cascade: Province → City → Location → Facility+Area → Area
-    -->
+                            Inspection Due
+                            Cascade: Province → City → Location → Facility+Area → Area
+                        -->
                         <li class="nav-item" style="display:none;">
                             <a href="@Url.Action("ManageInspectionDue", "Customer")"
                                class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isSchedule ? "active" : "")"
@@ -426,6 +505,7 @@ currentAction == "ManageAllUserContacts"
                                 <span class="nav-link-text">Inspection Due</span>
                             </a>
                         </li>
+
                         <div id="collapseSchedule"
                              class="accordion-collapse collapse @(isSchedule ? "show" : "")"
                              data-bs-parent="#sidebarAccordion"
@@ -444,31 +524,27 @@ currentAction == "ManageAllUserContacts"
                                 </select>
                             </div>
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterSchedule.province" class="form-control"
-                                        ng-change="loadCities('Schedule')">
+                                <select ng-model="filterSchedule.province" class="form-control">
                                     <option value="">-- Province --</option>
                                     <option ng-repeat="p in provinces" value="{{p.ProvinceID}}">{{p.ProvinceName}}</option>
                                 </select>
                             </div>
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterSchedule.city" class="form-control"
-                                        ng-change="loadLocations('Schedule')">
+                                <select ng-model="filterSchedule.city" class="form-control">
                                     <option value="">-- City --</option>
                                     <option ng-repeat="c in citiesSchedule" value="{{c.CityID}}">{{c.CityName}}</option>
                                 </select>
                             </div>
                             <!-- Location → triggers Facility + Area load -->
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterSchedule.location" class="form-control"
-                                        ng-change="loadFacilitiesAndAreas('Schedule')">
+                                <select ng-model="filterSchedule.location" class="form-control">
                                     <option value="">-- Location --</option>
                                     <option ng-repeat="l in locationsSchedule" value="{{l.CustomerLocationID}}">{{l.LocationName}}</option>
                                 </select>
                             </div>
                             <!-- Facility → triggers Area re-filter -->
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterSchedule.facility" class="form-control"
-                                        ng-change="loadAreasByFacility('Schedule')">
+                                <select ng-model="filterSchedule.facility" class="form-control">
                                     <option value="">-- Facility --</option>
                                     <option ng-repeat="f in facilitiesSchedule" value="{{f.FacilityID}}">{{f.FacilityName}}</option>
                                 </select>
@@ -489,9 +565,9 @@ currentAction == "ManageAllUserContacts"
                         </div>
 
                         <!--
-        Inspections (Status)
-        Cascade: Region/Province → City → Location → Facility+Area → Area
-    -->
+                            Inspections (Status)
+                            Cascade: Region/Province → City → Location → Facility+Area → Area
+                        -->
                         <li class="nav-item">
                             <a href="@Url.Action("ManageInspection", "Customer")"
                                class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isStatus ? "active" : "")"
@@ -524,38 +600,33 @@ currentAction == "ManageAllUserContacts"
                                 </ul>
                             </div>
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterStatus.Region" class="form-control"
-                                        ng-change="loadLocationsRegion('Status')">
+                                <select ng-model="filterStatus.Region" class="form-control">
                                     <option value="">-- Region --</option>
-                                    <option ng-repeat="r in regions" value="{{r.CustRegion}}">{{r.CustRegion}}</option>
+                                    <option ng-repeat="r in regions" value="{{r}}">{{r}}</option>
                                 </select>
                             </div>
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterStatus.province" class="form-control"
-                                        ng-change="loadCities('Status')">
+                                <select ng-model="filterStatus.province" class="form-control">
                                     <option value="">-- Province --</option>
                                     <option ng-repeat="p in provinces" value="{{p.ProvinceID}}">{{p.ProvinceName}}</option>
                                 </select>
                             </div>
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterStatus.city" class="form-control"
-                                        ng-change="loadLocations('Status')">
+                                <select ng-model="filterStatus.city" class="form-control">
                                     <option value="">-- City --</option>
                                     <option ng-repeat="c in citiesStatus" value="{{c.CityID}}">{{c.CityName}}</option>
                                 </select>
                             </div>
                             <!-- Location → triggers Facility + Area load -->
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterStatus.location" class="form-control"
-                                        ng-change="loadFacilitiesAndAreas('Status')">
+                                <select ng-model="filterStatus.location" class="form-control">
                                     <option value="">-- Location --</option>
                                     <option ng-repeat="l in locationsStatus" value="{{l.CustomerLocationID}}">{{l.LocationName}}</option>
                                 </select>
                             </div>
                             <!-- Facility → triggers Area re-filter -->
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterStatus.facility" class="form-control"
-                                        ng-change="loadAreasByFacility('Status')">
+                                <select ng-model="filterStatus.facility" class="form-control">
                                     <option value="">-- Facility --</option>
                                     <option ng-repeat="f in facilitiesStatus" value="{{f.FacilityID}}">{{f.FacilityName}}</option>
                                 </select>
@@ -574,11 +645,10 @@ currentAction == "ManageAllUserContacts"
                                 Search Inspection
                             </button>
                         </div>
-
                         <!--
-        Find Documents
-        Cascade: Region/Province → City → Location → Facility+Area → Area
-    -->
+                            Find Documents
+                            Cascade: Region/Province → City → Location → Facility+Area → Area
+                        -->
                         <li class="nav-item">
                             <a href="@Url.Action("ManageHistoryLegacyDocuments", "Customer")"
                                class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isDocs ? "active" : "")"
@@ -596,47 +666,42 @@ currentAction == "ManageAllUserContacts"
                              style="background-color:#fff;">
 
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterDocs.Region" class="form-control"
-                                        ng-change="loadLocationsRegion('Docs')">
+                                <select ng-model="filterDocs.Region" class="form-control">
                                     <option value="">-- Region --</option>
-                                    <option ng-repeat="r in regions" value="{{r.CustRegion}}">{{r.CustRegion}}</option>
+                                    <option ng-repeat="r in regions" value="{{r}}">{{r}}</option>
                                 </select>
                             </div>
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterDocs.province" class="form-control"
-                                        ng-change="loadCities('Docs')">
+                                <select ng-model="filterDocs.province" class="form-control">
                                     <option value="">-- Province --</option>
                                     <option ng-repeat="p in provinces" value="{{p.ProvinceID}}">{{p.ProvinceName}}</option>
                                 </select>
                             </div>
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterDocs.city" class="form-control"
-                                        ng-change="loadLocations('Docs')">
+                                <select ng-model="filterDocs.city" class="form-control">
                                     <option value="">-- City --</option>
-                                    <option ng-repeat="c in citiesDocs" value="{{c.CityID}}">{{c.CityName}}</option>
+                                    <option ng-repeat="c in citiesStatus" value="{{c.CityID}}">{{c.CityName}}</option>
                                 </select>
                             </div>
                             <!-- Location → triggers Facility + Area load -->
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterDocs.location" class="form-control"
-                                        ng-change="loadFacilitiesAndAreas('Docs')">
+                                <select ng-model="filterDocs.location" class="form-control">
                                     <option value="">-- Location --</option>
-                                    <option ng-repeat="l in locationsDocs" value="{{l.CustomerLocationID}}">{{l.LocationName}}</option>
+                                    <option ng-repeat="l in locationsStatus" value="{{l.CustomerLocationID}}">{{l.LocationName}}</option>
                                 </select>
                             </div>
                             <!-- Facility → triggers Area re-filter -->
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterDocs.facility" class="form-control"
-                                        ng-change="loadAreasByFacility('Docs')">
+                                <select ng-model="filterDocs.facility" class="form-control">
                                     <option value="">-- Facility --</option>
-                                    <option ng-repeat="f in facilitiesDocs" value="{{f.FacilityID}}">{{f.FacilityName}}</option>
+                                    <option ng-repeat="f in facilitiesStatus" value="{{f.FacilityID}}">{{f.FacilityName}}</option>
                                 </select>
                             </div>
                             <!-- Area -->
                             <div class="input-group input-group-outline mb-3">
                                 <select ng-model="filterDocs.area" class="form-control">
                                     <option value="">-- Area --</option>
-                                    <option ng-repeat="a in areasDocs" value="{{a.AreaID}}">{{a.AreaName}}</option>
+                                    <option ng-repeat="a in areasStatus" value="{{a.AreaID}}">{{a.AreaName}}</option>
                                 </select>
                             </div>
 
@@ -676,9 +741,9 @@ currentAction == "ManageAllUserContacts"
                         </div>
 
                         <!--
-        Incident Report
-        Cascade: Region/Province → City → Location → Facility+Area → Area
-    -->
+                            Incident Report
+                            Cascade: Region/Province → City → Location → Facility+Area → Area
+                        -->
                         <li class="nav-item">
                             <a href="@Url.Action("IncidentReport", "Customer")"
                                class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isIncident ? "active" : "")"
@@ -695,48 +760,44 @@ currentAction == "ManageAllUserContacts"
                              data-bs-parent="#sidebarAccordion"
                              style="background-color:#fff;">
 
+
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterIncident.Region" class="form-control"
-                                        ng-change="loadLocationsRegion('Incident')">
+                                <select ng-model="filterIncident.Region" class="form-control">
                                     <option value="">-- Region --</option>
-                                    <option ng-repeat="r in regions" value="{{r.CustRegion}}">{{r.CustRegion}}</option>
+                                    <option ng-repeat="r in regions" value="{{r}}">{{r}}</option>
                                 </select>
                             </div>
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterIncident.province" class="form-control"
-                                        ng-change="loadCities('Incident')">
+                                <select ng-model="filterIncident.province" class="form-control">
                                     <option value="">-- Province --</option>
                                     <option ng-repeat="p in provinces" value="{{p.ProvinceID}}">{{p.ProvinceName}}</option>
                                 </select>
                             </div>
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterIncident.city" class="form-control"
-                                        ng-change="loadLocations('Incident')">
+                                <select ng-model="filterIncident.city" class="form-control">
                                     <option value="">-- City --</option>
-                                    <option ng-repeat="c in citiesIncident" value="{{c.CityID}}">{{c.CityName}}</option>
+                                    <option ng-repeat="c in citiesStatus" value="{{c.CityID}}">{{c.CityName}}</option>
                                 </select>
                             </div>
                             <!-- Location → triggers Facility + Area load -->
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterIncident.location" class="form-control"
-                                        ng-change="loadFacilitiesAndAreas('Incident')">
+                                <select ng-model="filterIncident.location" class="form-control">
                                     <option value="">-- Location --</option>
-                                    <option ng-repeat="l in locationsIncident" value="{{l.CustomerLocationID}}">{{l.LocationName}}</option>
+                                    <option ng-repeat="l in locationsStatus" value="{{l.CustomerLocationID}}">{{l.LocationName}}</option>
                                 </select>
                             </div>
                             <!-- Facility → triggers Area re-filter -->
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterIncident.facility" class="form-control"
-                                        ng-change="loadAreasByFacility('Incident')">
+                                <select ng-model="filterIncident.facility" class="form-control">
                                     <option value="">-- Facility --</option>
-                                    <option ng-repeat="f in facilitiesIncident" value="{{f.FacilityID}}">{{f.FacilityName}}</option>
+                                    <option ng-repeat="f in facilitiesStatus" value="{{f.FacilityID}}">{{f.FacilityName}}</option>
                                 </select>
                             </div>
                             <!-- Area -->
                             <div class="input-group input-group-outline mb-3">
                                 <select ng-model="filterIncident.area" class="form-control">
                                     <option value="">-- Area --</option>
-                                    <option ng-repeat="a in areasIncident" value="{{a.AreaID}}">{{a.AreaName}}</option>
+                                    <option ng-repeat="a in areasStatus" value="{{a.AreaID}}">{{a.AreaName}}</option>
                                 </select>
                             </div>
 
@@ -748,9 +809,9 @@ currentAction == "ManageAllUserContacts"
                         </div>
 
                         <!--
-        Internal Inspections
-        Cascade: Region → Province → City → Location → Facility → Area
-    -->
+                            Internal Inspections
+                            Cascade: Region → Province → City → Location → Facility → Area
+                        -->
                         <li class="nav-item">
                             <a href="@Url.Action("customerInternalInspectionListing", "Customer")"
                                class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isInternal ? "active" : "")"
@@ -768,7 +829,7 @@ currentAction == "ManageAllUserContacts"
                              style="background-color:#fff;">
 
                             <!-- Quick links -->
-                            <ul class="nav flex-column mb-2">
+                            @*<ul class="nav flex-column mb-2">
                                 <li class="nav-item">
                                     <a class="nav-link" style="color:#000000;"
                                        href="@Url.Action("customerInternalInspectionAddEdit", "Customer")">
@@ -785,21 +846,19 @@ currentAction == "ManageAllUserContacts"
                                 </li>
                             </ul>
 
-                            <hr style="border-color:#ccc; margin: 4px 10px;" />
+                            <hr style="border-color:#ccc; margin: 4px 10px;" />*@
 
                             <!-- Region -->
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterInternal.Region" class="form-control"
-                                        ng-change="loadLocationsRegion('Internal')">
+                                <select ng-model="filterInternal.Region" class="form-control">
                                     <option value="">-- Region --</option>
-                                    <option ng-repeat="r in regions" value="{{r.CustRegion}}">{{r.CustRegion}}</option>
+                                    <option ng-repeat="r in regions" value="{{r}}">{{r}}</option>
                                 </select>
                             </div>
 
                             <!-- Province -->
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterInternal.province" class="form-control"
-                                        ng-change="loadCities('Internal')">
+                                <select ng-model="filterInternal.province" class="form-control">
                                     <option value="">-- Province --</option>
                                     <option ng-repeat="p in provinces" value="{{p.ProvinceID}}">{{p.ProvinceName}}</option>
                                 </select>
@@ -807,28 +866,25 @@ currentAction == "ManageAllUserContacts"
 
                             <!-- City -->
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterInternal.city" class="form-control"
-                                        ng-change="loadLocations('Internal')">
+                                <select ng-model="filterInternal.city" class="form-control">
                                     <option value="">-- City --</option>
-                                    <option ng-repeat="c in citiesInternal" value="{{c.CityID}}">{{c.CityName}}</option>
+                                    <option ng-repeat="c in citiesStatus" value="{{c.CityID}}">{{c.CityName}}</option>
                                 </select>
                             </div>
 
                             <!-- Location → triggers Facility + Area load -->
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterInternal.location" class="form-control"
-                                        ng-change="loadFacilitiesAndAreas('Internal')">
+                                <select ng-model="filterInternal.location" class="form-control">
                                     <option value="">-- Location --</option>
-                                    <option ng-repeat="l in locationsInternal" value="{{l.CustomerLocationID}}">{{l.LocationName}}</option>
+                                    <option ng-repeat="l in locationsStatus" value="{{l.CustomerLocationID}}">{{l.LocationName}}</option>
                                 </select>
                             </div>
 
                             <!-- Facility → triggers Area re-filter -->
                             <div class="input-group input-group-outline mb-3">
-                                <select ng-model="filterInternal.facility" class="form-control"
-                                        ng-change="loadAreasByFacility('Internal')">
+                                <select ng-model="filterInternal.facility" class="form-control">
                                     <option value="">-- Facility --</option>
-                                    <option ng-repeat="f in facilitiesInternal" value="{{f.CustomerFacilityID}}">{{f.FacilityName}}</option>
+                                    <option ng-repeat="f in facilitiesStatus" value="{{f.FacilityID}}">{{f.FacilityName}}</option>
                                 </select>
                             </div>
 
@@ -836,7 +892,7 @@ currentAction == "ManageAllUserContacts"
                             <div class="input-group input-group-outline mb-3">
                                 <select ng-model="filterInternal.area" class="form-control">
                                     <option value="">-- Area --</option>
-                                    <option ng-repeat="a in areasInternal" value="{{a.AreaID}}">{{a.AreaName}}</option>
+                                    <option ng-repeat="a in areasStatus" value="{{a.AreaID}}">{{a.AreaName}}</option>
                                 </select>
                             </div>
 
@@ -846,107 +902,146 @@ currentAction == "ManageAllUserContacts"
                                 Search Inspections
                             </button>
                         </div>
+                        
+                        <li class="nav-item">
 
+                            <a href="@Url.Action("customerSpareMaterialListing", "Customer")"
+                               class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isInventory ? "active" : "")"
+                               data-bs-toggle="collapse"
+                               data-bs-target="#collapseInventory"
+                               aria-expanded="@isInventory.ToString().ToLower()"
+                               aria-controls="collapseInventory">
+
+                                <i class="material-icons opacity-10 me-2">inventory_2</i>
+                                <span class="nav-link-text">Spare Material</span>
+
+                            </a>
+
+                        </li>
+
+                        <div id="collapseInventory"
+                             class="accordion-collapse collapse @(isInventory ? "show" : "")"
+                             data-bs-parent="#sidebarAccordion"
+                             style="background-color:#fff;">
+
+                            <!-- Region -->
+                            <div class="input-group input-group-outline mb-3">
+                                <select ng-model="filterInventory.Region" class="form-control">
+                                    <option value="">-- Region --</option>
+                                    <option ng-repeat="r in regions" value="{{r}}">
+                                        {{r}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Province -->
+                            <div class="input-group input-group-outline mb-3">
+                                <select ng-model="filterInventory.province" class="form-control">
+                                    <option value="">-- Province --</option>
+                                    <option ng-repeat="p in provinces" value="{{p.ProvinceID}}">
+                                        {{p.ProvinceName}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- City -->
+                            <div class="input-group input-group-outline mb-3">
+                                <select ng-model="filterInventory.city" class="form-control">
+                                    <option value="">-- City --</option>
+                                    <option ng-repeat="c in citiesInventory" value="{{c.CityID}}">
+                                        {{c.CityName}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="input-group input-group-outline mb-3">
+                                <select ng-model="filterInventory.location" class="form-control">
+                                    <option value="">-- Location --</option>
+                                    <option ng-repeat="l in locationsInventory" value="{{l.CustomerLocationID}}">
+                                        {{l.LocationName}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Facility -->
+                            <div class="input-group input-group-outline mb-3">
+                                <select ng-model="filterInventory.facility" class="form-control">
+                                    <option value="">-- Facility --</option>
+                                    <option ng-repeat="f in facilitiesInventory" value="{{f.FacilityID}}">
+                                        {{f.FacilityName}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Area -->
+                            <div class="input-group input-group-outline mb-3">
+                                <select ng-model="filterInventory.area" class="form-control">
+                                    <option value="">-- Area --</option>
+                                    <option ng-repeat="a in areasInventory" value="{{a.AreaID}}">
+                                        {{a.AreaName}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <button class="btn btn-lg bg-gradient-info"
+                                    style="display:block; margin-left:auto !important; margin-right:auto !important; width:fit-content;"
+                                    ng-click="applyInventoryFilters()">
+                                Search Spare Material
+                            </button>
+
+                        </div>
                         <!-- Training Center -->
                         <li class="nav-item">
-                            <a href="@Url.Action("TrainingCenter", "Customer")"
+                            <a href="@Url.Action("TrainingCenterRegistration", "Customer")"
                                class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isTraining ? "active" : "")"
                                data-bs-toggle="collapse"
-                               data-bs-target="#collapseTraining"
+                               data-bs-target="#collapseTrainingCustomer"
                                aria-expanded="@isTraining.ToString().ToLower()"
-                               aria-controls="collapseTraining">
+                               aria-controls="collapseTrainingCustomer">
                                 <i class="material-icons opacity-10 me-2">school</i>
                                 <span class="nav-link-text">Training Center</span>
                             </a>
                         </li>
-                        <div id="collapseTraining"
+                        <div id="collapseTrainingCustomer"
                              class="accordion-collapse collapse @(isTraining ? "show" : "")"
-                             data-bs-parent="#sidebarAccordion"
-                             style="background-color:#fff;">
-                            <div class="ms-3">
-                                <a class="nav-link text-dark d-flex align-items-center toggle-and-go @(isTrainingRegistration ? "active" : "")"
-                                   href="@Url.Action("TrainingCenterRegistration", "Customer")"
-                                   data-bs-toggle="collapse"
-                                   data-bs-target="#collapseReg"
-                                   aria-expanded="@isTrainingRegistration.ToString().ToLower()"
-                                   aria-controls="collapseReg">
-                                    <i class="material-icons opacity-10 me-2">how_to_reg</i>
-                                    <span class="nav-link-text">Registration</span>
-                                </a>
-                                <div id="collapseReg" class="collapse @(isTrainingRegistration ? "show" : "")" data-bs-parent="#collapseTraining">
-                                    <ul class="nav flex-column">
-                                        <li class="nav-item">
-                                            <a class="nav-link" style="color:#000000;" href="@Url.Action("TrainingCenterRegistration", "Customer")">
-                                                <i class="material-icons opacity-10">person_add</i>
-                                                <span class="nav-link-text ms-1">New Registrant</span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" style="color:#000000;" href="@Url.Action("TrainingCenterRegistration", "Customer")">
-                                                <i class="material-icons opacity-10">edit</i>
-                                                <span class="nav-link-text ms-1">Edit Registrants</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="ms-3 mt-2">
-                                <a class="nav-link text-dark d-flex align-items-center toggle-and-go @(isTrainingCourses ? "active" : "")"
-                                   href="@Url.Action("TrainingCenterCourses", "Customer")"
-                                   data-bs-toggle="collapse"
-                                   data-bs-target="#collapseCourses"
-                                   aria-expanded="@isTrainingCourses.ToString().ToLower()"
-                                   aria-controls="collapseCourses">
-                                    <i class="material-icons opacity-10 me-2">library_books</i>
-                                    <span class="nav-link-text">Courses</span>
-                                </a>
-                                <div id="collapseCourses" class="collapse @(isTrainingCourses ? "show" : "")" data-bs-parent="#collapseTraining">
-                                    <ul class="nav flex-column">
-                                        <li class="nav-item">
-                                            <a class="nav-link" style="color:#000000;" href="@Url.Action("TrainingCenterCourses", "Customer")">
-                                                <span class="nav-link-text ms-1">Pallet Racking Basics<br />(Includes CSA A344-23)</span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" style="color:#000000;" href="@Url.Action("TrainingCenterCourses", "Customer")">
-                                                <span class="nav-link-text ms-1">Internal Inspection Certification</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="ms-3 mt-2">
-                                <a class="nav-link text-dark d-flex align-items-center toggle-and-go @(isTrainingAdditionalResources ? "active" : "")"
-                                   href="@Url.Action("TrainingCenterAdditionalResources", "Customer")"
-                                   data-bs-toggle="collapse"
-                                   data-bs-target="#collapseResources"
-                                   aria-expanded="@isTrainingAdditionalResources.ToString().ToLower()"
-                                   aria-controls="collapseResources">
-                                    <i class="material-icons opacity-10 me-2">folder_shared</i>
-                                    <span class="nav-link-text">Additional Resources</span>
-                                </a>
-                                <div id="collapseResources" class="collapse @(isTrainingAdditionalResources ? "show" : "")" data-bs-parent="#collapseTraining">
-                                    <ul class="nav flex-column">
-                                        <li class="nav-item">
-                                            <a class="nav-link" style="color:#000000;" href="@Url.Action("TrainingCenterAdditionalResources", "Customer")">
-                                                <i class="material-icons opacity-10">video_library</i>
-                                                <span class="nav-link-text ms-1">Webinars</span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" style="color:#000000;" href="@Url.Action("TrainingCenterAdditionalResources", "Customer")">
-                                                <i class="material-icons opacity-10">link</i>
-                                                <span class="nav-link-text ms-1">Links</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
+                             data-bs-parent="#sidebarAccordion">
+                            <div id="collapseComponent" class="accordion-collapse collapse @(isTraining ? "show" : "")" data-bs-parent="#sidebarAccordion">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link text-white d-flex align-items-center @(isTrainingRegistration ? "active" : "")"
+                                           href="@Url.Action("TrainingCenterRegistration", "Customer")">
+                                            <i class="material-icons opacity-10 me-2">how_to_reg</i>
+                                            <span>Registration</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-white d-flex align-items-center @(isTrainingCourseStatus ? "active" : "")"
+                                           href="@Url.Action("TrainingCenterCourseStatus", "Customer")">
+                                            <i class="material-icons opacity-10 me-2">library_books</i>
+                                            <span>Course Status</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-white d-flex align-items-center @(isTrainingResources ? "active" : "")"
+                                           href="@Url.Action("TrainingCenterAdditionalResources", "Customer")">
+                                            <i class="material-icons opacity-10 me-2">video_library</i>
+                                            <span>Webinars &amp; Blogs</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-white d-flex align-items-center @(isTrainingQA ? "active" : "")"
+                                           href="@Url.Action("TrainingCenterTechnicalTalk", "Customer")">
+                                            <i class="material-icons opacity-10 me-2">forum</i>
+                                            <span>Community Q&amp;A</span>
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
-
                         <!--
-        Account
-    -->
+                            Account
+                        -->
                         <li class="nav-item">
                             <a href="@(userType == "4" ? Url.Action("ManageAllUserContacts", "Customer") : Url.Action("ManagePassword", "Customer"))"
                                class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isAccountCustomer ? "active" : "")"
@@ -984,10 +1079,9 @@ currentAction == "ManageAllUserContacts"
                                 </li>
                             </ul>
                         </div>
-
                         <!--
-        Sign Out
-    -->
+                            Sign Out
+                        -->
                         <li class="nav-item">
                             <a class="nav-link text-white d-flex align-items-center w-100"
                                href="@Url.Action("Login", "Account")">
@@ -999,8 +1093,6 @@ currentAction == "ManageAllUserContacts"
                     </ul>
                 </div>
             </div>
-
-
         }
         @if (userType == "5") // Employee Sales
         {
@@ -1038,27 +1130,27 @@ currentAction == "ManageAllUserContacts"
                     </a>
                 </li>
                 @*<li class="nav-item">
-                    <a class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isAdminSystem ? "active" : "")" data-bs-toggle="collapse"
-                       data-bs-target="#collapseSystemAlerts"
-                       aria-expanded="@isAdminSystem.ToString().ToLower()"
-                       aria-controls="collapseSystemAlerts">
-                        <i class="material-icons opacity-10 me-2">notifications_active</i>
-                        <span class="nav-link-text">System & Alerts</span>
-                    </a>
-                </li>
-                <div id="collapseSystemAlerts" class="accordion-collapse collapse @(isAdminSystem ? "show" : "")" data-bs-parent="#sidebarAccordion">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="@Url.Action("ImportantSettings", "Admin")">Important Settings</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="@Url.Action("NotificationPage", "Admin")">View Notifications</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="@Url.Action("Index", "Cities")">Manage City</a>
-                        </li>
-                    </ul>
-                </div>*@
+                        <a class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isAdminSystem ? "active" : "")" data-bs-toggle="collapse"
+                           data-bs-target="#collapseSystemAlerts"
+                           aria-expanded="@isAdminSystem.ToString().ToLower()"
+                           aria-controls="collapseSystemAlerts">
+                            <i class="material-icons opacity-10 me-2">notifications_active</i>
+                            <span class="nav-link-text">System & Alerts</span>
+                        </a>
+                    </li>
+                    <div id="collapseSystemAlerts" class="accordion-collapse collapse @(isAdminSystem ? "show" : "")" data-bs-parent="#sidebarAccordion">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="@Url.Action("ImportantSettings", "Admin")">Important Settings</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="@Url.Action("NotificationPage", "Admin")">View Notifications</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="@Url.Action("Index", "Cities")">Manage City</a>
+                            </li>
+                        </ul>
+                    </div>*@
                 <li class="nav-item">
                     <a href="#" class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isAdminUserSettings ? "active" : "")" data-bs-toggle="collapse"
                        data-bs-target="#collapseUserAdmin"
@@ -1111,17 +1203,17 @@ currentAction == "ManageAllUserContacts"
                         <span class="nav-link-text ms-1">Manage Inspection Due</span>
                     </a>
                 </li>
-                @if(userType == "6" )
+                @if (userType == "6")
                 {
-                <li class="nav-item">
-                    <a class="nav-link text-white " href="@Url.Action("ManageCustomer", "Admin")">
-                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10 me-2">assignment_ind</i>
-                            <span class="nav-link-text ms-1">Company Management</span>
-                        </div>
-                    </a>
-                </li>
-                }               
+                    <li class="nav-item">
+                        <a class="nav-link text-white " href="@Url.Action("ManageCustomer", "Admin")">
+                            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10 me-2">assignment_ind</i>
+                                <span class="nav-link-text ms-1">Company Management</span>
+                            </div>
+                        </a>
+                    </li>
+                }
                 <li class="nav-item">
                     <a href="#" class="nav-link text-white d-flex align-items-center w-100 toggle-and-go @(isAdminUserSettings ? "active" : "")" data-bs-toggle="collapse"
                        data-bs-target="#collapseUserAdmin"

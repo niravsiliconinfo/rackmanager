@@ -313,7 +313,15 @@
                 $scope.waiting = false;
             });
         };
-
+        $scope.GetAreaByFacilityIdDrpd = function (id) {
+            console.log('getAreaDetailsByFacilityId', id);
+            $http.get('/api/pageview/getAreaDetailsByFacilityId', { params: { id: id } }).then(function (response) {
+                $scope.getAreaDetailsByLocationId = response.data;
+                console.log('getAreaDetailsByLocationId--', $scope.getAreaDetailsByLocationId);
+            }, function (response) {
+                $scope.waiting = false;
+            });
+        };
         if (window.location.pathname == "/Admin/EditInspectionDue") {
 
             $http.get('/api/pageview/getAllFacilitiesArea').then(function (response) {
@@ -486,13 +494,12 @@
             }
             console.log('-----File Information-------', PdfList);
             var config = {
-                CustomerId: $scope.customerId, CustomerLocationId: $scope.customerLocationId, CustomerAreaID: $scope.customerAreaId,
+                CustomerId: $scope.customerId, CustomerLocationId: $scope.customerLocationId, CustomerAreaID: $scope.customerAreaId, CustomerFacilityID: $scope.customerFacilityId,
                 EmployeeId: $scope.employeeId, InspectionDate: $scope.inspectionDate, InspectionType: $scope.inspectionType,
                 CADDocuments: $scope.cADDocuments, FacilitiesAreasIds: $scope.checkedFacilitiesId, ProcessOverviewIds: $scope.checkedProcessId,
                 ReferenceDocumentIds: $scope.checkedDocumentId, inspectionFileDrawing: PdfList
             }
-            console.log('SaveInspectionDue', config);
-
+            console.log('SaveInspectionDue', config);            
             return $http({
                 url: '/api/pageview/saveInspectionDue',
                 method: "POST",
@@ -502,7 +509,7 @@
                 }
             }).then(function (response) {
                 if (response.data === "Ok") {
-                    var url = '/Admin/ManageInspectionNew';
+                    var url = '/Admin/ManageInspectionDue';
                     window.location = url;
                 }
                 else {
@@ -586,7 +593,7 @@
             }).then(function (response) {
                 console.log('Remove Inspection Success --', response);
                 if (response.data === "Ok") {
-                    var url = '/Admin/ManageInspectionNew';
+                    var url = '/Admin/ManageInspectionDue';
                     window.location = url;
                 }
             }, function (error) {
@@ -605,9 +612,9 @@
             $http.get('/api/pageview/getInspectionDetailsForSheet', { params: { id: para } }).then(function (response) {
                 $scope.getInspectionDetailsForSheet = response.data;
 
-                console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*************XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', $scope.getInspectionDetailsForSheet);
-                console.log("@@@@@@@@@@@@@@@@--------------------getInspectionDetailsForSheet.iDefModel--------@@@@@@@@@@@@@@", $scope.getInspectionDetailsForSheet.iDefModel);
-                console.log("Shelving CheckLists:", $scope.getInspectionDetailsForSheet.ShelvingCheckLists);
+                //console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*************XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', $scope.getInspectionDetailsForSheet);
+                //console.log("@@@@@@@@@@@@@@@@--------------------getInspectionDetailsForSheet.iDefModel--------@@@@@@@@@@@@@@", $scope.getInspectionDetailsForSheet.iDefModel);
+                //console.log("Shelving CheckLists:", $scope.getInspectionDetailsForSheet.ShelvingCheckLists);
 
                 $scope.hasShelvingChecklists = function () {
                     return $scope.getInspectionDetailsForSheet &&
@@ -1516,16 +1523,47 @@
             $scope.isProcessing = true;
             $scope.isLoadingButton = true;
 
-            // Initialize variables
-            var chkedSentEmailtoCustomer = "0";
-            var chkInspectionStatus = 0;
+            //  Read all checkboxes safely via DOM + scope fallback 
+            var chkInspectionStatusEl = document.getElementById('chkInspectionStatus');
+            var chkSentEmailtoCustomerEl = document.getElementById('chkSentEmailtoCustomer');
+            var chkQuotationApprovalEl = document.getElementById('chkQuotationApprovalToCustomer');
+            var chkIsInspectionFinishedEl = document.getElementById('chkIsInspectionFinished');
+
+            var chkInspectionStatus = (
+                $scope.chkInspectionStatus == 4 || $scope.chkInspectionStatus == "4" ||
+                (chkInspectionStatusEl && chkInspectionStatusEl.checked)
+            ) ? 4 : 0;
+
+            var chkedSentEmailtoCustomer = (
+                $scope.chkSentEmailtoCustomer == 1 || $scope.chkSentEmailtoCustomer == "1" ||
+                (chkSentEmailtoCustomerEl && chkSentEmailtoCustomerEl.checked)
+            ) ? "1" : "0";
+
+            var chkQuotationApprovalToCustomer = (
+                $scope.chkQuotationApprovalToCustomer == 6 || $scope.chkQuotationApprovalToCustomer == "6" ||
+                (chkQuotationApprovalEl && chkQuotationApprovalEl.checked)
+            ) ? 6 : 0;
+
+            var chkIsInspectionFinished = (
+                $scope.chkIsInspectionFinished == 9 || $scope.chkIsInspectionFinished == "9" ||
+                (chkIsInspectionFinishedEl && chkIsInspectionFinishedEl.checked)
+            ) ? 9 : 0;
+
+            //  If quotation is checked, it overrides inspection status 
+            if (chkQuotationApprovalToCustomer == 6) {
+                chkInspectionStatus = 6;
+            }
+
+            //  If inspection finished, it takes highest priority 
+            if (chkIsInspectionFinished == 9) {
+                chkInspectionStatus = 9;
+            }
+
+            //  Other variables 
             var istampingengineerid = 0;
-            var chkQuotationApprovalToCustomer = 0;
             var isalespersonid = 0;
-            var chkIsInspectionFinished = 0;
             var ShelvingChecklistComments = "";
 
-            // Get sales person ID if quotation exists
             if ($scope.getInspectionDetailsForSheet.objQuotation != null) {
                 var selectElementSalesPersonId = document.getElementById('QuotationSalesPersonId');
                 if (selectElementSalesPersonId) {
@@ -1533,74 +1571,43 @@
                 }
             }
 
-            if ($scope.getInspectionDetailsForSheet.ShelvingChecklistComments != "") {
-                console.log("ShelvingChecklistComments", $scope.getInspectionDetailsForSheet.ShelvingChecklistComments);
+            if ($scope.getInspectionDetailsForSheet.ShelvingChecklistComments) {
                 ShelvingChecklistComments = $scope.getInspectionDetailsForSheet.ShelvingChecklistComments;
-            } 
-
-            // Set inspection finished status
-            if ($scope.chkIsInspectionFinished !== undefined) {
-                chkIsInspectionFinished = $scope.chkIsInspectionFinished;
             }
 
-            // Set inspection status
-            if ($scope.chkInspectionStatus == 4) {
-                chkInspectionStatus = $scope.chkInspectionStatus;
-            }
-            console.log("Processing with chkInspectionStatus:", chkInspectionStatus);
-            // Set email to customer flag
-            if ($scope.chkSentEmailtoCustomer !== undefined) {
-                chkedSentEmailtoCustomer = $scope.chkSentEmailtoCustomer;
-            }
-
-            // Set quotation approval to customer flag
-            if ($scope.chkQuotationApprovalToCustomer !== undefined) {
-                chkQuotationApprovalToCustomer = $scope.chkQuotationApprovalToCustomer;
-                chkInspectionStatus = chkQuotationApprovalToCustomer;
-            }
-
-            // Set stamping engineer ID
             if ($scope.stampingengineerid !== undefined) {
                 istampingengineerid = $scope.stampingengineerid;
             }
 
-            // Override status if inspection is finished
-            if (chkIsInspectionFinished > 0) {
-                chkInspectionStatus = chkIsInspectionFinished;
-            }
-
-            // Collect selected inspection deficiencies
+            //  Collect selected inspection deficiencies 
             var checkedIspectionDeficiencyId = '';
             if ($scope.getInspectionDetailsForSheet.iDefModel != null) {
                 $scope.getInspectionDetailsForSheet.iDefModel.forEach(function (d) {
                     if (d.selected) {
-                        if (checkedIspectionDeficiencyId !== '') {
-                            checkedIspectionDeficiencyId += ",";
-                        }
+                        if (checkedIspectionDeficiencyId !== '') checkedIspectionDeficiencyId += ",";
                         checkedIspectionDeficiencyId += d.InspectionDeficiencyId;
                     }
                 });
             }
 
-            // Collect selected documents
+            //  Collect selected documents 
             var checkedDocument = '';
             if ($scope.getAllDocumentTitleInspection != null) {
                 $scope.getAllDocumentTitleInspection.forEach(function (t) {
                     if (t.selected) {
-                        if (checkedDocument !== '') {
-                            checkedDocument += ",";
-                        }
+                        if (checkedDocument !== '') checkedDocument += ",";
                         checkedDocument += t.DocumentId;
                     }
                 });
             }
 
-            // Collect customer location contact IDs
+            //  Collect customer location contact IDs (fixed trailing comma) 
             var checkedLocationContactId = '';
             if ($scope.getInspectionDetailsForSheet.ListCustomerLocationContacts != null) {
                 $scope.getInspectionDetailsForSheet.ListCustomerLocationContacts.forEach(function (Contact) {
                     if (Contact.selected) {
-                        checkedLocationContactId += Contact.LocationContactId + ",";
+                        if (checkedLocationContactId !== '') checkedLocationContactId += ",";
+                        checkedLocationContactId += Contact.LocationContactId;
                     }
                 });
             }
@@ -1612,38 +1619,34 @@
                 chkQuotationApprovalToCustomer: chkQuotationApprovalToCustomer,
                 chkedSentEmailtoCustomer: chkedSentEmailtoCustomer,
                 istampingengineerid: istampingengineerid,
-                isalespersonid: isalespersonid,                
+                isalespersonid: isalespersonid,
                 ShelvingChecklistComments: ShelvingChecklistComments
             });
-           
-            // CASE 1: Handle Inspection Finished (Priority)
+
+            //  CASE 1: Inspection Finished (highest priority) 
             if (chkIsInspectionFinished == 9) {
                 console.log("Processing Inspection Finished...");
-
-                var data = {
-                    inspectionId: id,
-                    iInspectionStatus: chkInspectionStatus,
-                    iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
-                    iStampingEngineerId: istampingengineerid,
-                    sCheckedDocument: checkedDocument
-                };
-                
 
                 return $http({
                     url: '/api/pageview/SaveUpdateApproveInspectionAdmin',
                     method: "POST",
-                    params: data,
+                    params: {
+                        inspectionId: id,
+                        iInspectionStatus: chkInspectionStatus,
+                        iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
+                        iStampingEngineerId: istampingengineerid,
+                        sCheckedDocument: checkedDocument
+                    },
                     headers: { "Content-Type": "application/json" }
                 }).then(function (response) {
                     $scope.isProcessing = false;
                     $scope.isLoadingButton = false;
-
                     if (response.data === "Ok") {
                         window.location = '/Admin/ManageInspectionNew';
                     } else {
                         alert("Failed to update inspection. Response: " + response.data);
                     }
-                }, function (error) {
+                }).catch(function (error) {
                     $scope.isProcessing = false;
                     $scope.isLoadingButton = false;
                     console.error("Error updating inspection:", error);
@@ -1651,59 +1654,52 @@
                 });
             }
 
-            // CASE 2: Handle Quotation Approval to Customer
+            //  CASE 2: Quotation Approval to Customer 
             if (chkQuotationApprovalToCustomer == 6) {
                 console.log("Send quotation to customer for approval");
 
                 if ($scope.getInspectionDetailsForSheet.objQuotation != null &&
                     $scope.getInspectionDetailsForSheet.objQuotation.QuotationNo != null) {
 
-                    var dataQuotation = {
-                        InspectionId: id,
-                        QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId,
-                        YourReference: $scope.getInspectionDetailsForSheet.objQuotation.YourReference,
-                        ValidTo: $scope.getInspectionDetailsForSheet.objQuotation.ValidTo,
-                        PaymentTerms: $scope.getInspectionDetailsForSheet.objQuotation.PaymentTerms,
-                        ShipmentMethod: $scope.getInspectionDetailsForSheet.objQuotation.ShipmentMethod,
-                        SalesPersonId: isalespersonid,
-                        GSTPer: $scope.getInspectionDetailsForSheet.objQuotation.GSTPer,
-                        LabourUnitPrice: $scope.getInspectionDetailsForSheet.objQuotation.LabourUnitPrice,
-                        TotalLabour: $scope.getInspectionDetailsForSheet.objQuotation.TotalLabour,
-                        SendEmailForApproval: chkQuotationApprovalToCustomer,
-                        QuotationSurcharge: $scope.getInspectionDetailsForSheet.objQuotation.QuotationSurcharge,
-                        QuotationMarkup: $scope.getInspectionDetailsForSheet.objQuotation.QuotationMarkup,
-                        QuotationNotes: $scope.getInspectionDetailsForSheet.objQuotation.QuotationNotes,
-                        LocationContactId: checkedLocationContactId
-                    };
-
-                    // First, send quotation
                     return $http({
                         url: '/api/pageview/sendQuotationtoCustomerForApproval',
                         method: "POST",
-                        data: dataQuotation,
+                        data: {
+                            InspectionId: id,
+                            QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId,
+                            YourReference: $scope.getInspectionDetailsForSheet.objQuotation.YourReference,
+                            ValidTo: $scope.getInspectionDetailsForSheet.objQuotation.ValidTo,
+                            PaymentTerms: $scope.getInspectionDetailsForSheet.objQuotation.PaymentTerms,
+                            ShipmentMethod: $scope.getInspectionDetailsForSheet.objQuotation.ShipmentMethod,
+                            SalesPersonId: isalespersonid,
+                            GSTPer: $scope.getInspectionDetailsForSheet.objQuotation.GSTPer,
+                            LabourUnitPrice: $scope.getInspectionDetailsForSheet.objQuotation.LabourUnitPrice,
+                            TotalLabour: $scope.getInspectionDetailsForSheet.objQuotation.TotalLabour,
+                            SendEmailForApproval: chkQuotationApprovalToCustomer,
+                            QuotationSurcharge: $scope.getInspectionDetailsForSheet.objQuotation.QuotationSurcharge,
+                            QuotationMarkup: $scope.getInspectionDetailsForSheet.objQuotation.QuotationMarkup,
+                            QuotationNotes: $scope.getInspectionDetailsForSheet.objQuotation.QuotationNotes,
+                            LocationContactId: checkedLocationContactId
+                        },
                         headers: { "Content-Type": "application/json" }
                     }).then(function (response) {
                         console.log("Quotation sent successfully:", response.data);
 
-                        // Then update inspection
-                        var inspectionData = {
-                            inspectionId: id,
-                            iInspectionStatus: chkInspectionStatus,
-                            iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
-                            iStampingEngineerId: istampingengineerid,
-                            sCheckedDocument: checkedDocument
-                        };
-
                         return $http({
                             url: '/api/pageview/SaveUpdateApproveInspectionAdmin',
                             method: "POST",
-                            params: inspectionData,
+                            params: {
+                                inspectionId: id,
+                                iInspectionStatus: chkInspectionStatus,
+                                iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
+                                iStampingEngineerId: istampingengineerid,
+                                sCheckedDocument: checkedDocument
+                            },
                             headers: { "Content-Type": "application/json" }
                         });
                     }).then(function (response) {
                         $scope.isProcessing = false;
                         $scope.isLoadingButton = false;
-
                         if (response.data === "Ok") {
                             window.location = '/Admin/ManageInspectionNew';
                         } else {
@@ -1715,6 +1711,7 @@
                         console.error("Error in quotation/inspection update:", error);
                         alert("Error: " + (error.data || error.statusText));
                     });
+
                 } else {
                     $scope.isProcessing = false;
                     $scope.isLoadingButton = false;
@@ -1723,52 +1720,44 @@
                 }
             }
 
-            // CASE 3: Standard inspection update with optional email
-            var data = {
-                inspectionId: id,
-                iInspectionStatus: chkInspectionStatus,
-                iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
-                iStampingEngineerId: istampingengineerid,
-                sCheckedDocument: checkedDocument,
-                ShelvingChecklistComments: ShelvingChecklistComments
-            };
-            
-            console.log("Updating inspection with data:", data);
-
+            //  CASE 3: Standard inspection update with optional email 
             return $http({
                 url: '/api/pageview/SaveUpdateApproveInspectionAdmin',
                 method: "POST",
-                params: data,
+                params: {
+                    inspectionId: id,
+                    iInspectionStatus: chkInspectionStatus,
+                    iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
+                    iStampingEngineerId: istampingengineerid,
+                    sCheckedDocument: checkedDocument,
+                    ShelvingChecklistComments: ShelvingChecklistComments
+                },
                 headers: { "Content-Type": "application/json" }
             }).then(function (response) {
                 console.log("Inspection update response:", response.data);
 
                 if (response.data === "Ok") {
-                    // Check if we need to send email
-                    if (chkedSentEmailtoCustomer == '1') {
+                    if (chkedSentEmailtoCustomer == "1") {
                         console.log("Sending email to customer...");
 
                         if (checkedLocationContactId === '') {
                             checkedLocationContactId = '0,0';
                         }
 
-                        var emailConfig = {
-                            InspectionId: id,
-                            LocationContactId: checkedLocationContactId,
-                            SentToClient: chkedSentEmailtoCustomer
-                        };
-
                         return $http({
                             url: '/Account/SendEmailOfPDF',
                             method: "POST",
-                            data: emailConfig,
+                            data: {
+                                InspectionId: id,
+                                LocationContactId: checkedLocationContactId,
+                                SentToClient: chkedSentEmailtoCustomer
+                            },
                             headers: {
                                 "Content-Type": "application/json",
                                 'RequestVerificationToken': $scope.antiForgeryToken
                             }
                         });
                     } else {
-                        // No email needed, return success
                         return { data: "Ok" };
                     }
                 } else {
@@ -1786,6 +1775,295 @@
                 alert("Error: " + (error.data || error.message || error.statusText));
             });
         };
+
+        //$scope.ApproveInspectionClick = function (id) {
+        //    console.log("ApproveInspectionClick called with ID:", id);
+
+        //    // Prevent double-clicks
+        //    if ($scope.isProcessing) {
+        //        console.log("Already processing, please wait...");
+        //        return;
+        //    }
+
+        //    $scope.isProcessing = true;
+        //    $scope.isLoadingButton = true;
+
+        //    // Initialize variables
+        //    var chkedSentEmailtoCustomer = "0";
+        //    var chkInspectionStatus = 0;
+        //    var istampingengineerid = 0;
+        //    var chkQuotationApprovalToCustomer = 0;
+        //    var isalespersonid = 0;
+        //    var chkIsInspectionFinished = 0;
+        //    var ShelvingChecklistComments = "";
+
+        //    // Get sales person ID if quotation exists
+        //    if ($scope.getInspectionDetailsForSheet.objQuotation != null) {
+        //        var selectElementSalesPersonId = document.getElementById('QuotationSalesPersonId');
+        //        if (selectElementSalesPersonId) {
+        //            isalespersonid = selectElementSalesPersonId.value || "0";
+        //        }
+        //    }
+
+        //    if ($scope.getInspectionDetailsForSheet.ShelvingChecklistComments != "") {
+        //        console.log("ShelvingChecklistComments", $scope.getInspectionDetailsForSheet.ShelvingChecklistComments);
+        //        ShelvingChecklistComments = $scope.getInspectionDetailsForSheet.ShelvingChecklistComments;
+        //    } 
+
+        //    // Set inspection finished status
+        //    if ($scope.chkIsInspectionFinished !== undefined) {
+        //        chkIsInspectionFinished = $scope.chkIsInspectionFinished;
+        //    }
+
+        //    console.log('$scope.chkInspectionStatus', $scope.chkInspectionStatus);
+        //    var chkInspectionStatusEl = document.getElementById('chkInspectionStatus');
+        //    chkInspectionStatus = ($scope.chkInspectionStatus == 4 ||
+        //        (chkInspectionStatusEl && chkInspectionStatusEl.checked)) ? 4 : 0;
+
+           
+        //    // Set inspection status
+        //    //if ($scope.chkInspectionStatus == 4) {
+        //    //    chkInspectionStatus = $scope.chkInspectionStatus;
+        //    //}
+        //    console.log("Processing with chkInspectionStatus:", chkInspectionStatus);
+        //    // Set email to customer flag
+        //    if ($scope.chkSentEmailtoCustomer !== undefined) {
+        //        chkedSentEmailtoCustomer = $scope.chkSentEmailtoCustomer;
+        //    }
+
+        //    // Set quotation approval to customer flag
+        //    if ($scope.chkQuotationApprovalToCustomer !== undefined) {
+        //        chkQuotationApprovalToCustomer = $scope.chkQuotationApprovalToCustomer;
+        //        chkInspectionStatus = chkQuotationApprovalToCustomer;
+        //    }
+
+        //    // Set stamping engineer ID
+        //    if ($scope.stampingengineerid !== undefined) {
+        //        istampingengineerid = $scope.stampingengineerid;
+        //    }
+
+        //    // Override status if inspection is finished
+        //    if (chkIsInspectionFinished > 0) {
+        //        chkInspectionStatus = chkIsInspectionFinished;
+        //    }
+
+        //    // Collect selected inspection deficiencies
+        //    var checkedIspectionDeficiencyId = '';
+        //    if ($scope.getInspectionDetailsForSheet.iDefModel != null) {
+        //        $scope.getInspectionDetailsForSheet.iDefModel.forEach(function (d) {
+        //            if (d.selected) {
+        //                if (checkedIspectionDeficiencyId !== '') {
+        //                    checkedIspectionDeficiencyId += ",";
+        //                }
+        //                checkedIspectionDeficiencyId += d.InspectionDeficiencyId;
+        //            }
+        //        });
+        //    }
+
+        //    // Collect selected documents
+        //    var checkedDocument = '';
+        //    if ($scope.getAllDocumentTitleInspection != null) {
+        //        $scope.getAllDocumentTitleInspection.forEach(function (t) {
+        //            if (t.selected) {
+        //                if (checkedDocument !== '') {
+        //                    checkedDocument += ",";
+        //                }
+        //                checkedDocument += t.DocumentId;
+        //            }
+        //        });
+        //    }
+
+        //    // Collect customer location contact IDs
+        //    var checkedLocationContactId = '';
+        //    if ($scope.getInspectionDetailsForSheet.ListCustomerLocationContacts != null) {
+        //        $scope.getInspectionDetailsForSheet.ListCustomerLocationContacts.forEach(function (Contact) {
+        //            if (Contact.selected) {
+        //                checkedLocationContactId += Contact.LocationContactId + ",";
+        //            }
+        //        });
+        //    }
+
+        //    console.log("Processing with parameters:", {
+        //        inspectionId: id,
+        //        chkInspectionStatus: chkInspectionStatus,
+        //        chkIsInspectionFinished: chkIsInspectionFinished,
+        //        chkQuotationApprovalToCustomer: chkQuotationApprovalToCustomer,
+        //        chkedSentEmailtoCustomer: chkedSentEmailtoCustomer,
+        //        istampingengineerid: istampingengineerid,
+        //        isalespersonid: isalespersonid,                
+        //        ShelvingChecklistComments: ShelvingChecklistComments
+        //    });
+           
+        //    // CASE 1: Handle Inspection Finished (Priority)
+        //    if (chkIsInspectionFinished == 9) {
+        //        console.log("Processing Inspection Finished...");
+
+        //        var data = {
+        //            inspectionId: id,
+        //            iInspectionStatus: chkInspectionStatus,
+        //            iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
+        //            iStampingEngineerId: istampingengineerid,
+        //            sCheckedDocument: checkedDocument
+        //        };
+                
+
+        //        return $http({
+        //            url: '/api/pageview/SaveUpdateApproveInspectionAdmin',
+        //            method: "POST",
+        //            params: data,
+        //            headers: { "Content-Type": "application/json" }
+        //        }).then(function (response) {
+        //            $scope.isProcessing = false;
+        //            $scope.isLoadingButton = false;
+
+        //            if (response.data === "Ok") {
+        //                window.location = '/Admin/ManageInspectionNew';
+        //            } else {
+        //                alert("Failed to update inspection. Response: " + response.data);
+        //            }
+        //        }, function (error) {
+        //            $scope.isProcessing = false;
+        //            $scope.isLoadingButton = false;
+        //            console.error("Error updating inspection:", error);
+        //            alert("Error: " + (error.data || error.statusText));
+        //        });
+        //    }
+
+        //    // CASE 2: Handle Quotation Approval to Customer
+        //    if (chkQuotationApprovalToCustomer == 6) {
+        //        console.log("Send quotation to customer for approval");
+
+        //        if ($scope.getInspectionDetailsForSheet.objQuotation != null &&
+        //            $scope.getInspectionDetailsForSheet.objQuotation.QuotationNo != null) {
+
+        //            var dataQuotation = {
+        //                InspectionId: id,
+        //                QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId,
+        //                YourReference: $scope.getInspectionDetailsForSheet.objQuotation.YourReference,
+        //                ValidTo: $scope.getInspectionDetailsForSheet.objQuotation.ValidTo,
+        //                PaymentTerms: $scope.getInspectionDetailsForSheet.objQuotation.PaymentTerms,
+        //                ShipmentMethod: $scope.getInspectionDetailsForSheet.objQuotation.ShipmentMethod,
+        //                SalesPersonId: isalespersonid,
+        //                GSTPer: $scope.getInspectionDetailsForSheet.objQuotation.GSTPer,
+        //                LabourUnitPrice: $scope.getInspectionDetailsForSheet.objQuotation.LabourUnitPrice,
+        //                TotalLabour: $scope.getInspectionDetailsForSheet.objQuotation.TotalLabour,
+        //                SendEmailForApproval: chkQuotationApprovalToCustomer,
+        //                QuotationSurcharge: $scope.getInspectionDetailsForSheet.objQuotation.QuotationSurcharge,
+        //                QuotationMarkup: $scope.getInspectionDetailsForSheet.objQuotation.QuotationMarkup,
+        //                QuotationNotes: $scope.getInspectionDetailsForSheet.objQuotation.QuotationNotes,
+        //                LocationContactId: checkedLocationContactId
+        //            };
+
+        //            // First, send quotation
+        //            return $http({
+        //                url: '/api/pageview/sendQuotationtoCustomerForApproval',
+        //                method: "POST",
+        //                data: dataQuotation,
+        //                headers: { "Content-Type": "application/json" }
+        //            }).then(function (response) {
+        //                console.log("Quotation sent successfully:", response.data);
+
+        //                // Then update inspection
+        //                var inspectionData = {
+        //                    inspectionId: id,
+        //                    iInspectionStatus: chkInspectionStatus,
+        //                    iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
+        //                    iStampingEngineerId: istampingengineerid,
+        //                    sCheckedDocument: checkedDocument
+        //                };
+
+        //                return $http({
+        //                    url: '/api/pageview/SaveUpdateApproveInspectionAdmin',
+        //                    method: "POST",
+        //                    params: inspectionData,
+        //                    headers: { "Content-Type": "application/json" }
+        //                });
+        //            }).then(function (response) {
+        //                $scope.isProcessing = false;
+        //                $scope.isLoadingButton = false;
+
+        //                if (response.data === "Ok") {
+        //                    window.location = '/Admin/ManageInspectionNew';
+        //                } else {
+        //                    alert("Failed to update inspection. Response: " + response.data);
+        //                }
+        //            }).catch(function (error) {
+        //                $scope.isProcessing = false;
+        //                $scope.isLoadingButton = false;
+        //                console.error("Error in quotation/inspection update:", error);
+        //                alert("Error: " + (error.data || error.statusText));
+        //            });
+        //        } else {
+        //            $scope.isProcessing = false;
+        //            $scope.isLoadingButton = false;
+        //            alert("No quotation found to send for approval.");
+        //            return;
+        //        }
+        //    }
+
+        //    // CASE 3: Standard inspection update with optional email
+        //    var data = {
+        //        inspectionId: id,
+        //        iInspectionStatus: chkInspectionStatus,
+        //        iAdminIspectionDeficiencyIdStatus: checkedIspectionDeficiencyId,
+        //        iStampingEngineerId: istampingengineerid,
+        //        sCheckedDocument: checkedDocument,
+        //        ShelvingChecklistComments: ShelvingChecklistComments
+        //    };
+            
+        //    console.log("Updating inspection with data:", data);
+        //    return;
+        //    return $http({
+        //        url: '/api/pageview/SaveUpdateApproveInspectionAdmin',
+        //        method: "POST",
+        //        params: data,
+        //        headers: { "Content-Type": "application/json" }
+        //    }).then(function (response) {
+        //        console.log("Inspection update response:", response.data);
+
+        //        if (response.data === "Ok") {
+        //            // Check if we need to send email
+        //            if (chkedSentEmailtoCustomer == '1') {
+        //                console.log("Sending email to customer...");
+
+        //                if (checkedLocationContactId === '') {
+        //                    checkedLocationContactId = '0,0';
+        //                }
+
+        //                var emailConfig = {
+        //                    InspectionId: id,
+        //                    LocationContactId: checkedLocationContactId,
+        //                    SentToClient: chkedSentEmailtoCustomer
+        //                };
+
+        //                return $http({
+        //                    url: '/Account/SendEmailOfPDF',
+        //                    method: "POST",
+        //                    data: emailConfig,
+        //                    headers: {
+        //                        "Content-Type": "application/json",
+        //                        'RequestVerificationToken': $scope.antiForgeryToken
+        //                    }
+        //                });
+        //            } else {
+        //                // No email needed, return success
+        //                return { data: "Ok" };
+        //            }
+        //        } else {
+        //            throw new Error("Inspection update failed: " + response.data);
+        //        }
+        //    }).then(function (response) {
+        //        $scope.isProcessing = false;
+        //        $scope.isLoadingButton = false;
+        //        console.log("Process completed successfully");
+        //        window.location = '/Admin/ManageInspectionNew';
+        //    }).catch(function (error) {
+        //        $scope.isProcessing = false;
+        //        $scope.isLoadingButton = false;
+        //        console.error("Error in approval process:", error);
+        //        alert("Error: " + (error.data || error.message || error.statusText));
+        //    });
+        //};
 
         //$scope.ApproveInspectionClick = function (id) {
         //    console.log("From Inspection Ctrl  - YXYXYXYXYXY----YYYYYYYYYYYY ");

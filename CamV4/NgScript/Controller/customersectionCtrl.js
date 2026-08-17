@@ -631,9 +631,10 @@
 
         $scope.AddContactShow = true;
         $scope.EditContactShow = false;
+
         $scope.SaveLocationContact = function (id) {
             $scope.GetCheckedLocationIds();
-
+            console.log('SaveLocationContact on customersectionCtrl');
             if ($scope.contactName == null) {
                 $scope.validationShow = "Enter Contact Name."
                 return "Enter Contact Name.";
@@ -809,6 +810,7 @@
             }, function (response) {
                 $scope.waiting = false;
             });
+
         }
 
 

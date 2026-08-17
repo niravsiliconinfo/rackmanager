@@ -25,7 +25,7 @@
                     }
                 <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Company</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -115,7 +115,7 @@
                                         <td class="align-middle text-sm">
                                             <span class="text-secondary text-xs font-weight-bold">{{d.CustomerNAVNo}}</span>
                                         </td>
-                                        <td class="align-middle" style="width:250px;">
+                                        <td class="align-middle" style="width:280px;">
                                             @if (userType == "1")
                                             {
                                                 <a href="@Url.Action("ManageHistoryLegacyDocuments", "Admin")?id={{d.CustomerID}}" title="History Legacy Documents"><i class="material-icons opacity-10">insert_drive_file</i></a>
@@ -132,6 +132,9 @@
                                                 <a href="@Url.Action("InternalInspectionListing", "Admin")?id={{d.CustomerID}}" title="View Internal Inspection">
                                                     <i class="material-icons opacity-10" style="color:#008000;">manage_search</i>
                                                 </a>
+                                                <a href="@Url.Action("SpareMaterialFiles", "Admin")?id={{d.CustomerID}}" title="View Spare Material">
+                                                    <i class="material-icons opacity-10" style="color:#8B8000;">inventory</i>
+                                                </a>
                                                 <a href="@Url.Action("EditCustomer", "Admin")?id={{d.CustomerID}}" title="Edit Customer">
                                                     <i class="material-icons opacity-10">edit</i>
                                                 </a>
@@ -141,6 +144,7 @@
                                             }
                                             else
                                             {
+                                                <a href="@Url.Action("ManageHistoryLegacyDocuments", "Admin")?id={{d.CustomerID}}" title="History Legacy Documents"><i class="material-icons opacity-10">insert_drive_file</i></a>
                                                 <a href="@Url.Action("ManageCustomerLocationHierarchy", "Admin")?id={{d.CustomerID}}" title="Manage Locations/Facility/Area">
                                                     <i class="material-icons opacity-10" style="color: #003DA6;">location_on</i>
                                                 </a>
@@ -159,7 +163,7 @@
                                     <option>50</option>
                                 </select> of {{getAllCustomerscount}} Companies
                                 <pagination total-items="totalgetAllCustomers" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
-                                            items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
+                                            items-per-page="itemsPerPage" previous-text="<" next-text=">"></pagination>
                             </nav>
                         </div>
                     </div>

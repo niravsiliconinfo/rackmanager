@@ -7,7 +7,7 @@
 @*<script src="~/Scripts/pdfmake/pdfmake.min.js"></script>*@
 @*<script src="~/Scripts/pdfmake/vfs_fonts.js"></script>*@
 <script src="~/Scripts/html2canvas.min.js"></script>
-
+<script src="~/NgScript/Controller/homeCtrl.js"></script>
 <script type="text/javascript">
     function getGridHtmlClass() {
         //$("#btnSubmit").click(function () {
@@ -29,7 +29,7 @@
                     <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index", "Admin")">Dashboard</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Employee</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -128,7 +128,7 @@
                             </table>
                             <nav>
                                 <pagination total-items="totalemployee" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
-                                            items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
+                                            items-per-page="itemsPerPage" previous-text="<" next-text=">"></pagination>
                                 Show <select ng-model="viewby" ng-change="setItemsPerPage(viewby)" style="height:25px">
                                     <option>5</option>
                                     <option>10</option>

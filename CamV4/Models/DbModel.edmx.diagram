@@ -70,10 +70,22 @@
         <EntityTypeShape EntityType="admin_rackauditorModel.CustomerLocationContact" Width="1.5" PointX="5.375" PointY="12.75" />
         <EntityTypeShape EntityType="admin_rackauditorModel.CustomersLocationsUserArea" Width="1.5" PointX="18.375" PointY="26.75" />
         <EntityTypeShape EntityType="admin_rackauditorModel.CustomersLocationsUserFacility" Width="1.5" PointX="26.375" PointY="19.75" />
-        <EntityTypeShape EntityType="admin_rackauditorModel.InternalInspection" Width="1.5" PointX="26.375" PointY="23.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.InternalInspection" Width="2" PointX="26.375" PointY="23.75" />
         <EntityTypeShape EntityType="admin_rackauditorModel.InternalInspectionDeficiency" Width="1.5" PointX="27.375" PointY="0.75" />
-        <EntityTypeShape EntityType="admin_rackauditorModel.InternalInspectionLevel" Width="1.5" PointX="27.375" PointY="5.75" />
-        <EntityTypeShape EntityType="admin_rackauditorModel.InternalInspectionPhoto" Width="1.5" PointX="27.375" PointY="8.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.InternalInspectionPhoto" Width="1.5" PointX="27.375" PointY="6.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.TrainingBlog" Width="1.5" PointX="10.375" PointY="27.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.TrainingCourse" Width="1.5" PointX="12.375" PointY="27.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.TrainingRegistration" Width="1.5" PointX="5.375" PointY="28.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.TrainingRegistrationPerson" Width="1.5" PointX="7.375" PointY="28.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.TrainingTechnicalTalk" Width="1.5" PointX="14.375" PointY="28.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.TrainingWebinar" Width="1.5" PointX="28.375" PointY="19.75" />
+        <AssociationConnector Association="admin_rackauditorModel.FK_CLUA_LocationContact" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.InventoryAuditLog" Width="1.5" PointX="24.375" PointY="28.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.InventoryColumn" Width="1.5" PointX="26.375" PointY="28.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.InventoryFile" Width="1.5" PointX="28.375" PointY="28.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.InventoryItem" Width="1.5" PointX="29.375" PointY="0.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.InventoryItemValue" Width="1.5" PointX="29.375" PointY="4.75" />
+        <EntityTypeShape EntityType="admin_rackauditorModel.AccountDeletionRequest" Width="1.5" PointX="29.375" PointY="7.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -14,11 +14,17 @@ namespace CamV4.Models
     
     public partial class InternalInspectionDeficiency
     {
-        public long DeficiencyID { get; set; }
+        public long InternalInspectionDeficiencyID { get; set; }
         public long InternalInspectionID { get; set; }
-        public long CustomerID { get; set; }
-        public string DeficiencyDescription { get; set; }
-        public string Severity { get; set; }
+        public string Area { get; set; }
+        public string Row { get; set; }
+        public string Aisle { get; set; }
+        public string Bay { get; set; }
+        public string BeamFrameLevel { get; set; }
+        public string BeamLocation { get; set; }
+        public string FrameSide { get; set; }
+        public string InternalAssessment { get; set; }
+        public string InternalAction { get; set; }
         public string RecommendedAction { get; set; }
         public bool IsEngineerReviewRequested { get; set; }
         public Nullable<decimal> EngineerReviewCost { get; set; }

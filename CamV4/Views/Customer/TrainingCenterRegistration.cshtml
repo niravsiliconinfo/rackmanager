@@ -1,30 +1,24 @@
-﻿@{
+@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-<script src="~/Scripts/ui-bootstrap-tpls-0.11.0.js"></script>
-@*<script src="~/Scripts/pdfmake/pdfmake.min.js"></script>
-    <script src="~/Scripts/pdfmake/vfs_fonts.js"></script>*@
-<script src="~/Scripts/html2canvas.min.js"></script>
-@{
-    var userType = Session["LoggedInUserType"].ToString();
-}
+<script src="~/NgScript/Controller/trainingCenterCtrl.js"></script>
 
-<main class="main-content2 position-relative max-height-vh-100 h-100">
-    <input type="hidden" name="GridHtml" id="GridHtml" />
-    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg"
+      ng-controller="trainingCenterCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
         <div class="container-fluid py-1 px-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index", "Customer")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index","Customer")">Dashboard</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Training Center - Registration</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-                    <div class="input-group input-group-outline">
+                    @*<div class="input-group input-group-outline">
                         <input type="search" class="form-control" placeholder="Type here..." ng-model="search" id="example-search-input">
-                    </div>
+                    </div>*@
                 </div>
                 <ul class="navbar-nav  justify-content-end">
                     <li class="nav-item d-flex align-items-center">
@@ -46,25 +40,204 @@
             </div>
         </div>
     </nav>
+
     <div class="container-fluid py-4">
+
+        <!-- Success / Error banners -->
+        <div class="alert alert-success" ng-show="formSuccess">{{formSuccess}}</div>
+        <div class="alert alert-danger"  ng-show="formError && !showAddForm">{{formError}}</div>
+
+        <!-- ---- NEW REGISTRATION BUILDER ---- -->
+        <div class="row" ng-if="showAddForm">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white ps-3 mt-2">
+                                {{editRegId > 0 ? 'Edit Registration' : 'New Registration'}}
+                            </h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-sm text-muted mb-3">
+                            Select personnel and a training course. You can add as many people as needed.
+                            When finished click <strong>Submit Registration</strong>.
+                        </p>
+
+                        <!-- Add/Edit person form -->
+                        <div class="border rounded p-3 mb-4">
+                            <h6 class="text-sm font-weight-bold mb-3">
+                                {{editPersonIndex >= 0 ? 'Edit Person' : 'Add Person'}}
+                            </h6>
+                            <div class="row">
+                                <div class="col-sm-2"><span>Full Name <span class="error">*</span></span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="text" class="form-control" ng-model="newPerson.ContactName"
+                                               placeholder="e.g. John Smith" maxlength="150" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-2"><span>Email <span class="error">*</span></span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="email" class="form-control" ng-model="newPerson.ContactEmail"
+                                               placeholder="e.g. john@company.com" maxlength="150" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2"><span>Course <span class="error">*</span></span></div>
+                                <div class="col-sm-6">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select class="form-control" ng-model="newPerson.TrainingCourseID">
+                                            <option value="">-- Select Course --</option>
+                                            <option ng-repeat="c in courseList" value="{{c.TrainingCourseID}}">
+                                                Course {{c.CourseCode}} - {{c.CourseName}} ({{c.PriceFormatted}})
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4 d-flex align-items-center">
+                                    <span class="text-info font-weight-bold" ng-if="newPerson.TrainingCourseID">
+                                        Price: {{getCourseById(newPerson.TrainingCourseID).PriceFormatted}}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="text-danger text-sm mb-2" ng-show="formError && showAddForm">{{formError}}</div>
+                            <button type="button" class="btn bg-gradient-info btn-sm mb-0"
+                                    ng-click="AddPerson()">
+                                {{editPersonIndex >= 0 ? 'Update Person' : 'Add to List'}}
+                            </button>
+                            <button type="button" class="btn bg-gradient-secondary btn-sm mb-0 ms-2"
+                                    ng-if="editPersonIndex >= 0" ng-click="CancelPerson()">Cancel</button>
+                        </div>
+
+                        <!-- Person list table -->
+                        <div ng-if="persons.length > 0">
+                            <h6 class="text-sm font-weight-bold mb-2">
+                                Personnel Added ({{persons.length}})
+                            </h6>
+                            <div class="table-responsive mb-3">
+                                <table class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">#</th>
+                                            <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Name</th>
+                                            <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Email</th>
+                                            <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Course</th>
+                                            <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Price</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="p in persons">
+                                            <td><p class="text-sm mb-0 ps-2">{{$index + 1}}</p></td>
+                                            <td><p class="text-sm mb-0">{{p.ContactName}}</p></td>
+                                            <td><p class="text-sm mb-0">{{p.ContactEmail}}</p></td>
+                                            <td><p class="text-sm mb-0">{{p.CourseName}}</p></td>
+                                            <td><p class="text-sm mb-0">${{p.CoursePrice | number:2}}</p></td>
+                                            <td>
+                                                <a href="javascript:void(0)" ng-click="EditPerson($index)" class="me-2" title="Edit">
+                                                    <i class="material-icons text-sm">edit</i>
+                                                </a>
+                                                <a href="javascript:void(0)" ng-click="RemovePerson($index)" title="Remove">
+                                                    <i class="material-icons text-sm text-danger">delete</i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="4" class="text-sm font-weight-bold text-end pe-3">Total:</td>
+                                            <td class="text-sm font-weight-bold">${{totalPrice() | number:2}}</td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                            <button type="button" class="btn bg-gradient-success btn-lg mb-0"
+                                    ng-click="FinishRegistration()" ng-disabled="saving">
+                                <span ng-if="!saving">
+                                    <i class="material-icons text-sm me-1" style="vertical-align:middle;">send</i>
+                                    Submit Registration
+                                </span>
+                                <span ng-if="saving">Submitting...</span>
+                            </button>
+                            <button type="button" class="btn bg-gradient-secondary btn-lg mb-0 ms-2"
+                                    ng-click="CancelRegistration()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ---- EXISTING REGISTRATIONS LISTING ---- -->
         <div class="row">
             <div class="col-12">
-                <div class="card my-4" id="tblInspection">
+                <div class="card my-4">
                     <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="pt-4 pb-4">
                             <div class="row">
                                 <div class="col-6 d-flex align-items-center">
-                                    <h6 class="text-white text-capitalize ps-3 mb-0">Training Center - Registration</h6>
+                                    <h6 class="text-white ps-3 mt-2">Course Registrations</h6>
+                                </div>
+                                <div class="col-6 text-end pe-4 d-flex align-items-center justify-content-end">
+                                    <button type="button" class="btn bg-gradient-dark mb-0 mx-3" 
+                                           ng-click="StartNewRegistration()"
+                                            ng-if="!showAddForm">
+                                        <i class="material-icons text-sm me-1" style="vertical-align:middle;">add</i>
+                                        New Course Registration
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card-body pb-2">
-
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Date</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Persons</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Total</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Status</th>
+                                        <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-if="!registrationList || registrationList.length == 0">
+                                        <td colspan="5" class="text-center text-sm py-3">No registrations yet.</td>
+                                    </tr>
+                                    <tr ng-repeat="r in registrationList | startFrom:(paging.current-1)*paging.size | limitTo:paging.size">
+                                        <td><p class="text-sm mb-0 ps-2">{{r.RegistrationDateFormatted}}</p></td>
+                                        <td class="text-center"><span class="badge bg-gradient-secondary">{{r.PersonCount}}</span></td>
+                                        <td><p class="text-sm mb-0">{{r.TotalPriceFormatted}}</p></td>
+                                        <td>
+                                            <span class="badge bg-gradient-warning" ng-if="r.Status=='Pending'">Pending</span>
+                                            <span class="badge bg-gradient-info"    ng-if="r.Status=='Confirmed'">Confirmed</span>
+                                            <span class="badge bg-gradient-primary" ng-if="r.Status=='Enrolled'">Enrolled</span>
+                                            <span class="badge bg-gradient-success" ng-if="r.Status=='Completed'">Completed</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="/Customer/TrainingCenterCourseStatus?id={{r.TrainingRegistrationID}}"
+                                               title="View" class="me-2">
+                                                <i class="material-icons text-sm">visibility</i>
+                                            </a>
+                                            <a href="javascript:void(0)" ng-click="StartEdit(r.TrainingRegistrationID)"
+                                               title="Edit" ng-if="r.Status=='Pending'">
+                                                <i class="material-icons text-sm">edit</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        @Html.Partial("_FooterLayout")
     </div>
-    @Html.Partial("_FooterLayout")
 </main>

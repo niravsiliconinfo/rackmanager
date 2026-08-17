@@ -1,0 +1,300 @@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="~/NgScript/Controller/trainingCenterCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg"
+      ng-controller="trainingCenterCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Dashboard","Admin")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Webinar &amp; Blog Management</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+
+        <!-- ===== WEBINARS ===== -->
+        <!-- Webinar inline form -->
+        <div class="row" ng-if="showWebForm">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white ps-3 mt-2">
+                                {{webinarForm.TrainingWebinarID > 0 ? 'Edit Webinar' : 'Add Webinar'}}
+                            </h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-2"><span>Title <span class="error">*</span></span></div>
+                            <div class="col-sm-10">
+                                <div class="input-group input-group-outline mb-3">
+                                    <input type="text" class="form-control" ng-model="webinarForm.Title" maxlength="300" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2"><span>Description</span></div>
+                            <div class="col-sm-10">
+                                <div class="input-group input-group-outline mb-3">
+                                    <textarea class="form-control" ng-model="webinarForm.Description" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2"><span>External Link</span></div>
+                            <div class="col-sm-7">
+                                <div class="input-group input-group-outline mb-3">
+                                    <input type="url" class="form-control" ng-model="webinarForm.ExternalLink"
+                                           placeholder="https://" maxlength="500" />
+                                </div>
+                            </div>
+                            <div class="col-sm-1"><span>Order</span></div>
+                            <div class="col-sm-2">
+                                <div class="input-group input-group-outline mb-3">
+                                    <input type="number" class="form-control" ng-model="webinarForm.DisplayOrder" min="0" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2"><span>Active</span></div>
+                            <div class="col-sm-10 d-flex align-items-center mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" ng-model="webinarForm.IsActive" id="webActive" />
+                                    <label class="form-check-label text-sm" for="webActive">Active</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-danger text-sm mb-2" ng-show="webError">{{webError}}</div>
+                        <div class="text-success text-sm mb-2" ng-show="webSuccess">{{webSuccess}}</div>
+                        <button type="button" class="btn bg-gradient-info btn-lg mb-0" ng-click="SaveWebinar()">Save</button>
+                        <button type="button" class="btn bg-gradient-secondary btn-lg mb-0 ms-2" ng-click="CloseWebForm()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Webinar listing -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white ps-3 mt-2">
+                                        <i class="material-icons text-sm me-2" style="vertical-align:middle;">videocam</i>
+                                        Webinars
+                                    </h6>
+                                </div>
+                                <div class="col-6 text-end pe-4 d-flex align-items-center justify-content-end">
+                                    <button type="button" class="btn bg-gradient-dark mb-0 mx-3"
+                                            ng-click="OpenWebForm(null)">
+                                        <i class="material-icons text-sm me-1" style="vertical-align:middle;">add</i>Add Webinar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Order</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Title</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Link</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Status</th>
+                                        <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-if="!webinarList || webinarList.length == 0">
+                                        <td colspan="5" class="text-center text-sm py-3">No webinars yet.</td>
+                                    </tr>
+                                    <tr ng-repeat="w in webinarList">
+                                        <td><p class="text-sm mb-0 ps-2">{{w.DisplayOrder}}</p></td>
+                                        <td>
+                                            <p class="text-sm font-weight-bold mb-0">{{w.Title}}</p>
+                                            <p class="text-sm text-muted mb-0">{{w.Description}}</p>
+                                        </td>
+                                        <td>
+                                            <a ng-if="w.ExternalLink" href="{{w.ExternalLink}}" target="_blank"
+                                               class="text-sm text-info">{{w.ExternalLink | limitTo:40}}...</a>
+                                            <span ng-if="!w.ExternalLink" class="text-sm text-muted">-</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-gradient-success"   ng-if="w.IsActive">Active</span>
+                                            <span class="badge bg-gradient-secondary" ng-if="!w.IsActive">Inactive</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="javascript:void(0)" ng-click="OpenWebForm(w)" class="me-2" title="Edit">
+                                                <i class="material-icons text-sm">edit</i>
+                                            </a>
+                                            <a href="javascript:void(0)" ng-click="DeleteWebinar(w.TrainingWebinarID)" title="Delete">
+                                                <i class="material-icons text-sm text-danger">delete</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== BLOGS ===== -->
+        <!-- Blog inline form -->
+        <div class="row" ng-if="showBlogForm">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white ps-3 mt-2">
+                                {{blogForm.TrainingBlogID > 0 ? 'Edit Blog Post' : 'Add Blog Post'}}
+                            </h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-2"><span>Title <span class="error">*</span></span></div>
+                            <div class="col-sm-10">
+                                <div class="input-group input-group-outline mb-3">
+                                    <input type="text" class="form-control" ng-model="blogForm.Title" maxlength="300" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2"><span>Description</span></div>
+                            <div class="col-sm-10">
+                                <div class="input-group input-group-outline mb-3">
+                                    <textarea class="form-control" ng-model="blogForm.Description" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2"><span>External Link</span></div>
+                            <div class="col-sm-7">
+                                <div class="input-group input-group-outline mb-3">
+                                    <input type="url" class="form-control" ng-model="blogForm.ExternalLink"
+                                           placeholder="https://" maxlength="500" />
+                                </div>
+                            </div>
+                            <div class="col-sm-1"><span>Order</span></div>
+                            <div class="col-sm-2">
+                                <div class="input-group input-group-outline mb-3">
+                                    <input type="number" class="form-control" ng-model="blogForm.DisplayOrder" min="0" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2"><span>Active</span></div>
+                            <div class="col-sm-10 d-flex align-items-center mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" ng-model="blogForm.IsActive" id="blogActive" />
+                                    <label class="form-check-label text-sm" for="blogActive">Active</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-danger text-sm mb-2" ng-show="blogError">{{blogError}}</div>
+                        <div class="text-success text-sm mb-2" ng-show="blogSuccess">{{blogSuccess}}</div>
+                        <button type="button" class="btn bg-gradient-info btn-lg mb-0" ng-click="SaveBlog()">Save</button>
+                        <button type="button" class="btn bg-gradient-secondary btn-lg mb-0 ms-2" ng-click="CloseBlogForm()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blog listing -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white ps-3 mt-2">
+                                        <i class="material-icons text-sm me-2" style="vertical-align:middle;">article</i>
+                                        Blog Posts
+                                    </h6>
+                                </div>
+                                <div class="col-6 text-end pe-4 d-flex align-items-center justify-content-end">
+                                    <button type="button" class="btn bg-gradient-dark mb-0 mx-3"
+                                            ng-click="OpenBlogForm(null)">
+                                        <i class="material-icons text-sm me-1" style="vertical-align:middle;">add</i>Add Blog Post
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Order</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Title</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Link</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Status</th>
+                                        <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-if="!blogList || blogList.length == 0">
+                                        <td colspan="5" class="text-center text-sm py-3">No blog posts yet.</td>
+                                    </tr>
+                                    <tr ng-repeat="b in blogList">
+                                        <td><p class="text-sm mb-0 ps-2">{{b.DisplayOrder}}</p></td>
+                                        <td>
+                                            <p class="text-sm font-weight-bold mb-0">{{b.Title}}</p>
+                                            <p class="text-sm text-muted mb-0">{{b.Description}}</p>
+                                        </td>
+                                        <td>
+                                            <a ng-if="b.ExternalLink" href="{{b.ExternalLink}}" target="_blank"
+                                               class="text-sm text-info">{{b.ExternalLink | limitTo:40}}...</a>
+                                            <span ng-if="!b.ExternalLink" class="text-sm text-muted">-</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-gradient-success"   ng-if="b.IsActive">Active</span>
+                                            <span class="badge bg-gradient-secondary" ng-if="!b.IsActive">Inactive</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="javascript:void(0)" ng-click="OpenBlogForm(b)" class="me-2" title="Edit">
+                                                <i class="material-icons text-sm">edit</i>
+                                            </a>
+                                            <a href="javascript:void(0)" ng-click="DeleteBlog(b.TrainingBlogID)" title="Delete">
+                                                <i class="material-icons text-sm text-danger">delete</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @Html.Partial("_FooterLayout")
+    </div>
+</main>

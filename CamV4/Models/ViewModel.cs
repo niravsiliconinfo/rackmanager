@@ -144,8 +144,11 @@ namespace CamV4.Models
         public string CustomerLogo { get; set; }
         public string CustomerAddress { get; set; }
         public string CityID { get; set; }
+        public string CityName { get; set; }
         public string ProvinceID { get; set; }
+        public string ProvinceName { get; set; }
         public string Country { get; set; }
+        public string CountryName { get; set; }
         public string CustomerNAVNo { get; set; }
         public string CustomerContactName { get; set; }
         public string PinCode { get; set; }
@@ -158,6 +161,7 @@ namespace CamV4.Models
         User user { get; set; }
         public string CustomerFullPathLogo { get; set; }
         public string CustomerPharse { get; set; }
+        public string CustomerFullAddress { get; set; }   
 
     }
 
@@ -250,12 +254,24 @@ namespace CamV4.Models
         public List<long> LinkedAreaIDs { get; set; }
     }
 
+
+    public partial class CustomerLocationContactViewModelList
+    {
+        public long CustomerLocationID { get; set; }
+        public string CustomerLocation { get; set; }
+        public string FacilityId { get; set; }
+        public string FacilityName { get; set; }
+        public string AreaId { get; set; }
+        public string AreaName { get; set; }        
+    }
+
     public class InspectionViewModel
     {
         public long InspectionId { get; set; }
         public string InspectionDocumentNo { get; set; }
         public string InspectionDocumentNoRef { get; set; }
         public string InspectionType { get; set; }
+        public string InspectionTypeCode { get; set; }
         public System.DateTime InspectionDate { get; set; }
         public string InspectionDateFormatted { get; set; }
         public Nullable<System.DateTime> Reportdate { get; set; }
@@ -936,7 +952,11 @@ namespace CamV4.Models
         public string Region { get; set; }
         public int City { get; set; }
         public string Location { get; set; }
+        public string Facility { get; set; }
+        public string Area { get; set; }
         public List<string> SelectedStatuses { get; set; }
+        public string facilityId { get; set; }
+        public string areaId { get; set; }
     }
 
     public class FilterFilesModel
@@ -947,6 +967,7 @@ namespace CamV4.Models
         public string Region { get; set; }
         public int City { get; set; }
         public string Location { get; set; }
+        public string Facility { get; set; }
         public List<string> DocumentTypeList { get; set; }
     }
 
@@ -1020,6 +1041,82 @@ namespace CamV4.Models
     }
     #endregion
 
+    //  Dropdown item models 
+
+    public class CustDash_LocationItem
+    {
+        public long CustomerLocationID { get; set; }
+        public string LocationName { get; set; }
+    }
+
+    public class CustDash_FacilityItem
+    {
+        public long CustomerFacilityID { get; set; }
+        public string FacilityName { get; set; }
+        public long CustomerLocationID { get; set; }
+    }
+
+    //  Graph result models 
+
+    public class CustDash_CategoryBreakdownItem
+    {
+        public string DeficiencyCategory { get; set; }
+        public int MinorCnt { get; set; }
+        public int IntermediateCnt { get; set; }
+        public int MajorCnt { get; set; }
+        public int TotalCnt { get; set; }
+    }
+
+    public class CustDash_PieItem
+    {
+        public string Classifications { get; set; }
+        public string ClassificationsColor { get; set; }
+        public int InspectionDeficiencyCnt { get; set; }
+    }
+
+    public class CustDash_TrendItem
+    {
+        public int Year { get; set; }
+        public int Minor { get; set; }
+        public int Intermediate { get; set; }
+        public int Major { get; set; }
+    }
+
+    public class CustDash_StatusCountItem
+    {
+        public int InspectionsDue { get; set; }
+        public int InProgress { get; set; }
+        public int SentForApproval { get; set; }
+        public int ReportComplete { get; set; }
+        public int QuotationRequested { get; set; }
+        public int AwaitingApproval { get; set; }
+        public int QuotationApproved { get; set; }
+        public int RepairCompleted { get; set; }
+        public int Finished { get; set; }
+    }
+
+    //  Main ViewModel returned by API 
+
+    public class CustDash_DashboardDataViewModel
+    {
+        public int SelectedYear { get; set; }
+        public long? SelectedLocationId { get; set; }
+        public long? SelectedFacilityId { get; set; }
+
+        public List<CustDash_CategoryBreakdownItem> CategoryBreakdown { get; set; }
+        public List<CustDash_PieItem> PieData { get; set; }
+        public List<CustDash_TrendItem> TrendData { get; set; }
+        public CustDash_StatusCountItem StatusCounts { get; set; }
+
+        public CustDash_DashboardDataViewModel()
+        {
+            CategoryBreakdown = new List<CustDash_CategoryBreakdownItem>();
+            PieData = new List<CustDash_PieItem>();
+            TrendData = new List<CustDash_TrendItem>();
+            StatusCounts = new CustDash_StatusCountItem();
+        }
+    }
+
     public class BulkSaveResult
     {
         public int SuccessCount { get; set; }
@@ -1037,120 +1134,90 @@ namespace CamV4.Models
     {
         public long id { get; set; }
     }
+    
+
     // ============================================================
-    // Internal Inspection Module - ViewModels
+    // Internal Inspection Module - ViewModels final
     // ============================================================
 
-    // ---- Main Inspection ViewModel ----
     public partial class InternalInspectionViewModel
     {
-        // Header
         public long InternalInspectionID { get; set; }
-        public string InspectionNumber { get; set; }
+        public string InternalInspectionNumber { get; set; }
+        public Nullable<DateTime> InternalInspectionDate { get; set; }
+        public string InternalInspectionDateFormatted { get; set; }
         public long CustomerID { get; set; }
         public string CustomerName { get; set; }
+        public string LogoUrl { get; set; }
         public long CustomerLocationID { get; set; }
         public string CustomerLocationName { get; set; }
         public string CustomerLocationAddress { get; set; }
+        public string Region { get; set; }
         public Nullable<long> CustomerFacilityID { get; set; }
         public string CustomerFacilityName { get; set; }
-        public Nullable<long> AreaID { get; set; }
-        public string AreaName { get; set; }
+        public Nullable<long> CustomerAreaID { get; set; }
+        public string CustomerAreaName { get; set; }
+        public string ReportedBy { get; set; }  // stores userId
+        public string ReportedByName { get; set; }  // resolved display name
+        public string Status { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+        public string CreatedBy { get; set; }
+        public string CreatedByName { get; set; }  // resolved display name
+        public Nullable<DateTime> CreatedDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public Nullable<DateTime> ModifiedDate { get; set; }
 
-        // Rack & Incident Info
-        public string TypeOfRack { get; set; }
-        public Nullable<DateTime> InspectionDate { get; set; }
-        public string InspectionDateFormatted { get; set; }  // display only: "February 02, 2026"
+        // Child collections
+        public List<InternalInspectionDeficiencyViewModel> Deficiencies { get; set; }
 
-        // Location Details
-        public string Area { get; set; }  // free-text area description
+        // Computed
+        public int DeficiencyCount { get; set; }
+        public int EngineerReviewCount { get; set; }
+        public decimal EngineerReviewTotalCost { get; set; }
+        public int MinorCount { get; set; }
+        public int ModerateCount { get; set; }
+        public int SevereCount { get; set; }
+    }
+
+    public partial class InternalInspectionDeficiencyViewModel
+    {
+        public long InternalInspectionDeficiencyID { get; set; }
+        public long InternalInspectionID { get; set; }
+        public string Area { get; set; }
         public string Row { get; set; }
         public string Aisle { get; set; }
         public string Bay { get; set; }
-        public string BeamLocation { get; set; }  // Front / Rear / Both
-        public string FrameSide { get; set; }  // Left / Right / Left & Right / None
-
-        // Report Info
-        public string ReportedBy { get; set; }
-        public string InspectionSummary { get; set; }
-        public string Status { get; set; }
-        public Nullable<bool> IsActive { get; set; }
-
-        // Audit
-        public string CreatedBy { get; set; }
-        public Nullable<DateTime> CreatedDate { get; set; }
-        public string ModifiedBy { get; set; }
-        public Nullable<DateTime> ModifiedDate { get; set; }
-
-        // Child collections — populated on detail/view load
-        public List<int> Levels { get; set; }  // e.g. [1, 3, 5]
-        public string LevelsDisplay { get; set; }  // e.g. "1, 3, 5"
-        public List<InternalInspectionDeficiencyViewModel> Deficiencies { get; set; }
-        public List<InternalInspectionPhotoViewModel> Photos { get; set; }
-
-        // Computed for listing
-        public int DeficiencyCount { get; set; }
-        public int EngineerReviewCount { get; set; }
-        public decimal EngineerReviewTotalCost { get; set; }  // DeficiencyCount * $20
-    }
-
-    // ---- Deficiency ViewModel ----
-    public partial class InternalInspectionDeficiencyViewModel
-    {
-        public long DeficiencyID { get; set; }
-        public long InternalInspectionID { get; set; }
-        public long CustomerID { get; set; }
-        public string DeficiencyDescription { get; set; }
-        public string Severity { get; set; }  // Low / Medium / High / Critical
+        public string BeamFrameLevel { get; set; }
+        public string BeamLocation { get; set; }
+        public string FrameSide { get; set; }
+        public string InternalAssessment { get; set; }
+        public string InternalAction { get; set; }
         public string RecommendedAction { get; set; }
         public bool IsEngineerReviewRequested { get; set; }
         public Nullable<decimal> EngineerReviewCost { get; set; }
-        public string Status { get; set; }  // Open / In Progress / Resolved
+        public string Status { get; set; }
         public Nullable<bool> IsActive { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<DateTime> CreatedDate { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<DateTime> ModifiedDate { get; set; }
+        public List<InternalInspectionPhotoViewModel> Photos { get; set; }
     }
 
-    // ---- Photo ViewModel ----
     public partial class InternalInspectionPhotoViewModel
     {
         public long InternalInspectionPhotoID { get; set; }
+        public long InternalInspectionDeficiencyID { get; set; }
         public long InternalInspectionID { get; set; }
-        public long CustomerID { get; set; }
         public string PhotoPath { get; set; }
         public string PhotoThumbPath { get; set; }
-        public string PhotoFullUrl { get; set; }  // display only — server maps relative to full URL
+        public string PhotoFullUrl { get; set; }
         public string PhotoThumbFullUrl { get; set; }
         public Nullable<bool> IsActive { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<DateTime> CreatedDate { get; set; }
     }
 
-    // ---- Save Request ViewModel (used by Add/Edit form POST) ----
-    public partial class SaveInternalInspectionViewModel
-    {
-        public long InternalInspectionID { get; set; }  // 0 = new, >0 = edit
-        public long CustomerID { get; set; }
-        public long CustomerLocationID { get; set; }
-        public Nullable<long> CustomerFacilityID { get; set; }
-        public Nullable<long> AreaID { get; set; }
-        public string TypeOfRack { get; set; }
-        public string InspectionDate { get; set; }  // string from date input yyyy-MM-dd
-        public string Area { get; set; }
-        public string Row { get; set; }
-        public string Aisle { get; set; }
-        public string Bay { get; set; }
-        public string BeamLocation { get; set; }
-        public string FrameSide { get; set; }
-        public string ReportedBy { get; set; }
-        public string InspectionSummary { get; set; }
-        public string Levels { get; set; }  // comma-separated e.g. "1,3,5"
-        public List<InternalInspectionDeficiencyViewModel> Deficiencies { get; set; }
-    }
-
-    // ---- Listing / Search Filter ViewModel ----
     public partial class InternalInspectionSearchViewModel
     {
         public Nullable<long> CustomerID { get; set; }
@@ -1160,4 +1227,382 @@ namespace CamV4.Models
         public string DateTo { get; set; }
         public string InspectionNumber { get; set; }
     }
+
+    #region "Training Module"
+    public partial class TrainingCourseViewModel
+    {
+        public long TrainingCourseID { get; set; }
+        public string CourseName { get; set; }
+        public string CourseCode { get; set; }  // A or B
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+        public string PriceFormatted { get; set; }  // computed display
+        public Nullable<bool> IsActive { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<DateTime> CreatedDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public Nullable<DateTime> ModifiedDate { get; set; }
+    }
+
+    // ---- Registration header ----
+    public partial class TrainingRegistrationViewModel
+    {
+        public long TrainingRegistrationID { get; set; }
+        public long CustomerID { get; set; }
+        public string CustomerName { get; set; }
+        public string CustomerEmail { get; set; }
+        public string CustomerPhone { get; set; }
+        public string CustomerLogo { get; set; }
+        public Nullable<DateTime> RegistrationDate { get; set; }
+        public string RegistrationDateFormatted { get; set; }
+        public decimal TotalPrice { get; set; }
+        public string TotalPriceFormatted { get; set; }
+        public string Status { get; set; }
+        // Status: Pending / Confirmed / Enrolled / Completed
+        public string Notes { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<DateTime> CreatedDate { get; set; }
+        public int PersonCount { get; set; }
+        public List<TrainingRegistrationPersonViewModel> Persons { get; set; }
+    }
+
+    // ---- Registration person ----
+    public partial class TrainingRegistrationPersonViewModel
+    {
+        public long TrainingRegistrationPersonID { get; set; }
+        public long TrainingRegistrationID { get; set; }
+        public long CustomerID { get; set; }
+        public string ContactName { get; set; }
+        public string ContactEmail { get; set; }
+        public long TrainingCourseID { get; set; }
+        public string CourseName { get; set; }
+        public string CourseCode { get; set; }
+        public decimal CoursePrice { get; set; }
+        public string CoursePriceFormatted { get; set; }
+        // Admin-updated fields
+        public string CourseStatus { get; set; }  // Incomplete / Complete
+        public string CertificatePath { get; set; }
+        public string CertificateFullUrl { get; set; }  // resolved full URL
+        public Nullable<DateTime> CertificateExpiryDate { get; set; }
+        public string CertificateExpiryFormatted { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<DateTime> CreatedDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public Nullable<DateTime> ModifiedDate { get; set; }
+    }
+
+    // ---- Save registration (POST from customer) ----
+    public partial class SaveTrainingRegistrationViewModel
+    {
+        public long TrainingRegistrationID { get; set; }  // 0 = new
+        public long CustomerID { get; set; }  // resolved server-side if 0
+        public List<SaveTrainingPersonViewModel> Persons { get; set; }
+    }
+
+    public partial class SaveTrainingPersonViewModel
+    {
+        public long TrainingRegistrationPersonID { get; set; }  // 0 = new
+        public string ContactName { get; set; }
+        public string ContactEmail { get; set; }
+        public long TrainingCourseID { get; set; }
+    }
+
+    // ---- Admin update person status ----
+    public partial class UpdateTrainingPersonStatusViewModel
+    {
+        public long TrainingRegistrationPersonID { get; set; }
+        public string CourseStatus { get; set; }
+        public string CertificateExpiryDate { get; set; }
+    }
+
+    // ---- Webinar ----
+    public partial class TrainingWebinarViewModel
+    {
+        public long TrainingWebinarID { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string ExternalLink { get; set; }
+        public int DisplayOrder { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<DateTime> CreatedDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public Nullable<DateTime> ModifiedDate { get; set; }
+    }
+
+    // ---- Blog ----
+    public partial class TrainingBlogViewModel
+    {
+        public long TrainingBlogID { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string ExternalLink { get; set; }
+        public int DisplayOrder { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<DateTime> CreatedDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public Nullable<DateTime> ModifiedDate { get; set; }
+    }
+
+    // ---- Technical Talk / Community Q&A ----
+    public partial class TrainingTechnicalTalkViewModel
+    {
+        public long TrainingTechnicalTalkID { get; set; }
+        public Nullable<long> CustomerID { get; set; }
+        public string CustomerName { get; set; }
+        public string Question { get; set; }
+        public string Answer { get; set; }
+        public bool IsPublished { get; set; }
+        public bool IsAdminCreated { get; set; }
+        public int DisplayOrder { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<DateTime> CreatedDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public Nullable<DateTime> ModifiedDate { get; set; }
+    }
+    public class TC_AnswerQuestionRequest
+    {
+        public long TrainingTechnicalTalkID { get; set; }
+        public string Answer { get; set; }
+    }
+
+    // ---- Request helper classes (TC-namespaced to avoid collision) ----
+    public class TC_IdRequest { public long id { get; set; } }
+    public class TC_SubmitQuestionRequest { public string question { get; set; } }
+    public class TC_UpdateRegStatusRequest
+    {
+        public long id { get; set; }
+        public string status { get; set; }
+        public string notes { get; set; }
+    }
+
+    #endregion
+
+    public class InspectionFilterModel
+    {
+        public string InspectionTypeId { get; set; }
+
+        public List<int> SelectedStatusIds { get; set; }
+
+        public string Region { get; set; }
+
+        public int? ProvinceId { get; set; }
+
+        public int? CityId { get; set; }
+
+        public long? CustomerLocationId { get; set; }
+
+        public long? CustomerFacilityId { get; set; }
+
+        public long? CustomerAreaId { get; set; }
+    }
+
+    public class DocumentFilterModel
+    {
+        public string Region { get; set; }
+
+        public int? ProvinceId { get; set; }
+
+        public int? CityId { get; set; }
+
+        public long? CustomerLocationId { get; set; }
+
+        public long? CustomerFacilityId { get; set; }
+
+        public long? CustomerAreaId { get; set; }
+
+        public bool IncludeInspectionDocuments { get; set; }
+
+        public bool IncludeHistoricalDocuments { get; set; }
+
+        public List<string> InspectionCategories { get; set; }
+
+        public List<string> HistoricalCategories { get; set; }
+    }
+    public class IncidentFilterModel
+    {
+        public string IncidentType { get; set; }
+
+        public string Region { get; set; }
+
+        public int? ProvinceId { get; set; }
+
+        public int? CityId { get; set; }
+
+        public long? CustomerLocationId { get; set; }
+
+        public long? CustomerFacilityId { get; set; }
+
+        public long? CustomerAreaId { get; set; }
+    }
+
+    public class InternalInspectionFilterModel
+    {
+        public string Status { get; set; }
+
+        public string Region { get; set; }
+
+        public int? ProvinceId { get; set; }
+
+        public int? CityId { get; set; }
+
+        public long? CustomerLocationId { get; set; }
+
+        public long? CustomerFacilityId { get; set; }
+
+        public long? CustomerAreaId { get; set; }
+    }
+
+    #region "Spare Material ViewModel"
+
+
+    public class InventoryFileDto
+    {
+        public long FileID { get; set; }
+        public string FileName { get; set; }
+        public string LocationName { get; set; }
+        public long LocationID { get; set; }
+        public string Region { get; set; }
+        public long? FacilityID { get; set; }
+        public string FacilityName { get; set; }
+        public long? AreaID { get; set; }
+        public string AreaName { get; set; }
+        public int RowCount { get; set; }
+        public string FileSize { get; set; }
+        public string UploadedBy { get; set; }
+        public string UploadDate { get; set; }
+        public string UpdatedAt { get; set; }
+        public string Status { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class InventoryHeaderDto
+    {
+        public long ColumnID { get; set; }
+        public string Key { get; set; }
+        public string Label { get; set; }
+        public string Type { get; set; }
+        public int Width { get; set; }
+        public bool Locked { get; set; }
+        public bool Visible { get; set; }
+        public int DisplayOrder { get; set; }
+    }
+
+    public class InventoryRowDto
+    {
+        public long ItemID { get; set; }
+        public Dictionary<string, string> Values { get; set; } = new Dictionary<string, string>();
+    }
+
+    public class InventoryAuditDto
+    {
+        public string DateTime { get; set; }
+        public string UserName { get; set; }
+        public int UserType { get; set; }
+        public string Action { get; set; }
+        public string LocationName { get; set; }
+        public string FileName { get; set; }
+        public string Details { get; set; }
+        public string IPAddress { get; set; }
+    }
+
+    public class LocationDto { public long LocationID { get; set; } public string LocationName { get; set; } }
+    public class FacilityDto { public long FacilityID { get; set; } public string FacilityName { get; set; } }
+    public class AreaDto { public long AreaID { get; set; } public string AreaName { get; set; } }
+
+   
+    public class UpdateFileMetadataDto
+    {
+        public long FileID { get; set; }
+        public long LocationID { get; set; }
+        public long? FacilityID { get; set; }
+        public long? AreaID { get; set; }
+        public string Status { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class CustomerBasicDto
+    {
+        public long CustomerId { get; set; }
+        public string CustomerName { get; set; }
+        public string CustomerNAVNo { get; set; }
+        public string CustomerAddress { get; set; }
+    }
+
+    public class InventoryFilterRequest
+    {
+        public string Region { get; set; }
+        public int? ProvinceID { get; set; }
+        public int? CityID { get; set; }
+        public long? LocationID { get; set; }
+        public long? FacilityID { get; set; }
+        public long? AreaID { get; set; }
+        public string Status { get; set; }
+        public string Search { get; set; }
+    }
+    public class InventoryFilterDto
+    {
+        public string Region { get; set; }
+        public int? ProvinceID { get; set; }
+        public int? CityID { get; set; }
+        public long? LocationID { get; set; }
+        public long? FacilityID { get; set; }
+        public long? AreaID { get; set; }
+        public string Status { get; set; }
+        public string Search { get; set; }
+    }
+
+    #endregion
+
+    #region "Account Delete"  
+
+    public class AccountDeletionRequests
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        [MaxLength(200)]
+        public string FullName { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        public string UserName { get; set; }
+
+        [Required]
+        [MaxLength(200)]
+        public string Email { get; set; }
+
+        [MaxLength(1000)]
+        public string Reason { get; set; }
+
+        [Required]
+        public DateTime RequestedDateUtc { get; set; }
+
+        [Required]
+        [MaxLength(30)]
+        public string Status { get; set; } // Pending, Verified, Completed, Rejected
+
+        [MaxLength(45)]
+        public string IpAddress { get; set; }
+
+        public DateTime? ProcessedDateUtc { get; set; }
+
+        [MaxLength(200)]
+        public string ProcessedBy { get; set; }
+    }
+    public class AccountDeletionRequestModel
+    {
+        public string FullName { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string Reason { get; set; }
+        public bool ConfirmDelete { get; set; }
+    }
+    #endregion
+
 }

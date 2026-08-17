@@ -1,0 +1,228 @@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="~/NgScript/Controller/trainingCenterCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg"
+      ng-controller="trainingCenterCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("TrainingCenterRegistration","Admin")">Registrations</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Person Status &amp; Certificate</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+
+        <div ng-if="!registration" class="text-center py-5">
+            <p class="text-sm text-muted">Loading registration...</p>
+        </div>
+
+        <div ng-if="registration">
+
+            <!-- Actions bar -->
+            <div class="row mb-3">
+                <div class="col-12 d-flex justify-content-between">
+                    <a href="@Url.Action("TrainingCenterRegistration","Admin")"
+                       class="btn bg-gradient-secondary btn-sm mb-0">
+                        <i class="material-icons text-sm me-1" style="vertical-align:middle;">arrow_back</i> Back
+                    </a>
+                </div>
+            </div>
+
+            <!-- Registration header info -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card my-4">
+                        <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="pt-4 pb-4">
+                                <h6 class="text-white ps-3 mt-2">Registration Details - {{registration.CustomerName}}</h6>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <table class="table table-bordered table-sm mb-0">
+                                        <tr>
+                                            <td class="text-sm font-weight-bold" style="width:40%;background:#f9f9f9;">Customer</td>
+                                            <td class="text-sm">{{registration.CustomerName}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Email</td>
+                                            <td class="text-sm">{{registration.CustomerEmail}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Phone</td>
+                                            <td class="text-sm">{{registration.CustomerPhone || '-'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Registration Date</td>
+                                            <td class="text-sm">{{registration.RegistrationDateFormatted}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Total</td>
+                                            <td class="text-sm font-weight-bold">{{registration.TotalPriceFormatted}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-sm-6">
+                                    <!-- Update registration status -->
+                                    <p class="text-sm font-weight-bold mb-2">Update Registration Status</p>
+                                    <div class="input-group input-group-outline mb-2">
+                                        <select class="form-control" ng-model="regStatusForm.status">
+                                            <option value="Pending">Pending</option>
+                                            <option value="Confirmed">Confirmed</option>
+                                            <option value="Enrolled">Enrolled</option>
+                                            <option value="Completed">Completed</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group input-group-outline mb-2">
+                                        <textarea class="form-control" ng-model="regStatusForm.notes" rows="2"
+                                                  placeholder="Notes to customer (optional)"></textarea>
+                                    </div>
+                                    <button type="button" class="btn bg-gradient-info btn-sm mb-0"
+                                            ng-click="UpdateRegStatus()">Update Status</button>
+                                    <span class="text-success text-sm ms-2" ng-show="regSuccess">{{regSuccess}}</span>
+                                    <span class="text-danger text-sm ms-2"  ng-show="regError">{{regError}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit person panel -->
+            <div class="row" ng-if="editPerson">
+                <div class="col-12 col-lg-7">
+                    <div class="card my-4">
+                        <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="pt-4 pb-4">
+                                <h6 class="text-white ps-3 mt-2">Update: {{editPerson.ContactName}}</h6>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-3"><span>Course Status</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select class="form-control" ng-model="editPerson.CourseStatus">
+                                            <option value="Incomplete">Incomplete</option>
+                                            <option value="Complete">Complete</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3"><span>Certificate PDF</span></div>
+                                <div class="col-sm-9">
+                                    <input type="file" id="certFile" accept=".pdf,.jpg,.png" class="mb-3" />
+                                    <p class="text-sm text-muted">Upload certificate file (PDF or image).</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3"><span>Certificate Expiry</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <input type="date" class="form-control"
+                                               ng-model="editPerson.CertificateExpiryDate" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-danger text-sm mb-2" ng-show="personError">{{personError}}</div>
+                            <div class="text-success text-sm mb-2" ng-show="personSuccess">{{personSuccess}}</div>
+                            <button type="button" class="btn bg-gradient-info btn-lg mb-0"
+                                    ng-click="SavePersonStatus()" ng-disabled="saving">
+                                <span ng-if="!saving">Save Changes</span>
+                                <span ng-if="saving">Saving...</span>
+                            </button>
+                            <button type="button" class="btn bg-gradient-secondary btn-lg mb-0 ms-2"
+                                    ng-click="CloseEditPerson()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personnel table -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card my-4">
+                        <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="pt-4 pb-4">
+                                <h6 class="text-white ps-3 mt-2">
+                                    Registered Personnel ({{registration.PersonCount}})
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="card-body pb-2">
+                            <div class="table-responsive p-0">
+                                <table class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">#</th>
+                                            <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Name</th>
+                                            <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Email</th>
+                                            <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Course</th>
+                                            <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Price</th>
+                                            <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Status</th>
+                                            <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Certificate</th>
+                                            <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Expiry</th>
+                                            <th class="text-secondary opacity-7"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="p in registration.Persons">
+                                            <td><p class="text-sm mb-0 ps-2">{{$index + 1}}</p></td>
+                                            <td><p class="text-sm font-weight-bold mb-0">{{p.ContactName}}</p></td>
+                                            <td><p class="text-sm mb-0">{{p.ContactEmail}}</p></td>
+                                            <td>
+                                                <span class="badge bg-gradient-dark me-1">{{p.CourseCode}}</span>
+                                                <span class="text-sm">{{p.CourseName}}</span>
+                                            </td>
+                                            <td><p class="text-sm mb-0">{{p.CoursePriceFormatted}}</p></td>
+                                            <td>
+                                                <span class="badge bg-gradient-secondary" ng-if="p.CourseStatus=='Incomplete'">Incomplete</span>
+                                                <span class="badge bg-gradient-success"   ng-if="p.CourseStatus=='Complete'">Complete</span>
+                                            </td>
+                                            <td>
+                                                <a ng-if="p.CertificateFullUrl" href="{{p.CertificateFullUrl}}"
+                                                   target="_blank" class="btn btn-sm bg-gradient-info mb-0 py-1">
+                                                    <i class="material-icons text-sm" style="vertical-align:middle;">download</i>
+                                                </a>
+                                                <span ng-if="!p.CertificateFullUrl" class="text-sm text-muted">-</span>
+                                            </td>
+                                            <td><p class="text-sm mb-0">{{p.CertificateExpiryFormatted || '-'}}</p></td>
+                                            <td class="align-middle">
+                                                <a href="javascript:void(0)" ng-click="OpenEditPerson(p)" title="Update Status">
+                                                    <i class="material-icons text-sm">edit</i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        @Html.Partial("_FooterLayout")
+    </div>
+</main>

@@ -180,7 +180,7 @@
             if (!$scope.customerlogo) {
                 console.log('hhhhhhhh');
                 var config = {
-                    CustomerId: $scope.customer, CustomerName: $scope.customername, CustomerAddress: $scope.customeraddress, CityID: $scope.city, CountryID: $scope.country,
+                    CustomerId: 0, CustomerName: $scope.customername, CustomerAddress: $scope.customeraddress, CityID: $scope.city, CountryID: $scope.country,
                     ProvinceID: $scope.province, Pincode: $scope.pin, CustomerNAVNo: $scope.customerNAVNo,
                     CustomerPhone: $scope.customerPhone, CustomerEmail: $scope.customerEmail, CustomerWebsite: $scope.customerWebsite, CustomerContactName: $scope.customercontactname,
                     user: { UserName: $scope.userName, UserPassword: $scope.password }, SalesRepresentativeId: $scope.salesrepresentativeid
@@ -189,15 +189,14 @@
             else {
                 console.log('hhhiiiii');
                 var config = {
-                    CustomerId: $scope.customer, CustomerName: $scope.customername, CustomerAddress: $scope.customeraddress, CityID: $scope.city, CountryID: $scope.country,
+                    CustomerId:0, CustomerName: $scope.customername, CustomerAddress: $scope.customeraddress, CityID: $scope.city, CountryID: $scope.country,
                     ProvinceID: $scope.province, Pincode: $scope.pin, CustomerNAVNo: $scope.customerNAVNo, CustomerLogo: $scope.customerlogo.filename,
                     CustomerPhone: $scope.customerPhone, CustomerEmail: $scope.customerEmail, CustomerWebsite: $scope.customerWebsite, CustomerContactName: $scope.customercontactname,
                     user: { UserName: $scope.userName, UserPassword: $scope.password }, SalesRepresentativeId: $scope.salesrepresentativeid
                 }
             }
 
-            console.log('AddCustomer', config);
-            return;
+            console.log('AddCustomer', config);            
             Upload.upload({
                 url: '/uploadImagetoLogoFolder',
                 data: {
@@ -458,21 +457,57 @@
             };
 
             // ---- ADD form: facility change ----
+            //$scope.onFacilityChangeAdd = function () {
+            //    var selectedLocIds = ($scope.getCustomerLocationByCustomerId || [])
+            //        .filter(function (l) { return l.selected; })
+            //        .map(function (l) { return l.CustomerLocationID; });
+
+            //    var selectedFacIds = $scope.facilitiesForAdd
+            //        .filter(function (f) { return f.selected; })
+            //        .map(function (f) { return f.CustomerFacilityID; });
+
+            //    $scope.areasForAdd = $scope.allAreas.filter(function (a) {
+            //        return selectedLocIds.indexOf(a.CustomerLocationID) !== -1
+            //            && (a.CustomerFacilityID == 0 || a.CustomerFacilityID == null
+            //                || selectedFacIds.indexOf(a.CustomerFacilityID) !== -1);
+            //    });
+            //    $scope.areasForAdd.forEach(function (a) { a.selected = false; });
+            //};
+
             $scope.onFacilityChangeAdd = function () {
-                var selectedLocIds = ($scope.getCustomerLocationByCustomerId || [])
-                    .filter(function (l) { return l.selected; })
-                    .map(function (l) { return l.CustomerLocationID; });
+                var selectedLocIds =
+                    ($scope.getCustomerLocationByCustomerId || [])
+                        .filter(function (l) {
+                            return l.selected;
+                        })
+                        .map(function (l) {
+                            return l.CustomerLocationID;
+                        });
+                var selectedFacIds =
+                    ($scope.facilitiesForAdd || [])
+                        .filter(function (f) {
+                            return f.selected;
+                        })
+                        .map(function (f) {
+                            return f.CustomerFacilityID;
+                        });
+                $scope.areasForAdd =
+                    ($scope.allAreas || [])
+                        .filter(function (a) {
 
-                var selectedFacIds = $scope.facilitiesForAdd
-                    .filter(function (f) { return f.selected; })
-                    .map(function (f) { return f.CustomerFacilityID; });
-
-                $scope.areasForAdd = $scope.allAreas.filter(function (a) {
-                    return selectedLocIds.indexOf(a.CustomerLocationID) !== -1
-                        && (a.CustomerFacilityID == 0 || a.CustomerFacilityID == null
-                            || selectedFacIds.indexOf(a.CustomerFacilityID) !== -1);
-                });
-                $scope.areasForAdd.forEach(function (a) { a.selected = false; });
+                            return selectedLocIds.indexOf(
+                                a.CustomerLocationID
+                            ) !== -1
+                                &&
+                                (
+                                    a.CustomerFacilityID == 0 || a.CustomerFacilityID == null || selectedFacIds.indexOf(a.CustomerFacilityID) !== -1
+                                );
+                        });
+                $scope.areasForAdd.forEach(
+                    function (a) {
+                        a.selected = false;
+                    }
+                );
             };
 
             // ---- EDIT form: location change ----
@@ -524,22 +559,48 @@
 
             // ---- Save new contact ----
             $scope.SaveLocationContact = function (id) {
-                $scope.GetCheckedLocationIds();
-                $scope.GetCheckedFacilityIds();
-                $scope.GetCheckedAreaIds();
+                console.log('SaveLocationContact.............GET SELECTED VALUES FROM ADD FORM');
+                // =========================================================
+                // GET SELECTED VALUES FROM ADD FORM
+                // =========================================================
+
+                $scope.GetCheckedLocationIdsAdd();
+                $scope.GetCheckedFacilityIdsAdd();
+                $scope.GetCheckedAreaIdsAdd();
+
+
+                // =========================================================
+                // VALIDATION
+                // =========================================================
 
                 if (!$scope.contactName) {
-                    $scope.validationShow = "Enter Contact Name."; return;
+                    $scope.validationShow = "Enter Contact Name.";
+                    return;
                 }
+
                 if (!$scope.contactEmail) {
-                    $scope.validationShow = "Enter Contact Email(UserID)."; return;
+                    $scope.validationShow = "Enter Contact Email(UserID).";
+                    return;
                 }
-                if (!$scope.userPassword) {
-                    $scope.validationShow = "Enter Password."; return;
+
+                //if (!$scope.userPassword) {
+                //    $scope.validationShow = "Enter Password.";
+                //    return;
+                //}
+
+                if (!$scope.checkedLocationIds ||
+                    $scope.checkedLocationIds.length == 0) {
+
+                    $scope.validationShow =
+                        "Select at least one Location.";
+
+                    return;
                 }
-                if (!$scope.checkedLocationIds || $scope.checkedLocationIds.length == 0) {
-                    $scope.validationShow = "Select at least one Location."; return;
-                }
+
+
+                // =========================================================
+                // CONFIG
+                // =========================================================
 
                 var config = {
                     CustomerId: id,
@@ -547,27 +608,154 @@
                     ContactEmail: $scope.contactEmail,
                     ContactPhone: $scope.contactPhone,
                     UserName: $scope.contactEmail,
-                    UserPassword: $scope.userPassword,
+                    UserPassword: '',
                     LocationIds: $scope.checkedLocationIds,
                     FacilityIds: $scope.checkedFacilityIds,
                     AreaIds: $scope.checkedAreaIds
                 };
+                // =========================================================
+                // API
+                // =========================================================
+
+                console.log('SaveLocationContact.............', config);
+
+                //return;
 
                 $http({
                     url: '/api/pageview/saveLocationContactMultiple',
                     method: 'POST',
                     data: config,
-                    headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': $scope.antiForgeryToken }
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken':
+                            $scope.antiForgeryToken
+                    }
+
                 }).then(function (response) {
                     if (response.data == 'Ok') {
                         $window.location.reload();
                     } else {
                         $scope.validationShow = response.data;
                     }
-                }, function (error) { $scope.registermessage = error; });
+                }, function (error) {
+                    $scope.registermessage = error;
+                });
             };
 
-            // ---- Edit click — load contact into edit form ----
+            $scope.GetCheckedLocationIdsAdd = function () {
+
+                var ids = [];
+
+                angular.forEach(
+                    $scope.getCustomerLocationByCustomerId || [],
+                    function (location) {
+
+                        if (location.selected) {
+
+                            ids.push(
+                                location.CustomerLocationID
+                            );
+                        }
+                    }
+                );
+
+                $scope.checkedLocationIds =
+                    ids.join(',');
+            };
+            $scope.GetCheckedFacilityIdsAdd = function () {
+
+                var ids = [];
+
+                angular.forEach(
+                    $scope.facilitiesForAdd || [],
+                    function (facility) {
+
+                        if (facility.selected) {
+
+                            ids.push(
+                                facility.CustomerLocationID +
+                                '_' +
+                                facility.CustomerFacilityID
+                            );
+                        }
+                    }
+                );
+
+                $scope.checkedFacilityIds =
+                    ids.join(',');
+            };
+            $scope.GetCheckedAreaIdsAdd = function () {
+
+                var ids = [];
+
+                angular.forEach(
+                    $scope.areasForAdd || [],
+                    function (area) {
+
+                        if (area.selected) {
+
+                            ids.push(
+                                area.CustomerLocationID +
+                                '_' +
+                                (
+                                    area.CustomerFacilityID ||
+                                    0
+                                ) +
+                                '_' +
+                                area.AreaID
+                            );
+                        }
+                    }
+                );
+
+                $scope.checkedAreaIds =
+                    ids.join(',');
+            };
+            //$scope.SaveLocationContact = function (id) {
+            //    $scope.GetCheckedLocationIds();
+            //    $scope.GetCheckedFacilityIds();
+            //    $scope.GetCheckedAreaIds();
+
+            //    if (!$scope.contactName) {
+            //        $scope.validationShow = "Enter Contact Name."; return;
+            //    }
+            //    if (!$scope.contactEmail) {
+            //        $scope.validationShow = "Enter Contact Email(UserID)."; return;
+            //    }
+            //    if (!$scope.userPassword) {
+            //        $scope.validationShow = "Enter Password."; return;
+            //    }
+            //    if (!$scope.checkedLocationIds || $scope.checkedLocationIds.length == 0) {
+            //        $scope.validationShow = "Select at least one Location."; return;
+            //    }
+
+            //    var config = {
+            //        CustomerId: id,
+            //        ContactName: $scope.contactName,
+            //        ContactEmail: $scope.contactEmail,
+            //        ContactPhone: $scope.contactPhone,
+            //        UserName: $scope.contactEmail,
+            //        UserPassword: $scope.userPassword,
+            //        LocationIds: $scope.checkedLocationIds,
+            //        FacilityIds: $scope.checkedFacilityIds,
+            //        AreaIds: $scope.checkedAreaIds
+            //    };
+
+            //    $http({
+            //        url: '/api/pageview/saveLocationContactMultiple',
+            //        method: 'POST',
+            //        data: config,
+            //        headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': $scope.antiForgeryToken }
+            //    }).then(function (response) {
+            //        if (response.data == 'Ok') {
+            //            $window.location.reload();
+            //        } else {
+            //            $scope.validationShow = response.data;
+            //        }
+            //    }, function (error) { $scope.registermessage = error; });
+            //};
+
+            // ---- Edit click - load contact into edit form ----
             $scope.EditContactClick = function (Id) {
                 $scope.AddContactShow = false;
                 $scope.EditContactShow = true;

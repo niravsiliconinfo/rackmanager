@@ -1,4 +1,4 @@
-// Retrieves the existing 'myApp' module — does NOT re-declare it
+// Retrieves the existing 'myApp' module - does NOT re-declare it
 angular.module('myApp')
     .filter('startFrom', function () {
         return function (input, start) {
@@ -27,7 +27,7 @@ angular.module('myApp')
         $scope.facError = ''; $scope.facSuccess = '';
         $scope.areaError = ''; $scope.areaSuccess = '';
 
-        // ---- Paging — use object to avoid child-scope override issue ----
+        // ---- Paging - use object to avoid child-scope override issue ----
         $scope.locPaging = { current: 1, size: 10 };
         $scope.facPaging = { current: 1, size: 10 };
         $scope.areaPaging = { current: 1, size: 10 };

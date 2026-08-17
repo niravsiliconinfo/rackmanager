@@ -24,7 +24,7 @@
                     <a href="@Url.Action("EditCustomer", "Admin")?id=@Session["CustomerId"]">
                         <i class="fa fa-arrow-left"></i>
                     </a>
-                    <span class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</span>
+                    <span class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</span>
                 </div>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
@@ -165,7 +165,7 @@
                                     <option>50</option>
                                 </select> of {{GetFacilityByLocationIdcount}} Location Facility
                                 <pagination total-items="totalGetFacilityByLocationId" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
-                                            items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
+                                            items-per-page="itemsPerPage" previous-text="<" next-text=">"></pagination>
                             </nav>
 
                         </div>

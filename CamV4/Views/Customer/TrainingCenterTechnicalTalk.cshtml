@@ -1,0 +1,130 @@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="~/NgScript/Controller/trainingCenterCtrl.js"></script>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg"
+      ng-controller="trainingCenterCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index","Customer")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Community Q&amp;A</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                    @*<div class="input-group input-group-outline">
+                        <input type="search" class="form-control" placeholder="Type here..." ng-model="search" id="example-search-input">
+                    </div>*@
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+
+        <!-- ---- ASK A QUESTION ---- -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white ps-3 mt-2">
+                                <i class="material-icons text-sm me-2" style="vertical-align:middle;">help_outline</i>
+                                Ask a Question
+                            </h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-success text-sm" ng-show="questionSent">
+                            <i class="material-icons text-sm me-1" style="vertical-align:middle;">check_circle</i>
+                            Your question has been submitted. Our team will review and publish an answer shortly.
+                        </div>
+                        <div ng-show="!questionSent">
+                            <p class="text-sm text-muted mb-3">
+                                Have a question about pallet racking, inspections, or training? Submit it below and our
+                                engineering team will answer and publish it in the FAQ list.
+                            </p>
+                            <div class="input-group input-group-outline mb-3">
+                                <textarea class="form-control" ng-model="newQuestion" rows="4"
+                                          placeholder="Type your question here..." maxlength="2000"></textarea>
+                            </div>
+                            <div class="text-danger text-sm mb-2" ng-show="questionError">{{questionError}}</div>
+                            <button type="button" class="btn bg-gradient-info btn-lg mb-0"
+                                    ng-click="SubmitQuestion()">
+                                <i class="material-icons text-sm me-1" style="vertical-align:middle;">send</i>
+                                Submit Question
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ---- FAQ LIST ---- -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <h6 class="text-white ps-3 mt-2">
+                                <i class="material-icons text-sm me-2" style="vertical-align:middle;">forum</i>
+                                Frequently Asked Questions
+                            </h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-sm text-muted" ng-if="!talkList || talkList.length == 0">
+                            No published Q&amp;A entries yet. Be the first to submit a question above!
+                        </p>
+                        <div class="accordion" id="faqAccordion">
+                            <div class="accordion-item border mb-2 rounded"
+                                 ng-repeat="t in talkList">
+                                <h2 class="accordion-header" id="faqHead_{{t.TrainingTechnicalTalkID}}">
+                                    <button class="accordion-button collapsed text-sm font-weight-bold"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#faqBody_{{t.TrainingTechnicalTalkID}}"
+                                            aria-expanded="false">
+                                        <i class="material-icons text-info text-sm me-2" style="vertical-align:middle;">question_answer</i>
+                                        {{t.Question}}
+                                    </button>
+                                </h2>
+                                <div id="faqBody_{{t.TrainingTechnicalTalkID}}"
+                                     class="accordion-collapse collapse" style="background-image: linear-gradient(195deg, #63656a 0%, #495361 100%); color: #ffffff;"
+                                     data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body text-sm" style="padding: 15px;">
+                                        @*<i class="material-icons text-success text-sm me-1" style="vertical-align:top;">check_circle</i>*@                                        
+                                        A. {{t.Answer}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @Html.Partial("_FooterLayout")
+    </div>
+</main>

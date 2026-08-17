@@ -52,7 +52,7 @@
         console.log('-----------incidentListCtrl--------------');
         $scope.getAllIncidentByCustomerId = [];
 
-        $scope.incidentFilter = sharedFilterService.getIncidentFilter() || {};
+        $scope.incidentFilter = sharedFilterService.getIncidentFilters() || {};
 
         $scope.viewby = '50';
         $scope.currentPage = '1';
@@ -73,7 +73,7 @@
 
         function init() {
                         
-            var incident = sharedFilterService.getIncidentFilter();
+            var incident = sharedFilterService.getIncidentFilters();
 
             if (window.location.pathname == "/Customer/IncidentReport") {
                 //loadDueInspections();
@@ -91,6 +91,18 @@
                 loadIncidentAdminList();
             } 
         }
+
+        //$scope.$on(
+        //    'incidentFiltersUpdated',
+        //    function (event, filters) {
+        //        loadIncidents(filters);
+        //    });
+        $scope.$on(
+            'incidentFiltersUpdated',
+            function (event, filters) {
+                console.log('incidentFiltersUpdated received', filters);
+                loadIncident(filters);  // Your load function
+            });
 
         function loadIncidentAdminList()
         {
@@ -133,12 +145,12 @@
             loadIncident();
         };
 
-        $rootScope.$on('incidentFilterUpdated', function () {
-            console.error("Load function when click on button for incidentFilterUpdated");
-            const filters = sharedFilterService.getIncidentFilter();
-            console.error("Load function when click on button for incidentFilterUpdated");
-            loadIncident(filters);
-        });       
+        //$rootScope.$on('incidentFilterUpdated', function () {
+        //    console.error("Load function when click on button for incidentFilterUpdated");
+        //    const filters = sharedFilterService.getIncidentFilters();
+        //    console.error("Load function when click on button for incidentFilterUpdated");
+        //    loadIncident(filters);
+        //});       
        
 
         $http.get('/api/pageview/getAllIncidentByCustomerId').then(function (response) {

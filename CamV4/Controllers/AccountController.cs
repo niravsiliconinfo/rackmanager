@@ -32,6 +32,13 @@ namespace CamV4.Controllers
             return View();
         }
 
+        [Route("account-deletion")]
+        [AllowAnonymous]
+        public ActionResult AccountDeletion()
+        {
+            return View();
+        }
+
         // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login()
@@ -56,6 +63,7 @@ namespace CamV4.Controllers
             Session.Remove("LoggedInUserId");
             Session.Remove("LoggedInUserName");
             Session.Remove("LoggedInUserType");
+            Session.Remove("LoggedInUserFullName");
             //ViewBag.Title = ConfigurationManager.AppSettings["PageTitle"];
             return View();
         }
@@ -81,17 +89,52 @@ namespace CamV4.Controllers
                     if (user.UserType == 9)
                     {
                         Session["LoggedInUserId"] = user.UserId;
+                        Session["LoggedInUserName"] = user.UserName;
                         var customerContact = db.CustomerLocationContacts.Where(y => y.UserID == user.UserId).FirstOrDefault();
                         if (customerContact != null)
                         {
-                            Session["LoggedInUserName"] = customerContact.ContactName;
+                            Session["LoggedInUserName"] = user.UserName;
                             Session["LoggedInUserType"] = user.UserType;
+                            Session["LoggedInUserFullName"] = customerContact.ContactName;
+                        }
+                    }
+                    else if (user.UserType == 4)
+                    {
+                        Session["LoggedInUserId"] = user.UserId;
+                        Session["LoggedInUserName"] = user.UserName;
+                        var customerContact = db.Customers.Where(y => y.UserID == user.UserId).FirstOrDefault();
+                        if (customerContact != null)
+                        {
+                            Session["LoggedInUserName"] = user.UserName;
+                            Session["LoggedInUserType"] = user.UserType;
+
+                            Session["LoggedInUserFullName"] = string.IsNullOrWhiteSpace(customerContact.CustomerContactName)
+                                ? user.UserName
+                                : customerContact.CustomerContactName;
+                        }
+                        else
+                        {
+                            Session["LoggedInUserName"] = user.UserName;
+                            Session["LoggedInUserType"] = user.UserType;
+                            Session["LoggedInUserFullName"] = user.UserName;
                         }
                     }
                     else
                     {
+                        var EmployeeInformation = db.Employees.Where(y => y.UserID == user.UserId).FirstOrDefault();
+                        if (EmployeeInformation != null)
+                        {
+
+                            //Session["LoggedInUserName"] = EmployeeInformation.EmployeeName;
+                            Session["LoggedInUserName"] = user.UserName;
+                            Session["LoggedInUserFullName"] = EmployeeInformation.EmployeeName;
+                        }
+                        else
+                        {
+                            Session["LoggedInUserName"] = user.UserName;
+                            Session["LoggedInUserFullName"] = user.UserName;
+                        }
                         Session["LoggedInUserId"] = user.UserId;
-                        Session["LoggedInUserName"] = user.UserName;
                         Session["LoggedInUserType"] = user.UserType;
                     }
                     if (model.RememberMe)
@@ -105,11 +148,12 @@ namespace CamV4.Controllers
 
                     if (user.UserType == 1 || user.UserType == 6 || user.UserType == 3 || user.UserType == 5)
                     {
-                        var emp =  DatabaseHelper.getUserEmployeeByUserId(user.UserId);
-                        if (emp != null) 
+                        var emp = DatabaseHelper.getUserEmployeeByUserId(user.UserId);
+                        if (emp != null)
                         {
                             Session["EmployeeID"] = emp.EmployeeID;
                             Session["EmployeeName"] = emp.EmployeeName;
+                            Session["LoggedInUserFullName"] = emp.EmployeeName;
                         }
                         return RedirectToAction("Index", "Admin");
                     }
@@ -120,6 +164,7 @@ namespace CamV4.Controllers
                         {
                             Session["EmployeeID"] = emp.EmployeeID;
                             Session["EmployeeName"] = emp.EmployeeName;
+                            Session["LoggedInUserFullName"] = emp.EmployeeName;
                         }
                         Session["LoggedInUserId"] = user.UserId;
                         return RedirectToAction("Index", "Employee");
@@ -1401,7 +1446,7 @@ namespace CamV4.Controllers
             if (ModelState.IsValid)
             {
                 //var _se = DatabaseHelper.GetEmailInformation();
-                
+
                 try
                 {
                     //FileContentResult attachmentFile = null;                    
@@ -1414,20 +1459,20 @@ namespace CamV4.Controllers
 
                         List<string> strCCEmailslist = new List<string>();
                         List<string> toCustContact = new List<string>();
-                        strCCEmailslist.Add(iDetails.empModel.EmployeeEmail);                        
+                        strCCEmailslist.Add(iDetails.empModel.EmployeeEmail);
                         strCCEmailslist.Add("b.trivedi@camindustrial.net");
-                        List<EmployeeViewModel> objPMList = new List<EmployeeViewModel>();
-                        objPMList = DatabaseHelper.GetAllProjectManager();
-                        if (objPMList != null && objPMList.Count != 0)
-                        {
-                            foreach (var pm in objPMList)
-                            {
-                                if (!string.IsNullOrWhiteSpace(pm.EmployeeEmail))
-                                {
-                                    strCCEmailslist.Add(pm.EmployeeEmail);
-                                }
-                            }
-                        }
+                        //List<EmployeeViewModel> objPMList = new List<EmployeeViewModel>();
+                        //objPMList = DatabaseHelper.GetAllProjectManager();
+                        //if (objPMList != null && objPMList.Count != 0)
+                        //{
+                        //    foreach (var pm in objPMList)
+                        //    {
+                        //        if (!string.IsNullOrWhiteSpace(pm.EmployeeEmail))
+                        //        {
+                        //            strCCEmailslist.Add(pm.EmployeeEmail);
+                        //        }
+                        //    }
+                        //}
                         //strCCEmailslist.Add("nirav.m@siliconinfo.com");
 
                         List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
@@ -1500,7 +1545,12 @@ namespace CamV4.Controllers
                         strMSG += "<br/>";
                         strMSG += "<br/>";
                         strMSG += "<p>We hope this message finds you well.</p>";
-                        strMSG += "<p>We are pleased to inform you that the racking inspection report is now available on the Rack Auditor platform <a href='https://rack-manager.com/'>(rack-manager.com)</a> for your review.</p>";
+                        strMSG += "<p>We are pleased to inform you that the racking inspection report for below location is now available on the Rack Manager platform <a href='https://rack-manager.com/'>(rack-manager.com)</a> for your review.</p>";
+                        strMSG += "<p> - " + iDetails.CustomerLocation
+                                    + (string.IsNullOrWhiteSpace(iDetails.CustomerFacility) ? "" : "/" + iDetails.CustomerFacility)
+                                    + (string.IsNullOrWhiteSpace(iDetails.CustomerArea) ? "" : "/" + iDetails.CustomerArea)
+                                + "</p>";
+                        //strMSG += "<p>We are pleased to inform you that the racking inspection report is now available on the Rack Manager platform <a href='https://rack-manager.com/'>(rack-manager.com)</a> for your review.</p>";
                         strMSG += "<p>The outcome of the inspection, and the detailed findings are now documented in the report. We understand the importance of this report in providing valuable insights into the condition and any necessary actions regarding the pallet racking.</p>";
                         strMSG += "<p>Additionally, you can access the deficiency list and select red and/or yellow deficiencies that you would like us to provide repair/replace quotation.</p>";
                         strMSG += "<br/>";
@@ -1518,30 +1568,65 @@ namespace CamV4.Controllers
                         strMSG += "<p>Should you have any questions or require further clarification on any aspect of the report, please do not hesitate to reach out to us. Our team is available to discuss the findings and provide any assistance you may need.</p>";
                         strMSG += "<br/>";
                         strMSG += "<div><div></div></div><br/><br/><div><div>";
-                        strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7b7b7b' lang='EN-US'>Best regards,</span></p>";
-                        strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>Bhavik Trivedi </span></b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'> P.Eng, M.Tech, PMP</span></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Engineering Manager</span></b></p>";
-                        strMSG += "<br/>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>cam|</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>industrial</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>20 7095 64 Street SE |";
-                        strMSG += "</span></b><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Calgary, AB, T2C 5C3</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                        strMSG += "<br/>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='ES'>E ~ &nbsp;</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#454545' lang='EN-US'>";
-                        strMSG += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank'><span lang='ES'>b.trivedi@camindustrial.net</span></a></span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='ES'>C ~</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='ES'>(403) 690-2976</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>D ~</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'> (587) 355-1346</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>F ~</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 720-7074</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                        strMSG += "<p><span><img style='width:2.618in;height:.6458in'";
-                        strMSG += "src='https://rack-manager.com/img/sigimg.png' alt='sig' data-image-whitelisted=''";
-                        strMSG += "class='CToWUd' data-bit='iit' width='251' height='62' border='0'></span></p>";
+                        strMSG += "<table cellpadding='0' cellspacing='0' border='0' style='border-collapse:collapse; font-family:Verdana, sans-serif;'>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:10px 0 10px 0;'>";
+                        strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#7b7b7b; font-weight:bold;'>Best regards,</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 1px 0;'>";
+                        strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>Bhavik Trivedi </span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab;'>P.Eng, ing., M.Tech, PMP</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 18px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Engineering Manager</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>cam</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'> | industrial</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 12px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>20 7095 64 Street SE | </span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Calgary, AB, T2C 5C3</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>E&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank' style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold; text-decoration:underline;'>b.trivedi@camindustrial.net</a>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>C&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 690-2976</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>D&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(587) 355-1346</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 10px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>F&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 720-7074</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0;'>";
+                        strMSG += "<img src='https://rack-manager.com/img/sigimg.png' alt='cam industrial' width='251' height='62' border='0' style='display:block; width:251px; height:62px;'>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "</table>";
                         strMSG += "</div>";
                         strMSG += "</div>";
                         strMSG += "</div>";

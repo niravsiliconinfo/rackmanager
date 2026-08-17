@@ -14,6 +14,12 @@ namespace CamV4.Models
     
     public partial class CustomerLocationContact
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public CustomerLocationContact()
+        {
+            this.CustomersLocationsUserAreas = new HashSet<CustomersLocationsUserArea>();
+        }
+    
         public long LocationContactId { get; set; }
         public long CustomerId { get; set; }
         public long CustomerLocationID { get; set; }
@@ -26,5 +32,8 @@ namespace CamV4.Models
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CustomersLocationsUserArea> CustomersLocationsUserAreas { get; set; }
     }
 }

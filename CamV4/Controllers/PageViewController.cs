@@ -1,5 +1,7 @@
 ﻿using CamV4.Helper;
 using CamV4.Models;
+using ClosedXML.Excel;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ using System.Web.Http.Results;
 
 namespace CamV4.Controllers
 {
+
     [RoutePrefix("api/pageview")]
     public class PageViewController : ApiController
     {
@@ -28,6 +31,30 @@ namespace CamV4.Controllers
         {
             var user = DatabaseHelper.mobilelogin(model);
             return user;
+        }
+        private long GetCurrentUserId()
+        {
+            return Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+        }
+      
+        private int GetCurrentUserType()
+        {
+            return Convert.ToInt32(HttpContext.Current.Session["LoggedInUserType"]);
+        }
+
+        private string GetCurrentUserName()
+        {
+            return HttpContext.Current.Session["LoggedInUserName"] as string ?? "SYSTEM";
+        }
+
+        private string GetClientIp()
+        {
+            return HttpContext.Current.Request.UserHostAddress;
+        }
+
+        private bool IsInternal()
+        {
+            return DatabaseHelper.IsInternalStaff(GetCurrentUserType());
         }
 
         //var details = DatabaseHelper.getAllCustomers();
@@ -332,6 +359,36 @@ namespace CamV4.Controllers
             return details;
         }
 
+        [Route("getFacilityByCustomerMenu")]
+        [HttpGet]
+        public async Task<List<CustomerFacility>> GetFacilityByCustomerMenu()
+        {
+            var details = DatabaseHelper.GetFacilityByCustomer();
+            return details;
+        }
+
+        [HttpGet]
+        [Route("GetCustomerDashboardData")]
+        public IHttpActionResult GetCustomerDashboardData(int year, long? locationId = null, long? facilityId = null)
+        {
+            try
+            {
+                if (year < 2000 || year > 2100)
+                    return BadRequest("Invalid year supplied.");
+
+                var result = DatabaseHelper.GetDashboardData(year, locationId, facilityId);
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
         [Route("getAreaByCustomer")]
         [HttpGet]
         public async Task<List<CustomerArea>> GetAreaByCustomer()
@@ -432,7 +489,7 @@ namespace CamV4.Controllers
         [HttpGet]
         public async Task<Customer> GetCustomerById(int id)
         {
-            var details = DatabaseHelper.getCustomerById(id);
+            var details = DatabaseHelper.getCustomerPVById(id);
             return details;
         }
 
@@ -512,7 +569,7 @@ namespace CamV4.Controllers
         #region "For Customer user with location facility and area"
 
         // ---- 1. Load contact grid ----
-        // JS: /api/pageview/getLocationContactDetailsByCustomerId?CustomerId=123
+        // JS: /getLocationContactDetailsByCustomerId?CustomerId=123
         [Route("getLocationContactDetailsByCustomerId")]
         [HttpGet]
         public List<CustomerLocationContactViewModel> GetLocationContactDetailsByCustomerId(long CustomerId)
@@ -521,7 +578,7 @@ namespace CamV4.Controllers
         }
 
         // ---- 2. Load single contact for edit ----
-        // JS: /api/pageview/getLocationContactUserDetailsById?id=456
+        // JS: /getLocationContactUserDetailsById?id=456
         [Route("getLocationContactUserDetailsById")]
         [HttpGet]
         public CustomerLocationContactViewModel GetLocationContactUserDetailsById(long id)
@@ -530,7 +587,7 @@ namespace CamV4.Controllers
         }
 
         // ---- 3. Save new contact (Add form) ----
-        // JS: POST /api/pageview/saveLocationContactMultiple
+        // JS: POST /saveLocationContactMultiple
         [Route("saveLocationContactMultiple")]
         [HttpPost]
         public async Task<string> SaveLocationContactMultiple(CustomerLocationContactViewModel model)
@@ -539,7 +596,7 @@ namespace CamV4.Controllers
         }
 
         // ---- 4. Update existing contact (Edit form) ----
-        // JS: POST /api/pageview/editLocationContactMultiple
+        // JS: POST /editLocationContactMultiple
         [Route("editLocationContactMultiple")]
         [HttpPost]
         public async Task<string> EditLocationContactMultiple(CustomerLocationContactViewModel model)
@@ -548,7 +605,7 @@ namespace CamV4.Controllers
         }
 
         // ---- 5. Soft delete contact ----
-        // JS: POST /api/pageview/removeLocationContact?id=456
+        // JS: POST /removeLocationContact?id=456
         [Route("removeLocationContact")]
         [HttpPost]
         public string RemoveLocationContact(long id)
@@ -557,8 +614,8 @@ namespace CamV4.Controllers
         }
 
         // ---- 6. Load location checklist for Add/Edit forms ----
-        // JS: /api/pageview/getCustomerLocationByCustomerId?id=123
-        // Already exists — confirm it returns LocationName, CustomerLocationID, City fields
+        // JS: /getCustomerLocationByCustomerId?id=123
+        // Already exists - confirm it returns LocationName, CustomerLocationID, City fields
         [Route("getCustomerLocationByCustomerId")]
         [HttpGet]
         public List<CustomerLocationViewModel> GetCustomerLocationByCustomerId(long id)
@@ -567,7 +624,7 @@ namespace CamV4.Controllers
         }
 
         // ---- 7. Load facility checklist for Add/Edit forms ----
-        // JS: /api/pageview/getCustomerFacilityByCustomerId?id=123
+        // JS: /getCustomerFacilityByCustomerId?id=123
         [Route("getCustomerFacilityByCustomerId")]
         [HttpGet]
         public List<CustomerFacilityViewModel> GetCustomerFacilityByCustomerId(long id)
@@ -576,7 +633,7 @@ namespace CamV4.Controllers
         }
 
         // ---- 8. Load area checklist for Add/Edit forms ----
-        // JS: /api/pageview/getCustomerAreaByCustomerId?id=123
+        // JS: /getCustomerAreaByCustomerId?id=123
         [Route("getCustomerAreaByCustomerId")]
         [HttpGet]
         public List<CustomerAreaViewModel> GetCustomerAreaByCustomerId(long id)
@@ -675,6 +732,15 @@ namespace CamV4.Controllers
             return details;
         }
 
+        [Route("getAreaDetailsByFacilityId")]
+        [HttpGet]
+        public async Task<List<CustomerAreaViewModel>> GetAreaDetailsByFacilityId(int id)
+        {
+            var details = DatabaseHelper.getAreaDetailsByFacilityId(id);
+            return details;
+        }
+
+
         [Route("getFacilityByLocationId")]
         [HttpGet]
         public async Task<List<CustomerFacilityViewModel>> GetFacilityByLocationId(int id)
@@ -758,7 +824,7 @@ namespace CamV4.Controllers
         {
             List<CustomerLocationContactViewModel> customerlocationcontactlist = DatabaseHelper.getLocationContactDetailsByLocationId();
             return customerlocationcontactlist;
-        }
+        }        
 
         [Route("getLocationContactByCustomer")]
         [HttpGet]
@@ -889,7 +955,7 @@ namespace CamV4.Controllers
             }
         }
 
-        // POST api/pageview/SaveCustomerLocation
+        // POST SaveCustomerLocation
         [HttpPost]
         [Route("SaveCustomerLocation")]
         public IHttpActionResult SaveCustomerLocation(CustomerLocation model)
@@ -909,7 +975,7 @@ namespace CamV4.Controllers
             }
         }
 
-        // POST api/pageview/DeleteCustomerLocation
+        // POST DeleteCustomerLocation
         [HttpPost]
         [Route("DeleteCustomerLocation")]
         public IHttpActionResult DeleteCustomerLocation([FromBody] IdModel model)
@@ -926,7 +992,7 @@ namespace CamV4.Controllers
             }
         }
 
-        // POST api/pageview/SaveCustomerFacility
+        // POST SaveCustomerFacility
         [HttpPost]
         [Route("SaveCustomerFacility")]
         public IHttpActionResult SaveCustomerFacility(CustomerFacility model)
@@ -948,7 +1014,7 @@ namespace CamV4.Controllers
             }
         }
 
-        // POST api/pageview/DeleteCustomerFacility
+        // POST DeleteCustomerFacility
         [HttpPost]
         [Route("DeleteCustomerFacility")]
         public IHttpActionResult DeleteCustomerFacility([FromBody] IdModel model)
@@ -965,7 +1031,7 @@ namespace CamV4.Controllers
             }
         }
 
-        // POST api/pageview/SaveCustomerArea
+        // POST SaveCustomerArea
         [HttpPost]
         [Route("SaveCustomerArea")]
         public IHttpActionResult SaveCustomerArea(CustomerArea model)
@@ -987,7 +1053,7 @@ namespace CamV4.Controllers
             }
         }
 
-        // POST api/pageview/DeleteCustomerArea
+        // POST DeleteCustomerArea
         [HttpPost]
         [Route("DeleteCustomerArea")]
         public IHttpActionResult DeleteCustomerArea([FromBody] IdModel model)
@@ -1127,10 +1193,10 @@ namespace CamV4.Controllers
             {
                 return "Invalid data";
             }
-
             model.IsShelvingChecklist = model.IsShelvingChecklist ?? false; // Ensure default value
-            db.ProcessOverviews.Add(model);
-            await db.SaveChangesAsync();
+            string stroutput = DatabaseHelper.saveProcessOverview(model);            
+            //db.ProcessOverviews.Add(model);
+            //await db.SaveChangesAsync();
             return "Ok";
         }
 
@@ -1151,7 +1217,8 @@ namespace CamV4.Controllers
 
             existing.ProcessOverviewDesc = model.ProcessOverviewDesc;
             existing.IsShelvingChecklist = model.IsShelvingChecklist;
-            await db.SaveChangesAsync();
+            string stroutput = DatabaseHelper.editProcessOverview(model);
+            //await db.SaveChangesAsync();
             return "Ok";
         }
 
@@ -1658,6 +1725,33 @@ namespace CamV4.Controllers
             }
         }
 
+        // ---- Update Incident Report Status (Admin) ----
+        [Route("updateIncidentStatus")]
+        [HttpPost]
+        public IHttpActionResult UpdateIncidentStatus([FromBody] UpdateIncidentStatusRequest request)
+        {
+            try
+            {
+                if (request == null || request.id == 0)
+                    return Ok(new { success = false, message = "Invalid request." });
+
+                var result = DatabaseHelper.UpdateIncidentReportStatus(request.id, request.status);
+                if (result)
+                    return Ok(new { success = true });
+                else
+                    return Ok(new { success = false, message = "Incident not found or could not be updated." });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { success = false, message = ex.Message });
+            }
+        }
+
+        public class UpdateIncidentStatusRequest
+        {
+            public long id { get; set; }
+            public string status { get; set; }
+        }
         [Route("getIncidentReportById")]
         [HttpGet]
         public IHttpActionResult GetIncidentReportById(int id)
@@ -1868,6 +1962,22 @@ namespace CamV4.Controllers
             return details;
         }
 
+        [Route("getInspectionListingForMobile")]
+        [HttpGet]
+        public async Task<List<InspectionViewModel>> GetInspectionListingForMobile(long customerId, long customerLocationId, string inspectionType, long? customerFacilityId = null, bool bForTech = false)
+        {
+            var details = DatabaseHelper.GetInspectionListingForMobile(inspectionType, customerId, customerLocationId, customerFacilityId, bForTech);
+            return details;
+        }
+
+        [Route("getInspectionDetailsByLocationIdFacilityId")]
+        [HttpGet]
+        public async Task<List<InspectionViewModel>> GetInspectionDetailsByLocationIdFacilityID(int CustomerId, int CustomerLocationId, int CustomerFacilityId, bool bForTech = false)
+        {
+            var details = DatabaseHelper.GetInspectionDetailsByLocationIdFacilityID(CustomerId, CustomerLocationId, CustomerFacilityId, bForTech);
+            return details;
+        }
+
         [Route("getInspectionDetailsByLocationIdAreaId")]
         [HttpGet]
         public async Task<List<InspectionViewModel>> GetInspectionDetailsByLocationIdAreaId(int CustomerId, int CustomerLocationId, int AreaId, bool bForTech = false)
@@ -2041,7 +2151,7 @@ namespace CamV4.Controllers
 
         [Route("SaveUpdateApproveInspectionAdmin")]
         [HttpPost]
-        public async Task<string> SaveUpdateApproveInspectionAdmin(long inspectionId, int iInspectionStatus, string iAdminIspectionDeficiencyIdStatus, long iStampingEngineerId, string sCheckedDocument, string ShelvingChecklistComments ="")
+        public async Task<string> SaveUpdateApproveInspectionAdmin(long inspectionId, int iInspectionStatus, string iAdminIspectionDeficiencyIdStatus, long iStampingEngineerId, string sCheckedDocument, string ShelvingChecklistComments = "")
         {
             var details = DatabaseHelper.SaveUpdateApproveInspectionAdmin(inspectionId, iInspectionStatus, iAdminIspectionDeficiencyIdStatus, iStampingEngineerId, sCheckedDocument, ShelvingChecklistComments);
             return details;
@@ -2615,6 +2725,7 @@ namespace CamV4.Controllers
             return details;
         }
 
+        [AllowAnonymous]
         [Route("getInspectionCountGraphByYear")]
         [HttpGet]
         public async Task<List<InsepctionCount_Graph>> GetInspectionCountGraphByYear(int year)
@@ -2622,6 +2733,7 @@ namespace CamV4.Controllers
             var lstInspectionCount = DatabaseHelper.getInspectionCountGraphByYear(0, year);
             return lstInspectionCount;
         }
+
 
         [Route("getInspectionCountGraphByYearMobile")]
         [HttpGet]
@@ -2678,7 +2790,7 @@ namespace CamV4.Controllers
             var lstInspectionCount = DatabaseHelper.GetDeficienciesTrendFromPreviousYearsForCustomerLocation(customerLocationid);
             return lstInspectionCount;
         }
-
+        [AllowAnonymous]
         [Route("getDoneEmpInspectionCountByYear")]
         [HttpGet]
         public async Task<List<sp_getEmpInspection_Count_New_Result>> GetDoneEmpInspectionCountByYear(int year)
@@ -2687,6 +2799,7 @@ namespace CamV4.Controllers
             return details;
         }
 
+        [AllowAnonymous]
         [Route("getApprovedInspectionCountByYear")]
         [HttpGet]
         public async Task<List<sp_getApprovedInspection_Count_New_Result>> GetApprovedInspectionCountByYear(int year)
@@ -2695,12 +2808,22 @@ namespace CamV4.Controllers
             return details;
         }
 
+        [AllowAnonymous]
         [Route("getDashboardCountByYear")]
         [HttpGet]
         public async Task<AdminDashboardGraphViewModel> GetDashboardCountByYear(int year)
         {
             AdminDashboardGraphViewModel graph = new AdminDashboardGraphViewModel();
-            graph = DatabaseHelper.GetDashboardCountByYear(year);
+            Int32 userId = Convert.ToInt32(HttpContext.Current.Session["LoggedInUserId"]);
+            Int32 userTypeId = Convert.ToInt32(HttpContext.Current.Session["LoggedInUserType"]);
+            if (Convert.ToInt32(HttpContext.Current.Session["LoggedInUserType"]) == 1)
+            {
+                graph = DatabaseHelper.GetDashboardCountByYear(year, 0, userTypeId);
+            }
+            else 
+            {
+                graph = DatabaseHelper.GetDashboardCountByYear(year, userId, userTypeId);
+            }
             return graph;
         }
 
@@ -3574,19 +3697,67 @@ namespace CamV4.Controllers
         }
 
         // ============================================================
-        // PageViewController - Internal Inspection Module
-        // Endpoints only — no business logic
-        // ============================================================
-
-        // ============================================================
-        // PageViewController - Internal Inspection Module
-        // Endpoints only — no business logic
+        // PageViewController - Internal Inspection Module v4
+        // Fixed: supports both customer admin (UserType 4) and
+        //        customer contact users (UserType 9)
         // ============================================================
 
         #region "Internal Inspection"
 
-        // ---- 1. Get all inspections for a customer (Customer listing page) ----
-        // JS: GET /api/pageview/getInternalInspectionsByCustomerId?customerId=123
+        private long II_ResolveCustomerIdFromSession()
+        {
+            var userIdObj = HttpContext.Current.Session["LoggedInUserId"];
+            if (userIdObj == null) return 0;
+            long userId = Convert.ToInt64(userIdObj);
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                var customer = db.Customers.FirstOrDefault(x => x.UserID == userId);
+                if (customer != null) return customer.CustomerId;
+                var contact = db.CustomerLocationContacts.FirstOrDefault(x => x.UserID == userId && x.IsActive == true);
+                if (contact != null) return contact.CustomerId;
+                return 0;
+            }
+        }
+
+        // ---- 1. Hierarchy for current customer (session, all user types) ----
+        [Route("getMyCustomerHierarchy")]
+        [HttpGet]
+        public IHttpActionResult GetMyCustomerHierarchy()
+        {
+            try
+            {
+                long customerId = II_ResolveCustomerIdFromSession();
+                if (customerId == 0) return Unauthorized();
+                var result = new
+                {
+                    Locations = DatabaseHelper.GetCustomerLocations(customerId),
+                    Facilities = DatabaseHelper.GetCustomerFacilities(customerId),
+                    Areas = DatabaseHelper.GetCustomerAreas(customerId)
+                };
+                return Ok(result);
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // ---- 2. My inspections (session-resolved, with optional filters) ----
+        [Route("getMyInternalInspections")]
+        [HttpGet]
+        public IHttpActionResult GetMyInternalInspections(
+            long? CustomerLocationID = null,
+            long? CustomerFacilityID = null,
+            long? CustomerAreaID = null,
+            string Region = null)
+        {
+            try
+            {
+                var result = DatabaseHelper.GetInternalInspectionsByCurrentCustomer(
+                    CustomerLocationID, CustomerFacilityID, CustomerAreaID, Region);
+                return Ok(result ?? new List<InternalInspectionViewModel>());
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // ---- 3. Inspections by customerId (admin/engineer) ----
         [Route("getInternalInspectionsByCustomerId")]
         [HttpGet]
         public IHttpActionResult GetInternalInspectionsByCustomerId(long customerId)
@@ -3594,33 +3765,12 @@ namespace CamV4.Controllers
             try
             {
                 var result = DatabaseHelper.GetInternalInspectionsByCustomerId(customerId);
-                return Ok(result);
+                return Ok(result ?? new List<InternalInspectionViewModel>());
             }
             catch (Exception ex) { return InternalServerError(ex); }
         }
 
-        // ---- 1b. Get inspections for currently logged-in customer (session-resolved) ----
-        // JS: GET /api/pageview/getMyInternalInspections
-        // Optional filter params: CustomerLocationID, CustomerFacilityID, AreaID, Region
-        [Route("getMyInternalInspections")]
-        [HttpGet]
-        public IHttpActionResult GetMyInternalInspections(
-            long? CustomerLocationID = null,
-            long? CustomerFacilityID = null,
-            long? AreaID = null,
-            string Region = null)
-        {
-            try
-            {
-                var result = DatabaseHelper.GetInternalInspectionsByCurrentCustomer(
-                    CustomerLocationID, CustomerFacilityID, AreaID, Region);
-                return Ok(result);
-            }
-            catch (Exception ex) { return InternalServerError(ex); }
-        }
-
-        // ---- 2. Get all inspections for Admin/Employee (with filters) ----
-        // JS: POST /api/pageview/getInternalInspectionsForAdmin
+        // ---- 4. Admin full filter ----
         [Route("getInternalInspectionsForAdmin")]
         [HttpPost]
         public IHttpActionResult GetInternalInspectionsForAdmin(InternalInspectionSearchViewModel filter)
@@ -3628,13 +3778,12 @@ namespace CamV4.Controllers
             try
             {
                 var result = DatabaseHelper.GetInternalInspectionsForAdmin(filter);
-                return Ok(result);
+                return Ok(result ?? new List<InternalInspectionViewModel>());
             }
             catch (Exception ex) { return InternalServerError(ex); }
         }
 
-        // ---- 3. Get single inspection detail (View page) ----
-        // JS: GET /api/pageview/getInternalInspectionById?id=456
+        // ---- 5. Single inspection detail ----
         [Route("getInternalInspectionById")]
         [HttpGet]
         public IHttpActionResult GetInternalInspectionById(long id)
@@ -3648,37 +3797,35 @@ namespace CamV4.Controllers
             catch (Exception ex) { return InternalServerError(ex); }
         }
 
-        // ---- 4. Save new or update existing inspection ----
-        // JS: POST /api/pageview/saveInternalInspection
+        // ---- 6. Save (multipart/form-data) ----
         [Route("saveInternalInspection")]
         [HttpPost]
-        public IHttpActionResult SaveInternalInspection(SaveInternalInspectionViewModel model)
+        public async Task<IHttpActionResult> SaveInternalInspection()
         {
             try
             {
-                var result = DatabaseHelper.SaveInternalInspection(model);
-                return Ok(result);
+                var idStr = DatabaseHelper.SaveInternalInspection();
+                if (idStr != null && idStr.StartsWith("Error:", StringComparison.OrdinalIgnoreCase))
+                    return Ok(new { success = false, message = idStr });
+                return Ok(new { success = true, id = idStr });
+            }
+            catch (Exception ex) { return Ok(new { success = false, message = ex.Message }); }
+        }
+
+        // ---- 7. Get PDF HTML (for server-side PDF generation) ----
+        [Route("getInternalInspectionPdfHtml")]
+        [HttpGet]
+        public IHttpActionResult GetInternalInspectionPdfHtml(long id)
+        {
+            try
+            {
+                var html = DatabaseHelper.GetInternalInspectionPdfHtml(id);
+                return Ok(new { html = html });
             }
             catch (Exception ex) { return InternalServerError(ex); }
         }
 
-        // ---- 5. Upload photos for an inspection ----
-        // JS: POST /api/pageview/saveInternalInspectionPhotos
-        // Accepts multipart/form-data — file handling logic lives in DatabaseHelper
-        [Route("saveInternalInspectionPhotos")]
-        [HttpPost]
-        public async Task<IHttpActionResult> SaveInternalInspectionPhotos()
-        {
-            try
-            {
-                var result = await DatabaseHelper.SaveInternalInspectionPhotos(Request);
-                return Ok(result);
-            }
-            catch (Exception ex) { return InternalServerError(ex); }
-        }
-
-        // ---- 6. Soft delete an inspection ----
-        // JS: POST /api/pageview/deleteInternalInspection
+        // ---- 8. Delete ----
         [Route("deleteInternalInspection")]
         [HttpPost]
         public IHttpActionResult DeleteInternalInspection([FromBody] DeleteInspectionRequest request)
@@ -3691,27 +3838,83 @@ namespace CamV4.Controllers
             catch (Exception ex) { return InternalServerError(ex); }
         }
 
-        // ---- 7. Update inspection status (Admin/Employee only) ----
-        // JS: POST /api/pageview/updateInternalInspectionStatus
+        // ---- 9. Update status ----
+        //[Route("updateInternalInspectionStatus")]
+        //[HttpPost]
+        //public IHttpActionResult UpdateInternalInspectionStatus([FromBody] UpdateInspectionStatusRequest request)
+        //{
+        //    try
+        //    {
+        //        var result = DatabaseHelper.UpdateInternalInspectionStatus(request.id, request.status);
+        //        return Ok(result);
+        //    }
+        //    catch (Exception ex) { return InternalServerError(ex); }
+        //}
+
+        public class DeleteInspectionRequest { public long id { get; set; } }
+        //public class UpdateInspectionStatusRequest { public long id { get; set; } public string status { get; set; } }
+
+        #endregion
+
+        #region "Internal Inspection - Admin Status Endpoints"
+
+        [Route("getEngineerReviewCost")]
+        [HttpGet]
+        public IHttpActionResult GetEngineerReviewCost()
+        {
+            try
+            {
+                decimal cost = DatabaseHelper.GetImpSetting("EngineerReview", 20m);
+                return Ok(new { cost = cost });
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+
+        // ---- Update whole inspection status (Admin/Engineer) ----
         [Route("updateInternalInspectionStatus")]
         [HttpPost]
         public IHttpActionResult UpdateInternalInspectionStatus([FromBody] UpdateInspectionStatusRequest request)
         {
             try
             {
+                if (request == null || request.id == 0)
+                    return Ok(false);
+
                 var result = DatabaseHelper.UpdateInternalInspectionStatus(request.id, request.status);
                 return Ok(result);
             }
             catch (Exception ex) { return InternalServerError(ex); }
         }
 
-        // ---- Request helper classes ----
-        public class DeleteInspectionRequest
+        // ---- Approve / Reject a single deficiency ----
+        [Route("updateInternalDeficiencyStatus")]
+        [HttpPost]
+        public IHttpActionResult UpdateInternalDeficiencyStatus(
+            [FromBody] UpdateDeficiencyStatusRequest request)
         {
-            public long id { get; set; }
+            try
+            {
+                if (request == null || request.id == 0)
+                    return Ok(false);
+
+                var result = DatabaseHelper.UpdateInternalDeficiencyStatus(request.id, request.status);
+                return Ok(result);
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
         }
 
+        // ---- Request models ----
         public class UpdateInspectionStatusRequest
+        {
+            public long id { get; set; }
+            public string status { get; set; }
+        }
+
+        public class UpdateDeficiencyStatusRequest
         {
             public long id { get; set; }
             public string status { get; set; }
@@ -3719,7 +3922,1130 @@ namespace CamV4.Controllers
 
         #endregion
 
+        #region "Training Center"
 
+        // ============================================================
+        // COURSES
+        // ============================================================
+
+        // GET /tc_getAllCourses?activeOnly=true
+        [Route("tc_getAllCourses")]
+        [HttpGet]
+        public IHttpActionResult TC_GetAllCourses(bool activeOnly = true)
+        {
+            try { return Ok(DatabaseHelper.TC_GetAllCourses(activeOnly)); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // POST /tc_saveCourse
+        [Route("tc_saveCourse")]
+        [HttpPost]
+        public IHttpActionResult TC_SaveCourse([FromBody] TrainingCourseViewModel model)
+        {
+            try { return Ok(DatabaseHelper.TC_SaveCourse(model)); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // POST /tc_toggleCourse
+        [Route("tc_toggleCourse")]
+        [HttpPost]
+        public IHttpActionResult TC_ToggleCourse([FromBody] TC_IdRequest request)
+        {
+            try { return Ok(DatabaseHelper.TC_ToggleCourse(request.id)); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        [Route("tc_answerQuestion")]
+        [HttpPost]
+        public IHttpActionResult TC_AnswerQuestion([FromBody] TC_AnswerQuestionRequest request)
+        {
+            try
+            {
+                if (request == null || request.TrainingTechnicalTalkID <= 0)
+                    return Ok("Invalid request.");
+                if (string.IsNullOrWhiteSpace(request.Answer))
+                    return Ok("Answer cannot be empty.");
+
+                return Ok(DatabaseHelper.TC_AnswerQuestion(request.TrainingTechnicalTalkID, request.Answer));
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+        // ============================================================
+        // REGISTRATION
+        // ============================================================
+
+        // POST /tc_saveRegistration
+        [Route("tc_saveRegistration")]
+        [HttpPost]
+        public IHttpActionResult TC_SaveRegistration([FromBody] SaveTrainingRegistrationViewModel model)
+        {
+            try
+            {
+                var r = DatabaseHelper.TC_SaveRegistration(model);
+                if (r.StartsWith("Error:", StringComparison.OrdinalIgnoreCase))
+                    return Ok(new { success = false, message = r });
+                return Ok(new { success = true, id = r });
+            }
+            catch (Exception ex) { return Ok(new { success = false, message = ex.Message }); }
+        }
+
+        // GET /tc_getMyRegistrations
+        [Route("tc_getMyRegistrations")]
+        [HttpGet]
+        public IHttpActionResult TC_GetMyRegistrations()
+        {
+            try { return Ok(DatabaseHelper.TC_GetMyRegistrations()); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // GET /tc_getRegistrationsByCustomerId?customerId=123
+        [Route("tc_getRegistrationsByCustomerId")]
+        [HttpGet]
+        public IHttpActionResult TC_GetRegistrationsByCustomerId(long customerId)
+        {
+            try { return Ok(DatabaseHelper.TC_GetRegistrationsByCustomerId(customerId)); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // GET /tc_getAllRegistrations
+        [Route("tc_getAllRegistrations")]
+        [HttpGet]
+        public IHttpActionResult TC_GetAllRegistrations()
+        {
+            try { return Ok(DatabaseHelper.TC_GetAllRegistrations()); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // GET /tc_getRegistrationById?id=456
+        [Route("tc_getRegistrationById")]
+        [HttpGet]
+        public IHttpActionResult TC_GetRegistrationById(long id)
+        {
+            try
+            {
+                var r = DatabaseHelper.TC_GetRegistrationById(id);
+                if (r == null) return NotFound();
+                return Ok(r);
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // POST /tc_updateRegistrationStatus
+        [Route("tc_updateRegistrationStatus")]
+        [HttpPost]
+        public IHttpActionResult TC_UpdateRegistrationStatus([FromBody] TC_UpdateRegStatusRequest request)
+        {
+            try { 
+                return Ok(DatabaseHelper.TC_UpdateRegistrationStatus(request.id, request.status, request.notes)); 
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // POST /tc_updatePersonStatus  (multipart - includes optional cert file)
+        [Route("tc_updatePersonStatus")]
+        [HttpPost]
+        public async Task<IHttpActionResult> TC_UpdatePersonStatus()
+        {
+            try
+            {
+                var req = HttpContext.Current.Request;
+                var model = new UpdateTrainingPersonStatusViewModel
+                {
+                    TrainingRegistrationPersonID = long.TryParse(req.Form["TrainingRegistrationPersonID"], out var pid) ? pid : 0,
+                    CourseStatus = req.Form["CourseStatus"] ?? "",
+                    CertificateExpiryDate = req.Form["CertificateExpiryDate"] ?? ""
+                };
+
+                System.Web.HttpPostedFileBase certFile = null;
+                if (req.Files.Count > 0 && req.Files[0]?.ContentLength > 0)
+                    certFile = new System.Web.HttpPostedFileWrapper(req.Files[0]);
+
+                return Ok(DatabaseHelper.TC_UpdatePersonStatus(model, certFile));
+            }
+            catch (Exception ex) { return Ok("Error: " + ex.Message); }
+        }
+
+        // ============================================================
+        // WEBINAR
+        // ============================================================
+
+        // GET /tc_getAllWebinars?activeOnly=true
+        [Route("tc_getAllWebinars")]
+        [HttpGet]
+        public IHttpActionResult TC_GetAllWebinars(bool activeOnly = true)
+        {
+            try { return Ok(DatabaseHelper.TC_GetAllWebinars(activeOnly)); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // POST /tc_saveWebinar
+        [Route("tc_saveWebinar")]
+        [HttpPost]
+        public IHttpActionResult TC_SaveWebinar([FromBody] TrainingWebinarViewModel model)
+        {
+            try { return Ok(DatabaseHelper.TC_SaveWebinar(model)); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // POST /tc_deleteWebinar
+        [Route("tc_deleteWebinar")]
+        [HttpPost]
+        public IHttpActionResult TC_DeleteWebinar([FromBody] TC_IdRequest request)
+        {
+            try { return Ok(DatabaseHelper.TC_DeleteWebinar(request.id)); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // ============================================================
+        // BLOG
+        // ============================================================
+
+        // GET /tc_getAllBlogs?activeOnly=true
+        [Route("tc_getAllBlogs")]
+        [HttpGet]
+        public IHttpActionResult TC_GetAllBlogs(bool activeOnly = true)
+        {
+            try { return Ok(DatabaseHelper.TC_GetAllBlogs(activeOnly)); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // POST /tc_saveBlog
+        [Route("tc_saveBlog")]
+        [HttpPost]
+        public IHttpActionResult TC_SaveBlog([FromBody] TrainingBlogViewModel model)
+        {
+            try { return Ok(DatabaseHelper.TC_SaveBlog(model)); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // POST /tc_deleteBlog
+        [Route("tc_deleteBlog")]
+        [HttpPost]
+        public IHttpActionResult TC_DeleteBlog([FromBody] TC_IdRequest request)
+        {
+            try { return Ok(DatabaseHelper.TC_DeleteBlog(request.id)); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // ============================================================
+        // TECHNICAL TALK
+        // ============================================================
+
+        // GET /tc_getPublishedTalks
+        [Route("tc_getPublishedTalks")]
+        [HttpGet]
+        public IHttpActionResult TC_GetPublishedTalks()
+        {
+            try { return Ok(DatabaseHelper.TC_GetPublishedTalks()); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // GET /tc_getAllTalks
+        [Route("tc_getAllTalks")]
+        [HttpGet]
+        public IHttpActionResult TC_GetAllTalks()
+        {
+            try { return Ok(DatabaseHelper.TC_GetAllTalks()); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // POST /tc_submitQuestion
+        [Route("tc_submitQuestion")]
+        [HttpPost]
+        public IHttpActionResult TC_SubmitQuestion([FromBody] TC_SubmitQuestionRequest request)
+        {
+            try
+            {
+                Customer c = null;
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    var uidObj = HttpContext.Current.Session["LoggedInUserId"];
+                    if (uidObj != null)
+                    {
+                        long uid = Convert.ToInt64(uidObj);
+                        c = db.Customers.FirstOrDefault(x => x.UserID == uid);
+                    }
+                }
+                return Ok(DatabaseHelper.TC_SubmitQuestion(request.question, c));
+            }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // POST /tc_saveTechnicalTalk
+        [Route("tc_saveTechnicalTalk")]
+        [HttpPost]
+        public IHttpActionResult TC_SaveTechnicalTalk([FromBody] TrainingTechnicalTalkViewModel model)
+        {
+            try { return Ok(DatabaseHelper.TC_SaveTechnicalTalk(model)); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }
+
+        // POST /tc_deleteTechnicalTalk
+        [Route("tc_deleteTechnicalTalk")]
+        [HttpPost]
+        public IHttpActionResult TC_DeleteTechnicalTalk([FromBody] TC_IdRequest request)
+        {
+            try { return Ok(DatabaseHelper.TC_DeleteTechnicalTalk(request.id)); }
+            catch (Exception ex) { return InternalServerError(ex); }
+        }       
+       
+
+        #endregion
+
+        #region "New code for customer filters"
+        [HttpGet]
+        [Route("getInspectionTypes")]
+        public List<InspectionType> GetInspectionTypes()
+        {
+            return DatabaseHelper.GetInspectionTypes();
+        }
+
+        [HttpGet]
+        [Route("getInspectionStatuses")]
+        public List<InspectionStatu> GetInspectionStatuses()
+        {
+            return DatabaseHelper.GetInspectionStatuses();
+        }
+        [HttpPost]
+        [Route("getInspectionListing")]
+        public async Task<List<GetInspectionListing_Result>> GetInspectionListing(InspectionFilterModel filters)
+        {
+            long userId = Convert.ToInt64(User.Identity.GetUserId());
+
+            return DatabaseHelper.GetInspectionListing(
+                userId,
+                filters);
+        }
+        [HttpGet]
+        [Route("getRegions")]
+        public async Task<List<string>> GetRegions()
+        {
+            long userId = Convert.ToInt64(User.Identity.GetUserId());
+
+            return DatabaseHelper.GetRegions(userId);
+        }
+
+        [HttpGet]
+        [Route("getProvinces")]
+        public async Task<List<GetCustomerProvinces_Result>> GetProvinces(string region = "")
+        {
+            if (region == "")
+            {
+                region = null;
+            }
+            long userId = Convert.ToInt64(User.Identity.GetUserId());
+
+            return DatabaseHelper.GetProvinces(
+                userId,
+                region);
+        }
+        [HttpGet]
+        [Route("getCities")]
+        public async Task<List<GetCustomerCities_Result>> GetCities(
+        int? provinceId,
+        string region)
+        {
+            long userId = Convert.ToInt64(User.Identity.GetUserId());
+
+            return DatabaseHelper.GetCities(
+                userId,
+                provinceId,
+                region);
+        }
+        [HttpGet]
+        [Route("getLocations")]
+        public async Task<List<GetCustomerLocations_Result>> GetLocations(string region, int? provinceId, int? cityId)
+        {
+            long userId = Convert.ToInt64(User.Identity.GetUserId());
+
+            return DatabaseHelper.GetLocations(
+                userId,
+                region,
+                provinceId,
+                cityId);
+        }
+
+        [HttpGet]
+        [Route("getFacilities")]
+        public async Task<List<GetCustomerFacilities_Result>> GetFacilities(long? locationId)
+        {
+            long userId = Convert.ToInt64(User.Identity.GetUserId());
+
+            return DatabaseHelper.GetFacilities(
+                userId,
+                locationId);
+        }
+
+        [HttpGet]
+        [Route("getAreas")]
+        public async Task<List<GetCustomerAreas_Result>> GetAreas(
+        long? locationId,
+        long? facilityId)
+        {
+            long userId = Convert.ToInt64(User.Identity.GetUserId());
+
+            return DatabaseHelper.GetAreas(
+                userId,
+                locationId,
+                facilityId);
+        }
+
+        [HttpPost]
+        [Route("getDocumentListing")]
+        public async Task<List<GetDocumentListing_Result>> GetDocumentListing(DocumentFilterModel filters)
+        {
+            long userId = Convert.ToInt64(User.Identity.GetUserId());
+
+            return DatabaseHelper.GetDocumentListing(
+                userId,
+                filters);
+        }
+
+        [HttpPost]
+        [Route("getIncidentListing")]
+        public async Task<List<GetIncidentListing_Result>> GetIncidentListing(IncidentFilterModel filters)
+        {
+            long userId = Convert.ToInt64(User.Identity.GetUserId());
+
+            return DatabaseHelper.GetIncidentListing(
+                userId,
+                filters);
+        }
+
+        [HttpPost]
+        [Route("getInternalInspectionListing")]
+        public async Task<List<GetInternalInspectionListing_Result>> GetInternalInspectionListing(
+        InternalInspectionFilterModel filters)
+        {
+            long userId = Convert.ToInt64(User.Identity.GetUserId());
+
+            return DatabaseHelper.GetInternalInspectionListing(
+                userId,
+                filters);
+        }
+        #endregion
+
+        #region "Inventory API Calls"
+
+                //  GET /getInventoryLocations 
+        // Supports optional cityId / provinceId / customerId for
+        // sidebar cascade and admin customer-scoped dropdowns.
+        [HttpGet]
+        [Route("getInventoryLocations")]
+        public IHttpActionResult GetInventoryLocations(
+            long? cityId = null,
+            long? provinceId = null,
+            long? customerId = null)
+        {
+            try
+            {
+                return Ok(DatabaseHelper.GetInventoryLocations(
+                    GetCurrentUserId(), GetCurrentUserType(),
+                    cityId, provinceId, customerId));
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        //  GET /getInventoryFacilities 
+        [HttpGet]
+        [Route("getInventoryFacilities")]
+        public IHttpActionResult GetInventoryFacilities(long? locationId = null)
+        {
+            try
+            {
+                return Ok(DatabaseHelper.GetCustomerFacilities(locationId));
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        //  GET /getInventoryAreas 
+        [HttpGet]
+        [Route("getInventoryAreas")]
+        public IHttpActionResult GetInventoryAreas(long? facilityId = null)
+        {
+            try
+            {
+                return Ok(DatabaseHelper.GetCustomerAreas(facilityId));
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }       
+
+
+        //  POST /getInventoryFilesFiltered 
+       
+
+        [HttpPost]
+        [Route("getInventoryFilesFiltered")]
+        public IHttpActionResult GetInventoryFilesFiltered(
+            [FromBody] InventoryFilterRequest filter,
+            long? customerId = null)
+        {
+            try
+            {
+                var filterDto = new InventoryFilterDto
+                {
+                    Region = filter?.Region,
+                    ProvinceID = filter?.ProvinceID,
+                    CityID = filter?.CityID,
+                    LocationID = filter?.LocationID,
+                    FacilityID = filter?.FacilityID,
+                    AreaID = filter?.AreaID,
+                    Status = filter?.Status,
+                    Search = filter?.Search
+                };
+
+                var result = DatabaseHelper.GetInventoryFilesFiltered(
+                    GetCurrentUserId(), GetCurrentUserType(),
+                    filterDto, customerId);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("getInventoryFiles")]
+        public IHttpActionResult GetInventoryFiles()
+        {
+            try
+            {
+                var result = IsInternal()
+                    ? DatabaseHelper.GetAllInventoryFiles()
+                    : DatabaseHelper.GetInventoryFilesByCustomerUser(GetCurrentUserId());
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("getInventoryFileById")]
+        public IHttpActionResult GetInventoryFileById(long fileId)
+        {
+            try
+            {
+                if (!DatabaseHelper.CustomerCanAccessFile(GetCurrentUserId(), GetCurrentUserType(), fileId))
+                    return Content(HttpStatusCode.Forbidden, new { Message = "Access denied to this file." });
+
+                var file = DatabaseHelper.GetInventoryFileById(fileId);
+                if (file == null) return NotFound();
+
+                return Ok(file);
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// POST /uploadInventoryFile
+        /// multipart/form-data: file (.xlsx), locationId, facilityId?, areaId?,
+        ///                      description?, customerId (internal staff only)
+        /// Uses ClosedXML (free MIT) to parse the uploaded Excel file.
+        /// All DB writes go through DatabaseHelper.
+        /// </summary>
+        [HttpPost]
+        [Route("uploadInventoryFile")]
+        public async System.Threading.Tasks.Task<IHttpActionResult> UploadInventoryFile()
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                    return BadRequest("Expected multipart/form-data.");
+
+                var provider = new MultipartMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                var fileContent = provider.Contents.FirstOrDefault(c =>
+                    c.Headers.ContentDisposition.Name.Trim('"') == "file");
+                if (fileContent == null) return BadRequest("No file uploaded.");
+
+                var fileBytes = await fileContent.ReadAsByteArrayAsync();
+                var originalFileName = fileContent.Headers.ContentDisposition.FileName?.Trim('"');
+
+                long locationId = GetFormValue(provider, "locationId", 0L);
+                long? facilityId = GetFormValueNullable(provider, "facilityId");
+                long? areaId = GetFormValueNullable(provider, "areaId");
+                string description = GetFormValueString(provider, "description");
+
+                //  Resolve customerId 
+                long customerId;
+                if (IsInternal())
+                {
+                    customerId = GetFormValue(provider, "customerId", 0L);
+                    if (customerId == 0)
+                        return BadRequest("customerId is required for internal staff uploads.");
+                }
+                else
+                {
+                    var resolved = DatabaseHelper.GetCustomerIdForUser(GetCurrentUserId());
+                    if (!resolved.HasValue)
+                        return Content(HttpStatusCode.Forbidden,
+                            new { Message = "No customer linked to this user." });
+                    customerId = resolved.Value;
+
+                    var accessible = DatabaseHelper.GetAccessibleLocationIdsForUser(GetCurrentUserId());
+                    if (!accessible.Contains(locationId))
+                        return Content(HttpStatusCode.Forbidden,
+                            new { Message = "You do not have access to this location." });
+                }
+
+                var userName = GetCurrentUserName();
+
+                //  Save physical file 
+                var storedFileName = Guid.NewGuid() + Path.GetExtension(originalFileName);
+                var uploadDir = HttpContext.Current.Server.MapPath("~/App_Data/InventoryUploads");
+                if (!Directory.Exists(uploadDir)) Directory.CreateDirectory(uploadDir);
+                File.WriteAllBytes(Path.Combine(uploadDir, storedFileName), fileBytes);
+
+                //  Create InventoryFile record 
+                var fileId = DatabaseHelper.CreateInventoryFile(
+                    originalFileName, storedFileName,
+                    "/App_Data/InventoryUploads/" + storedFileName,
+                    fileBytes.LongLength, customerId, locationId,
+                    facilityId, areaId, description, userName);
+
+                //  Parse Excel with ClosedXML (free MIT) 
+                // DatabaseHelper.ImportExcelData handles all DB writes;
+                // controller only passes the raw bytes + metadata.
+                DatabaseHelper.ImportExcelData(fileId, fileBytes, userName);
+
+                DatabaseHelper.LogInventoryAction(
+                    fileId, GetCurrentUserId(), GetCurrentUserType(),
+                    "Uploaded", "Imported " + originalFileName,
+                    GetClientIp(), locationId);
+
+                return Ok(new { FileID = fileId, Message = "File uploaded and imported successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// GET /exportInventoryFile?fileId=123
+        /// Builds and streams a .xlsx using ClosedXML (free MIT).
+        /// All data retrieval is via DatabaseHelper.
+        /// </summary>
+        [HttpGet]
+        [Route("exportInventoryFile")]
+        public HttpResponseMessage ExportInventoryFile(long fileId)
+        {
+            try
+            {
+                if (!DatabaseHelper.CustomerCanAccessFile(
+                        GetCurrentUserId(), GetCurrentUserType(), fileId))
+                    return new HttpResponseMessage(HttpStatusCode.Forbidden);
+
+                var file = DatabaseHelper.GetInventoryFileById(fileId);
+                if (file == null)
+                    return new HttpResponseMessage(HttpStatusCode.NotFound);
+
+                var headers = DatabaseHelper.GetInventoryHeaders(fileId);
+                var rows = DatabaseHelper.GetInventoryGridData(fileId);
+
+                //  Build .xlsx with ClosedXML 
+                using (var wb = new XLWorkbook())
+                {
+                    var ws = wb.Worksheets.Add("Inventory");
+
+                    // Header row
+                    for (int c = 0; c < headers.Count; c++)
+                    {
+                        var cell = ws.Cell(1, c + 1);
+                        cell.Value = headers[c].Label;
+                        cell.Style.Font.Bold = true;
+                    }
+
+                    // Data rows
+                    for (int r = 0; r < rows.Count; r++)
+                    {
+                        for (int c = 0; c < headers.Count; c++)
+                        {
+                            rows[r].Values.TryGetValue(headers[c].Key, out var val);
+                            var cell = ws.Cell(r + 2, c + 1);
+
+                            if (headers[c].Type == "number" && double.TryParse(val, out var num))
+                                cell.Value = num;
+                            else
+                                cell.Value = val ?? "";
+                        }
+                    }
+
+                    ws.Columns().AdjustToContents();
+
+                    var ms = new MemoryStream();
+                    wb.SaveAs(ms);
+                    var bytes = ms.ToArray();
+
+                    DatabaseHelper.LogInventoryAction(
+                        fileId, GetCurrentUserId(), GetCurrentUserType(),
+                        "Exported", "Full export to Excel",
+                        GetClientIp(), file.LocationID);
+
+                    var response = new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new ByteArrayContent(bytes)
+                    };
+                    response.Content.Headers.ContentType =
+                        new System.Net.Http.Headers.MediaTypeHeaderValue(
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                    response.Content.Headers.ContentDisposition =
+                        new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment")
+                        {
+                            FileName = file.FileName
+                        };
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                var err = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+                err.Content = new StringContent(ex.Message);
+                return err;
+            }
+        }
+
+        [HttpDelete]
+        [Route("deleteInventoryFile")]
+        public IHttpActionResult DeleteInventoryFile(long fileId)
+        {
+            try
+            {
+                if (!IsInternal())
+                    return Content(HttpStatusCode.Forbidden,
+                        new { Message = "Customers cannot delete files." });
+
+                DatabaseHelper.DeleteInventoryFile(fileId, GetCurrentUserName());
+                DatabaseHelper.LogInventoryAction(
+                    fileId, GetCurrentUserId(), GetCurrentUserType(),
+                    "Deleted", "File deleted", GetClientIp(), null);
+
+                return Ok(new { Message = "File deleted." });
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("updateInventoryFileMetadata")]
+        public IHttpActionResult UpdateInventoryFileMetadata(
+            [FromBody] UpdateFileMetadataDto dto)
+        {
+            try
+            {
+                if (!IsInternal())
+                    return Content(HttpStatusCode.Forbidden,
+                        new { Message = "Customers cannot edit file metadata." });
+
+                if (dto.LocationID <= 0) return BadRequest("Location is required.");
+
+                DatabaseHelper.UpdateInventoryFileMetadata(dto, GetCurrentUserName());
+                DatabaseHelper.LogInventoryAction(
+                    dto.FileID, GetCurrentUserId(), GetCurrentUserType(),
+                    "Edited", "File metadata updated", GetClientIp(), dto.LocationID);
+
+                return Ok(new { Message = "File metadata updated." });
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+
+        // 
+        // HEADER ENDPOINTS
+        // 
+
+        [HttpGet]
+        [Route("getInventoryHeaders")]
+        public IHttpActionResult GetInventoryHeaders(long fileId)
+        {
+            try
+            {
+                if (!DatabaseHelper.CustomerCanAccessFile(
+                        GetCurrentUserId(), GetCurrentUserType(), fileId))
+                    return Content(HttpStatusCode.Forbidden, new { Message = "Access denied." });
+
+                return Ok(DatabaseHelper.GetInventoryHeaders(fileId));
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+
+        // 
+        // GRID DATA / ITEM CRUD ENDPOINTS
+        // 
+
+        [HttpGet]
+        [Route("getInventoryGridData")]
+        public IHttpActionResult GetInventoryGridData(long fileId)
+        {
+            try
+            {
+                if (!DatabaseHelper.CustomerCanAccessFile(
+                        GetCurrentUserId(), GetCurrentUserType(), fileId))
+                    return Content(HttpStatusCode.Forbidden, new { Message = "Access denied." });
+
+                return Ok(DatabaseHelper.GetInventoryGridData(fileId));
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        public class SaveRowRequest
+        {
+            public long ItemID { get; set; }
+            public Dictionary<string, string> Values { get; set; }
+        }
+
+        [HttpPost]
+        [Route("saveInventoryRow")]
+        public IHttpActionResult SaveInventoryRow(
+            long fileId, [FromBody] SaveRowRequest request)
+        {
+            try
+            {
+                if (!DatabaseHelper.CustomerCanAccessFile(
+                        GetCurrentUserId(), GetCurrentUserType(), fileId))
+                    return Content(HttpStatusCode.Forbidden, new { Message = "Access denied." });
+
+                var itemId = DatabaseHelper.SaveInventoryRow(
+                    fileId, request.ItemID, request.Values, GetCurrentUserName());
+
+                DatabaseHelper.LogInventoryAction(
+                    fileId, GetCurrentUserId(), GetCurrentUserType(),
+                    request.ItemID > 0 ? "Edited" : "Saved",
+                    request.ItemID > 0 ? "1 row updated" : "1 row added",
+                    GetClientIp(), null);
+
+                return Ok(new { ItemID = itemId });
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        public class BulkSaveRequest
+        {
+            public List<SaveRowRequest> Rows { get; set; }
+        }
+
+        [HttpPost]
+        [Route("bulkSaveInventoryRows")]
+        public IHttpActionResult BulkSaveInventoryRows(
+            long fileId, [FromBody] BulkSaveRequest request)
+        {
+            try
+            {
+                if (!DatabaseHelper.CustomerCanAccessFile(
+                        GetCurrentUserId(), GetCurrentUserType(), fileId))
+                    return Content(HttpStatusCode.Forbidden, new { Message = "Access denied." });
+
+                var rows = request.Rows
+                    .Select(r => new InventoryRowDto
+                    {
+                        ItemID = r.ItemID,
+                        Values = r.Values
+                    }).ToList();
+
+                DatabaseHelper.BulkSaveInventoryRows(fileId, rows, GetCurrentUserName());
+
+                DatabaseHelper.LogInventoryAction(
+                    fileId, GetCurrentUserId(), GetCurrentUserType(),
+                    "Saved", rows.Count + " rows updated", GetClientIp(), null);
+
+                return Ok(new { Message = rows.Count + " rows saved." });
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [Route("deleteInventoryRow")]
+        public IHttpActionResult DeleteInventoryRow(long fileId, long itemId)
+        {
+            try
+            {
+                if (!DatabaseHelper.CustomerCanAccessFile(
+                        GetCurrentUserId(), GetCurrentUserType(), fileId))
+                    return Content(HttpStatusCode.Forbidden, new { Message = "Access denied." });
+
+                DatabaseHelper.DeleteInventoryRow(fileId, itemId, GetCurrentUserName());
+
+                DatabaseHelper.LogInventoryAction(
+                    fileId, GetCurrentUserId(), GetCurrentUserType(),
+                    "Deleted", "1 row removed", GetClientIp(), null);
+
+                return Ok(new { Message = "Row deleted." });
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        public class DeleteRowsRequest
+        {
+            public List<long> ItemIds { get; set; }
+        }
+
+        [HttpPost]
+        [Route("deleteInventoryRows")]
+        public IHttpActionResult DeleteInventoryRows(
+            long fileId, [FromBody] DeleteRowsRequest request)
+        {
+            try
+            {
+                if (!DatabaseHelper.CustomerCanAccessFile(
+                        GetCurrentUserId(), GetCurrentUserType(), fileId))
+                    return Content(HttpStatusCode.Forbidden, new { Message = "Access denied." });
+
+                DatabaseHelper.DeleteInventoryRows(
+                    fileId, request.ItemIds, GetCurrentUserName());
+
+                DatabaseHelper.LogInventoryAction(
+                    fileId, GetCurrentUserId(), GetCurrentUserType(),
+                    "Deleted", request.ItemIds.Count + " rows removed",
+                    GetClientIp(), null);
+
+                return Ok(new { Message = request.ItemIds.Count + " rows deleted." });
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+
+        // 
+        // AUDIT LOG / HISTORY ENDPOINTS
+        // 
+
+        [HttpGet]
+        [Route("getInventoryAuditLog")]
+        public IHttpActionResult GetInventoryAuditLog(
+            DateTime? fromDate, DateTime? toDate,
+            long? userId, string actionType, long? locationId)
+        {
+            try
+            {
+                if (!IsInternal())
+                    return Content(HttpStatusCode.Forbidden, new { Message = "Access denied." });
+
+                return Ok(DatabaseHelper.GetInventoryAuditLog(
+                    fromDate, toDate, userId, actionType, locationId));
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("getCustomerInventoryHistory")]
+        public IHttpActionResult GetCustomerInventoryHistory(
+            DateTime? fromDate, DateTime? toDate,
+            long? fileId, string actionType)
+        {
+            try
+            {
+                return Ok(DatabaseHelper.GetCustomerInventoryHistory(
+                    GetCurrentUserId(), fromDate, toDate, fileId, actionType));
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+
+        // 
+        // LOOKUP ENDPOINTS
+        // 
+
+        [HttpGet]
+        [Route("getCustomerLocations")]
+        public IHttpActionResult GetCustomerLocations(long? customerId = null)
+        {
+            try
+            {
+                return Ok(DatabaseHelper.GetCustomerLocationsForUser(
+                    GetCurrentUserId(), GetCurrentUserType(), customerId));
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("getCustomerFacilities")]
+        public IHttpActionResult GetCustomerFacilities(long? locationId = null)
+        {
+            try
+            {
+                return Ok(DatabaseHelper.GetCustomerFacilities(locationId));
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("getCustomerAreas")]
+        public IHttpActionResult GetCustomerAreas(long? facilityId = null)
+        {
+            try
+            {
+                return Ok(DatabaseHelper.GetCustomerAreas(facilityId));
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [Route("updateInventoryColumnLabels")]
+        public IHttpActionResult UpdateInventoryColumnLabels(
+    long fileId, [FromBody] Dictionary<string, string> columnUpdates)
+        {
+            try
+            {
+                if (!IsInternal())
+                    return Content(HttpStatusCode.Forbidden,
+                        new { Message = "Customers cannot rename columns." });
+
+                DatabaseHelper.UpdateInventoryColumnLabels(
+                    fileId, columnUpdates, GetCurrentUserName());
+
+                return Ok(new { Message = "Column labels updated." });
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError,
+                    new { Message = ex.Message });
+            }
+        }
+        // 
+        // MULTIPART FORM HELPERS (no DB, no Excel — pure HTTP)
+        // 
+
+        private long GetFormValue(MultipartMemoryStreamProvider p, string name, long def)
+        {
+            var raw = GetFormValueString(p, name);
+            return long.TryParse(raw, out var v) ? v : def;
+        }
+
+        private long? GetFormValueNullable(MultipartMemoryStreamProvider p, string name)
+        {
+            var raw = GetFormValueString(p, name);
+            return long.TryParse(raw, out var v) ? v : (long?)null;
+        }
+
+        private string GetFormValueString(MultipartMemoryStreamProvider p, string name)
+        {
+            var content = p.Contents.FirstOrDefault(c =>
+                c.Headers.ContentDisposition.Name?.Trim('"') == name);
+            return content?.ReadAsStringAsync().Result;
+        }
+
+        #endregion
+
+        #region "Delete Account"
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("submit")]
+        public IHttpActionResult Submit([FromBody] AccountDeletionRequestModel model)
+        {
+            if (model == null)
+            {
+                return Content(HttpStatusCode.BadRequest, new { success = false, message = "No data received." });
+            }
+
+            if (string.IsNullOrWhiteSpace(model.FullName) ||
+                string.IsNullOrWhiteSpace(model.UserName) ||
+                string.IsNullOrWhiteSpace(model.Email))
+            {
+                return Content(HttpStatusCode.BadRequest, new
+                {
+                    success = false,
+                    message = "Full name, user name and email are required."
+                });
+            }
+
+            if (!model.ConfirmDelete)
+            {
+                return Content(HttpStatusCode.BadRequest, new
+                {
+                    success = false,
+                    message = "Please confirm the permanent deletion checkbox."
+                });
+            }
+
+            if (DatabaseHelper.EmailHasPendingRequest(model.Email.Trim()))
+            {
+                return Content(HttpStatusCode.BadRequest, new
+                {
+                    success = false,
+                    message = "A pending deletion request already exists for this email."
+                });
+            }
+
+            var result = DatabaseHelper.SaveDeletionRequestAndNotify(model, GetClientIp());
+
+            if (result != null && result.StartsWith("ERROR"))
+            {
+                // TODO: replace with your project's logging (log4net/NLog/etc.)
+                System.Diagnostics.Trace.TraceError("AccountDeletion Submit failed: " + result);
+
+                return Content(HttpStatusCode.InternalServerError, new
+                {
+                    success = false,
+                    message = "Unable to save your request right now. Please try again later."
+                });
+            }
+
+            return Ok(new
+            {
+                success = true,
+                message = "Request submitted successfully.",
+                referenceNumber = result
+            });
+        }
+        
+        #endregion
 
     }
 }

@@ -50,6 +50,18 @@
     <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
+    <Reference Include="ClosedXML, Version=0.105.0.0, Culture=neutral, PublicKeyToken=fd1eb21b62ae805b, processorArchitecture=MSIL">
+      <HintPath>..\packages\ClosedXML.0.105.0\lib\netstandard2.0\ClosedXML.dll</HintPath>
+    </Reference>
+    <Reference Include="ClosedXML.Parser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1d5f7376574c51ec, processorArchitecture=MSIL">
+      <HintPath>..\packages\ClosedXML.Parser.2.0.0\lib\netstandard2.0\ClosedXML.Parser.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=3.1.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.3.1.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml.Framework, Version=3.1.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.Framework.3.1.1\lib\net46\DocumentFormat.OpenXml.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -61,6 +73,9 @@
     </Reference>
     <Reference Include="ExcelDataReader.DataSet, Version=3.7.0.0, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
       <HintPath>..\packages\ExcelDataReader.DataSet.3.7.0\lib\net462\ExcelDataReader.DataSet.dll</HintPath>
+    </Reference>
+    <Reference Include="ExcelNumberFormat, Version=1.1.0.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExcelNumberFormat.1.1.0\lib\net20\ExcelNumberFormat.dll</HintPath>
     </Reference>
     <Reference Include="FirebaseAdmin, Version=3.1.0.0, Culture=neutral, PublicKeyToken=97c8d00c348326ed, processorArchitecture=MSIL">
       <HintPath>..\packages\FirebaseAdmin.3.1.0\lib\net462\FirebaseAdmin.dll</HintPath>
@@ -174,6 +189,9 @@
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.6.0.0\lib\net461\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.5.0.0\lib\net461\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Identity.Client, Version=3.0.8.0, Culture=neutral, PublicKeyToken=0a613f4dd989e8ae, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Identity.Client.3.0.8\lib\net45\Microsoft.Identity.Client.dll</HintPath>
     </Reference>
@@ -194,6 +212,9 @@
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Tokens, Version=6.35.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IdentityModel.Tokens.6.35.0\lib\net472\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IO.RecyclableMemoryStream.3.0.1\lib\netstandard2.0\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Net.Http.Headers, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.Headers.2.2.0\lib\netstandard2.0\Microsoft.Net.Http.Headers.dll</HintPath>
@@ -249,6 +270,13 @@
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="RBush, Version=4.0.0.0, Culture=neutral, PublicKeyToken=c77e27b81f4d0187, processorArchitecture=MSIL">
+      <HintPath>..\packages\RBush.Signed.4.0.0\lib\net47\RBush.dll</HintPath>
+    </Reference>
+    <Reference Include="SixLabors.Fonts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d998eea7b14cab13, processorArchitecture=MSIL">
+      <HintPath>..\packages\SixLabors.Fonts.1.0.0\lib\netstandard2.0\SixLabors.Fonts.dll</HintPath>
     </Reference>
     <Reference Include="Swashbuckle.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cd1bb07a5ac7c7bc, processorArchitecture=MSIL">
       <HintPath>..\packages\Swashbuckle.Core.5.6.0\lib\net40\Swashbuckle.Core.dll</HintPath>
@@ -411,8 +439,8 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Security.Cryptography.Xml, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.Xml.4.5.0\lib\net461\System.Security.Cryptography.Xml.dll</HintPath>
+    <Reference Include="System.Security.Cryptography.Xml, Version=8.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Xml.8.0.3\lib\net462\System.Security.Cryptography.Xml.dll</HintPath>
     </Reference>
     <Reference Include="System.Security.Permissions, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Permissions.4.5.0\lib\net461\System.Security.Permissions.dll</HintPath>
@@ -501,6 +529,7 @@
       <Private>True</Private>
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\AddAuthorizationHeaderParameterOperationFilter.cs" />
@@ -529,6 +558,9 @@
     <Compile Include="Helper\InspectionDetailsHelper.cs" />
     <Compile Include="Helper\PdfTemplate.cs" />
     <Compile Include="Helper\TokenManager.cs" />
+    <Compile Include="Models\AccountDeletionRequest.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ActionRequired.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
@@ -652,13 +684,55 @@
     <Compile Include="Models\GetAllInspectionTobeCloned_Result.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetAreaAll_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetAreas_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCities_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCityAll_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCustomerAreas_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCustomerCities_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetCustomerDocumentsWithFilters_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCustomerFacilities_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCustomerLocations_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCustomerProvinces_Result.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetCustomerUsersDocumentsWithFilters_Result.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetDocumentListing_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetFacilities_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetFacilityAll_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetIncidentListing_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetInspectionCustomerUserWithFilters_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetInspectionCustomerWithFiltersNew_Result.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetInspectionCustomerWithFilters_Result.cs">
@@ -683,6 +757,21 @@
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetInspectionDueCustomerWithFilters_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetInspectionListing_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetInternalInspectionListing_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetLocationAll_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetLocations_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetProvinces_Result.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Get_DeficienciesBreakdownCategoriesInspection_Result.cs">
@@ -764,10 +853,22 @@
     <Compile Include="Models\InternalInspectionDeficiency.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\InternalInspectionLevel.cs">
+    <Compile Include="Models\InternalInspectionPhoto.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\InternalInspectionPhoto.cs">
+    <Compile Include="Models\InventoryAuditLog.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\InventoryColumn.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\InventoryFile.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\InventoryItem.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\InventoryItemValue.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Manufacturer.cs">
@@ -824,6 +925,12 @@
     <Compile Include="Models\sp_getApprovedInspection_Count_Result.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SP_GetCustomerDashboard_AllAdmin_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SP_GetCustomerDashboard_All_v2_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\sp_getEmpInspection_Count_New_AllUser_Result.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
@@ -849,6 +956,24 @@
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SP_Get_CustomerDashboardCount_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TrainingBlog.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TrainingCourse.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TrainingRegistration.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TrainingRegistrationPerson.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TrainingTechnicalTalk.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TrainingWebinar.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs">
@@ -1190,6 +1315,7 @@
     <Content Include="Content\V2\images\illustrations\pattern-tree.svg" />
     <Content Include="Content\V2\images\illustrations\rocket-white.png" />
     <Content Include="Content\V2\images\InspectionApproved.png" />
+    <Content Include="Content\V2\images\inspectionprocedurecorrected.jpg" />
     <Content Include="Content\V2\images\InspectionUnderProgress.png" />
     <Content Include="Content\V2\images\ivana-square.jpg" />
     <Content Include="Content\V2\images\ivana-squares.jpg" />
@@ -1547,11 +1673,17 @@
       <DependentUpon>DbModel.edmx</DependentUpon>
       <LastGenOutput>DbModel.cs</LastGenOutput>
     </Content>
+    <Content Include="NgScript\Controller\account-deletion.js" />
+    <Content Include="NgScript\Controller\adminInternalInspectionCtrl.js" />
     <Content Include="NgScript\Controller\app.js" />
+    <Content Include="NgScript\Controller\auditLogCtrl.js" />
+    <Content Include="NgScript\Controller\changeHistoryCtrl.js" />
     <Content Include="NgScript\Controller\cityCtrl.js" />
     <Content Include="NgScript\Controller\componentCtrl.js" />
     <Content Include="NgScript\Controller\componentPriceCtrl.js" />
     <Content Include="NgScript\Controller\customerHierarchyCtrl.js" />
+    <Content Include="NgScript\Controller\customerInventoryGridCtrl.js" />
+    <Content Include="NgScript\Controller\customerInventoryListingCtrl.js" />
     <Content Include="NgScript\Controller\customersectionCtrl.js" />
     <Content Include="NgScript\Controller\customerCtrl.js" />
     <Content Include="NgScript\Controller\customerdashboardCtrl.js" />
@@ -1562,6 +1694,9 @@
     <Content Include="NgScript\Controller\inspectionlistingCtrlDT.js" />
     <Content Include="NgScript\Controller\inspectionlistingCtrl.js" />
     <Content Include="NgScript\Controller\internalInspectionCtrl.js" />
+    <Content Include="NgScript\Controller\inventoryFilesCtrl.js" />
+    <Content Include="NgScript\Controller\inventoryFilters.js" />
+    <Content Include="NgScript\Controller\inventoryGridCtrl.js" />
     <Content Include="NgScript\Controller\manufacturerCtrl.js" />
     <Content Include="NgScript\Controller\menuCtrl.js" />
     <Content Include="NgScript\Controller\inspectionDueCtrl.js" />
@@ -1579,6 +1714,7 @@
     <Content Include="NgScript\Controller\shelvingchecklistCtrl.js" />
     <Content Include="NgScript\Controller\shelvingchecklistdeficiencyCtrl.js" />
     <Content Include="NgScript\Controller\shelvingchecklisttypeCtrl.js" />
+    <Content Include="NgScript\Controller\trainingCenterCtrl.js" />
     <Content Include="NgScript\Controller\userCtrl.js" />
     <Content Include="NgScript\Module\Authentication.js" />
     <Content Include="Scripts\angular-animate.js" />
@@ -3033,6 +3169,22 @@
     <Content Include="Views\Customer\customerInternalInspectionView.cshtml" />
     <Content Include="Views\Admin\InternalInspectionListing.cshtml" />
     <Content Include="Views\Admin\InternalInspectionView.cshtml" />
+    <Content Include="Views\Customer\TrainingCenterCourseStatus.cshtml" />
+    <Content Include="Views\Customer\TrainingCenterTechnicalTalk.cshtml" />
+    <Content Include="Views\Admin\TrainingCenterCourses.cshtml" />
+    <Content Include="Views\Admin\TrainingCenterRegistration.cshtml" />
+    <Content Include="Views\Admin\TrainingCenterPersonStatus.cshtml" />
+    <Content Include="Views\Admin\TrainingCenterAdditionalResources.cshtml" />
+    <Content Include="Views\Admin\TrainingCenterTechnicalTalk.cshtml" />
+    <Content Include="Views\Admin\AuditLog.cshtml" />
+    <Content Include="Views\Admin\InventoryGrid.cshtml" />
+    <Content Include="Views\Customer\InventoryGrid.cshtml" />
+    <Content Include="Views\Customer\ChangeHistory.cshtml" />
+    <Content Include="Views\Admin\SpareMaterialFiles.cshtml" />
+    <Content Include="Views\Customer\customerSpareMaterialGrid.cshtml" />
+    <Content Include="Views\Admin\SpareMaterialGrid.cshtml" />
+    <Content Include="Views\Customer\customerSpareMaterialListing.cshtml" />
+    <Content Include="Views\Account\AccountDeletion.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -3044,7 +3196,10 @@
     <Folder Include="img\in\deficiencythumb\" />
     <Folder Include="img\Shelvingchecklist\" />
     <Folder Include="logs\" />
+    <Folder Include="NgScript\Services\" />
     <Folder Include="pricelist\" />
+    <Folder Include="Security\" />
+    <Folder Include="Services\" />
     <Folder Include="Views\ShelvingChecklist\" />
   </ItemGroup>
   <ItemGroup>

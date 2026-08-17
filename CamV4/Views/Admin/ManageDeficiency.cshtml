@@ -14,7 +14,7 @@
                     <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index", "Admin")">Dashboard</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Deficiency</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -69,6 +69,7 @@
                                         <th class="text-secondary opacity-7"></th>
                                     </tr>
                                 </thead>
+                                
                                 <tbody ng-repeat="d in getAllDeficiency | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
                                     <tr>
                                         <td class="align-middle text-sm">
@@ -101,7 +102,7 @@
                                     <option>50</option>
                                 </select> of {{getAllDeficiencycount}} Deficiency
                                 <pagination total-items="totalgetAllDeficiency" ng-model="currentPage" max-size="maxSize" class="pagination" rotate="false" num-pages="numPages"
-                                            items-per-page="itemsPerPage" previous-text="«" next-text="»"></pagination>
+                                            items-per-page="itemsPerPage" previous-text="<" next-text=">"></pagination>
                             </nav>
                         </div>
                     </div>

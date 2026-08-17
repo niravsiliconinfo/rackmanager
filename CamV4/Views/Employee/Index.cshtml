@@ -13,16 +13,16 @@
                     <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Home</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Dashboard</li>
                 </ol>
-                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserName"]!</h6>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <ul class="ms-md-auto navbar-nav  justify-content-end">
                     @*<li class="nav-item d-flex align-items-center">
-                        <a href="@Url.Action("MyProfile", "Employee")" class="nav-link text-body font-weight-bold">
-                            <i class="fa fa-user me-sm-1"></i>
-                            <span class="d-sm-inline d-none">Profile</span>
-                        </a>
-                    </li>*@
+                            <a href="@Url.Action("MyProfile", "Employee")" class="nav-link text-body font-weight-bold">
+                                <i class="fa fa-user me-sm-1"></i>
+                                <span class="d-sm-inline d-none">Profile</span>
+                            </a>
+                        </li>*@
                     <li class="nav-item d-flex align-items-center">
                         <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
                             <i class="fa fa-sign-out me-sm-1"></i>
@@ -239,7 +239,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col mb-3">              
+            <div class="col mb-3">
                 <div class="card">
                     <div class="card-header p-1 pt-2">
                         <div class="icon icon-lg icon-shape  text-center mt-n4 position-absolute">
@@ -268,7 +268,7 @@
                         </div>
                         <div class="text-end pt-1">
                             <h4 class="mb-0">@Model.DashboardActiveInventoryCount</h4>
-                            <p class="text-sm mb-0 text-capitalize">Inventory</p>
+                            <p class="text-sm mb-0 text-capitalize">Spare Material</p>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
@@ -290,7 +290,7 @@
                                 <h6>Recent Inspection</h6>
                                 <p class="text-sm mb-0">
                                     @*<i class="fa fa-check text-info" aria-hidden="true"></i>
-        <span class="font-weight-bold ms-1">30 done</span> this month*@
+                                        <span class="font-weight-bold ms-1">30 done</span> this month*@
                                 </p>
                             </div>
                         </div>
@@ -390,7 +390,7 @@
 <script src="~/assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="~/assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="~/assets/js/plugins/chartjs.min.js"></script>
-
+<script src="~/NgScript/Controller/homeCtrl.js"></script>
 <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {

@@ -1,0 +1,553 @@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<script src="~/Scripts/ui-bootstrap-tpls-0.11.0.js"></script>
+<script>
+    // startFrom filter — required for ui-bootstrap pagination
+    // Registered inline so no extra file needs to be deployed.
+    // If your app.js already has this filter, remove this block.
+    try {
+        angular.module("myApp").filter("startFrom", function () {
+            return function (input, start) {
+                if (!Array.isArray(input)) return [];
+                return input.slice(parseInt(start, 10) || 0);
+            };
+        });
+    } catch(e) { /* already registered */ }
+</script>
+@{
+    var userType   = Session["LoggedInUserType"].ToString();
+    var customerId = Request.QueryString["id"];
+}
+<script src="~/NgScript/Controller/inventoryFilesCtrl.js"></script>
+<style>
+    /* Hide entire page until Angular bootstraps — prevents flash of
+       raw {{expressions}}, modals, and alert divs on page load */
+    [ng-cloak] { display: none !important; }
+
+    /* Edit modal — force visible border on all inputs and selects.
+       Material Dashboard input-group-outline hides borders by default
+       until focused. Inside modals we always want the border visible. */
+    .modal-card .form-control,
+    .modal-card select.form-control {
+        border: 1px solid #d2d6da !important;
+        border-radius: 0.375rem !important;
+        padding: 0.5rem 0.75rem !important;
+        height: auto !important;
+        background-color: #fff !important;
+    }
+
+    .modal-card .form-control:focus,
+    .modal-card select.form-control:focus {
+        border-color: #35d1f5 !important;
+        box-shadow: 0 0 0 2px rgba(53,209,245,.2) !important;
+        outline: none !important;
+    }
+
+    .modal-card .form-control:disabled {
+        background-color: #f8f9fa !important;
+        color: #6c757d !important;
+    }
+
+    /* Label always sits above the field — no floating animation in modals */
+    .modal-card .field-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #7b809a;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        margin-bottom: 4px;
+    }
+
+    .modal-card .field-wrap {
+        margin-bottom: 1rem;
+    }
+</style>
+<main ng-cloak class="main-content2 position-relative max-height-vh-100 h-100"
+      ng-app="myApp" ng-controller="inventoryFilesCtrl">
+
+    <input type="hidden" ng-model="customerId" ng-init="customerId='@customerId'" />
+
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none"
+         id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    @if (userType == "1")
+                    {
+                        <li class="breadcrumb-item text-sm">
+                            <a class="opacity-5 text-dark" href="@Url.Action("Index","Admin")">Dashboard</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="breadcrumb-item text-sm">
+                            <a class="opacity-5 text-dark" href="@Url.Action("Index","Employee")">Dashboard</a>
+                        </li>
+                    }
+                    <li class="breadcrumb-item text-sm">
+                        <a class="opacity-5 text-dark" href="@Url.Action("ManageCustomer","Admin")">Companies</a>
+                    </li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
+                        Spare Materials
+                    </li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                    <div class="input-group input-group-outline">
+                        <input type="search" class="form-control" placeholder="Type here..."
+                               ng-model="search" id="example-search-input">
+                    </div>
+                </div>
+                <ul class="navbar-nav justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login","Account")"
+                           class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid py-4">
+        <div class="row" ng-if="pageError || pageSuccess">
+            <div class="col-12">
+                <div class="alert alert-danger"  ng-if="pageError">  {{pageError}}  </div>
+                <div class="alert alert-success" ng-if="pageSuccess">{{pageSuccess}}</div>
+            </div>
+        </div>
+        <!--  Upload Card  -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">                    
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mt-2">Upload Spare Material File</h6>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <h6 class="text-white text-capitalize ps-3 mt-2 mx-3">{{customerInfo.CustomerName}}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pb-2">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <span>Select File <span class="text-danger">*</span></span>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="input-group input-group-outline mb-3">
+                                    <input type="file" class="form-control" accept=".xlsx"
+                                           onchange="angular.element(this).scope().HandleFileSelect(this.files)" />
+                                </div>
+                                <p class="text-xs text-secondary">Accepted format: .xlsx only</p>
+                            </div>
+                            <div class="col-sm-2">
+                                <span>Location <span class="text-danger">*</span></span>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="input-group input-group-outline mb-3">
+                                    <select class="form-control" ng-model="upload.locationId"
+                                            ng-change="OnLocationChange()">
+                                        <option value="">-- Select Location --</option>
+                                        <option ng-repeat="l in uploadLocationList"
+                                                value="{{l.LocationID}}">
+                                            {{l.LocationName}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2"><span>Facility</span></div>
+                            <div class="col-sm-4">
+                                <div class="input-group input-group-outline mb-3">
+                                    <select class="form-control" ng-model="upload.facilityId"
+                                            ng-change="OnFacilityChange()">
+                                        <option value="">-- None --</option>
+                                        <option ng-repeat="f in uploadFacilityList"
+                                                value="{{f.FacilityID}}">
+                                            {{f.FacilityName}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2"><span>Area</span></div>
+                            <div class="col-sm-4">
+                                <div class="input-group input-group-outline mb-3">
+                                    <select class="form-control" ng-model="upload.areaId">
+                                        <option value="">-- None --</option>
+                                        <option ng-repeat="a in uploadAreaList"
+                                                value="{{a.AreaID}}">
+                                            {{a.AreaName}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2"><span>Description</span></div>
+                            <div class="col-sm-4">
+                                <div class="input-group input-group-outline mb-3">
+                                    <input type="text" class="form-control"
+                                           ng-model="upload.description" maxlength="200" />
+                                </div>
+                            </div>
+                            <div class="col-sm-6"></div>
+                        </div>
+
+                        <div class="row" ng-if="uploading">
+                            <div class="col-sm-6 offset-sm-2">
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-gradient-info" role="progressbar"
+                                         ng-style="{width: uploadProgress + '%'}">
+                                        {{uploadProgress}}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <span class="text-danger" ng-show="uploadError">  {{uploadError}}  </span>
+                                <span class="text-success" ng-show="uploadSuccess">{{uploadSuccess}}</span>
+                            </div>
+                        </div>
+                        <div class="text-center float-end mt-3">
+                            <button type="button" ng-click="UploadFile()"
+                                    class="btn btn-lg bg-gradient-info mt-2 mb-0"
+                                    ng-disabled="uploading">
+                                <span ng-if="!uploading">Upload File</span>
+                                <span ng-if="uploading">Uploading...</span>
+                            </button>
+                            <button type="button" ng-click="ClearUpload()"
+                                    class="btn btn-lg bg-gradient-secondary mt-2 mb-0 ms-2">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--  Files Listing  -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4" id="tblInventoryFiles">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mb-0">
+                                        Spare Materials
+                                    </h6>
+                                </div>
+                                <div class="col-6 d-flex align-items-center justify-content-end pe-3">
+                                    <button type="button" ng-click="LoadFiles()"
+                                            class="btn btn-sm bg-gradient-secondary mb-0">
+                                        <i class="material-icons opacity-10"
+                                           style="font-size:16px;vertical-align:middle">refresh</i>
+                                        Refresh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pb-2">
+
+                        <!-- Filter row -->
+                        @*<div class="row mb-3">
+                            <div class="col-sm-4">
+                                <div class="input-group input-group-outline">
+                                    <select class="form-control" ng-model="filterLocationId"
+                                            ng-change="ApplyClientFilter()">
+                                        <option value="">All Locations</option>
+                                        <option ng-repeat="l in uploadLocationList"
+                                                value="{{l.LocationID}}">
+                                            {{l.LocationName}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="input-group input-group-outline">
+                                    <select class="form-control" ng-model="filterStatus"
+                                            ng-change="ApplyClientFilter()">
+                                        <option value="">All Status</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="input-group input-group-outline">
+                                    <select class="form-control" ng-model="filterFacilityId"
+                                            ng-change="ApplyClientFilter()">
+                                        <option value="">All Facilities</option>
+                                        <option ng-repeat="f in uploadFacilityList"
+                                                value="{{f.FacilityID}}">
+                                            {{f.FacilityName}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>*@
+
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">File Name</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Area,Facility,Location</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Region</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Rows</th>                                        
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Created Date</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Created By</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Status</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-repeat="f in filteredFiles | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
+                                    <tr>
+                                        <td class="align-middle text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">{{f.FileName}}</span>
+                                        </td>
+                                        <td class="align-middle text-sm">
+                                            <span class="text-secondary text-xs">
+                                                {{f.AreaName}}
+                                                <span ng-if="f.AreaName && (f.FacilityName || f.LocationName)">, </span>
+                                                <span ng-if="f.FacilityName">
+                                                    {{f.FacilityName}}
+                                                    <span ng-if="f.LocationName">, </span>
+                                                </span>
+                                                {{f.LocationName}}
+                                            </span>
+                                        </td>
+                                        <td class="align-middle text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">{{f.Region}}</span>
+                                        </td>
+                                        <td class="align-middle text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">{{f.RowCount | number}}</span>
+                                        </td>
+                                        <td class="align-middle text-sm">
+                                            <span class="text-secondary text-xs">{{f.UploadDate}}</span>
+                                        </td>
+                                        <td class="align-middle text-sm">
+                                            <span class="text-secondary text-xs">{{f.UploadedBy}}</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="badge badge-sm bg-gradient-completed"
+                                                        ng-show="f.Status=='Active'">
+                                                        Active
+                                                    </h6>
+                                                    <h6 class="badge badge-sm bg-gradient-secondary"
+                                                        ng-show="f.Status=='Inactive'">
+                                                        Inactive
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="white-space:nowrap">
+                                            <a href="@Url.Action("SpareMaterialGrid","Admin")?fileId={{f.FileID}}"
+                                               title="Open Grid Editor">
+                                                <i class="material-icons opacity-10">grid_on</i>
+                                            </a>
+                                            &nbsp;
+                                            <a href="javascript:void(0)" ng-click="OpenEditFileModal(f)"
+                                               title="Edit File Details">
+                                                <i class="material-icons opacity-10">edit</i>
+                                            </a>
+                                            &nbsp;
+                                            <a href="javascript:void(0)" ng-click="ExportFile(f.FileID)"
+                                               title="Download Excel">
+                                                <i class="material-icons opacity-10">download</i>
+                                            </a>
+                                            &nbsp;
+                                            <a href="javascript:void(0)" ng-click="ConfirmDelete(f)"
+                                               title="Delete File">
+                                                <i class="material-icons opacity-10">delete</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody ng-if="filteredFiles.length == 0">
+                                    <tr>
+                                        <td colspan="10" class="text-center">No files found.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <nav>
+                                Show
+                                <select ng-model="viewby" ng-change="setItemsPerPage(viewby)"
+                                        style="height:25px">
+                                    <option>5</option><option>10</option>
+                                    <option>20</option><option>50</option>
+                                </select>
+                                of {{filteredFiles.length}} Files
+                                <pagination
+                                    total-items="filteredFiles.length"
+                                    ng-model="currentPage"
+                                    max-size="maxSize"
+                                    class="pagination"
+                                    rotate="false"
+                                    num-pages="numPages"
+                                    items-per-page="itemsPerPage"
+                                    previous-text="<"
+                                    next-text=">">
+                                </pagination>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--  Edit File Metadata Modal  -->
+        <div ng-if="showEditFileModal"
+             ng-click="CloseEditFileModal()"
+             style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1050;
+                    display:flex;align-items:center;justify-content:center;">
+            <div class="card modal-card"
+                 ng-click="$event.stopPropagation()"
+                 style="width:90%;max-width:620px;max-height:90vh;overflow-y:auto">
+                <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="d-flex justify-content-between align-items-center pt-4 pb-4 px-3">
+                        <h6 class="text-white text-capitalize mt-2 mb-0">Edit File Details</h6>
+                        <button type="button" class="btn-close btn-close-white"
+                                ng-click="CloseEditFileModal()"></button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="field-wrap">
+                                <label class="field-label">File Name</label>
+                                <input type="text" class="form-control"
+                                       ng-model="editFile.FileName" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="field-wrap">
+                                <label class="field-label">Location <span class="text-danger">*</span></label>
+                                <select class="form-control" ng-model="editFile.LocationID"
+                                        ng-change="OnEditLocationChange()">
+                                    <option value="">-- Select --</option>
+                                    <option ng-repeat="l in editLocationList"
+                                            value="{{l.LocationID}}">{{l.LocationName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="field-wrap">
+                                <label class="field-label">Status</label>
+                                <select class="form-control" ng-model="editFile.Status">
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="field-wrap">
+                                <label class="field-label">Facility</label>
+                                <select class="form-control" ng-model="editFile.FacilityID"
+                                        ng-change="OnEditFacilityChange()">
+                                    <option value="">-- None --</option>
+                                    <option ng-repeat="f in editFacilityList"
+                                            value="{{f.FacilityID}}">{{f.FacilityName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="field-wrap">
+                                <label class="field-label">Area</label>
+                                <select class="form-control" ng-model="editFile.AreaID">
+                                    <option value="">-- None --</option>
+                                    <option ng-repeat="a in editAreaList"
+                                            value="{{a.AreaID}}">{{a.AreaName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="field-wrap">
+                                <label class="field-label">Description</label>
+                                <input type="text" class="form-control"
+                                       ng-model="editFile.Description" maxlength="200" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-if="editFileError">
+                        <div class="col-sm-12">
+                            <span class="text-danger">{{editFileError}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <button type="button" ng-click="CloseEditFileModal()"
+                            class="btn bg-gradient-secondary">Cancel</button>
+                    <button type="button" ng-click="SaveFileMetadata()"
+                            class="btn bg-gradient-info ms-2" ng-disabled="savingFile">
+                        {{savingFile ? 'Saving...' : 'Save Changes'}}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!--  Delete Confirm Modal  -->
+        <div ng-if="showDeleteModal"
+             ng-click="showDeleteModal=false"
+             style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1050;
+                    display:flex;align-items:center;justify-content:center;">
+            <div class="card"
+                 ng-click="$event.stopPropagation()"
+                 style="width:90%;max-width:440px">
+                <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="pt-4 pb-4">
+                        <h6 class="text-white text-capitalize ps-3 mb-0">Confirm Delete</h6>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="text-sm">
+                        Are you sure you want to delete
+                        <strong>{{fileToDelete.FileName}}</strong>?<br/>
+                        This will permanently remove the file and all
+                        {{fileToDelete.RowCount | number}} spare material rows.
+                    </p>
+                </div>
+                <div class="card-footer text-end">
+                    <button type="button" ng-click="showDeleteModal=false"
+                            class="btn bg-gradient-secondary">Cancel</button>
+                    <button type="button" ng-click="DeleteFile()"
+                            class="btn bg-gradient-danger ms-2" ng-disabled="deleting">
+                        {{deleting ? 'Deleting...' : 'Delete'}}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    @Html.Partial("_FooterLayout")
+</main>
