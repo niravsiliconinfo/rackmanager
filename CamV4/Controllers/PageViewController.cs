@@ -1,4 +1,4 @@
-﻿using CamV4.Helper;
+using CamV4.Helper;
 using CamV4.Models;
 using ClosedXML.Excel;
 using Microsoft.AspNet.Identity;
@@ -118,7 +118,7 @@ namespace CamV4.Controllers
         [HttpGet]
         public async Task<List<EmployeeSalesViewModel>> getAllSalesRep()
         {
-            List<EmployeeSalesViewModel> lstEmployeeEngineer = DatabaseHelper.GetAllSalesRep();
+            List<EmployeeSalesViewModel> lstEmployeeEngineer = DatabaseHelper.GetAllSalesRep(0);
             return lstEmployeeEngineer;
         }
 
@@ -286,6 +286,18 @@ namespace CamV4.Controllers
 
         #region "Common Masters"
 
+        //==========================================================
+        // COMMON FILTER DROPDOWN
+        // Customer Admin / Customer User / Sales Representative
+        //==========================================================
+
+        [Route("getDropdownMaster")]
+        [HttpGet]
+        public async Task<DropdownMasterViewModel> GetDropdownMaster()
+        {
+            return DatabaseHelper.GetDropdownMaster();
+        }
+
         [Route("getAllInspectionStatus")]
         [HttpGet]
         public async Task<List<InspectionStatu>> GetAllInspectionStatus()
@@ -347,7 +359,7 @@ namespace CamV4.Controllers
         [HttpGet]
         public async Task<List<CustomerLocation>> getLocationByCustomer()
         {
-            var details = DatabaseHelper.GetLocationByCustomer();
+            var details = DatabaseHelper.getLocationByCustomer();
             return details;
         }
 
@@ -355,7 +367,7 @@ namespace CamV4.Controllers
         [HttpGet]
         public async Task<List<CustomerFacility>> GetFacilityByCustomer()
         {
-            var details = DatabaseHelper.GetFacilityByCustomer();
+            var details = DatabaseHelper.getFacilityByCustomer();
             return details;
         }
 
@@ -363,7 +375,7 @@ namespace CamV4.Controllers
         [HttpGet]
         public async Task<List<CustomerFacility>> GetFacilityByCustomerMenu()
         {
-            var details = DatabaseHelper.GetFacilityByCustomer();
+            var details = DatabaseHelper.getFacilityByCustomer();
             return details;
         }
 
@@ -1655,7 +1667,14 @@ namespace CamV4.Controllers
         {
             FilterCustomerModel filters = new FilterCustomerModel();
             var details = DatabaseHelper.GetAllIncidentByCustomerId(filters);
-            //var details = DatabaseHelper.getAllInspectionDueByCustomerId(3);
+            return details;
+        }
+
+        [Route("getAllIncidentByCustomerId")]
+        [HttpPost]
+        public async Task<List<IncidentViewModel>> GetAllIncidentByCustomerIdPost(FilterCustomerModel filters)
+        {
+            var details = DatabaseHelper.GetAllIncidentByCustomerId(filters);
             return details;
         }
 
@@ -1804,10 +1823,11 @@ namespace CamV4.Controllers
 
         [HttpPost]
         [Route("getAllCustomerDocumentsWithFilters")]
-        public async Task<List<CustomerLocationHistoryLegacyFileListing>> GetAllCustomerDocumentsWithFilters(FilterFilesModel filters)
+        public async Task<List<CustomerLocationHistoryLegacyFileListing>>GetAllCustomerDocumentsWithFilters(FilterFilesModel filters)
         {
-            var details = DatabaseHelper.GetAllCustomerDocumentsWithFilters(filters);
-            return details;
+            //var details = DatabaseHelper.GetAllCustomerDocumentsWithFilters(filters);
+            //return details;
+            return DatabaseHelper.GetAllCustomerDocumentsWithFilters(filters);
         }
 
         [Route("getAllInspectionByCustomerIdInspectionStatus")]
@@ -2309,6 +2329,112 @@ namespace CamV4.Controllers
             return objQuotation;
         }
 
+
+        // =============================================================================
+        // PAGE VIEW CONTROLLER - COMPLETE QUOTATION ENDPOINTS
+        // =============================================================================
+        // Add these methods to your existing PageViewController class
+
+        [Route("updatePriceAdmin")]
+        [HttpPost]
+        public async Task<Quotation> UpdatePriceAdmin(AdminQuotation objQuotation)
+        {
+            try
+            {
+                var result = DatabaseHelper.UpdatePriceAdmin(objQuotation);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in UpdatePriceAdmin: {ex.Message}");
+                return null;
+            }
+        }
+
+        [Route("updateSurchargeMarkupAdmin")]
+        [HttpPost]
+        public async Task<Quotation> UpdateSurchargeMarkupAdmin(AdminQuotation objQuotation)
+        {
+            try
+            {
+                var result = DatabaseHelper.UpdateSurchargeMarkupAdmin(objQuotation);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in UpdateSurchargeMarkupAdmin: {ex.Message}");
+                return null;
+            }
+        }
+
+        [Route("updateAllAdmin")]
+        [HttpPost]
+        public async Task<Quotation> UpdateAllAdmin(AdminQuotation objQuotation)
+        {
+            try
+            {
+                var result = DatabaseHelper.UpdateAllAdmin(objQuotation);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in UpdateAllAdmin: {ex.Message}");
+                return null;
+            }
+        }
+
+        [Route("updateTBDItemAdmin")]
+        [HttpPost]
+        public async Task<dynamic> UpdateTBDItemAdmin(QuotationItemAdmin objItem)
+        {
+            try
+            {
+                var result = DatabaseHelper.UpdateTBDItemAdmin(objItem);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in UpdateTBDItemAdmin: {ex.Message}");
+                return null;
+            }
+        }
+
+        [Route("editQuotationItemAdmin")]
+        [HttpPost]
+        public async Task<dynamic> EditQuotationItemAdmin(QuotationItemAdmin objItem)
+        {
+            try
+            {
+                var result = DatabaseHelper.EditQuotationItemAdmin(objItem);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in EditQuotationItemAdmin: {ex.Message}");
+                return null;
+            }
+        }
+
+        [Route("deleteQuotationItemAdmin")]
+        [HttpPost]
+        public async Task<dynamic> DeleteQuotationItemAdmin(QuotationItemAdmin objItem)
+        {
+            try
+            {
+                var result = DatabaseHelper.DeleteQuotationItemAdmin(objItem);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in DeleteQuotationItemAdmin: {ex.Message}");
+                return null;
+            }
+        }
+
+        // =============================================================================
+        // END OF QUOTATION ENDPOINTS
+        // =============================================================================
+
         [Route("saveComponentSaved")]
         [HttpPost]
         public async Task<string> SaveComponentSaved(List<ComponentSavedViewModel> model)
@@ -2790,10 +2916,11 @@ namespace CamV4.Controllers
             var lstInspectionCount = DatabaseHelper.GetDeficienciesTrendFromPreviousYearsForCustomerLocation(customerLocationid);
             return lstInspectionCount;
         }
+
         [AllowAnonymous]
         [Route("getDoneEmpInspectionCountByYear")]
         [HttpGet]
-        public async Task<List<sp_getEmpInspection_Count_New_Result>> GetDoneEmpInspectionCountByYear(int year)
+        public async Task<List<DashboardEmployeeGraphVM>> GetDoneEmpInspectionCountByYear(int year)
         {
             var details = DatabaseHelper.getDoneEmpInspectionCountByYear(year);
             return details;
@@ -2802,7 +2929,7 @@ namespace CamV4.Controllers
         [AllowAnonymous]
         [Route("getApprovedInspectionCountByYear")]
         [HttpGet]
-        public async Task<List<sp_getApprovedInspection_Count_New_Result>> GetApprovedInspectionCountByYear(int year)
+        public async Task<List<DashboardApprovedGraphVM>> GetApprovedInspectionCountByYear(int year)
         {
             var details = DatabaseHelper.getApprovedInspectionCountByYear(year);
             return details;
@@ -3961,10 +4088,10 @@ namespace CamV4.Controllers
         {
             try
             {
-                if (request == null || request.TrainingTechnicalTalkID <= 0)
-                    return Ok("Invalid request.");
-                if (string.IsNullOrWhiteSpace(request.Answer))
-                    return Ok("Answer cannot be empty.");
+                //if (request == null || request.TrainingTechnicalTalkID <= 0)
+                //    return Ok("Invalid request.");
+                //if (string.IsNullOrWhiteSpace(request.Answer))
+                //    return Ok("Answer cannot be empty.");
 
                 return Ok(DatabaseHelper.TC_AnswerQuestion(request.TrainingTechnicalTalkID, request.Answer));
             }
@@ -4136,8 +4263,28 @@ namespace CamV4.Controllers
         [HttpGet]
         public IHttpActionResult TC_GetPublishedTalks()
         {
-            try { return Ok(DatabaseHelper.TC_GetPublishedTalks()); }
-            catch (Exception ex) { return InternalServerError(ex); }
+            try { 
+                return Ok(DatabaseHelper.TC_GetPublishedTalks()); 
+            }
+            catch (Exception ex) 
+            {
+                return InternalServerError(ex); 
+            }
+        }
+
+        // GET /tc_getPublishedTalks
+        [Route("tc_getPublishedTalksAll")]
+        [HttpGet]
+        public IHttpActionResult TC_GetPublishedTalksAll()
+        {
+            try
+            {
+                return Ok(DatabaseHelper.TC_GetPublishedTalksAll());
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
 
         // GET /tc_getAllTalks
@@ -4145,8 +4292,13 @@ namespace CamV4.Controllers
         [HttpGet]
         public IHttpActionResult TC_GetAllTalks()
         {
-            try { return Ok(DatabaseHelper.TC_GetAllTalks()); }
-            catch (Exception ex) { return InternalServerError(ex); }
+            try { 
+                return Ok(DatabaseHelper.TC_GetAllTalks());
+            }
+            catch (Exception ex) 
+            {
+                return InternalServerError(ex); 
+            }
         }
 
         // POST /tc_submitQuestion
@@ -4155,18 +4307,8 @@ namespace CamV4.Controllers
         public IHttpActionResult TC_SubmitQuestion([FromBody] TC_SubmitQuestionRequest request)
         {
             try
-            {
-                Customer c = null;
-                using (DatabaseEntities db = new DatabaseEntities())
-                {
-                    var uidObj = HttpContext.Current.Session["LoggedInUserId"];
-                    if (uidObj != null)
-                    {
-                        long uid = Convert.ToInt64(uidObj);
-                        c = db.Customers.FirstOrDefault(x => x.UserID == uid);
-                    }
-                }
-                return Ok(DatabaseHelper.TC_SubmitQuestion(request.question, c));
+            {                
+                return Ok(DatabaseHelper.TC_SubmitQuestion(request.question));
             }
             catch (Exception ex) { return InternalServerError(ex); }
         }
@@ -4325,9 +4467,157 @@ namespace CamV4.Controllers
         }
         #endregion
 
+        #region "Sales  Person Area"
+
+        [HttpPost]
+        [Route("getSalesInspectionListing")]
+        public async Task<List<GetInspectionListing_Result>> GetSalesInspectionListing(InspectionFilterModel filters)
+        {
+            return DatabaseHelper.GetSalesInspectionListing(filters);
+        }
+
+        [HttpPost]
+        [Route("getSalesDocumentsWithFilters")]
+        public async Task<List<CustomerLocationHistoryLegacyFileListing>> GetSalesDocumentsWithFilters(FilterFilesModel filters)
+        {
+            return DatabaseHelper.GetSalesDocumentsWithFilters(filters);
+        }
+
+        [HttpPost]
+        [Route("getSalesIncidentListing")]
+        public async Task<List<IncidentViewModel>> GetSalesIncidentListing(FilterCustomerModel filters)
+        {
+            return DatabaseHelper.GetSalesIncidentListing(filters);
+        }
+
+        [HttpPost]
+        [Route("getSalesInternalInspections")]
+        public async Task<List<InternalInspectionViewModel>> GetSalesInternalInspections(FilterCustomerModel filters)
+        {
+            filters = filters ?? new FilterCustomerModel();
+
+            return DatabaseHelper.GetSalesInternalInspections(
+                filters.CustomerLocationId,
+                filters.CustomerFacilityId,
+                filters.CustomerAreaId,
+                filters.Region);
+        }
+
+        [HttpPost]
+        [Route("getSalesInventoryFiles")]
+        public IHttpActionResult GetSalesInventoryFiles([FromBody] InventoryFilterRequest filter)
+        {
+            try
+            {
+                filter = filter ?? new InventoryFilterRequest();
+
+                var dto = new InventoryFilterDto
+                {
+                    Region = filter.Region,
+                    ProvinceID = filter.ProvinceID,
+                    CityID = filter.CityID,
+                    LocationID = filter.LocationID,
+                    FacilityID = filter.FacilityID,
+                    AreaID = filter.AreaID,
+                    Status = filter.Status,
+                    Search = filter.Search
+                };
+
+                return Ok(DatabaseHelper.GetSalesInventoryFilesFiltered(dto));
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError,
+                    new { Message = ex.Message });
+            }
+        }        
+
+        // ---------------- Courses ----------------
+
+        [Route("tc_getSalesCourses")]
+        [HttpGet]
+        public IHttpActionResult TC_GetSalesCourses()
+        {
+            return Ok(DatabaseHelper.TC_GetSalesCourses());
+        }
+
+        [Route("tc_getSalesCourseById")]
+        [HttpGet]
+        public IHttpActionResult TC_GetSalesCourseById(long id)
+        {
+            return Ok(DatabaseHelper.TC_GetSalesCourseById(id));
+        }
+
+        // ---------------- Registrations ----------------
+
+        [Route("tc_getSalesRegistrations")]
+        [HttpGet]
+        public IHttpActionResult TC_GetSalesRegistrations()
+        {
+            return Ok(DatabaseHelper.TC_GetSalesRegistrations());
+        }
+
+        [Route("tc_getSalesRegistrationById")]
+        [HttpGet]
+        public IHttpActionResult TC_GetSalesRegistrationById(long id)
+        {
+            return Ok(DatabaseHelper.TC_GetSalesRegistrationById(id));
+        }
+
+        // ---------------- Webinar ----------------
+
+        [Route("tc_getSalesWebinars")]
+        [HttpGet]
+        public IHttpActionResult TC_GetSalesWebinars()
+        {
+            return Ok(DatabaseHelper.TC_GetSalesWebinars());
+        }
+
+        [Route("tc_getSalesWebinarById")]
+        [HttpGet]
+        public IHttpActionResult TC_GetSalesWebinarById(long id)
+        {
+            return Ok(DatabaseHelper.TC_GetSalesWebinarById(id));
+        }
+
+        // ---------------- Blog ----------------
+
+        [Route("tc_getSalesBlogs")]
+        [HttpGet]
+        public IHttpActionResult TC_GetSalesBlogs()
+        {
+            return Ok(DatabaseHelper.TC_GetSalesBlogs());
+        }
+
+        [Route("tc_getSalesBlogById")]
+        [HttpGet]
+        public IHttpActionResult TC_GetSalesBlogById(long id)
+        {
+            return Ok(DatabaseHelper.TC_GetSalesBlogById(id));
+        }
+
+        // ---------------- Technical Talk ----------------
+
+        [Route("tc_getSalesTechnicalTalks")]
+        [HttpGet]
+        public IHttpActionResult TC_GetSalesTechnicalTalks()
+        {
+            return Ok(DatabaseHelper.TC_GetSalesTechnicalTalks());
+        }
+
+        [Route("tc_getSalesTechnicalTalkById")]
+        [HttpGet]
+        public IHttpActionResult TC_GetSalesTechnicalTalkById(long id)
+        {
+            return Ok(DatabaseHelper.TC_GetSalesTechnicalTalkById(id));
+        }
+
+        
+        #endregion
+
         #region "Inventory API Calls"
 
-                //  GET /getInventoryLocations 
+        //  GET /getInventoryLocations 
         // Supports optional cityId / provinceId / customerId for
         // sidebar cascade and admin customer-scoped dropdowns.
         [HttpGet]

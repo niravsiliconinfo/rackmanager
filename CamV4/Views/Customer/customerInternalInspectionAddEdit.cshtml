@@ -45,6 +45,24 @@
                     <div class="card-body">
                         <!-- Location + Inspection Date -->
                         <div class="row">
+                            <div class="col-sm-2"><span>Internal Inspection Number</span></div>
+                            <div class="col-sm-4">
+                                <div class="input-group input-group-outline mb-3">
+                                    <input type="text" class="form-control" ng-model="form.inspectionNumber" placeholder="Auto-generated on save" readonly />
+                                </div>
+                            </div>
+                            <div class="col-sm-2"><span>Inspection Date</span></div>
+                            <div class="col-sm-4">
+                                <div class="input-group input-group-outline mb-3">
+                                    <input type="date" class="form-control" ng-model="form.inspectionDate" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                </div>
+                            </div>
+                           
+
+                        </div>
+
+                        <!-- Facility + Area -->
+                        <div class="row">
                             <div class="col-sm-2"><span>Location ID <span class="error">*</span></span></div>
                             <div class="col-sm-4">
                                 <div class="input-group input-group-outline mb-3">
@@ -57,16 +75,6 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-sm-2"><span>Inspection Date</span></div>
-                            <div class="col-sm-4">
-                                <div class="input-group input-group-outline mb-3">
-                                    <input type="date" class="form-control" ng-model="form.inspectionDate" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Facility + Area -->
-                        <div class="row">
                             <div class="col-sm-2"><span>Facility</span></div>
                             <div class="col-sm-4">
                                 <div class="input-group input-group-outline mb-3">
@@ -78,7 +86,11 @@
                                         </option>
                                     </select>
                                 </div>
-                            </div>
+                            </div>                           
+                        </div>
+
+                        <!-- Inspection Number + Reported By -->
+                        <div class="row">
                             <div class="col-sm-2"><span>Area</span></div>
                             <div class="col-sm-4">
                                 <div class="input-group input-group-outline mb-3">
@@ -88,17 +100,6 @@
                                             {{a.AreaName}}
                                         </option>
                                     </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Inspection Number + Reported By -->
-                        <div class="row">
-                            <div class="col-sm-2"><span>Inspection Number</span></div>
-                            <div class="col-sm-4">
-                                <div class="input-group input-group-outline mb-3">
-                                    <input type="text" class="form-control" ng-model="form.inspectionNumber"
-                                           placeholder="Auto-generated on save" readonly />
                                 </div>
                             </div>
                             <div class="col-sm-2"><span>Reported By</span></div>
@@ -292,7 +293,7 @@
 
                             <!-- Photos for this deficiency -->
                             <div class="row mt-2">
-                                <div class="col-sm-2"><span>Photos</span></div>
+                                <div class="col-sm-2"><span>Deficiency Photos</span></div>
                                 <div class="col-sm-10">
                                     <input type="file"
                                            id="defPhoto_{{$index}}"
@@ -330,7 +331,7 @@
                 <div class="text-danger mb-2" ng-show="formError">{{formError}}</div>
                 <div class="text-success mb-2" ng-show="formSuccess">{{formSuccess}}</div>
                 <button type="button" class="btn bg-gradient-info btn-lg mt-2 mb-0"
-                        ng-click="SaveInspection()" ng-disabled="saving">
+                        ng-click="SaveInternalInspection()" ng-disabled="saving">
                     <span ng-if="!saving">{{inspectionId > 0 ? 'Update Inspection' : 'Submit Inspection'}}</span>
                     <span ng-if="saving">Saving...</span>
                 </button>

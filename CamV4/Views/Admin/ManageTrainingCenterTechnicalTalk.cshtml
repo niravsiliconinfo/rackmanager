@@ -211,8 +211,8 @@
                     </div>
 
                     <div class="card-body pb-2">
-
                         <!-- Filter tabs -->
+                        {{filteredTalkList}}
                         <div class="mb-3">
                             <button type="button" class="btn btn-sm mb-0 me-2"
                                     ng-class="talkFilter == 'all' ? 'bg-gradient-dark' : 'bg-gradient-secondary'"
@@ -254,7 +254,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-if="!filteredTalkList || filteredTalkList.length == 0">
+                                    <tr ng-if="!talkList || talkList.length == 0">
                                         <td colspan="8" class="text-center text-sm py-4 text-muted">
                                             No entries found for this filter.
                                         </td>

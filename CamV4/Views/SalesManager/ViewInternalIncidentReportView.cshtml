@@ -1,0 +1,432 @@
+﻿@{
+    ViewBag.Title = "Internal Inspection View - Rack Manager - cam|industrial";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@functions{
+    public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    }
+}
+
+<script src="~/NgScript/Controller/salesInternalInspectionCtrl.js"></script>
+<style>
+    .deficiency-card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        overflow: hidden;
+    }
+
+    .deficiency-card-header {
+        padding: 10px 16px;
+        font-weight: 600;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .deficiency-card-body {
+        padding: 12px 16px;
+        background: #fff;
+    }
+
+    .badge-minor {
+        background: #28a745;
+        color: #fff;
+    }
+
+    .badge-moderate {
+        background: #ffc107;
+        color: #333;
+    }
+
+    .badge-severe {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .badge-open {
+        background: #6c757d;
+        color: #fff;
+    }
+
+    .badge-approved {
+        background: #28a745;
+        color: #fff;
+    }
+
+    .badge-rejected {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .photo-thumb {
+        width: 100px;
+        height: 80px;
+        object-fit: cover;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .summary-box {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 12px 16px;
+    }
+
+    .info-label {
+        font-weight: 600;
+        font-size: 12px;
+        color: #6c757d;
+        text-transform: uppercase;
+    }
+
+    .info-value {
+        font-size: 14px;
+    }
+
+    @@media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .deficiency-card {
+            break-inside: avoid;
+        }
+    }
+</style>
+
+<main class="main-content2 position-relative max-height-vh-100 h-100" ng-app="myApp" ng-controller="salesInternalInspectionCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("ManageInternalInspectionSales", "SalesManager")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Internal Inspections</li>
+                </ol>
+                <div class="float-sm-start">
+                    <span class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</span>
+                </div>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center"></div>
+                <ul class="navbar-nav justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid py-4">
+
+        <!-- Loading -->
+        <div ng-if="loading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Loading inspection...</p>
+        </div>
+
+        <!-- Error -->
+        <div ng-if="loadError" class="alert alert-danger mx-3">{{loadError}}</div>
+
+        <!--
+             MAIN CONTENT - only shown once data is loaded
+         -->
+        <div ng-if="inspection && !loading">
+
+            <!--  Top action card  -->
+            <div class="card mb-4 no-print">
+                <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="pt-3 pb-3 px-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <h6 class="text-white mb-0">
+                                {{inspection.InternalInspectionNumber}}
+                            </h6>
+                            <span class="badge badge-sm"
+                                  ng-class="{
+                                    'bg-warning' : inspection.Status === 'Submitted',
+                                    'bg-info'    : inspection.Status === 'Under Review',
+                                    'bg-success' : inspection.Status === 'Approved',
+                                    'bg-danger'  : inspection.Status === 'Rejected'
+                                  }">
+                                {{inspection.Status}}
+                            </span>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <div class="d-flex gap-2">
+
+                                <button class="btn btn-sm btn-warning mb-0"
+                                        disabled
+                                        ng-class="{'opacity-50': inspection.Status !== 'Under Review'}">
+                                    UNDER REVIEW
+                                </button>
+
+                                <button class="btn btn-sm btn-success mb-0"
+                                        disabled
+                                        ng-class="{'opacity-50': inspection.Status !== 'Approved'}">
+                                    APPROVED
+                                </button>
+
+                                <button class="btn btn-sm btn-danger mb-0"
+                                        disabled
+                                        ng-class="{'opacity-50': inspection.Status !== 'Rejected'}">
+                                    REJECTED
+                                </button>
+
+                                <button class="btn btn-sm btn-dark mb-0"
+                                        ng-click="DownloadPdf()">
+                                    <i class="fa fa-file-pdf-o"></i> PDF
+                                </button>
+
+                                <button class="btn btn-sm btn-secondary mb-0"
+                                        ng-click="DownloadPdf()">
+                                    <i class="fa fa-print"></i> PRINT
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status feedback -->
+                <div class="card-body py-2" ng-if="statusMessage || statusError">
+                    <div ng-if="statusMessage" class="alert alert-success py-1 mb-0 text-sm">
+                        <i class="material-icons text-sm align-middle">check</i> {{statusMessage}}
+                    </div>
+                    <div ng-if="statusError" class="alert alert-danger py-1 mb-0 text-sm">
+                        <i class="material-icons text-sm align-middle">error</i> {{statusError}}
+                    </div>
+                </div>
+            </div>
+
+            <!--  Inspection master info  -->
+            <div class="card mb-4">
+                <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="pt-3 pb-3 px-3">
+                        <h6 class="text-white mb-0">Inspection Information</h6>
+                    </div>
+                </div>
+                <div class="card-body pt-4">
+                    <div class="row align-items-start mb-3">
+                        <div class="col-auto">
+                            <img ng-src="{{inspection.LogoUrl}}" alt="logo"
+                                 style="max-height:55px; max-width:180px; object-fit:contain;">
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <p class="info-label mb-0">Inspection Number</p>
+                            <p class="info-value">{{inspection.InternalInspectionNumber}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="info-label mb-0">Inspection Date</p>
+                            <p class="info-value">{{inspection.InternalInspectionDateFormatted}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="info-label mb-0">Prepared By</p>
+                            <p class="info-value">{{inspection.ReportedByName || '-'}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="info-label mb-0">Customer</p>
+                            <p class="info-value">{{inspection.CustomerName}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="info-label mb-0">Location</p>
+                            <p class="info-value">{{inspection.CustomerLocationName}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="info-label mb-0">Region</p>
+                            <p class="info-value">{{inspection.Region || '-'}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="info-label mb-0">Address</p>
+                            <p class="info-value">{{inspection.CustomerLocationAddress || '-'}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="info-label mb-0">Facility</p>
+                            <p class="info-value">{{inspection.CustomerFacilityName || '-'}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="info-label mb-0">Area</p>
+                            <p class="info-value">{{inspection.CustomerAreaName || '-'}}</p>
+                        </div>
+                    </div>
+
+                    <!-- Deficiency summary counts -->
+                    <div class="row g-3 mt-2">
+                        <div class="col-12">
+                            <div class="summary-box">
+                                <div class="row text-center">
+                                    <div class="col">
+                                        <p class="info-label mb-0">Total Deficiencies</p>
+                                        <h5 class="mb-0">{{inspection.DeficiencyCount}}</h5>
+                                    </div>
+                                    <div class="col">
+                                        <p class="info-label mb-0">Minor</p>
+                                        <h5 class="mb-0 text-success">{{inspection.MinorCount}}</h5>
+                                    </div>
+                                    <div class="col">
+                                        <p class="info-label mb-0">Moderate</p>
+                                        <h5 class="mb-0 text-warning">{{inspection.ModerateCount}}</h5>
+                                    </div>
+                                    <div class="col">
+                                        <p class="info-label mb-0">Severe</p>
+                                        <h5 class="mb-0 text-danger">{{inspection.SevereCount}}</h5>
+                                    </div>
+                                    <div class="col">
+                                        <p class="info-label mb-0">Eng. Review Requested</p>
+                                        <h5 class="mb-0 text-info">{{inspection.EngineerReviewCount}}</h5>
+                                    </div>
+                                    <div class="col">
+                                        <p class="info-label mb-0">Eng. Review Cost</p>
+                                        <h5 class="mb-0">
+                                            {{inspection.EngineerReviewTotalCost | currency:"$":0}}
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--  Deficiencies  -->
+            <div class="card mb-4">
+                <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="pt-3 pb-3 px-3">
+                        <h6 class="text-white mb-0">
+                            Deficiencies
+                            <span class="text-white-50 text-sm ms-2">({{inspection.Deficiencies.length}} total)</span>
+                        </h6>
+                    </div>
+                </div>
+                <div class="card-body pt-4">
+
+                    <div ng-if="!inspection.Deficiencies || inspection.Deficiencies.length === 0"
+                         class="text-muted text-center py-3">
+                        No deficiencies recorded for this inspection.
+                    </div>
+
+                    <div class="deficiency-card"
+                         ng-repeat="def in inspection.Deficiencies track by def.InternalInspectionDeficiencyID">
+
+                        <!-- Deficiency header -->
+                        <div class="deficiency-card-header"
+                             ng-class="{
+                               'bg-light border-success' : def.InternalAssessment === 'Minor',
+                               'bg-light border-warning' : def.InternalAssessment === 'Moderate',
+                               'bg-light border-danger'  : def.InternalAssessment === 'Severe'
+                             }">
+                            <span>
+                                Deficiency #{{$index + 1}}
+                                &nbsp;
+                                <span class="badge badge-sm"
+                                      ng-class="{
+                                        'badge-minor'    : def.InternalAssessment === 'Minor',
+                                        'badge-moderate' : def.InternalAssessment === 'Moderate',
+                                        'badge-severe'   : def.InternalAssessment === 'Severe'
+                                      }">
+                                    {{def.InternalAssessment || '-'}}
+                                </span>
+                                &nbsp;
+                                <span class="badge badge-sm"
+                                      ng-class="{
+                                        'badge-open'     : def.Status === 'Open',
+                                        'badge-approved' : def.Status === 'Approved',
+                                        'badge-rejected' : def.Status === 'Rejected'
+                                      }">
+                                    {{def.Status}}
+                                </span>
+                                <span ng-if="def.IsEngineerReviewRequested"
+                                      class="badge badge-sm bg-info ms-1">
+                                    Eng. Review - ${{def.EngineerReviewCost | number:2}}
+                                </span>
+                            </span>
+                            <!-- Per-deficiency approve/reject (Admin action) -->
+                            <span class="no-print">                               
+                                <span ng-if="def.updating" class="ms-1 spinner-border spinner-border-sm text-primary"></span>
+                                <span ng-if="def.feedback" class="ms-2 text-xs"
+                                      ng-class="{'text-success': def.feedbackOk, 'text-danger': !def.feedbackOk}">
+                                    {{def.feedback}}
+                                </span>
+                            </span>
+                        </div>
+
+                        <!-- Deficiency body -->
+                        <div class="deficiency-card-body">
+                            <div class="row g-2">
+                                <div class="col-md-2">
+                                    <p class="info-label mb-0">Area</p>
+                                    <p class="info-value mb-1">{{def.Area || '-'}}</p>
+                                </div>
+                                <div class="col-md-2">
+                                    <p class="info-label mb-0">Row</p>
+                                    <p class="info-value mb-1">{{def.Row || '-'}}</p>
+                                </div>
+                                <div class="col-md-2">
+                                    <p class="info-label mb-0">Aisle</p>
+                                    <p class="info-value mb-1">{{def.Aisle || '-'}}</p>
+                                </div>
+                                <div class="col-md-2">
+                                    <p class="info-label mb-0">Bay</p>
+                                    <p class="info-value mb-1">{{def.Bay || '-'}}</p>
+                                </div>
+                                <div class="col-md-2">
+                                    <p class="info-label mb-0">Level</p>
+                                    <p class="info-value mb-1">{{def.BeamFrameLevel || '-'}}</p>
+                                </div>
+                                <div class="col-md-2">
+                                    <p class="info-label mb-0">Beam Location</p>
+                                    <p class="info-value mb-1">{{def.BeamLocation || '-'}}</p>
+                                </div>
+                                <div class="col-md-2">
+                                    <p class="info-label mb-0">Frame Side</p>
+                                    <p class="info-value mb-1">{{def.FrameSide || '-'}}</p>
+                                </div>
+                                <div class="col-md-2">
+                                    <p class="info-label mb-0">Internal Action</p>
+                                    <p class="info-value mb-1">{{def.InternalAction || '-'}}</p>
+                                </div>
+                                <div class="col-md-8">
+                                    <p class="info-label mb-0">Recommended Action</p>
+                                    <p class="info-value mb-1" style="white-space:pre-wrap;">{{def.RecommendedAction || '-'}}</p>
+                                </div>
+                            </div>
+
+                            <!-- Photos -->
+                            <div ng-if="def.Photos && def.Photos.length > 0" class="mt-3">
+                                <p class="info-label mb-2">Photos ({{def.Photos.length}})</p>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a ng-repeat="p in def.Photos"
+                                       ng-href="{{p.PhotoFullUrl}}" target="_blank" title="View full size">
+                                        <img ng-src="{{p.PhotoThumbFullUrl || p.PhotoFullUrl}}"
+                                             class="photo-thumb"
+                                             alt="deficiency photo"
+                                             onerror="this.src='/Content/V2/images/no-image.png'">
+                                    </a>
+                                </div>
+                            </div>
+                            <div ng-if="!def.Photos || def.Photos.length === 0" class="mt-2">
+                                <span class="text-xs text-muted">No photos attached.</span>
+                            </div>
+                        </div>
+                    </div><!-- /ng-repeat deficiency -->
+
+                </div>
+            </div>
+
+        </div><!-- /ng-if inspection -->
+    </div>
+
+    @Html.Partial("_FooterLayout")
+</main>
+

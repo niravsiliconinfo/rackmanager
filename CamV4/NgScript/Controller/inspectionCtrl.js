@@ -302,7 +302,7 @@
             }, function (response) {
                 $scope.waiting = false;
             });
-        };        
+        };
 
         $scope.GetAreaByLocationIdDrpd = function (id) {
             console.log('getAreaDetailsByLocationId', id);
@@ -499,7 +499,7 @@
                 CADDocuments: $scope.cADDocuments, FacilitiesAreasIds: $scope.checkedFacilitiesId, ProcessOverviewIds: $scope.checkedProcessId,
                 ReferenceDocumentIds: $scope.checkedDocumentId, inspectionFileDrawing: PdfList
             }
-            console.log('SaveInspectionDue', config);            
+            console.log('SaveInspectionDue', config);
             return $http({
                 url: '/api/pageview/saveInspectionDue',
                 method: "POST",
@@ -663,7 +663,7 @@
                 }, function (response) {
                     $scope.waiting = false;
                 });
-               
+
                 if (window.location.pathname == "/Customer/InspectionDetails") {
 
                     console.log('Selected Year:', para);
@@ -676,7 +676,7 @@
                         $scope.waiting = false;
                     });
 
-                    
+
 
                     $http.get('/api/pageview/getDeficienciesTrendFromPreviousYearsForCustomerLocation', { params: { customerLocationid: response.data.CustomerLocationId } })
                         .then(function (response) {
@@ -804,7 +804,7 @@
                         });
                 }
 
-                if (window.location.pathname == "/Admin/InspectionSheet" || window.location.pathname == "/Employee/InspectionDetail") {                   
+                if (window.location.pathname == "/Admin/InspectionSheet" || window.location.pathname == "/Employee/InspectionDetail") {
                     console.log('para inspection sheet clone', para);
                     $http.get('/api/pageview/getInspectionDataClone', { params: { id: para } })
                         .then(function (response) {
@@ -813,7 +813,7 @@
                             $scope.isLoading = false;
                             console.error("Error loading all inspections:", error);
                         });
-                }                
+                }
             }, function (response) {
                 $scope.waiting = false;
                 $scope.isLoading = false;
@@ -823,7 +823,7 @@
         };
 
         if (window.location.pathname == "/Admin/InspectionSheet" || window.location.pathname == "/Customer/InspectionDetails" || window.location.pathname == "/Employee/InspectionDetail" || window.location.pathname == "/Customer/GenerateQuotation") {
-            $scope.loadInspectionData();                    
+            $scope.loadInspectionData();
         }
 
         $scope.cloneInspectionClick = function (id, id1) {
@@ -1051,71 +1051,87 @@
         };
 
         $scope.calculateTotals = function () {
+            if ($scope.getInspectionDetailsForSheet &&
+                $scope.getInspectionDetailsForSheet.objQuotation &&
+                $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent) {
 
-            let ItemUnitPrice = 0;
-            let ItemPrice = 0;
-            const surcharge = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.QuotationSurcharge) || 0;
-            const markup = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.QuotationMarkup) || 0;
+                var component = $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent;
+                var qty = parseFloat(component.ItemQuantity) || 0;
+                var price = parseFloat(component.ItemPrice) || 0;
+                var weight = parseFloat(component.ItemWeight) || 0;
+                var labour = parseFloat(component.ItemLabour) || 0;
 
-            if ($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.IsTBD) {
-                ItemUnitPrice = 0;
-                const LineTotal = 0;
-                $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice = "0";
-                $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.LineTotal = 0;
-                const iLabourTime = 0;
-                const iLabourTimeTotal = 0;
-                if ($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemLabour != '') {
-                    iLabourTime = $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemLabour;
-                    iLabourTimeTotal = quantity * iLabourTime;
-                }
-                const ItemWeight = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemWeight) || 0;
-                const quantity = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemQuantity) || 0;
-                const ItemWeightTotal = quantity * ItemWeight;
-                $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemWeightTotal = (ItemWeightTotal).toFixed(2);
-                $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.LineTotal = LineTotal;//).toFixed(2);
-                $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemLabourTotal = (iLabourTimeTotal).toFixed(2);
+                component.ItemWeightTotal = (weight * qty).toFixed(2);
+                component.LineTotal = (price * qty).toFixed(2);
+                component.ItemLabourTotal = (labour * qty).toFixed(2);
             }
-            else {
-                //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice = "0.0";
-                const itemPartNo = $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemPartNo;
-                $http.get('/api/pageview/getComponentItemDetails', { params: { ItemPartNo: itemPartNo } }).then(function (response) {
-                    console.log(response.data);
-                    $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice = response.data.ComponentPrice;
-                    ItemUnitPrice = response.data.ComponentPrice; //parseFloat($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice) || 0;
-
-                    const ItemWeight = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemWeight) || 0;
-                    const quantity = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemQuantity) || 0;
-                    ItemPrice = ($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice * surcharge * markup).toFixed(2);
-                    $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemPrice = ItemPrice;
-                    /*ItemPrice = ItemUnitPrice * surcharge * markup;*/
-                    //const iLabourTime = 0;
-                    var iLabourTimeTotal = 0;
-                    //console.log('in labour calc-------', $.trim(response.data.ComponentLabourTime));
-                    //iLabourTime = parseFloat($.trim(response.data.ComponentLabourTime));
-
-                    iLabourTimeTotal = quantity * response.data.ComponentLabourTime;
-                    console.log('in labour calc', iLabourTimeTotal);
-                    //if (iLabourTime != '') {
-                    //    console.log('in labour calc');                        
-
-                    //}
-                    const LineTotal = (ItemPrice * $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemQuantity).toFixed(2);
-                    const ItemWeightTotal = quantity * ItemWeight;
-                    console.log('quantity - LineTotal', ItemUnitPrice + '||' + surcharge + '||' + markup + ' ||' + LineTotal);
-                    $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemWeightTotal = (ItemWeightTotal).toFixed(2);
-                    $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.LineTotal = LineTotal;//).toFixed(2);
-                    $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemLabourTotal = iLabourTimeTotal;// (iLabourTimeTotal).toFixed(2);
-                }, function (response) {
-                    $scope.waiting = false;
-                });
-            }
-
-            //ItemUnitPrice = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice) || 0;
-
-            /*const ItemUnitPrice = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice) || 0;*/
-
-
         };
+        //$scope.calculateTotals = function () {
+
+        //    let ItemUnitPrice = 0;
+        //    let ItemPrice = 0;
+        //    const surcharge = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.QuotationSurcharge) || 0;
+        //    const markup = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.QuotationMarkup) || 0;
+
+        //    if ($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.IsTBD) {
+        //        ItemUnitPrice = 0;
+        //        const LineTotal = 0;
+        //        $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice = "0";
+        //        $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.LineTotal = 0;
+        //        const iLabourTime = 0;
+        //        const iLabourTimeTotal = 0;
+        //        if ($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemLabour != '') {
+        //            iLabourTime = $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemLabour;
+        //            iLabourTimeTotal = quantity * iLabourTime;
+        //        }
+        //        const ItemWeight = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemWeight) || 0;
+        //        const quantity = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemQuantity) || 0;
+        //        const ItemWeightTotal = quantity * ItemWeight;
+        //        $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemWeightTotal = (ItemWeightTotal).toFixed(2);
+        //        $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.LineTotal = LineTotal;//).toFixed(2);
+        //        $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemLabourTotal = (iLabourTimeTotal).toFixed(2);
+        //    }
+        //    else {
+        //        //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice = "0.0";
+        //        const itemPartNo = $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemPartNo;
+        //        $http.get('/api/pageview/getComponentItemDetails', { params: { ItemPartNo: itemPartNo } }).then(function (response) {
+        //            console.log(response.data);
+        //            $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice = response.data.ComponentPrice;
+        //            ItemUnitPrice = response.data.ComponentPrice; //parseFloat($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice) || 0;
+
+        //            const ItemWeight = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemWeight) || 0;
+        //            const quantity = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemQuantity) || 0;
+        //            ItemPrice = ($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice * surcharge * markup).toFixed(2);
+        //            $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemPrice = ItemPrice;
+        //            /*ItemPrice = ItemUnitPrice * surcharge * markup;*/
+        //            //const iLabourTime = 0;
+        //            var iLabourTimeTotal = 0;
+        //            //console.log('in labour calc-------', $.trim(response.data.ComponentLabourTime));
+        //            //iLabourTime = parseFloat($.trim(response.data.ComponentLabourTime));
+
+        //            iLabourTimeTotal = quantity * response.data.ComponentLabourTime;
+        //            console.log('in labour calc', iLabourTimeTotal);
+        //            //if (iLabourTime != '') {
+        //            //    console.log('in labour calc');                        
+
+        //            //}
+        //            const LineTotal = (ItemPrice * $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemQuantity).toFixed(2);
+        //            const ItemWeightTotal = quantity * ItemWeight;
+        //            console.log('quantity - LineTotal', ItemUnitPrice + '||' + surcharge + '||' + markup + ' ||' + LineTotal);
+        //            $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemWeightTotal = (ItemWeightTotal).toFixed(2);
+        //            $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.LineTotal = LineTotal;//).toFixed(2);
+        //            $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemLabourTotal = iLabourTimeTotal;// (iLabourTimeTotal).toFixed(2);
+        //        }, function (response) {
+        //            $scope.waiting = false;
+        //        });
+        //    }
+
+        //    //ItemUnitPrice = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice) || 0;
+
+        //    /*const ItemUnitPrice = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice) || 0;*/
+
+
+        //};
 
         $scope.updateGSTTotals = function () {
             let subtotal = 0;
@@ -1402,7 +1418,7 @@
                 const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
                 let GSTVal = parseFloat(subtotal * gstRate);
                 $scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (subtotal * gstRate).toFixed(2);
-                $scope.getInspectionDetailsForSheet.objQuotation.Total = (subtotal + GSTVal).toFixed(2);                
+                $scope.getInspectionDetailsForSheet.objQuotation.Total = (subtotal + GSTVal).toFixed(2);
             }, function (error) {
                 console.error("Error removing quotation item", error);
                 alert("Failed to remove item. Please try again.");
@@ -1495,15 +1511,114 @@
                         $scope.getInspectionDetailsForSheet.objQuotation.TotalUnitPrice = (response.data.TotalUnitPrice).toFixed(2);
                         $scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (response.data.Subtotal).toFixed(2);
                         $scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (response.data.GSTValue).toFixed(2);
-                        $scope.getInspectionDetailsForSheet.objQuotation.Total = (response.data.Total).toFixed(2);                        
+                        $scope.getInspectionDetailsForSheet.objQuotation.Total = (response.data.Total).toFixed(2);
                         //if (response.data === "Ok") {
                         //    console.log('First API call succeeded');
                         //} else {
                         //    console.warn('First API call did not return Ok');
                         //}
                     }).catch(function (error) {
-                        console.error('Error in first API call', error);                        
-                    }).finally(function () {                        
+                        console.error('Error in first API call', error);
+                    }).finally(function () {
+                        $scope.isLoadingButton = false;
+                        $scope.isProcessing = false;
+                    }));
+                }
+            }
+        }
+
+        $scope.saveQuotationAdmin = function (id) {
+            $scope.isLoadingButton = true;
+            $scope.isProcessing = true;
+            var chkedSentEmailtoCustomer = "0";
+            var chkInspectionStatus = 0;
+            var istampingengineerid = 0;
+            var isalespersonid = 0;
+            var chkIsInspectionFinished = 0;
+            var selectElementSalesPersonId = 0;
+            var selectedValueSalesPersonId = "";
+            var chkQuotationApprovalToCustomer = 0;
+            var isalespersonid = 0;
+            var selectElementSalesPersonId = document.getElementById('QuotationSalesPersonId');
+            var selectedValueSalesPersonId = selectElementSalesPersonId.value;
+            console.log('Selected SalesPerson ID: -----Updateitempriceadmin ', selectElementSalesPersonId);
+            console.log('$scope.getInspectionDetailsForSheet.objQuotation.QuotationNotes', $scope.getInspectionDetailsForSheet.objQuotation.QuotationNotes);
+
+            if ($scope.chkQuotationApprovalToCustomer === undefined) {
+                chkQuotationApprovalToCustomer = "0";
+            }
+            else {
+                chkQuotationApprovalToCustomer = $scope.chkQuotationApprovalToCustomer;
+                chkInspectionStatus = $scope.chkQuotationApprovalToCustomer;
+            }
+
+            if (selectedValueSalesPersonId === undefined) {
+                isalespersonid = "0";
+            }
+            else {
+                isalespersonid = selectedValueSalesPersonId;
+            }
+            var checkedLocationContactId = '';
+            if ($scope.getInspectionDetailsForSheet.ListCustomerLocationContacts != null) {
+                $scope.getInspectionDetailsForSheet.ListCustomerLocationContacts.forEach(function (Contact) {
+                    if (Contact.selected) {
+                        checkedLocationContactId += Contact.LocationContactId + ",";
+                    }
+                    else {
+                        /*      console.log('----XXXXtempXXXXXX NOT Selected----', checkedLocationContactId);*/
+                    }
+                });
+            }
+            else {
+                checkedLocationContactId = '';
+            }
+            let promises = [];
+            if ($scope.getInspectionDetailsForSheet.objQuotation != null) {
+                if ($scope.getInspectionDetailsForSheet.objQuotation.QuotationNo != null) {
+
+                    var dataQuotation = {
+                        InspectionId: id,
+                        QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId,
+                        YourReference: $scope.getInspectionDetailsForSheet.objQuotation.YourReference,
+                        ValidTo: $scope.getInspectionDetailsForSheet.objQuotation.ValidTo,
+                        PaymentTerms: $scope.getInspectionDetailsForSheet.objQuotation.PaymentTerms,
+                        ShipmentMethod: $scope.getInspectionDetailsForSheet.objQuotation.ShipmentMethod,
+                        SalesPersonId: isalespersonid, // $scope.getInspectionDetailsForSheet.objQuotation.QuotationSalesPersonId,
+                        GSTPer: $scope.getInspectionDetailsForSheet.objQuotation.GSTPer,
+                        LabourUnitPrice: $scope.getInspectionDetailsForSheet.objQuotation.LabourUnitPrice,
+                        TotalLabour: $scope.getInspectionDetailsForSheet.objQuotation.TotalLabour,
+                        SendEmailForApproval: chkQuotationApprovalToCustomer,
+                        QuotationSurcharge: $scope.getInspectionDetailsForSheet.objQuotation.QuotationSurcharge,
+                        QuotationMarkup: $scope.getInspectionDetailsForSheet.objQuotation.QuotationMarkup,
+                        QuotationNotes: $scope.getInspectionDetailsForSheet.objQuotation.QuotationNotes,
+                        LocationContactId: checkedLocationContactId,
+                        IsUpdateAll: $scope.getInspectionDetailsForSheet.objQuotation.updateAll
+                    };
+
+                    console.log('dataQuotation', dataQuotation);
+                    //return false;
+                    promises.push($http({
+                        url: '/api/pageview/saveQuotationAdmin',
+                        method: "POST",
+                        data: dataQuotation,
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    }).then(function (response) {
+                        console.log('$scope.getInspectionDetailsForSheet.objQuotation', response.data);
+                        $scope.getInspectionDetailsForSheet.objQuotation = response.data;
+                        $scope.getInspectionDetailsForSheet.objQuotation.TotalUnitPrice = (response.data.TotalUnitPrice).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (response.data.Subtotal).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (response.data.GSTValue).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.Total = (response.data.Total).toFixed(2);
+                        //if (response.data === "Ok") {
+                        //    console.log('First API call succeeded');
+                        //} else {
+                        //    console.warn('First API call did not return Ok');
+                        //}
+                    }).catch(function (error) {
+                        console.error('Error in first API call', error);
+                    }).finally(function () {
                         $scope.isLoadingButton = false;
                         $scope.isProcessing = false;
                     }));
@@ -1820,7 +1935,7 @@
         //    chkInspectionStatus = ($scope.chkInspectionStatus == 4 ||
         //        (chkInspectionStatusEl && chkInspectionStatusEl.checked)) ? 4 : 0;
 
-           
+
         //    // Set inspection status
         //    //if ($scope.chkInspectionStatus == 4) {
         //    //    chkInspectionStatus = $scope.chkInspectionStatus;
@@ -1893,7 +2008,7 @@
         //        isalespersonid: isalespersonid,                
         //        ShelvingChecklistComments: ShelvingChecklistComments
         //    });
-           
+
         //    // CASE 1: Handle Inspection Finished (Priority)
         //    if (chkIsInspectionFinished == 9) {
         //        console.log("Processing Inspection Finished...");
@@ -1905,7 +2020,7 @@
         //            iStampingEngineerId: istampingengineerid,
         //            sCheckedDocument: checkedDocument
         //        };
-                
+
 
         //        return $http({
         //            url: '/api/pageview/SaveUpdateApproveInspectionAdmin',
@@ -2010,7 +2125,7 @@
         //        sCheckedDocument: checkedDocument,
         //        ShelvingChecklistComments: ShelvingChecklistComments
         //    };
-            
+
         //    console.log("Updating inspection with data:", data);
         //    return;
         //    return $http({
@@ -2095,7 +2210,7 @@
         //    if ($scope.chkSentEmailtoCustomer !== undefined) {
         //       chkedSentEmailtoCustomer = $scope.chkSentEmailtoCustomer;
         //    }
-                       
+
         //    if ($scope.chkQuotationApprovalToCustomer !== undefined) {
         //       chkQuotationApprovalToCustomer = $scope.chkQuotationApprovalToCustomer;
         //       chkInspectionStatus = chkQuotationApprovalToCustomer;
@@ -2157,8 +2272,8 @@
         //           alert(error);
         //       });
         //    }
-            
-            
+
+
         //    // Collect Customer Location Contact IDs
         //    var checkedLocationContactId = '';
         //    if ($scope.getInspectionDetailsForSheet.ListCustomerLocationContacts != null) {
@@ -2424,6 +2539,477 @@
 
             }
         };
+        /**
+ * OPERATION 1: UPDATE PRICE
+ * Updates item prices from Item Master and saves to database
+ */
+        $scope.isLoadingButton = false;
+
+        // START EDIT MODE
+        $scope.startEditQuotationItem = function (item) {
+            item.backup = angular.copy(item);
+            item.isEditing = true;
+        };
+
+        // CANCEL EDIT MODE
+        $scope.cancelEditQuotationItem = function (item) {
+            if (item.backup) {
+                item.ItemPartNo = item.backup.ItemPartNo;
+                item.ItemDescription = item.backup.ItemDescription;
+                item.ItemUnitPrice = item.backup.ItemUnitPrice;
+                item.ItemSurcharge = item.backup.ItemSurcharge;
+                item.ItemMarkup = item.backup.ItemMarkup;
+                item.ItemPrice = item.backup.ItemPrice;
+                item.ItemWeight = item.backup.ItemWeight;
+                item.ItemQuantity = item.backup.ItemQuantity;
+                item.ItemWeightTotal = item.backup.ItemWeightTotal;
+                item.LineTotal = item.backup.LineTotal;
+                item.ItemLabour = item.backup.ItemLabour;
+                item.ItemLabourTotal = item.backup.ItemLabourTotal;
+                item.IsTBD = item.backup.IsTBD;
+            }
+            item.isEditing = false;
+        };
+
+        // RECALCULATE ROW ON-THE-FLY
+        $scope.recalculateItemRow = function (item) {
+            try {
+                if (!item) return;
+                var qty = parseFloat(item.ItemQuantity) || 0;
+                var unitPrice = parseFloat(item.ItemUnitPrice) || 0;
+                var surcharge = parseFloat(item.ItemSurcharge) || 1;
+                var markup = parseFloat(item.ItemMarkup) || 1;
+                var weight = parseFloat(item.ItemWeight) || 0;
+                var labour = parseFloat(item.ItemLabour) || 0;
+
+                if (item.IsTBD == true) {
+                    item.ItemPrice = 0;
+                    item.LineTotal = 0;
+                    item.ItemLabourTotal = 0;
+                    item.ItemWeightTotal = 0;
+                } else {
+                    item.ItemPrice = Math.round((unitPrice * surcharge * markup) * 100) / 100;
+                    item.LineTotal = Math.round((item.ItemPrice * qty) * 100) / 100;
+                    item.ItemWeightTotal = Math.round((weight * qty) * 100) / 100;
+                    item.ItemLabourTotal = Math.round((labour * qty) * 100) / 100;
+                }
+            } catch (ex) {
+                console.error('Error in recalculateItemRow:', ex);
+            }
+        };
+
+        // SAVE EDITED ITEM
+        $scope.saveEditQuotationItem = function (item) {
+            if ($scope.isLoadingButton) return;
+            $scope.isLoadingButton = true;
+
+            try {
+                if (!item || !item.QuotationInspectionItemId) {
+                    alert('Invalid item selected');
+                    $scope.isLoadingButton = false;
+                    return;
+                }
+
+                $scope.recalculateItemRow(item);
+
+                var dataItem = {
+                    InspectionId: $scope.getInspectionDetailsForSheet.InspectionId,
+                    QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId,
+                    QuotationItemId: item.QuotationInspectionItemId,
+                    ItemPartNo: item.ItemPartNo,
+                    ItemDescription: item.ItemDescription,
+                    ItemUnitPrice: item.ItemUnitPrice,
+                    ItemSurcharge: item.ItemSurcharge,
+                    ItemMarkup: item.ItemMarkup,
+                    ItemPrice: item.ItemPrice,
+                    ItemQuantity: item.ItemQuantity,
+                    LineTotal: item.LineTotal,
+                    ItemWeight: item.ItemWeight,
+                    ItemWeightTotal: item.ItemWeightTotal,
+                    ItemLabour: item.ItemLabour,
+                    ItemLabourTotal: item.ItemLabourTotal,
+                    IsTBD: item.IsTBD
+                };
+
+                $http({
+                    url: '/api/pageview/editQuotationItemAdmin',
+                    method: "POST",
+                    data: dataItem,
+                    headers: { "Content-Type": "application/json" }
+                }).then(function (response) {
+                    if (response.data && response.data.success) {
+                        $scope.getInspectionDetailsForSheet.objQuotation.Subtotal = parseFloat(response.data.Subtotal).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.GSTValue = parseFloat(response.data.GSTValue).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.Total = parseFloat(response.data.Total).toFixed(2);
+                        item.isEditing = false;
+                        alert('Item saved successfully');
+                    }
+                }).catch(function (error) {
+                    console.error('Error saving item', error);
+                    alert('Error saving item');
+                }).finally(function () {
+                    $scope.isLoadingButton = false;
+                });
+
+            } catch (ex) {
+                console.error('Exception in saveEditQuotationItem:', ex);
+                $scope.isLoadingButton = false;
+                alert('An error occurred: ' + ex.message);
+            }
+        };
+
+        // UPDATE PRICE
+        $scope.updatePrice = function (inspectionId) {
+            if ($scope.isLoadingButton) return;
+            $scope.isLoadingButton = true;
+
+            try {
+                if (!$scope.getInspectionDetailsForSheet || !$scope.getInspectionDetailsForSheet.objQuotation) {
+                    alert('No quotation found');
+                    $scope.isLoadingButton = false;
+                    return;
+                }
+
+                var salesPersonId = 0;
+                var selectElement = document.getElementById('QuotationSalesPersonId');
+                if (selectElement && selectElement.value) {
+                    salesPersonId = parseInt(selectElement.value);
+                }
+
+                var dataQuotation = {
+                    InspectionId: inspectionId,
+                    QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId,
+                    SalesPersonId: salesPersonId,
+                    IsUpdatePrice: true
+                };
+
+                $http({
+                    url: '/api/pageview/updatePriceAdmin',
+                    method: "POST",
+                    data: dataQuotation,
+                    headers: { "Content-Type": "application/json" }
+                }).then(function (response) {
+                    if (response.data) {
+                        $scope.getInspectionDetailsForSheet.objQuotation = response.data;
+                        if (response.data.objQuotationItems) {
+                            $scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems = response.data.objQuotationItems;
+                        }
+                        $scope.getInspectionDetailsForSheet.objQuotation.Subtotal = parseFloat(response.data.Subtotal).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.GSTValue = parseFloat(response.data.GSTValue).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.Total = parseFloat(response.data.Total).toFixed(2);
+                        alert('Item prices updated successfully');
+                    }
+                }).catch(function (error) {
+                    console.error('Error updating prices', error);
+                    alert('Error updating item prices');
+                }).finally(function () {
+                    $scope.isLoadingButton = false;
+                });
+
+            } catch (ex) {
+                console.error('Exception in updatePrice:', ex);
+                $scope.isLoadingButton = false;
+                alert('An error occurred: ' + ex.message);
+            }
+        };
+
+        // UPDATE SURCHARGE & MARKUP
+        $scope.updateSurchargeMarkup = function (inspectionId) {
+            if ($scope.isLoadingButton) return;
+            $scope.isLoadingButton = true;
+
+            try {
+                if (!$scope.getInspectionDetailsForSheet || !$scope.getInspectionDetailsForSheet.objQuotation) {
+                    alert('No quotation found');
+                    $scope.isLoadingButton = false;
+                    return;
+                }
+
+                var surcharge = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.QuotationSurcharge);
+                var markup = parseFloat($scope.getInspectionDetailsForSheet.objQuotation.QuotationMarkup);
+
+                if (isNaN(surcharge) || isNaN(markup)) {
+                    alert('Surcharge and Markup must be valid numbers');
+                    $scope.isLoadingButton = false;
+                    return;
+                }
+
+                var salesPersonId = 0;
+                var selectElement = document.getElementById('QuotationSalesPersonId');
+                if (selectElement && selectElement.value) {
+                    salesPersonId = parseInt(selectElement.value);
+                }
+
+                var dataQuotation = {
+                    InspectionId: inspectionId,
+                    QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId,
+                    QuotationSurcharge: surcharge,
+                    QuotationMarkup: markup,
+                    SalesPersonId: salesPersonId,
+                    IsUpdateSurchargeMarkup: true
+                };
+
+                $http({
+                    url: '/api/pageview/updateSurchargeMarkupAdmin',
+                    method: "POST",
+                    data: dataQuotation,
+                    headers: { "Content-Type": "application/json" }
+                }).then(function (response) {
+                    if (response.data) {
+                        $scope.getInspectionDetailsForSheet.objQuotation = response.data;
+                        if (response.data.objQuotationItems) {
+                            $scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems = response.data.objQuotationItems;
+                        }
+                        $scope.getInspectionDetailsForSheet.objQuotation.Subtotal = parseFloat(response.data.Subtotal).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.GSTValue = parseFloat(response.data.GSTValue).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.Total = parseFloat(response.data.Total).toFixed(2);
+                        alert('Surcharge and Markup updated successfully');
+                    }
+                }).catch(function (error) {
+                    console.error('Error updating surcharge and markup', error);
+                    alert('Error updating surcharge and markup');
+                }).finally(function () {
+                    $scope.isLoadingButton = false;
+                });
+
+            } catch (ex) {
+                console.error('Exception in updateSurchargeMarkup:', ex);
+                $scope.isLoadingButton = false;
+                alert('An error occurred: ' + ex.message);
+            }
+        };
+
+        // UPDATE SURCHARGE & MARKUP BUTTON
+        $scope.updateSurchargeAndMarkup = function (inspectionId) {
+            $scope.updateSurchargeMarkup(inspectionId);
+        };
+
+        // UPDATE ALL
+        $scope.updateAll = function (inspectionId) {
+            if ($scope.isLoadingButton) return;
+            $scope.isLoadingButton = true;
+
+            try {
+                if (!$scope.getInspectionDetailsForSheet || !$scope.getInspectionDetailsForSheet.objQuotation) {
+                    alert('No quotation found');
+                    $scope.isLoadingButton = false;
+                    return;
+                }
+
+                var salesPersonId = parseInt($scope.quotationsalespersonid) || 0;
+
+                var selectedSalesPerson = $scope.getAllSalesPerson.find(function (d) {
+                    return d.EmployeeSalesID == salesPersonId;
+                });
+
+                var salesPersonName = selectedSalesPerson
+                    ? selectedSalesPerson.EmployeeSalesName
+                    : "";
+
+                var dataQuotation = {
+                    InspectionId: inspectionId,
+                    QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId,
+                    YourReference: $scope.getInspectionDetailsForSheet.objQuotation.YourReference,
+                    ValidTo: $scope.getInspectionDetailsForSheet.objQuotation.ValidTo,
+                    PaymentTerms: $scope.getInspectionDetailsForSheet.objQuotation.PaymentTerms,
+                    ShipmentMethod: $scope.getInspectionDetailsForSheet.objQuotation.ShipmentMethod,
+                    SalesPersonId: salesPersonId,
+                    SalesPersonName: salesPersonName,
+                    GSTPer: $scope.getInspectionDetailsForSheet.objQuotation.GSTPer,
+                    LabourUnitPrice: $scope.getInspectionDetailsForSheet.objQuotation.LabourUnitPrice,
+                    QuotationSurcharge: $scope.getInspectionDetailsForSheet.objQuotation.QuotationSurcharge,
+                    QuotationMarkup: $scope.getInspectionDetailsForSheet.objQuotation.QuotationMarkup,
+                    QuotationNotes: $scope.getInspectionDetailsForSheet.objQuotation.QuotationNotes,
+                    IsUpdateAll: true
+                };
+
+                $http({
+                    url: '/api/pageview/updateAllAdmin',
+                    method: "POST",
+                    data: dataQuotation,
+                    headers: { "Content-Type": "application/json" }
+                }).then(function (response) {
+                    if (response.data) {
+                        $scope.getInspectionDetailsForSheet.objQuotation = response.data;
+                        if (response.data.objQuotationItems) {
+                            $scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems = response.data.objQuotationItems;
+                        }
+                        $scope.getInspectionDetailsForSheet.objQuotation.Subtotal = parseFloat(response.data.Subtotal).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.GSTValue = parseFloat(response.data.GSTValue).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.Total = parseFloat(response.data.Total).toFixed(2);
+                        alert('Complete quotation updated successfully');
+                    }
+                }).catch(function (error) {
+                    console.error('Error updating quotation', error);
+                    alert('Error updating quotation');
+                }).finally(function () {
+                    $scope.isLoadingButton = false;
+                });
+
+            } catch (ex) {
+                console.error('Exception in updateAll:', ex);
+                $scope.isLoadingButton = false;
+                alert('An error occurred: ' + ex.message);
+            }
+        };
+
+        // UPDATE TBD
+        $scope.updateTBD = function (item) {
+            if ($scope.isLoadingButton) return;
+            $scope.isLoadingButton = true;
+
+            try {
+                if (!item || !item.QuotationInspectionItemId) {
+                    $scope.isLoadingButton = false;
+                    return;
+                }
+
+                if (item.IsTBD) {
+                    item.ItemPrice = 0;
+                    item.LineTotal = 0;
+                    item.ItemLabourTotal = 0;
+                } else {
+                    var surcharge = item.ItemSurcharge || 1;
+                    var markup = item.ItemMarkup || 1;
+                    var unitPrice = item.ItemUnitPrice || 0;
+                    item.ItemPrice = Math.round((unitPrice * surcharge * markup) * 100) / 100;
+                    var qty = item.ItemQuantity || 0;
+                    item.LineTotal = Math.round((item.ItemPrice * qty) * 100) / 100;
+                    var labour = item.ItemLabour || 0;
+                    item.ItemLabourTotal = Math.round((labour * qty) * 100) / 100;
+                }
+
+                var dataItem = {
+                    InspectionId: $scope.getInspectionDetailsForSheet.InspectionId,
+                    QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId,
+                    QuotationItemId: item.QuotationInspectionItemId,
+                    IsTBD: item.IsTBD,
+                    ItemUnitPrice: item.ItemUnitPrice,
+                    ItemSurcharge: item.ItemSurcharge,
+                    ItemMarkup: item.ItemMarkup,
+                    ItemPrice: item.ItemPrice,
+                    ItemQuantity: item.ItemQuantity,
+                    LineTotal: item.LineTotal,
+                    ItemWeight: item.ItemWeight,
+                    ItemWeightTotal: item.ItemWeightTotal,
+                    ItemLabour: item.ItemLabour,
+                    ItemLabourTotal: item.ItemLabourTotal
+                };
+
+                $http({
+                    url: '/api/pageview/updateTBDItemAdmin',
+                    method: "POST",
+                    data: dataItem,
+                    headers: { "Content-Type": "application/json" }
+                }).then(function (response) {
+                    if (response.data) {
+                        $scope.getInspectionDetailsForSheet.objQuotation.Subtotal = parseFloat(response.data.Subtotal).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.GSTValue = parseFloat(response.data.GSTValue).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.Total = parseFloat(response.data.Total).toFixed(2);
+                    }
+                }).catch(function (error) {
+                    console.error('Error updating TBD', error);
+                    alert('Error updating TBD status');
+                }).finally(function () {
+                    $scope.isLoadingButton = false;
+                });
+
+            } catch (ex) {
+                console.error('Exception in updateTBD:', ex);
+                $scope.isLoadingButton = false;
+                alert('An error occurred: ' + ex.message);
+            }
+        };
+
+        // DELETE ITEM
+        $scope.deleteQuotationItem = function (item) {
+            if (!confirm('Are you sure you want to delete this item?')) {
+                return;
+            }
+
+            if ($scope.isLoadingButton) return;
+            $scope.isLoadingButton = true;
+
+            try {
+                if (!item || !item.QuotationInspectionItemId) {
+                    alert('Invalid item selected');
+                    $scope.isLoadingButton = false;
+                    return;
+                }
+
+                var dataItem = {
+                    InspectionId: $scope.getInspectionDetailsForSheet.InspectionId,
+                    QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId,
+                    QuotationItemId: item.QuotationInspectionItemId
+                };
+
+                $http({
+                    url: '/api/pageview/deleteQuotationItemAdmin',
+                    method: "POST",
+                    data: dataItem,
+                    headers: { "Content-Type": "application/json" }
+                }).then(function (response) {
+                    if (response.data && response.data.success) {
+                        var index = $scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.indexOf(item);
+                        if (index > -1) {
+                            $scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.splice(index, 1);
+                        }
+                        $scope.getInspectionDetailsForSheet.objQuotation.Subtotal = parseFloat(response.data.Subtotal).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.GSTValue = parseFloat(response.data.GSTValue).toFixed(2);
+                        $scope.getInspectionDetailsForSheet.objQuotation.Total = parseFloat(response.data.Total).toFixed(2);
+                        alert('Item deleted successfully');
+                    }
+                }).catch(function (error) {
+                    console.error('Error deleting item', error);
+                    alert('Error deleting item');
+                }).finally(function () {
+                    $scope.isLoadingButton = false;
+                });
+
+            } catch (ex) {
+                console.error('Exception in deleteQuotationItem:', ex);
+                $scope.isLoadingButton = false;
+                alert('An error occurred: ' + ex.message);
+            }
+        };
+
+        // CALCULATE TOTALS
+        $scope.calculateTotals = function () {
+            if ($scope.getInspectionDetailsForSheet &&
+                $scope.getInspectionDetailsForSheet.objQuotation &&
+                $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent) {
+
+                var component = $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent;
+                var qty = parseFloat(component.ItemQuantity) || 0;
+                var price = parseFloat(component.ItemPrice) || 0;
+                var weight = parseFloat(component.ItemWeight) || 0;
+                var labour = parseFloat(component.ItemLabour) || 0;
+
+                component.ItemWeightTotal = (weight * qty).toFixed(2);
+                component.LineTotal = (price * qty).toFixed(2);
+                component.ItemLabourTotal = (labour * qty).toFixed(2);
+            }
+        };
+
+        // CHECK TBD
+        $scope.checkTBD = function () {
+            if ($scope.getInspectionDetailsForSheet &&
+                $scope.getInspectionDetailsForSheet.objQuotation &&
+                $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent) {
+
+                if ($scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.IsTBD) {
+                    $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemPrice = 0;
+                    $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice = 0;
+                    $scope.getInspectionDetailsForSheet.objQuotation.objQuotationComponent.LineTotal = 0;
+                }
+            }
+        };
+
+        // BACKWARD COMPATIBILITY
+        $scope.Updateitempriceadmin = function (id) {
+            $scope.updateAll(id);
+        };
+
 
         //$scope.ddlDeficiencySelectionCheckboxes = function () {
         //    // Log the selected value to see if the dropdown value is updating properly
@@ -2573,7 +3159,7 @@
             $scope.isLoadingButton = true;
             $scope.isProcessing = true;
 
-            
+
             let selectedIds = [];
 
             if ($scope.getInspectionDetailsForSheet.iDefModel) {
@@ -2584,7 +3170,7 @@
                     }
                 });
             }
-            
+
             var data = {
                 inspectionId: inspectionId,
                 sCustomerSelectedDeficiencyIds: selectedIds.join(',')

@@ -10,23 +10,24 @@
     }
 }
 <script src="~/NgScript/Controller/internalInspectionCtrl.js"></script>
-
-<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg"
-      ng-controller="internalInspectionCtrl">
-    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+<main class="main-content2 position-relative max-height-vh-100 h-100" ng-app="myApp" ng-controller="internalInspectionCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
         <div class="container-fluid py-1 px-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("customerInternalInspectionListing","Customer")">Internal Inspections</a></li>
-                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">View Inspection</li>
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("customerInternalInspectionListing", "Customer")">Back(Internal Inspections)</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">View Internal Inspection</li>
                 </ol>
                 <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-                <ul class="navbar-nav justify-content-end">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
                     <li class="nav-item d-flex align-items-center">
-                        <a href="@Url.Action("Login","Account")" class="nav-link text-body font-weight-bold px-0">
-                            <i class="fa fa-sign-out me-sm-1"></i><span class="d-sm-inline d-none">Sign Out</span>
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
                         </a>
                     </li>
                 </ul>
@@ -35,211 +36,239 @@
     </nav>
 
     <div class="container-fluid py-4">
-        <input type="hidden" ng-model="antiForgeryToken" ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2 bg-gradient-inprogress">
+                        <div class="pt-4 pb-4">
+                            <div class="row align-items-center">
 
-        <div ng-if="!inspection" class="text-center py-5">
-            <p class="text-sm text-muted">Loading inspection details...</p>
-        </div>
-
-        <div ng-if="inspection">
-            <!-- Actions bar -->
-            <div class="row mb-3">
-                <div class="col-12 d-flex justify-content-between align-items-center">
-                    <a href="@Url.Action("customerInternalInspectionListing","Customer")"
-                       class="btn bg-gradient-secondary btn-sm mb-0">
-                        <i class="material-icons text-sm me-1" style="vertical-align:middle;">arrow_back</i> Back
-                    </a>
-                    <div>
-                        <a href="/Customer/customerInternalInspectionAddEdit?id={{inspection.InternalInspectionID}}"
-                           class="btn bg-gradient-info btn-sm mb-0 me-2"
-                           ng-if="inspection.Status=='Draft'||inspection.Status=='Submitted'">
-                            <i class="material-icons text-sm me-1" style="vertical-align:middle;">edit</i> Edit
-                        </a>
-                        <button type="button" class="btn bg-gradient-dark btn-sm mb-0"
-                                ng-click="DownloadPdf()" ng-disabled="downloading">
-                            <i class="material-icons text-sm me-1" style="vertical-align:middle;">picture_as_pdf</i>
-                            <span ng-if="!downloading">Download PDF</span>
-                            <span ng-if="downloading">Generating...</span>
-                        </button>
-                        <span class="text-danger text-sm ms-2" ng-show="downloadError">{{downloadError}}</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ---- REPORT LAYOUT matching image ---- -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card my-2" style="border:1px solid #ccc;">
-                        <div class="card-body p-0">
-
-                            <!-- Logo + Title row -->
-                            <table class="table table-bordered mb-0" style="margin:0;">
-                                <tr>
-                                    <td style="width:40%;padding:12px 16px;">
-                                        <img ng-src="{{inspection.LogoUrl}}" alt="Logo"
-                                             style="max-height:50px;max-width:180px;" />
-                                    </td>
-                                    <td style="padding:12px 16px;text-align:right;">
-                                        <span style="font-size:14pt;color:#666;margin-right:6px;">Inspection</span>
-                                        <span style="font-size:22pt;font-weight:bold;color:#003087;">Report</span>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <!-- Description -->
-                            <div style="padding:8px 16px;font-size:8pt;color:#555;border-bottom:1px solid #ccc;">
-                                This incident report is designed to be used by a qualified person/supervisor to identify and document an incident data to generate a request for a formal incident inspection or repair material to comply with Occupational Health and Safety Regulation.
-                            </div>
-
-                            <!-- Inspection Information -->
-                            <div style="background:#fbe9dc;padding:6px 16px;border-bottom:1px solid #ccc;">
-                                <strong style="color:#cc0000;font-size:9pt;">Inspection Information</strong>
-                            </div>
-                            <table class="table table-bordered mb-0">
-                                <tr>
-                                    <td class="text-sm font-weight-bold" style="width:20%;background:#f9f9f9;">Business Name</td>
-                                    <td class="text-sm" colspan="3">{{inspection.CustomerName}}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Inspection Address</td>
-                                    <td class="text-sm" colspan="3">{{inspection.CustomerLocationAddress || '-'}}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Location</td>
-                                    <td class="text-sm">{{inspection.CustomerLocationName}}</td>
-                                    <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Region</td>
-                                    <td class="text-sm">{{inspection.Region || '-'}}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Facility</td>
-                                    <td class="text-sm">{{inspection.CustomerFacilityName || '-'}}</td>
-                                    <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Area</td>
-                                    <td class="text-sm">{{inspection.CustomerAreaName || '-'}}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Inspection Number</td>
-                                    <td class="text-sm">{{inspection.InternalInspectionNumber}}</td>
-                                    <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Inspection Date</td>
-                                    <td class="text-sm">{{inspection.InternalInspectionDateFormatted}}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Prepared By</td>
-                                    <td class="text-sm" colspan="3">{{inspection.ReportedByName}}</td>
-                                </tr>
-                            </table>
-
-                            <!-- Deficiency Summary -->
-                            <div style="background:#e8f0fb;padding:6px 16px;border-bottom:1px solid #ccc;border-top:1px solid #ccc;">
-                                <strong style="color:#003087;font-size:9pt;">Deficiency Summary &nbsp;|&nbsp; Eng Review Cost</strong>
-                            </div>
-                            <table class="table table-bordered mb-0">
-                                <tr>
-                                    <td class="text-sm">Minor - {{inspection.MinorCount}}</td>
-                                    <td class="text-sm">x $20</td>
-                                    <td class="text-sm">= ${{(inspection.MinorCount * 20) | number:2}}</td>
-                                    <td class="text-sm">Moderate - {{inspection.ModerateCount}}</td>
-                                    <td class="text-sm">x $20</td>
-                                    <td class="text-sm">= ${{(inspection.ModerateCount * 20) | number:2}}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-sm">Severe - {{inspection.SevereCount}}</td>
-                                    <td class="text-sm">x $20</td>
-                                    <td class="text-sm">= ${{(inspection.SevereCount * 20) | number:2}}</td>
-                                    <td class="text-sm font-weight-bold" colspan="2">Total</td>
-                                    <td class="text-sm font-weight-bold">${{inspection.EngineerReviewTotalCost | number:2}}</td>
-                                </tr>
-                            </table>
-
-                            <!-- Deficiencies -->
-                            <div ng-repeat="def in inspection.Deficiencies">
-                                <!-- Deficiency header -->
-                                <div style="background:#003087;color:white;padding:6px 16px;border-top:2px solid #ccc;margin-top:10px;">
-                                    <strong>Deficiency #{{$index + 1}}</strong>
-                                    <span class="badge ms-2"
-                                          ng-style="{'background': def.InternalAssessment=='Minor' ? '#28a745' : def.InternalAssessment=='Severe' ? '#dc3545' : '#ffc107',
-                                                     'color': def.InternalAssessment=='Moderate' ? '#333' : 'white'}">
-                                        {{def.InternalAssessment || 'N/A'}}
-                                    </span>
+                                <div class="custom-card-title col-6 d-flex align-items-center"
+                                     style="padding-left:20px;">
+                                    Preview Internal Inspection - {{inspection.InternalInspectionNumber}}
                                 </div>
 
-                                <!-- Location section -->
-                                <div style="background:#e8f0fb;padding:4px 16px;border-top:1px solid #ccc;">
-                                    <strong style="color:#003087;font-size:8pt;">Location:</strong>
-                                </div>
-                                <table class="table table-bordered mb-0">
-                                    <tr>
-                                        <td class="text-sm font-weight-bold" style="width:15%;background:#f9f9f9;">Area</td>
-                                        <td class="text-sm">{{def.Area || '-'}}</td>
-                                        <td class="text-sm font-weight-bold" style="width:15%;background:#f9f9f9;">Row</td>
-                                        <td class="text-sm">{{def.Row || '-'}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Aisle</td>
-                                        <td class="text-sm">{{def.Aisle || '-'}}</td>
-                                        <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Bay</td>
-                                        <td class="text-sm">{{def.Bay || '-'}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Level</td>
-                                        <td class="text-sm">{{def.BeamFrameLevel || '-'}}</td>
-                                        <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Beam Location</td>
-                                        <td class="text-sm">{{def.BeamLocation || '-'}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Frame Side</td>
-                                        <td class="text-sm" colspan="3">{{def.FrameSide || '-'}}</td>
-                                    </tr>
-                                </table>
+                                <div class="col-6 text-end" style="padding-right: 20px;">
+                                    <div class="right-tools d-flex align-items-center justify-content-end">
 
-                                <!-- Assessment + Action -->
-                                <table class="table table-bordered mb-0">
-                                    <tr>
-                                        <td class="text-sm font-weight-bold" style="width:25%;background:#f9f9f9;">Internal Assessment</td>
-                                        <td class="text-sm" style="width:25%;">{{def.InternalAssessment || '-'}}</td>
-                                        <td class="text-sm font-weight-bold" style="width:25%;background:#f9f9f9;">Internal Action</td>
-                                        <td class="text-sm">{{def.InternalAction || '-'}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Recommended Action</td>
-                                        <td class="text-sm" colspan="3" style="white-space:pre-wrap;">{{def.RecommendedAction || '-'}}</td>
-                                    </tr>
-                                </table>
+                                        <a href="/Customer/customerInternalInspectionAddEdit?id={{inspection.InternalInspectionID}}"
+                                           class="btn btn-sm mb-0 me-2"
+                                           ng-if="inspection.Status=='Draft'||inspection.Status=='Submitted'"
+                                           style="background-color:#fff; color:#0d47a1;">
+                                            <i class="material-icons text-sm me-1"
+                                               style="vertical-align:middle;">edit</i>
+                                            Edit
+                                        </a>
 
-                                <!-- Photos -->
-                                <div ng-if="def.Photos && def.Photos.length > 0">
-                                    <div style="background:#f9f9f9;padding:4px 16px;border-top:1px solid #ccc;border-bottom:1px solid #ccc;">
-                                        <strong style="font-size:8pt;">Inspection photos:</strong>
-                                    </div>
-                                    <div style="padding:8px 16px;">
-                                        <div ng-repeat="p in def.Photos" class="d-inline-block me-2 mb-2">
-                                            <a href="{{p.PhotoFullUrl}}" target="_blank">
-                                                <img ng-src="{{p.PhotoFullUrl}}" alt="Photo"
-                                                     style="width:140px;height:105px;object-fit:cover;border:1px solid #ccc;" />
-                                            </a>
-                                        </div>
+                                        <button type="button"
+                                                class="btn btn-sm mb-0"
+                                                ng-click="DownloadPdf()"
+                                                ng-disabled="downloading"
+                                                style="background-color:#343a40; color:#fff;">
+                                            <i class="material-icons text-sm me-1"
+                                               style="vertical-align:middle;">picture_as_pdf</i>
+
+                                            <span ng-if="!downloading">Download PDF</span>
+                                            <span ng-if="downloading">Generating...</span>
+                                        </button>
+
+                                        <span class="text-white text-sm ms-2"
+                                              ng-show="downloadError">
+                                            {{downloadError}}
+                                        </span>
+
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Footer bar -->
-                            <table class="table table-bordered mb-0" style="margin-top:10px;">
-                                <tr style="background:#f0f0f0;">
-                                    <td class="text-sm" style="width:50%;">Inspection date: {{inspection.InternalInspectionDateFormatted}}</td>
-                                    <td class="text-sm">Inspection number: {{inspection.InternalInspectionNumber}}</td>
-                                </tr>
-                                <tr style="background:#f0f0f0;">
-                                    <td class="text-sm">Internal Inspection Report</td>
-                                    <td class="text-sm text-end">
-                                        <img ng-src="{{inspection.LogoUrl}}" style="max-height:25px;" />
-                                    </td>
-                                </tr>
-                            </table>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div class="card-body" id="inspectionsheet">
+                        <div ng-if="!inspection" class="text-center py-5">
+                            <p class="text-sm text-muted">
+                                Loading internal inspection details...
+                            </p>
+                        </div>
+
+                        <div ng-if="inspection">
+                            <input id="antiForgeryToken"
+                                   ng-model="antiForgeryToken"
+                                   type="hidden"
+                                   ng-init="antiForgeryToken='@GetAntiForgeryToken()'" />
+
+                            <!-- Your existing inspection report section -->
+                            <section style="width:100%; background:white; box-shadow:0 .5mm 2mm rgba(0,0,0,.3); margin:5mm auto; padding:5mm; box-sizing:border-box;">
+
+                                <div class="card-body p-0">
+                                    <!-- Logo + Title row -->
+                                    <table class="table table-bordered mb-0" style="margin:0;">
+                                        <tr>
+                                            <td style="width:40%;padding:12px 16px;">
+                                                <img ng-src="{{inspection.LogoUrl}}" alt="Logo"
+                                                     style="max-height:50px;max-width:180px;" />
+                                            </td>
+                                            <td style="padding:12px 16px;text-align:right;">
+                                                <span style="font-size:14pt;color:#666;margin-right:6px;">Internal Inspection</span>
+                                                <span style="font-size:22pt;font-weight:bold;color:#003087;">Report</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <!-- Description -->
+                                    <div style="padding:8px 16px;font-size:8pt;color:#555;border-bottom:1px solid #ccc;">
+                                        This incident report is designed to be used by a qualified person/supervisor to identify and document an incident data to generate a request for a formal incident inspection or repair material to comply with Occupational Health and Safety Regulation.
+                                    </div>
+
+                                    <!-- Inspection Information -->
+                                    <div style="background:#fbe9dc;padding:6px 16px;border-bottom:1px solid #ccc;">
+                                        <strong style="color:#cc0000;font-size:9pt;">Inspection Information</strong>
+                                    </div>
+                                    <table class="table table-bordered mb-0">
+                                        <tr>
+                                            <td class="text-sm font-weight-bold" style="width:20%;background:#f9f9f9;">Business Name</td>
+                                            <td class="text-sm" colspan="3">{{inspection.CustomerName}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Inspection Address</td>
+                                            <td class="text-sm" colspan="3">{{inspection.CustomerLocationAddress || '-'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Location</td>
+                                            <td class="text-sm">{{inspection.CustomerLocationName}}</td>
+                                            <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Region</td>
+                                            <td class="text-sm">{{inspection.Region || '-'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Facility</td>
+                                            <td class="text-sm">{{inspection.CustomerFacilityName || '-'}}</td>
+                                            <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Area</td>
+                                            <td class="text-sm">{{inspection.CustomerAreaName || '-'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Inspection Number</td>
+                                            <td class="text-sm">{{inspection.InternalInspectionNumber}}</td>
+                                            <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Inspection Date</td>
+                                            <td class="text-sm">{{inspection.InternalInspectionDateFormatted}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Prepared By</td>
+                                            <td class="text-sm" colspan="3">{{inspection.ReportedByName}}</td>
+                                        </tr>
+                                    </table>
+
+                                    <!-- Deficiency Summary -->
+                                    <div style="background:#e8f0fb;padding:6px 16px;border-bottom:1px solid #ccc;border-top:1px solid #ccc;">
+                                        <strong style="color:#003087;font-size:9pt;">Deficiency Summary &nbsp;|&nbsp; Eng Review Cost</strong>
+                                    </div>
+                                    <table class="table table-bordered mb-0">
+                                        <tr>
+                                            <td><strong>Minor</strong></td>
+                                            <td>{{getEngineerReviewCount('Minor')}}</td>
+                                            <td>${{getEngineerReviewCost('Minor') | number:2}}</td>
+                                            <td><strong>Moderate</strong></td>
+                                            <td>{{getEngineerReviewCount('Moderate')}}</td>
+                                            <td>${{getEngineerReviewCost('Moderate') | number:2}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Severe</strong></td>
+                                            <td>{{getEngineerReviewCount('Severe')}}</td>
+                                            <td>${{getEngineerReviewCost('Severe') | number:2}}</td>
+                                            <td colspan="2" class="text-right"><strong>Total</strong></td>
+                                            <td><strong>${{getEngineerReviewGrandTotal() | number:2}}</strong></td>
+                                        </tr>
+                                    </table>
+
+                                    <!-- Deficiencies -->
+                                    <div ng-repeat="def in inspection.Deficiencies">
+                                        <!-- Deficiency header -->
+                                        <div style="background:#003087;color:white;padding:6px 16px;border-top:2px solid #ccc;margin-top:10px;">
+                                            <strong>Deficiency #{{$index + 1}}</strong>
+                                            <span class="badge ms-2"
+                                                  ng-style="{'background': def.InternalAssessment=='Minor' ? '#28a745' : def.InternalAssessment=='Severe' ? '#dc3545' : '#ffc107','color': def.InternalAssessment=='Moderate' ? '#333' : 'white'}">
+                                                {{def.InternalAssessment || 'N/A'}}
+                                            </span>
+                                        </div>
+
+                                        <!-- Location section -->
+                                        <div style="background:#e8f0fb;padding:4px 16px;border-top:1px solid #ccc;">
+                                            <strong style="color:#003087;font-size:8pt;">Location:</strong>
+                                        </div>
+                                        <table class="table table-bordered mb-0">
+                                            <tr>
+                                                <td class="text-sm font-weight-bold" style="width:15%;background:#f9f9f9;">Area</td>
+                                                <td class="text-sm">{{def.Area || '-'}}</td>
+                                                <td class="text-sm font-weight-bold" style="width:15%;background:#f9f9f9;">Row</td>
+                                                <td class="text-sm">{{def.Row || '-'}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Aisle</td>
+                                                <td class="text-sm">{{def.Aisle || '-'}}</td>
+                                                <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Bay</td>
+                                                <td class="text-sm">{{def.Bay || '-'}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Level</td>
+                                                <td class="text-sm">{{def.BeamFrameLevel || '-'}}</td>
+                                                <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Beam Location</td>
+                                                <td class="text-sm">{{def.BeamLocation || '-'}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Frame Side</td>
+                                                <td class="text-sm" colspan="3">{{def.FrameSide || '-'}}</td>
+                                            </tr>
+                                        </table>
+
+                                        <!-- Assessment + Action -->
+                                        <table class="table table-bordered mb-0">
+                                            <tr>
+                                                <td class="text-sm font-weight-bold" style="width:25%;background:#f9f9f9;">Internal Assessment</td>
+                                                <td class="text-sm" style="width:25%;">{{def.InternalAssessment || '-'}}</td>
+                                                <td class="text-sm font-weight-bold" style="width:25%;background:#f9f9f9;">Internal Action</td>
+                                                <td class="text-sm">{{def.InternalAction || '-'}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-sm font-weight-bold" style="background:#f9f9f9;">Recommended Action</td>
+                                                <td class="text-sm" colspan="3" style="white-space:pre-wrap;">{{def.RecommendedAction || '-'}}</td>
+                                            </tr>
+                                        </table>
+
+                                        <!-- Photos -->
+                                        <div ng-if="def.Photos && def.Photos.length > 0">
+                                            <div style="background:#f9f9f9;padding:4px 16px;border-top:1px solid #ccc;border-bottom:1px solid #ccc;">
+                                                <strong style="font-size:8pt;">Deficiency Photos:</strong>
+                                            </div>
+                                            <div style="padding:8px 16px;">
+                                                <div ng-repeat="p in def.Photos" class="d-inline-block me-2 mb-2">
+                                                    <a href="{{p.PhotoFullUrl}}" target="_blank">
+                                                        <img ng-src="{{p.PhotoFullUrl}}" alt="Photo"
+                                                             style="width:140px;height:105px;object-fit:cover;border:1px solid #ccc;" />
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Footer bar -->
+                                    <table class="table table-bordered mb-0" style="margin-top:10px;">
+                                        <tr style="background:#f0f0f0;">
+                                            <td class="text-sm" style="width:50%;">Inspection date: {{inspection.InternalInspectionDateFormatted}}</td>
+                                            <td class="text-sm">Inspection number: {{inspection.InternalInspectionNumber}}</td>
+                                        </tr>
+                                        <tr style="background:#f0f0f0;">
+                                            <td class="text-sm">Internal Inspection Report</td>
+                                            <td class="text-sm text-end">
+                                                <img ng-src="{{inspection.LogoUrl}}" style="max-height:25px;" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                            </section>
+                        </div>
+                    </div>                    
+                </div>                
             </div>
         </div>
-
-        @Html.Partial("_FooterLayout")
     </div>
+    @Html.Partial("_FooterLayout")
 </main>

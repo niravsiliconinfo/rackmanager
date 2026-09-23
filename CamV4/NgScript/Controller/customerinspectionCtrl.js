@@ -102,7 +102,15 @@
         };
         
         init();
-
+        function loadInspectionList(filters) {
+            filters = filters || {};
+            $http.post('/api/pageview/getInspectionListing', filters)
+                .then(function (res) {
+                    $scope.getAllInspectionByCustomerId = res.data;
+                }, function (err) {
+                    console.log(err);
+                });
+        }
         function init() {
             // Get filters from shared memory
             //var schedule = sharedFilterService.getScheduleFilter();
@@ -125,74 +133,81 @@
                     console.log('from init for LoadInpsections', status);
                     console.log('inspectionFiltersUpdated received', status);
                     $scope.statusFilter = status;
-                    loadInspections(status);
+                    loadInspectionList(status);
                 } else {
                     console.log('from init for LoadInpsections');
-                    loadInspections(); // Load default data
+                    loadInspectionList(); // Load default data
                 }
             }            
         }
 
-        $scope.$on(
-            'inspectionFiltersUpdated',
-            function (event, filters) {
-
+        $scope.$on('inspectionFiltersUpdated',function (event, filters) {
                 console.log(
                     'inspectionFiltersUpdated received',
                     filters);
-
-                loadInspections(filters);
-
+                loadInspectionList(filters);
             });
 
-        function loadInspectionDue(filter) {
-            console.log('Calling ----> loadInspectionDue');
-            const filters = filter;
-            console.log("------XXXXXXXXXXXXXXXXXXXX------ CALL ------- -----getDueInspectionsCustomerFilters");
-            $http.post('/api/pageview/getDueInspectionsCustomerFilters', filters)
-                .then(function (response) {
-                    $scope.getAllInspectionDueByCustomerId = response.data;
-                }, function (error) {
-                    console.error("Error loading due inspections:", error);
-                });
-        }
+        //function loadInspectionDue(filter) {
+        //    console.log('Calling ----> loadInspectionDue');
+        //    const filters = filter;
+        //    console.log("------XXXXXXXXXXXXXXXXXXXX------ CALL ------- -----getDueInspectionsCustomerFilters");
+        //    $http.post('/api/pageview/getDueInspectionsCustomerFilters', filters)
+        //        .then(function (response) {
+        //            $scope.getAllInspectionDueByCustomerId = response.data;
+        //        }, function (error) {
+        //            console.error("Error loading due inspections:", error);
+        //        });
+        //}
 
-        function loadInspections(filter) {
-            const filters = filter;
-            console.log('Calling ----> loadInspections', filters);
+        //function loadInspections(filter) {
+        //    const filters = filter;
+        //    console.log('Calling ----> loadInspections', filters);
+        //    $http.post('/api/pageview/getInspectionListing', filters)
+        //        .then(function (response) {
+        //            console.log("SUCCESS");
+        //            console.log(response);
+        //            $scope.getAllInspectionByCustomerId = response.data;
+        //        })
+        //        .catch(function (error) {
+        //            console.log("ERROR");
+        //            console.log(error);
+        //        });
+        //}
+
+        //// Expose refresh methods for button calls
+        //$scope.refreshDueInspections = function () {
+        //    loadDueInspections();
+        //};
+
+        //$scope.refreshAllInspections = function () {
+        //    loadInspectionList(sharedFilterService.getInspectionFilters());
+        //};
+
+        function loadInspectionList(filters) {
+
+            filters = filters || {};
+
             $http.post('/api/pageview/getInspectionListing', filters)
-                .then(function (response) {
-                    console.log("SUCCESS");
-                    console.log(response);
-                    $scope.getAllInspectionByCustomerId = response.data;
-                })
-                .catch(function (error) {
-                    console.log("ERROR");
-                    console.log(error);
+                .then(function (res) {
+                    $scope.getAllInspectionByCustomerId = res.data;
                 });
         }
+        
+        loadInspectionList(sharedFilterService.getInspectionFilters() || {});
 
-        // Expose refresh methods for button calls
-        $scope.refreshDueInspections = function () {
-            loadDueInspections();
-        };
-
-        $scope.refreshAllInspections = function () {
-            loadAllInspections();
-        };
-
-        $rootScope.$on('scheduleFilterUpdated', function () {
-            console.error("Load function when click on button for scheduleFilterUpdated");
-            const filters = sharedFilterService.getScheduleFilter();
-            console.error("Load function when click on button for scheduleFilterUpdated");
-            loadInspectionDue(filters);
+        $scope.$on('inspectionFiltersUpdated', function (e, filters) {
+            loadInspectionList(filters);
         });
 
-        $rootScope.$on('statusFilterUpdated', function () {
-            const filters = sharedFilterService.getStatusFilter();
-            console.log("Load function when click on button for statusFilterUpdated", filters);            
-            loadInspections(filters);
-        });
+        //$rootScope.$on('scheduleFilterUpdated', function () {
+        //    console.error("Load function when click on button for scheduleFilterUpdated");
+        //    const filters = sharedFilterService.getScheduleFilter();
+        //    console.error("Load function when click on button for scheduleFilterUpdated");
+        //    loadInspectionDue(filters);
+        //});
+
+      
      
         $scope.InspectionDetailClickByCustomer = function (id) {
             $http.get('/api/pageview/getInspectionById', { params: { InspectionId: id } }).then(function (response) {
@@ -236,73 +251,6 @@
                 $scope.waiting = false;
             });
         };
-
-        if (window.location.pathname == "/Admin/EditInspectionDue") {
-
-            $http.get('/api/pageview/getAllFacilitiesArea').then(function (response) {
-                $scope.getAllFacilitiesArea = response.data;
-            }, function (response) {
-                $scope.waiting = false;
-            });
-
-            $http.get('/api/pageview/getAllProcessOverview').then(function (response) {
-                $scope.getAllProcessOverview = response.data;
-            }, function (response) {
-                $scope.waiting = false;
-            });
-
-            $http.get('/api/pageview/getAllDocumentTitle').then(function (response) {
-                $scope.getAllDocumentTitle = response.data;
-            }, function (response) {
-                $scope.waiting = false;
-            });
-
-            $http.get('/api/pageview/getAllCustomerLocations').then(function (response) {
-                $scope.getCustomerLocationByCustomerIdDrpd = response.data;
-                console.log('getAllCustomerLocations0000--', $scope.getCustomerLocationByCustomerIdDrpd);
-            }, function (response) {
-                $scope.waiting = false;
-            });
-
-            $http.get('/api/pageview/getAllCustomerArea').then(function (response) {
-                $scope.getAreaDetailsByLocationId = response.data;
-                console.log('getAllCustomerArea0000--', $scope.getAreaDetailsByLocationId);
-            }, function (response) {
-                $scope.waiting = false;
-            });
-
-            var para = window.location.search;
-            para = para.replace('?id=', '');
-            $http.get('/api/pageview/getInspectionById', { params: { InspectionId: para } }).then(function (response) {
-                $scope.getInspectionById = response.data;
-                var process = $scope.getInspectionById.ProcessOverviewIds;
-                var document = $scope.getInspectionById.ReferenceDocumentIds;
-                var facilities = $scope.getInspectionById.FacilitiesAreasIds;
-
-                angular.forEach($scope.getAllFacilitiesArea, function (f) {
-                    if (facilities.indexOf(f.FacilitiesAreaId) > -1) {
-                        f.selected = true;
-                    }
-                });
-
-                angular.forEach($scope.getAllProcessOverview, function (p) {
-                    if (process.indexOf(p.ProcessOverviewId) > -1) {
-                        p.selected = true;
-                    }
-                });
-                angular.forEach($scope.getAllDocumentTitle, function (t) {
-                    if (document.indexOf(t.DocumentId) > -1) {
-                        t.selected = true;
-                    }
-                });
-                console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXX checkedDocument || XXXXXXXXXXXXXXXXXXXXXXXXXXX", document);
-            }, function (response) {
-                $scope.waiting = false;
-            });
-
-            $scope.ShowDatepicker = false;
-            $scope.ReadOnlyDatePicker = true;
-        }
 
         if (window.location.pathname == "/CustomerLocationContact/ManageInspection") {
             $http.get('/api/pageview/getInspectionByContactId').then(function (response) {
@@ -386,138 +334,7 @@
             $scope.fileList.splice(i, 1);
         }
 
-        $scope.SaveInspectionDue = function () {
-            $scope.GetCheckedFacilitiesAndProcess();
-            var PdfList = [];
-            var CapacityTable = 0;
-            var PlanElevationDrawing = 0;
-            if ($scope.capacitytable === true) {
-                CapacityTable = 1;
-            }
-
-            if ($scope.planelevationdrawing) {
-                PlanElevationDrawing = 1;
-            }
-            for (var i = 0; i < $scope.fileList.length; i++) {
-
-                $scope.UploadFileIndividual($scope.fileList[i].file,
-                    $scope.fileList[i].file.name,
-                    $scope.fileList[i].file.type,
-                    $scope.fileList[i].file.size,
-                    i);
-                PdfList[i] = $scope.fileList[i].file.name;
-            }
-            console.log('-----File Information-------', PdfList);
-            if (true) {
-
-            }
-            var config = {
-                CustomerId: $scope.customerId, CustomerLocationId: $scope.customerLocationId, CustomerAreaID: $scope.customerAreaId,
-                EmployeeId: $scope.employeeId, InspectionDate: $scope.inspectionDate, InspectionType: $scope.inspectionType,
-                CADDocuments: $scope.cADDocuments, FacilitiesAreasIds: $scope.checkedFacilitiesId, ProcessOverviewIds: $scope.checkedProcessId,
-                ReferenceDocumentIds: $scope.checkedDocumentId, inspectionFileDrawing: PdfList
-            }
-            console.log('SaveInspectionDue', config);
-
-            return $http({
-                url: '/api/pageview/saveInspectionDue',
-                method: "POST",
-                data: config,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            }).then(function (response) {
-                if (response.data === "Ok") {
-                    var url = '/Admin/ManageInspectionNew';
-                    window.location = url;
-                }
-                else {
-                    $scope.errorNot = response.data;
-                }
-            }, function (error) {
-                alert(error);
-            });
-        };
-
-        $scope.UploadFileIndividual = function (fileToUpload, name, type, size, index) {
-            //Create XMLHttpRequest Object
-            var reqObj = new XMLHttpRequest();
-
-            //open the object and set method of call(get/post), url to call, isAsynchronous(true/False)
-            reqObj.open("POST", "/UploadDrawingFiles", true);
-
-            //set Content-Type at request header.for file upload it's value must be multipart/form-data
-            reqObj.setRequestHeader("Content-Type", "multipart/form-data");
-
-            //Set Other header like file name,size and type
-            reqObj.setRequestHeader('X-File-Name', name);
-            reqObj.setRequestHeader('X-File-Type', type);
-            reqObj.setRequestHeader('X-File-Size', size);
-
-            // send the file
-            reqObj.send(fileToUpload);
-        }
-
-        $scope.EditInspectionDue = function (Id) {
-            $scope.GetCheckedFacilitiesAndProcess();
-            var PdfList = [];
-
-            for (var i = 0; i < $scope.fileList.length; i++) {
-
-                $scope.UploadFileIndividual($scope.fileList[i].file,
-                    $scope.fileList[i].file.name,
-                    $scope.fileList[i].file.type,
-                    $scope.fileList[i].file.size,
-                    i);
-                PdfList[i] = $scope.fileList[i].file.name;
-            }
-
-            var config = {
-                CustomerId: $scope.customerId, CustomerLocationId: $scope.customerLocationId, CustomerAreaID: $scope.customerAreaId,
-                EmployeeId: $scope.employeeId, InspectionDate: $scope.inspectionDate, InspectionType: $scope.inspectionType, InspectionId: Id,
-                CADDocuments: $scope.cADDocuments, FacilitiesAreasIds: $scope.checkedFacilitiesId, ProcessOverviewIds: $scope.checkedProcessId,
-                InspectionStatus: $scope.inspectionStatus, ReferenceDocumentIds: $scope.checkedDocumentId, inspectionFileDrawing: PdfList
-            }
-            console.log('editInspectionDue', config);
-            return $http({
-                url: '/api/pageview/editInspectionDue',
-                method: "POST",
-                data: config,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            }).then(function (response) {
-                if (response.data === "Ok") {
-                    var url = '/Admin/ManageInspectionDue';
-                    window.location = url;
-                }
-            }, function (error) {
-                alert(error);
-            });
-        };
-
-        $scope.RemoveInspectionDue = function (id) {
-            var config = { id: id }
-            console.log('Remove Inspection --', config);
-            return $http({
-                url: '/api/pageview/removeInspectionDue',
-                method: "POST",
-                params: config,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            }).then(function (response) {
-                console.log('Remove Inspection Success --', response);
-                if (response.data === "Ok") {
-                    var url = '/Admin/ManageInspectionNew';
-                    window.location = url;
-                }
-            }, function (error) {
-                alert(error);
-            });
-        };
-
-        if (window.location.pathname == "/Admin/InspectionSheet" || window.location.pathname == "/Customer/InspectionDetails" || window.location.pathname == "/Employee/InspectionDetail" || window.location.pathname == "/Customer/GenerateQuotation") {
+        if (window.location.pathname == "/Customer/InspectionDetails" || window.location.pathname == "/Customer/GenerateQuotation") {
 
             var para = window.location.search;
             console.log('para inspection sheet', para);
@@ -1163,77 +980,7 @@
 
                 }, function (error) {
                     alert(error);
-                });
-
-                //$.ajax({
-                //    url: '', // Replace with your actual API URL
-                //    type: 'POST',
-                //    contentType: 'application/json',
-                //    data: JSON.stringify({
-                //       QuotationId: $scope.getInspectionDetailsForSheet.objQuotation.QuotationId, // Replace with your actual QuotationId
-                //       QuotationComponentList: itemData // Replace with your actual data
-                //    }),
-                //    success: function (response) {
-
-
-
-                //       //console.log('Remove Quotation Items By Admin Success --', response);
-                //       //$scope.getInspectionDetailsForSheet.objQuotation = response.data;
-                //       ///*$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems = response.data;*/
-
-                //       //let subtotal = 0;
-                //       //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
-                //       //    subtotal += parseFloat(item.LineTotal);
-                //       //});
-
-                //       //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
-
-                //       //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
-                //       //let GSTVal = parseFloat(subtotal * gstRate);
-                //       //$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (subtotal * gstRate).toFixed(2);
-                //       //$scope.getInspectionDetailsForSheet.objQuotation.Total = (subtotal + GSTVal).toFixed(2);
-
-                //       //if (!$scope.getInspectionDetailsForSheet.objQuotation) {
-                //       //    $scope.getInspectionDetailsForSheet.objQuotation = {};
-                //       //}
-
-                //       //if ($scope.getInspectionDetailsForSheet && $scope.getInspectionDetailsForSheet.objQuotation) {
-                //       //    $scope.getInspectionDetailsForSheet.objQuotation = response.data;
-                //       //} else {
-                //       //    console.error("objQuotation is not defined");
-                //       //}
-
-                //       //let subtotal = 0;
-                //       //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
-                //       //    subtotal += parseFloat(item.LineTotal);
-                //       //});
-
-                //       //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
-
-                //       //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
-                //       //let GSTVal = parseFloat(subtotal * gstRate);
-                //       //$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (subtotal * gstRate).toFixed(2);
-                //       //$scope.getInspectionDetailsForSheet.objQuotation.Total = (subtotal + GSTVal).toFixed(2);
-                //       //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems = response;
-
-
-                //       //$scope.getInspectionDetailsForSheet.objQuotation.objQuotationItems.forEach(function (item) {
-
-                //       //    subtotal += parseFloat(item.LineTotal);                            
-                //       //});
-
-                //       //$scope.getInspectionDetailsForSheet.objQuotation.Subtotal = (subtotal).toFixed(2);
-                //       //console.log('xxxxxxx', subtotal);
-                //       //const gstRate = $scope.getInspectionDetailsForSheet.objQuotation.GSTPer / 100;
-                //       //let GSTVal = parseFloat(subtotal * gstRate);
-                //       ////$scope.getInspectionDetailsForSheet.objQuotation.GSTValue = (objQuotation.GSTVal).toFixed(2);
-                //       ////$scope.getInspectionDetailsForSheet.objQuotation.Total = (objQuotation.Total).toFixed(2);
-
-                //    },
-                //    error: function (xhr, status, error) {
-                //       console.error('Error:', xhr.responseText || 'An error occurred');
-                //    }
-                //});
+                });               
             }
         }
 

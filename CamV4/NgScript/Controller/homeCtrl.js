@@ -82,6 +82,71 @@
         //    $scope.waiting = false;
         //});
 
+        $http.get('/api/pageview/getAllCountries').then(function (response) {
+            $scope.getAllCountries = response.data;
+            console.log('getAllCountries--', $scope.getAllCountries);
+        }, function (response) {
+            $scope.waiting = false;
+        });
+
+        $http.get('/api/pageview/getAllProvince').then(function (response) {
+            $scope.getAllProvince = response.data;
+            console.log('getAllProvince--', $scope.getAllProvince);
+        }, function (response) {
+            $scope.waiting = false;
+        });
+
+        $http.get('/api/pageview/getAllCities').then(function (response) {
+            $scope.getAllCities = response.data;
+            console.log('getAllCities--', $scope.getAllCities);
+        }, function (response) {
+            $scope.waiting = false;
+        });
+
+        $scope.GetProvincebyCountryId = function () {
+            $scope.strCountry = document.getElementById("drpcountry").value;
+            console.log('strCountry', $scope.strCountry);
+            $http.get('/api/pageview/getProvincebyCountryId', { params: { id: $scope.strCountry } }).then(function (response) {
+                $scope.getProvincebyCountryId = response.data;
+                console.log('getProvincebyCountryId--', $scope.getProvincebyCountryId);
+            }, function (response) {
+                $scope.waiting = false;
+            });
+        };
+
+
+        $scope.GetCitybyProvinceId = function () {
+            $scope.strProvince = document.getElementById("drpprovince").value;
+            console.log('strProvince', $scope.strProvince);
+            $http.get('/api/pageview/getCitybyProvinceId', { params: { id: $scope.strProvince } }).then(function (response) {
+                $scope.getCitybyProvinceId = response.data;
+                console.log('getCitybyProvinceId--', $scope.getCitybyProvinceId);
+            }, function (response) {
+                $scope.waiting = false;
+            });
+        };
+
+        $scope.GetProvincebyCountryModelId = function (id) {
+            console.log('strProvince', id);
+            $http.get('/api/pageview/getProvincebyCountryId', { params: { id: id } }).then(function (response) {
+                $scope.getAllProvince = response.data;
+                console.log('getProvincebyCountryId--', $scope.getAllProvince);
+            }, function (response) {
+                $scope.waiting = false;
+            });
+        };
+
+        $scope.GetCitybyProvinceModelId = function (id) {
+            console.log('strProvince', id);
+            $http.get('/api/pageview/getCitybyProvinceId', { params: { id: id } }).then(function (response) {
+                $scope.getAllCities = response.data;
+                console.log('getCitybyProvinceId--', $scope.getAllCities);
+            }, function (response) {
+                $scope.waiting = false;
+            });
+        };
+
+
         $http.get('/api/pageview/getAllCustomers').then(function (response) {
             $scope.getAllCustomers = response.data;
             console.log('$scope.getAllCustomers', $scope.getAllCustomers);
@@ -181,6 +246,7 @@
             $scope.waiting = false;
         });
 
+       
         $scope.filterInspectionsByStatus = function () {
             const selected = $scope.InspectionStatusLayout
                 .filter(s => s.selected)

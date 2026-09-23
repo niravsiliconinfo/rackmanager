@@ -191,8 +191,6 @@
 
                         <div ng-if="!loading">
                             <div class="grid-toolbar">
-
-                                <!-- Row operations -->
                                 <button type="button"
                                         ng-click="AddRow()"
                                         class="btn btn-sm btn-success mb-0"
@@ -225,9 +223,8 @@
                                         title="Revert to last saved state">
                                     Discard
                                 </button>
-
+                                <!-- Row operations -->
                                 <div class="tsep"></div>
-
                                 <!-- Export -->
                                 <button type="button"
                                         ng-click="ExportGrid()"
@@ -235,9 +232,7 @@
                                         title="Download current data as .xlsx">
                                     Export Excel
                                 </button>
-
                             </div>
-
                             <div id="luckysheet-container"></div>
 
                             <div class="grid-footer">

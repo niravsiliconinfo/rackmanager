@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<main class="main-content position-relative max-height-vh-100 h-100 " ng-controller="homeCtrl">
+<main class="main-content2 position-relative max-height-vh-100 h-100" ng-controller="homeCtrl">
     <!-- Navbar -->
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
         <div class="container-fluid py-1 px-3">
@@ -375,7 +375,7 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder">Company</th>
-                                        <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder">Location and Area</th>
+                                        <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder">Area, Facility & Location</th>
                                         <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder">Done By</th>
                                         <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder">Started On</th>
                                         <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder">Download</th>
@@ -395,8 +395,13 @@
                                             </div>
                                         </td>
                                         <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">{{d.CustomerLocation}}</p>
-                                            <p class="text-xs font-weight-bold mb-0">{{d.CustomerArea}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">
+                                                {{d.CustomerArea}}
+                                                <span ng-if="d.CustomerArea && (d.CustomerFacility || d.CustomerLocation)">,</span>
+                                                {{d.CustomerFacility}}
+                                                <span ng-if="d.CustomerFacility && d.CustomerLocation">,</span>
+                                                {{d.CustomerLocation}}
+                                            </p>
                                         </td>
                                         <td class="align-middle text-center text-sm">
                                             <p class="text-xs font-weight-bold mb-0">{{d.Employee}}</p>
@@ -421,6 +426,7 @@
                         <h6>Inspection Due</h6>
                     </div>
                     <div class="card-body p-3">
+                        @*<pre>{{ getAllDueInspectionAdminDashboard | json }}</pre>*@
                         <div class="timeline timeline-one-side" ng-repeat="d in getAllDueInspectionAdminDashboard">
                             <div class="timeline-block mb-3">
                                 <span class="timeline-step">
@@ -428,10 +434,17 @@
                                 </span>
                                 <div class="timeline-content">
                                     <h6 class="text-dark text-sm font-weight-bold mb-0">{{d.Customer}}</h6>
-                                    @*<h7 class="text-dark text-sm font-weight-bold mb-0">{{d.InspectionDocumentNo}}</h7>*@
+                                    <h7 class="text-dark text-sm font-weight-bold mb-0">{{d.InspectionDocumentNo}}</h7>
                                     <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.Employee}}</p>
-                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.CustomerLocation}}</p>
-                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.InspectionDate | date: dd-MMM-yyyy}}</p>
+                                    @*<p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.CustomerLocation}}</p>*@
+                                    <p class="text-xs font-weight-bold mb-0">
+                                        {{d.CustomerArea}}
+                                        <span ng-if="d.CustomerArea && (d.CustomerFacility || d.CustomerLocation)">,</span>
+                                        {{d.CustomerFacility}}
+                                        <span ng-if="d.CustomerFacility && d.CustomerLocation">,</span>
+                                        {{d.CustomerLocation}}
+                                    </p>
+                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.InspectionDate | date:'dd MMM yyyy'}}</p>
                                 </div>
                             </div>
                         </div>
@@ -447,7 +460,7 @@
                                 <script>
                                     document.write(new Date().getFullYear())
                                 </script>
-                                <a href="https://camindustrial.net/" class="font-weight-bold" target="_blank">Cam Industrial -- Version 5.00.43</a>
+                                <a href="https://camindustrial.net/" class="font-weight-bold" target="_blank">Cam Industrial -- Version 5.00.56</a>
                             </div>
                         </div>
                     </div>
@@ -626,7 +639,8 @@
             @:dataListDone.push("@dataInput.cnt");
             @:lableListDone.push("@dataInput.EmployeeName");
         }
-
+    console.log("Pie Labels", lableList);
+    console.log("Pie Data", dataList);
     const doneconfig = {
         type: "line",
         data: {

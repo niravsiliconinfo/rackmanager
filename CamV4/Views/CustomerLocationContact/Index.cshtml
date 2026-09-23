@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<main class="main-content position-relative max-height-vh-100 h-100 " ng-app="myApp" ng-controller="homeCtrl">
+<main class="main-content2 position-relative max-height-vh-100 h-100" ng-app="myApp" ng-controller="homeCtrl">
     <!-- Navbar -->
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none" id="navbarBlur" navbar-scroll="true">
         <div class="container-fluid py-1 px-3">
@@ -112,16 +112,21 @@
                                 <table class="table align-items-center mb-0">
                                     <thead>
                                         <tr>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Location and Area</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Area, Facility & Location</th>
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Done By</th>
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Started On</th>
                                         </tr>
                                     </thead>
                                     <tbody ng-repeat="d in getRecentInspectionbyCustomerId">
                                         <tr ng-click="InspectionDetailClickByCustomer(d.InspectionId)">
-                                            <td class="align-middle text-center text-sm">
-                                                <p class="text-xs font-weight-bold mb-0">{{d.CustomerLocation}}</p>
-                                                <p class="text-xs font-weight-bold mb-0">{{d.CustomerArea}}</p>
+                                            <td class="align-middle text-center text-sm">                                                
+                                                <p class="text-xs font-weight-bold mb-0">
+                                                    {{d.CustomerArea}}
+                                                    <span ng-if="d.CustomerArea && (d.CustomerFacility || d.CustomerLocation)">,</span>
+                                                    {{d.CustomerFacility}}
+                                                    <span ng-if="d.CustomerFacility && d.CustomerLocation">,</span>
+                                                    {{d.CustomerLocation}}
+                                                </p>
                                             </td>
                                             <td class="align-middle text-center text-sm">
                                                 <p class="text-xs font-weight-bold mb-0">{{d.Employee}}</p>
@@ -151,8 +156,20 @@
                                     <div class="timeline-content">
                                         <h6 class="text-dark text-sm font-weight-bold mb-0">{{d.Customer}}</h6>
                                         <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.Employee}}</p>
-                                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.CustomerLocation}}</p>
-                                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.InspectionDate | date: dd-MMM-yyyy}}</p>
+                                        @*<p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.CustomerLocation}}</p>*@
+                                        <p ng-if="d.CustomerArea"
+                                           class="text-secondary font-weight-bold text-xs mt-1 mb-0">
+                                            {{d.CustomerArea}}
+                                        </p>
+                                        <p ng-if="d.CustomerFacility"
+                                           class="text-secondary font-weight-bold text-xs mt-1 mb-0">
+                                            {{d.CustomerFacility}}
+                                        </p>
+                                        <p ng-if="d.CustomerLocation"
+                                           class="text-secondary font-weight-bold text-xs mt-1 mb-0">
+                                            {{d.CustomerLocation}}
+                                        </p>
+                                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">{{d.InspectionDate | date: dd MMM yyyy}}</p>
                                     </div>
                                 </div>
                             </div>

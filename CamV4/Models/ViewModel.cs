@@ -59,6 +59,7 @@ namespace CamV4.Models
         public Nullable<System.DateTime> ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<int> IsStampingEngineer { get; set; }
+        public Nullable<bool> IsProfileEdit { get; set; }
     }
 
     public class EmployeeSalesViewModel
@@ -102,7 +103,7 @@ namespace CamV4.Models
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
-        
+
     }
     public class UserViewModel
     {
@@ -161,7 +162,7 @@ namespace CamV4.Models
         User user { get; set; }
         public string CustomerFullPathLogo { get; set; }
         public string CustomerPharse { get; set; }
-        public string CustomerFullAddress { get; set; }   
+        public string CustomerFullAddress { get; set; }
 
     }
 
@@ -197,7 +198,7 @@ namespace CamV4.Models
         public long AreaID { get; set; }
         public string Customer { get; set; }
         public long CustomerID { get; set; }
-        public long CustomerLocationID { get; set; }  
+        public long CustomerLocationID { get; set; }
         public long CustomerFacilityID { get; set; }
         public string CustomerLocation { get; set; }
         public Nullable<bool> IsActive { get; set; }
@@ -221,7 +222,7 @@ namespace CamV4.Models
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
     }
-    
+
     public partial class CustomerLocationContactViewModel
     {
         public long LocationContactId { get; set; }
@@ -242,7 +243,7 @@ namespace CamV4.Models
         public Nullable<System.DateTime> ModifiedDate { get; set; }
         public bool Selected { get; set; }
         public string LocationIds { get; set; }
-        public string FacilityIds { get; set; } 
+        public string FacilityIds { get; set; }
         public string AreaIds { get; set; }
         public List<long> LinkedCustomerLocationIDs { get; set; }
         public List<long> LinkedCustomerUserLocationIds { get; set; }
@@ -262,7 +263,7 @@ namespace CamV4.Models
         public string FacilityId { get; set; }
         public string FacilityName { get; set; }
         public string AreaId { get; set; }
-        public string AreaName { get; set; }        
+        public string AreaName { get; set; }
     }
 
     public class InspectionViewModel
@@ -330,6 +331,45 @@ namespace CamV4.Models
         public Nullable<int> PlanElevationDrawing { get; set; }
         public Quotation objQuotation { get; set; }
         public List<ShelvingCheckListViewModel> ShelvingCheckLists { get; set; }
+    }
+
+    public class DropdownMasterViewModel
+    {
+        public List<DropdownItem> Regions { get; set; }
+        public List<DropdownItem> Provinces { get; set; }
+        public List<DropdownItem> Cities { get; set; }
+        public List<DropdownItem> Locations { get; set; }
+        public List<DropdownItem> Facilities { get; set; }
+        public List<DropdownItem> Areas { get; set; }
+
+        public DropdownMasterViewModel()
+        {
+            Regions = new List<DropdownItem>();
+            Provinces = new List<DropdownItem>();
+            Cities = new List<DropdownItem>();
+            Locations = new List<DropdownItem>();
+            Facilities = new List<DropdownItem>();
+            Areas = new List<DropdownItem>();
+        }
+    }
+
+    public class DropdownItem
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class DashboardEmployeeGraphVM
+    {
+        public long? EmployeeId { get; set; }
+        public string EmployeeName { get; set; }
+        public int? cnt { get; set; }
+    }
+
+    public class DashboardApprovedGraphVM
+    {
+        public string iMonth { get; set; }
+        public int? iCount { get; set; }
     }
 
     #region "ShelvingCheckList"
@@ -434,6 +474,12 @@ namespace CamV4.Models
         public string IncidentSummary { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
+
+        public long? CustomerFacilityID { get; set; }
+        public long? CustomerAreaID { get; set; }
+
+        public string FacilityName { get; set; }
+        public string AreaName { get; set; }
     }
 
     public class IncidentReportViewModel
@@ -694,8 +740,10 @@ namespace CamV4.Models
         public List<InsepctionCount_Graph> Pie { get; set; }
         //public List<Get_DeficienciesBySeverityCustomerNew_Result> PieCusomter { get; set; }
         public List<InsepctionCount_Graph> PieYear { get; set; }
-        public List<sp_getEmpInspection_Count_New_Result> LineDone { get; set; }
-        public List<sp_getApprovedInspection_Count_New_Result> LineApproved { get; set; }
+        //public List<sp_getEmpInspection_Count_New_Result> LineDone { get; set; }
+        //public List<sp_getApprovedInspection_Count_New_Result> LineApproved { get; set; }
+        public List<DashboardEmployeeGraphVM> LineDone { get; set; }
+        public List<DashboardApprovedGraphVM> LineApproved { get; set; }
         public long InspectionDueCount { get; set; }
         public long InProgressCount { get; set; }
         public long SentforApprovalCount { get; set; }
@@ -790,7 +838,7 @@ namespace CamV4.Models
     {
         public long InspectionId { get; set; }
         public string LocationContactId { get; set; }
-        public int SentToClient { get; set; }    
+        public int SentToClient { get; set; }
     }
 
     public class CustomerDashboardGraphViewModel
@@ -853,6 +901,53 @@ namespace CamV4.Models
         public string SettingValue { get; set; }
     }
 
+  
+    //public class AdminQuotation
+    //{
+    //    public int QuotationId { get; set; }
+    //    public int InspectionId { get; set; }
+    //    public string YourReference { get; set; }
+    //    public string ValidTo { get; set; }
+    //    public int SalesPersonId { get; set; }
+    //    public string PaymentTerms { get; set; }
+    //    public string ShipmentMethod { get; set; }
+    //    public decimal? QuotationSurcharge { get; set; }
+    //    public decimal? QuotationMarkup { get; set; }
+    //    public decimal? LabourUnitPrice { get; set; }
+    //    public decimal? TotalLabour { get; set; }
+    //    public decimal? GSTPer { get; set; }
+    //    public string QuotationNotes { get; set; }
+
+    //    // Operation flags
+    //    public bool IsUpdatePrice { get; set; }
+    //    public bool IsUpdateSurchargeMarkup { get; set; }
+    //    public bool IsUpdateAll { get; set; }
+    //    public bool IsUpdateTBD { get; set; }
+    //}
+
+    /// <summary>
+    /// QuotationItemAdmin - For line item operations (Edit, Delete, TBD)
+    /// </summary>
+    public class QuotationItemAdmin
+    {
+        public long QuotationItemId { get; set; }  // Maps to QuotationInspectionItemId in DB
+        public long QuotationId { get; set; }
+        public long InspectionId { get; set; }
+        public string ItemPartNo { get; set; }
+        public string ItemDescription { get; set; }
+        public decimal? ItemUnitPrice { get; set; }
+        public decimal? ItemSurcharge { get; set; }
+        public decimal? ItemMarkup { get; set; }
+        public decimal? ItemPrice { get; set; }
+        public int? ItemQuantity { get; set; }
+        public decimal? ItemWeight { get; set; }
+        public decimal? ItemWeightTotal { get; set; }
+        public decimal? LineTotal { get; set; }
+        public decimal? ItemLabour { get; set; }
+        public decimal? ItemLabourTotal { get; set; }
+        public bool? IsTBD { get; set; }
+    }
+
     public partial class AdminQuotation
     {
         public long QuotationId { get; set; }
@@ -888,8 +983,23 @@ namespace CamV4.Models
         public Nullable<bool> SendEmailForApproval { get; set; }
         public string LocationContactId { get; set; }
         public bool IsUpdateAll { get; set; }
+        public bool IsUpdatePrice { get; set; }
+        public bool IsUpdateSurchargeMarkup { get; set; }
     }
 
+
+    /// <summary>
+    /// API Response for quotation operations
+    /// </summary>
+    public class QuotationResponse
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public decimal Subtotal { get; set; }
+        public decimal GSTValue { get; set; }
+        public decimal Total { get; set; }
+        public DateTime ModifiedDate { get; set; }
+    }
     public class SaveQuotationRequest
     {
         public long QuotationId { get; set; }
@@ -957,17 +1067,25 @@ namespace CamV4.Models
         public List<string> SelectedStatuses { get; set; }
         public string facilityId { get; set; }
         public string areaId { get; set; }
+        public long CustomerLocationId { get; set; }
+        public long CustomerFacilityId { get; set; }
+        public long CustomerAreaId { get; set; }
+        public string IncidentType { get; set; }
     }
 
     public class FilterFilesModel
     {
         public bool InspectionDocs { get; set; }
         public bool HistoricalDocs { get; set; }
+
         public int Province { get; set; }
         public string Region { get; set; }
         public int City { get; set; }
-        public string Location { get; set; }
-        public string Facility { get; set; }
+
+        public long CustomerLocationId { get; set; }
+        public long CustomerFacilityId { get; set; }
+        public long CustomerAreaId { get; set; }
+
         public List<string> DocumentTypeList { get; set; }
     }
 
@@ -1134,7 +1252,7 @@ namespace CamV4.Models
     {
         public long id { get; set; }
     }
-    
+
 
     // ============================================================
     // Internal Inspection Module - ViewModels final
@@ -1514,7 +1632,7 @@ namespace CamV4.Models
     public class FacilityDto { public long FacilityID { get; set; } public string FacilityName { get; set; } }
     public class AreaDto { public long AreaID { get; set; } public string AreaName { get; set; } }
 
-   
+
     public class UpdateFileMetadataDto
     {
         public long FileID { get; set; }

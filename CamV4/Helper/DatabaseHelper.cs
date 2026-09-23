@@ -1,5 +1,7 @@
-﻿using CamV4.Controllers;
+using CamV4.Controllers;
 using CamV4.Models;
+using DocumentFormat.OpenXml.VariantTypes;
+using iText.StyledXmlParser.Css.Selector.Item;
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.OpenApi.Any;
@@ -60,6 +62,18 @@ namespace CamV4.Helper
             }
         }
 
+        #region Helper - Get Current User ID
+        private static string GetCurrentUserId()
+        {
+            if (System.Web.HttpContext.Current != null &&
+                System.Web.HttpContext.Current.Session != null &&
+                System.Web.HttpContext.Current.Session["LoggedInUserId"] != null)
+            {
+                return System.Web.HttpContext.Current.Session["LoggedInUserId"].ToString();
+            }
+            return "System";
+        }
+        #endregion
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private static Random _random = new Random();
         internal static List<InspectionStatu> GetAllInspectionStatus()
@@ -212,7 +226,69 @@ namespace CamV4.Helper
                 return null;
             }
         }
+        internal static List<EmployeeViewModel> GetAllCAMAdmin()
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                List<EmployeeViewModel> adminVMList = new List<EmployeeViewModel>();
 
+                //var itm = db.Employees.Where(x => x.IsActive == true ).OrderBy(x => x.EmployeeName).ToList();
+                //var userTypes = new[] { 1, 2 };
+                int?[] userTypes = { 1 };
+
+                var employees = (from e in db.Employees
+                                 join u in db.Users
+                                     on e.UserID equals u.UserId
+                                 where userTypes.Contains(u.UserType)
+                                       && e.IsActive == true
+                                 orderby e.EmployeeName
+                                 select e)
+                                 .ToList();
+
+                if (employees.Count != 0)
+                {
+                    foreach (var d in employees)
+                    {
+                        EmployeeViewModel adminVM = new EmployeeViewModel();
+                        adminVM.UserID = d.UserID;
+                        adminVM.EmployeeID = d.EmployeeID;
+                        adminVM.EmployeeName = d.EmployeeName;
+                        adminVM.EmployeeEmail = d.EmployeeEmail;
+                        adminVM.EmployeeAddress = d.EmployeeAddress;
+                        adminVM.PinCode = d.Pincode;
+                        adminVM.Gender = d.Gender;
+                        adminVM.TitleDegrees = d.TitleDegrees;
+                        //if (d.CityID != 0)
+                        //{
+                        //    if (d.CityID != null) { adminVM.CityName = getCitybyId(d.CityID).CityName; }
+                        //}
+                        //else
+                        //{
+                        //    adminVM.CityName = "";
+                        //}
+                        //if (d.ProvinceID != 0)
+                        //{
+                        //    if (d.ProvinceID != null) { adminVM.ProvianceName = getProvincebyId(d.ProvinceID).ProvinceName; }
+                        //}
+                        //else
+                        //{
+                        //    adminVM.ProvianceName = "";
+                        //}
+                        //if (d.CountryID != 0)
+                        //{
+                        //    if (d.CountryID != null) { adminVM.CountryName = getCountrybyId(d.CountryID).CountryName; }
+                        //}
+                        //else
+                        //{
+                        //    adminVM.CountryName = "";
+                        //}
+                        adminVMList.Add(adminVM);
+                    }
+                    return adminVMList;
+                }
+                return null;
+            }
+        }
         internal static List<EmployeeViewModel> GetAllProjectManager()
         {
             using (DatabaseEntities db = new DatabaseEntities())
@@ -342,68 +418,172 @@ namespace CamV4.Helper
         }
 
 
-        internal static List<EmployeeSalesViewModel> GetAllSalesRep()
+        //internal static List<EmployeeSalesViewModel> GetAllSalesRep(int32 iCustId)
+        //{
+        //    using (DatabaseEntities db = new DatabaseEntities())
+        //    {
+        //        List<EmployeeSalesViewModel> empSalesRepVMList = new List<EmployeeSalesViewModel>();
+        //        //var itm = db.Employees.Where(x => x.IsActive == true).OrderBy(x => x.EmployeeName).ToList();
+        //        var employees = db.Employees.Join(db.Users, e => e.UserID, u => u.UserId,
+        //                        (e, u) => new { e, u })
+        //                        .Where(x => x.u.UserType == 5 && x.u.IsActive == true)
+        //                        .Select(x => x.e).ToList();
+
+        //        if (employees.Count != 0)
+        //        {
+        //            foreach (var d in employees)
+        //            {
+        //                EmployeeSalesViewModel empVM = new EmployeeSalesViewModel();
+        //                empVM.UserID = d.UserID;
+        //                empVM.EmployeeSalesID = d.EmployeeID;
+        //                empVM.EmployeeSalesName = d.EmployeeName;
+        //                empVM.EmployeeID = d.EmployeeID;
+        //                empVM.EmployeeName = d.EmployeeName;
+        //                empVM.EmployeeEmail = d.EmployeeEmail;
+        //                empVM.EmployeeAddress = d.EmployeeAddress;
+        //                empVM.PinCode = d.Pincode;
+        //                empVM.Gender = d.Gender;
+        //                empVM.TitleDegrees = d.TitleDegrees;
+        //                empVM.CreatedDate = d.CreatedDate;
+        //                empVM.CreatedBy = d.EmployeeName;
+        //                empVM.ModifiedDate = d.CreatedDate;
+        //                empVM.ModifiedBy = d.EmployeeName;
+        //                if (d.CityID != 0)
+        //                {
+        //                    if (d.CityID != null) { empVM.CityName = getCitybyId(d.CityID).CityName; }
+        //                }
+        //                else
+        //                {
+        //                    empVM.CityName = "";
+        //                }
+        //                if (d.ProvinceID != 0)
+        //                {
+        //                    if (d.ProvinceID != null) { empVM.ProvianceName = getProvincebyId(d.ProvinceID).ProvinceName; }
+        //                }
+        //                else
+        //                {
+        //                    empVM.ProvianceName = "";
+        //                }
+        //                if (d.CountryID != 0)
+        //                {
+        //                    if (d.CountryID != null) { empVM.CountryName = getCountrybyId(d.CountryID).CountryName; }
+        //                }
+        //                else
+        //                {
+        //                    empVM.CountryName = "";
+        //                }
+        //                var AllCustomerSales = db.Customers.Where(x => x.SalesRepresentativeId == d.EmployeeID).Select(x => x.CustomerId.ToString()).ToList();
+        //                empVM.SalesCompanyListing = string.Join(",", AllCustomerSales);
+
+        //                empSalesRepVMList.Add(empVM);
+        //            }
+        //            return empSalesRepVMList;
+        //        }
+        //        return null;
+        //    }
+        //}
+        internal static List<EmployeeSalesViewModel> GetAllSalesRep(long iCustId)
         {
             using (DatabaseEntities db = new DatabaseEntities())
             {
                 List<EmployeeSalesViewModel> empSalesRepVMList = new List<EmployeeSalesViewModel>();
-                //var itm = db.Employees.Where(x => x.IsActive == true).OrderBy(x => x.EmployeeName).ToList();
-                var employees = db.Employees.Join(db.Users, e => e.UserID, u => u.UserId,
-                                (e, u) => new { e, u })
-                                .Where(x => x.u.UserType == 5 && x.u.IsActive == true)
-                                .Select(x => x.e).ToList();
 
-                if (employees.Count != 0)
+                // Get SalesRepresentativeId based on CustomerId
+                long? salesRepresentativeId = null;
+
+                if (iCustId != 0)
                 {
-                    foreach (var d in employees)
-                    {
-                        EmployeeSalesViewModel empVM = new EmployeeSalesViewModel();
-                        empVM.UserID = d.UserID;
-                        empVM.EmployeeSalesID = d.EmployeeID;
-                        empVM.EmployeeSalesName = d.EmployeeName;
-                        empVM.EmployeeID = d.EmployeeID;
-                        empVM.EmployeeName = d.EmployeeName;
-                        empVM.EmployeeEmail = d.EmployeeEmail;
-                        empVM.EmployeeAddress = d.EmployeeAddress;
-                        empVM.PinCode = d.Pincode;
-                        empVM.Gender = d.Gender;
-                        empVM.TitleDegrees = d.TitleDegrees;
-                        empVM.CreatedDate = d.CreatedDate;
-                        empVM.CreatedBy = d.EmployeeName;
-                        empVM.ModifiedDate = d.CreatedDate;
-                        empVM.ModifiedBy = d.EmployeeName;
-                        if (d.CityID != 0)
-                        {
-                            if (d.CityID != null) { empVM.CityName = getCitybyId(d.CityID).CityName; }
-                        }
-                        else
-                        {
-                            empVM.CityName = "";
-                        }
-                        if (d.ProvinceID != 0)
-                        {
-                            if (d.ProvinceID != null) { empVM.ProvianceName = getProvincebyId(d.ProvinceID).ProvinceName; }
-                        }
-                        else
-                        {
-                            empVM.ProvianceName = "";
-                        }
-                        if (d.CountryID != 0)
-                        {
-                            if (d.CountryID != null) { empVM.CountryName = getCountrybyId(d.CountryID).CountryName; }
-                        }
-                        else
-                        {
-                            empVM.CountryName = "";
-                        }
-                        var AllCustomerSales = db.Customers.Where(x => x.SalesRepresentativeId == d.EmployeeID).Select(x => x.CustomerId.ToString()).ToList();
-                        empVM.SalesCompanyListing = string.Join(",", AllCustomerSales);
-
-                        empSalesRepVMList.Add(empVM);
-                    }
-                    return empSalesRepVMList;
+                    salesRepresentativeId = db.Customers
+                        .Where(x => x.CustomerId == iCustId)
+                        .Select(x => x.SalesRepresentativeId)
+                        .FirstOrDefault();
                 }
-                return null;
+
+                // Get active sales representatives
+                var employees = db.Employees
+                    .Join(
+                        db.Users,
+                        e => e.UserID,
+                        u => u.UserId,
+                        (e, u) => new { e, u }
+                    )
+                    .Where(x => x.u.UserType == 5 && x.u.IsActive == true);
+
+                // If CustomerId is provided, get only its Sales Representative
+                if (iCustId != 0)
+                {
+                    employees = employees.Where(x =>
+                        salesRepresentativeId != null &&
+                        x.e.EmployeeID == salesRepresentativeId.Value);
+                }
+
+                var employeeList = employees
+                    .Select(x => x.e)
+                    .ToList();
+
+                if (employeeList.Count == 0)
+                {
+                    return null;
+                }
+
+                foreach (var d in employeeList)
+                {
+                    EmployeeSalesViewModel empVM = new EmployeeSalesViewModel();
+
+                    empVM.UserID = d.UserID;
+                    empVM.EmployeeSalesID = d.EmployeeID;
+                    empVM.EmployeeSalesName = d.EmployeeName;
+                    empVM.EmployeeID = d.EmployeeID;
+                    empVM.EmployeeName = d.EmployeeName;
+                    empVM.EmployeeEmail = d.EmployeeEmail;
+                    empVM.EmployeeAddress = d.EmployeeAddress;
+                    empVM.PinCode = d.Pincode;
+                    empVM.Gender = d.Gender;
+                    empVM.TitleDegrees = d.TitleDegrees;
+                    empVM.CreatedDate = d.CreatedDate;
+                    empVM.CreatedBy = d.EmployeeName;
+                    empVM.ModifiedDate = d.CreatedDate;
+                    empVM.ModifiedBy = d.EmployeeName;
+
+                    if (d.CityID != null && d.CityID != 0)
+                    {
+                        empVM.CityName = getCitybyId(d.CityID).CityName;
+                    }
+                    else
+                    {
+                        empVM.CityName = "";
+                    }
+
+                    if (d.ProvinceID != null && d.ProvinceID != 0)
+                    {
+                        empVM.ProvianceName = getProvincebyId(d.ProvinceID).ProvinceName;
+                    }
+                    else
+                    {
+                        empVM.ProvianceName = "";
+                    }
+
+                    if (d.CountryID != null && d.CountryID != 0)
+                    {
+                        empVM.CountryName = getCountrybyId(d.CountryID).CountryName;
+                    }
+                    else
+                    {
+                        empVM.CountryName = "";
+                    }
+
+                    // Get customers assigned to this sales representative
+                    var allCustomerSales = db.Customers
+                        .Where(x => x.SalesRepresentativeId == d.EmployeeID)
+                        .Select(x => x.CustomerId.ToString())
+                        .ToList();
+
+                    empVM.SalesCompanyListing = string.Join(",", allCustomerSales);
+
+                    empSalesRepVMList.Add(empVM);
+                }
+
+                return empSalesRepVMList;
             }
         }
 
@@ -1008,7 +1188,262 @@ namespace CamV4.Helper
                 return result;
             }
         }
+        internal static DropdownMasterViewModel GetDropdownMaster()
+        {
+            DropdownMasterViewModel model = new DropdownMasterViewModel();
 
+            try
+            {
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    long loggedInUserId = 0;
+                    var session = HttpContext.Current?.Session;
+                    if (session != null && session["LoggedInUserId"] != null)
+                    {
+                        long.TryParse(session["LoggedInUserId"].ToString(), out loggedInUserId);
+                    }
+
+                    List<long> customerIds = new List<long>();
+                    List<long> locationIds = new List<long>();
+                    List<long> facilityIds = new List<long>();
+                    List<long> areaIds = new List<long>();
+
+                    bool isCustomerUser = false;
+
+                    //====================================================
+                    // CUSTOMER ADMIN
+                    //====================================================
+
+                    var customer = db.Customers
+                        .FirstOrDefault(x => x.UserID == loggedInUserId);
+
+                    if (customer != null)
+                    {
+                        customerIds.Add(customer.CustomerId);
+                    }
+
+                    //====================================================
+                    // SALES REPRESENTATIVE
+                    //====================================================
+
+                    //if (!customerIds.Any())
+                    //{
+                    //    customerIds = db.Customers
+                    //        .Where(x => x.SalesRepresentativeId == loggedInUserId)
+                    //        .Select(x => x.CustomerId)
+                    //        .Distinct()
+                    //        .ToList();
+                    //}
+
+                    if (!customerIds.Any())
+                    {
+                        // Get EmployeeID from logged-in UserID
+                        var employeeId = db.Employees
+                            .Where(e => e.UserID == loggedInUserId)
+                            .Select(e => e.EmployeeID)
+                            .FirstOrDefault();
+
+                        if (employeeId != 0)
+                        {
+                            customerIds = db.Customers
+                                .Where(c => c.SalesRepresentativeId == employeeId)
+                                .Select(c => c.CustomerId)
+                                .Distinct()
+                                .ToList();
+                        }
+                    }
+                    //====================================================
+                    // CUSTOMER USER
+                    //====================================================
+
+                    if (!customerIds.Any())
+                    {
+                        isCustomerUser = true;
+
+                        var contactIds = db.CustomerLocationContacts
+                            .Where(x => x.UserID == loggedInUserId)
+                            .Select(x => x.LocationContactId)
+                            .ToList();
+
+                        customerIds = db.CustomerLocationContacts
+                            .Where(x => x.UserID == loggedInUserId)
+                            .Select(x => x.CustomerId)
+                            .Distinct()
+                            .ToList();
+
+                        locationIds = db.CustomersLocationsUsers
+                            .Where(x => contactIds.Contains(x.LocationContactId))
+                            .Select(x => x.CustomerLocationID)
+                            .Distinct()
+                            .ToList();
+
+                        facilityIds = db.CustomersLocationsUserFacilities
+                            .Where(x => contactIds.Contains(x.LocationContactId))
+                            .Select(x => x.CustomerFacilityID)
+                            .Distinct()
+                            .ToList();
+
+                        areaIds = db.CustomersLocationsUserAreas
+                            .Where(x => contactIds.Contains(x.LocationContactId))
+                            .Select(x => x.AreaID)
+                            .Distinct()
+                            .ToList();
+                    }
+
+                    if (!customerIds.Any())
+                    {
+                        customerIds = db.Customers.Select(x => x.CustomerId).ToList();
+                    }
+
+                    //====================================================
+                    // LOCATIONS
+                    //====================================================
+
+                    var locations = db.CustomerLocations
+                        .Where(x =>
+                            customerIds.Contains(x.CustomerId) &&
+                            (x.IsActive ?? false))
+                        .ToList();
+
+                    if (isCustomerUser)
+                    {
+                        locations = locations
+                            .Where(x => locationIds.Contains(x.CustomerLocationID))
+                            .ToList();
+                    }
+
+                    //====================================================
+                    // REGION
+                    //====================================================
+
+                    model.Regions = locations
+                        .Where(x => !string.IsNullOrWhiteSpace(x.Region))
+                        .GroupBy(x => x.Region.Trim())
+                        .Select(x => new DropdownItem
+                        {
+                            Id = 0,
+                            Name = x.Key
+                        })
+                        .OrderBy(x => x.Name)
+                        .ToList();
+
+                    //====================================================
+                    // PROVINCES
+                    //====================================================
+
+                    var provinceIds = locations
+                        .Where(x => x.ProvinceID.HasValue)
+                        .Select(x => x.ProvinceID.Value)
+                        .Distinct()
+                        .ToList();
+
+                    model.Provinces = db.Provinces
+                        .Where(x => provinceIds.Contains(x.ProvinceID))
+                        .Select(x => new DropdownItem
+                        {
+                            Id = x.ProvinceID,
+                            Name = x.ProvinceName
+                        })
+                        .OrderBy(x => x.Name)
+                        .ToList();
+
+                    //====================================================
+                    // CITIES
+                    //====================================================
+
+                    var cityIds = locations
+                        .Where(x => x.CityID.HasValue)
+                        .Select(x => x.CityID.Value)
+                        .Distinct()
+                        .ToList();
+
+                    model.Cities = db.Cities
+                        .Where(x =>
+                            cityIds.Contains(x.CityID) &&
+                            (x.IsActive ?? true))
+                        .Select(x => new DropdownItem
+                        {
+                            Id = x.CityID,
+                            Name = x.CityName
+                        })
+                        .OrderBy(x => x.Name)
+                        .ToList();
+
+                    //====================================================
+                    // LOCATION
+                    //====================================================
+
+                    model.Locations = locations
+                        .Select(x => new DropdownItem
+                        {
+                            Id = x.CustomerLocationID,
+                            Name = x.LocationName
+                        })
+                        .OrderBy(x => x.Name)
+                        .ToList();
+
+                    //====================================================
+                    // FACILITY
+                    //====================================================
+
+                    var facilities = db.CustomerFacilities
+                        .Where(x =>
+                            customerIds.Contains(x.CustomerID) &&
+                            x.IsActive)
+                        .ToList();
+
+                    if (isCustomerUser)
+                    {
+                        facilities = facilities
+                            .Where(x => facilityIds.Contains(x.CustomerFacilityID))
+                            .ToList();
+                    }
+
+                    model.Facilities = facilities
+                        .GroupBy(x => x.CustomerFacilityID)
+                        .Select(x => new DropdownItem
+                        {
+                            Id = x.FirstOrDefault().CustomerFacilityID,
+                            Name = x.FirstOrDefault().FacilityName
+                        })
+                        .OrderBy(x => x.Name)
+                        .ToList();
+
+                    //====================================================
+                    // AREA
+                    //====================================================
+
+                    var areas = db.CustomerAreas
+                        .Where(x =>
+                            customerIds.Contains(x.CustomerID) &&
+                            x.IsActive)
+                        .ToList();
+
+                    if (isCustomerUser)
+                    {
+                        areas = areas
+                            .Where(x => areaIds.Contains(x.AreaID))
+                            .ToList();
+                    }
+
+                    model.Areas = areas
+                        .GroupBy(x => x.AreaID)
+                        .Select(x => new DropdownItem
+                        {
+                            Id = x.FirstOrDefault().AreaID,
+                            Name = x.FirstOrDefault().AreaName
+                        })
+                        .OrderBy(x => x.Name)
+                        .ToList();
+                }
+            }
+            catch
+            {
+                return new DropdownMasterViewModel();
+            }
+
+            return model;
+        }
         internal static City getCitybyId(int? id)
         {
             using (DatabaseEntities db = new DatabaseEntities())
@@ -1061,69 +1496,137 @@ namespace CamV4.Helper
                 throw;
             }
         }
-        internal static List<CustomerLocation> GetLocationByCustomer()
+        //internal static List<CustomerLocation> GetLocationByCustomer()
+        //{
+        //    try
+        //    {
+        //        using (DatabaseEntities db = new DatabaseEntities())
+        //        {
+        //            var userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+        //            if (userId != 0)
+        //            {
+        //                var cust = db.Customers.FirstOrDefault(x => x.UserID == userId);
+        //                if (cust != null)
+        //                {
+        //                    long customerId = cust.CustomerId;
+
+        //                    var itm = db.CustomerLocations.Where(cl => cl.CustomerId == customerId).ToList();
+
+        //                    if (itm != null)
+        //                    {
+        //                        return itm;
+        //                    }
+        //                }
+        //            }
+        //            return null;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return null;
+
+        //        throw;
+        //    }
+        //}
+        internal static List<CustomerLocation> getLocationByCustomer()
         {
-            try
+            using (DatabaseEntities db = new DatabaseEntities())
             {
-                using (DatabaseEntities db = new DatabaseEntities())
+                long userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+
+                // Customer Admin
+                var customer = db.Customers.FirstOrDefault(x => x.UserID == userId);
+                if (customer != null)
                 {
-                    var userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
-                    if (userId != 0)
-                    {
-                        var cust = db.Customers.FirstOrDefault(x => x.UserID == userId);
-                        if (cust != null)
-                        {
-                            long customerId = cust.CustomerId;
-
-                            var itm = db.CustomerLocations.Where(cl => cl.CustomerId == customerId).ToList();
-
-                            if (itm != null)
-                            {
-                                return itm;
-                            }
-                        }
-                    }
-                    return null;
+                    return db.CustomerLocations
+                        .Where(x => x.CustomerId == customer.CustomerId && (x.IsActive ?? false))
+                        .OrderBy(x => x.LocationName)
+                        .ToList();
                 }
-            }
-            catch (Exception ex)
-            {
-                return null;
 
-                throw;
+                // Customer User
+                var contactIds = db.CustomerLocationContacts
+                    .Where(x => x.UserID == userId)
+                    .Select(x => x.LocationContactId)
+                    .ToList();
+
+                var locationIds = db.CustomersLocationsUsers
+                    .Where(x => contactIds.Contains(x.LocationContactId))
+                    .Select(x => x.CustomerLocationID)
+                    .Distinct()
+                    .ToList();
+
+                return db.CustomerLocations
+                    .Where(x => locationIds.Contains(x.CustomerLocationID) && (x.IsActive ?? false))
+                    .OrderBy(x => x.LocationName)
+                    .ToList();
             }
         }
 
-        internal static List<CustomerFacility> GetFacilityByCustomer()
+        //internal static List<CustomerFacility> GetFacilityByCustomer()
+        //{
+        //    try
+        //    {
+        //        using (DatabaseEntities db = new DatabaseEntities())
+        //        {
+        //            var userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+        //            if (userId != 0)
+        //            {
+        //                var cust = db.Customers.FirstOrDefault(x => x.UserID == userId);
+        //                if (cust != null)
+        //                {
+        //                    long customerId = cust.CustomerId;
+
+        //                    var itm = db.CustomerFacilities.Where(cl => cl.CustomerID == customerId).ToList();
+
+        //                    if (itm != null)
+        //                    {
+        //                        return itm;
+        //                    }
+        //                }
+        //            }
+        //            return null;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return null;
+
+        //        throw;
+        //    }
+        //}
+        internal static List<CustomerFacility> getFacilityByCustomer()
         {
-            try
+            using (DatabaseEntities db = new DatabaseEntities())
             {
-                using (DatabaseEntities db = new DatabaseEntities())
+                long userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+
+                // Customer Admin
+                var customer = db.Customers.FirstOrDefault(x => x.UserID == userId);
+                if (customer != null)
                 {
-                    var userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
-                    if (userId != 0)
-                    {
-                        var cust = db.Customers.FirstOrDefault(x => x.UserID == userId);
-                        if (cust != null)
-                        {
-                            long customerId = cust.CustomerId;
-
-                            var itm = db.CustomerFacilities.Where(cl => cl.CustomerID == customerId).ToList();
-
-                            if (itm != null)
-                            {
-                                return itm;
-                            }
-                        }
-                    }
-                    return null;
+                    return db.CustomerFacilities
+                        .Where(x => x.CustomerID == customer.CustomerId && x.IsActive)
+                        .OrderBy(x => x.FacilityName)
+                        .ToList();
                 }
-            }
-            catch (Exception ex)
-            {
-                return null;
 
-                throw;
+                // Customer User
+                var contactIds = db.CustomerLocationContacts
+                    .Where(x => x.UserID == userId)
+                    .Select(x => x.LocationContactId)
+                    .ToList();
+
+                var facilityIds = db.CustomersLocationsUserFacilities
+                    .Where(x => contactIds.Contains(x.LocationContactId))
+                    .Select(x => x.CustomerFacilityID)
+                    .Distinct()
+                    .ToList();
+
+                return db.CustomerFacilities
+                    .Where(x => facilityIds.Contains(x.CustomerFacilityID) && x.IsActive)
+                    .OrderBy(x => x.FacilityName)
+                    .ToList();
             }
         }
         internal static List<CustomerArea> GetAreaByCustomer()
@@ -1924,10 +2427,11 @@ namespace CamV4.Helper
             if (cust != null)
             {
                 string strMSG = "";
-                string strCustomerEmail = "", strCustomerName = "", strUsername = "";
+                List<string> strCustomerEmail = new List<string>();
+                string strCustomerName = "", strUsername = "";
 
                 strCustomerName = cust.CustomerName;
-                strCustomerEmail = cust.CustomerEmail;
+                strCustomerEmail.Add(cust.CustomerEmail);
                 using (DatabaseEntities db = new DatabaseEntities())
                 {
                     var _user = db.Users.Where(x => x.UserId == cust.UserID).FirstOrDefault();
@@ -1937,7 +2441,7 @@ namespace CamV4.Helper
                     }
                 }
                 //strCustomerEmail = "nirav.m@siliconinfo.com";
-                if (!string.IsNullOrEmpty(strCustomerEmail) && !string.IsNullOrEmpty(strUsername) && !string.IsNullOrEmpty(cust.CustomerPharse))
+                if (strCustomerEmail != null && !string.IsNullOrEmpty(strUsername) && !string.IsNullOrEmpty(cust.CustomerPharse))
                 {
                     strMSG = "";
                     strMSG = "<html>";
@@ -6570,15 +7074,134 @@ namespace CamV4.Helper
             }
         }
 
+        //internal static List<InspectionViewModel> getAllInspection()
+        //{
+        //    if (HttpContext.Current.Session["LoggedInUserId"] != null)
+        //    {
+        //        Logger.Info("Get inspection function call from databasehelper after login from user id " + HttpContext.Current.Session["LoggedInUserId"].ToString() + " at " + System.DateTime.Now);
+        //    }
+        //    else
+        //    {
+        //        Logger.Info("Get inspection function call from databasehelper after login from user id at " + System.DateTime.Now);
+        //    }
+
+        //    using (DatabaseEntities db = new DatabaseEntities())
+        //    {
+        //        string tmpURL = HttpContext.Current.Request.Url.AbsoluteUri;
+        //        Uri url = new Uri(tmpURL);
+        //        string host = url.GetLeftPart(UriPartial.Authority);
+        //        Int32 userId = 0;
+        //        userId = Convert.ToInt32(HttpContext.Current.Session["LoggedInUserId"].ToString());
+        //        List<InspectionViewModel> _listM = new List<InspectionViewModel>();
+
+        //        var user = db.Users.FirstOrDefault(u => u.UserId == userId);
+        //        int userType = Convert.ToInt32(HttpContext.Current.Session["LoggedInUserType"].ToString());
+
+        //        long employeeId = 0;
+
+        //        if (userType == 5)
+        //        {
+        //            employeeId = db.Employees
+        //                           .Where(e => e.UserID == userId)
+        //                           .Select(e => e.EmployeeID)
+        //                           .FirstOrDefault();
+        //        }
+
+        //        var query = from i in db.Inspections
+        //                    join c in db.Customers on i.CustomerId equals c.CustomerId
+        //                    where i.IsActive == true
+        //                    select new { i, c };
+
+        //        if (userType == 5)
+        //        {
+        //            query = query.Where(x => x.c.SalesRepresentativeId == employeeId);
+        //        }
+
+        //        var list = query
+        //                    .OrderBy(x => x.i.InspectionStatus)
+        //                    .ThenByDescending(x => x.i.InspectionDate)
+        //                    .Select(x => x.i)
+        //                    .ToList();
+
+        //        //var list = db.Inspections.Where(x => x.IsActive == true).OrderBy(x => x.InspectionStatus).ThenByDescending(x => x.InspectionDate).ToList();
+
+        //        if (list.Count != 0)
+        //        {
+        //            foreach (var d in list)
+        //            {
+        //                InspectionViewModel _list = new InspectionViewModel();
+        //                _list.InspectionId = d.InspectionId;
+        //                _list.InspectionDocumentNo = d.InspectionDocumentNo;
+        //                _list.InspectionDocumentNoRef = d.InspectionDocumentNoRef;
+        //                _list.InspectionType = d.InspectionType;
+        //                _list.InspectionDate = d.InspectionDate;
+        //                _list.Reportdate = d.Reportdate;
+        //                _list.InspectionStatus = d.InspectionStatus;
+        //                _list.InspectionStartedOn = d.InspectionStartedOn;
+        //                _list.InspectionEndOn = d.InspectionEndOn;
+        //                _list.EmployeeId = d.EmployeeId;
+        //                _list.CustomerId = d.CustomerId;
+        //                _list.CustomerLocationId = d.CustomerLocationId;
+        //                if (d.CustomerId != 0)
+        //                {
+        //                    var cust = getCustomerById(d.CustomerId);
+        //                    if (cust != null) { _list.Customer = cust.CustomerName; }
+        //                    var customer = db.Customers.Where(x => x.CustomerId == d.CustomerId).FirstOrDefault();
+        //                    if (customer != null)
+        //                    {
+
+        //                        if (customer.CustomerLogo != null)
+        //                        {
+        //                            _list.CustomerLogo = host + "/img/logos/" + customer.CustomerLogo.Trim();
+        //                        }
+        //                        else
+        //                        {
+        //                            _list.CustomerLogo = host + "/img/logos/defaultcompany.png";
+        //                        }
+        //                    }
+        //                }
+        //                if (d.CustomerLocationId != 0)
+        //                {
+        //                    var loc = getCustomerLocationById(Convert.ToInt16(d.CustomerLocationId));
+        //                    if (loc != null) { _list.CustomerLocation = loc.LocationName; }
+        //                }
+        //                if (d.CustomerAreaID != 0)
+        //                {
+        //                    var area = getAreaDetailsById(Convert.ToInt16(d.CustomerAreaID));
+        //                    if (area != null) { _list.CustomerArea = area.AreaName; }
+        //                }
+        //                if (d.CustomerFacilityID != 0)
+        //                {
+        //                    _list.CustomerFacilityID = d.CustomerFacilityID;
+        //                    var facility = getFacilityDetailsById(Convert.ToInt64(d.CustomerFacilityID));
+        //                    if (facility != null) { _list.CustomerFacility = facility.FacilityName; }
+        //                }
+        //                if (d.EmployeeId != 0)
+        //                {
+        //                    var emp = getEmployeeById(Convert.ToInt16(d.EmployeeId));
+        //                    if (emp != null) { _list.Employee = emp.EmployeeName; }
+        //                }
+        //                _list.InspectionPDFPath = d.InspectionPDFPath;
+        //                _list.CreatedDate = d.CreatedDate;
+        //                _listM.Add(_list);
+        //            }
+        //            return _listM;
+        //        }
+        //        return null;
+        //    }
+        //}
+
         internal static List<InspectionViewModel> getAllInspection()
         {
             if (HttpContext.Current.Session["LoggedInUserId"] != null)
             {
-                Logger.Info("Get inspection function call from databasehelper after login from user id " + HttpContext.Current.Session["LoggedInUserId"].ToString() + " at " + System.DateTime.Now);
+                Logger.Info("Get inspection function call from databasehelper after login from user id " +
+                            HttpContext.Current.Session["LoggedInUserId"].ToString() +
+                            " at " + DateTime.Now);
             }
             else
             {
-                Logger.Info("Get inspection function call from databasehelper after login from user id at " + System.DateTime.Now);
+                Logger.Info("Get inspection function call from databasehelper at " + DateTime.Now);
             }
 
             using (DatabaseEntities db = new DatabaseEntities())
@@ -6586,12 +7209,9 @@ namespace CamV4.Helper
                 string tmpURL = HttpContext.Current.Request.Url.AbsoluteUri;
                 Uri url = new Uri(tmpURL);
                 string host = url.GetLeftPart(UriPartial.Authority);
-                Int32 userId = 0;
-                userId = Convert.ToInt32(HttpContext.Current.Session["LoggedInUserId"].ToString());
-                List<InspectionViewModel> _listM = new List<InspectionViewModel>();
 
-                var user = db.Users.FirstOrDefault(u => u.UserId == userId);
-                int userType = Convert.ToInt32(HttpContext.Current.Session["LoggedInUserType"].ToString());
+                int userId = Convert.ToInt32(HttpContext.Current.Session["LoggedInUserId"]);
+                int userType = Convert.ToInt32(HttpContext.Current.Session["LoggedInUserType"]);
 
                 long employeeId = 0;
 
@@ -6599,91 +7219,88 @@ namespace CamV4.Helper
                 {
                     employeeId = db.Employees
                                    .Where(e => e.UserID == userId)
-                                   .Select(e => e.EmployeeID)
-                                   .FirstOrDefault();
+                                   .Select(e => (long?)e.EmployeeID)
+                                   .FirstOrDefault() ?? 0;
                 }
 
-                var query = from i in db.Inspections
-                            join c in db.Customers on i.CustomerId equals c.CustomerId
-                            where i.IsActive == true
-                            select new { i, c };
+                var query =
+                    from i in db.Inspections.AsNoTracking()
+
+                    join c in db.Customers.AsNoTracking()
+                        on i.CustomerId equals c.CustomerId
+
+                    join l in db.CustomerLocations.AsNoTracking()
+                        on i.CustomerLocationId equals l.CustomerLocationID into loc
+                    from l in loc.DefaultIfEmpty()
+
+                    join a in db.CustomerAreas.AsNoTracking()
+                        on i.CustomerAreaID equals a.AreaID into area
+                    from a in area.DefaultIfEmpty()
+
+                    join f in db.CustomerFacilities.AsNoTracking()
+                        on i.CustomerFacilityID equals f.CustomerFacilityID into fac
+                    from f in fac.DefaultIfEmpty()
+
+                    join e in db.Employees.AsNoTracking()
+                        on i.EmployeeId equals e.EmployeeID into emp
+                    from e in emp.DefaultIfEmpty()
+
+                    where i.IsActive == true
+                    select new
+                    {
+                        Inspection = i,
+                        Customer = c,
+                        Location = l,
+                        Area = a,
+                        Facility = f,
+                        Employee = e
+                    };
 
                 if (userType == 5)
                 {
-                    query = query.Where(x => x.c.SalesRepresentativeId == employeeId);
+                    query = query.Where(x => x.Customer.SalesRepresentativeId == employeeId);
                 }
 
-                var list = query
-                            .OrderBy(x => x.i.InspectionStatus)
-                            .ThenByDescending(x => x.i.InspectionDate)
-                            .Select(x => x.i)
-                            .ToList();
-
-                //var list = db.Inspections.Where(x => x.IsActive == true).OrderBy(x => x.InspectionStatus).ThenByDescending(x => x.InspectionDate).ToList();
-
-                if (list.Count != 0)
-                {
-                    foreach (var d in list)
+                var result = query
+                    .OrderBy(x => x.Inspection.InspectionStatus)
+                    .ThenByDescending(x => x.Inspection.InspectionDate)
+                    .ToList()
+                    .Select(x => new InspectionViewModel
                     {
-                        InspectionViewModel _list = new InspectionViewModel();
-                        _list.InspectionId = d.InspectionId;
-                        _list.InspectionDocumentNo = d.InspectionDocumentNo;
-                        _list.InspectionDocumentNoRef = d.InspectionDocumentNoRef;
-                        _list.InspectionType = d.InspectionType;
-                        _list.InspectionDate = d.InspectionDate;
-                        _list.Reportdate = d.Reportdate;
-                        _list.InspectionStatus = d.InspectionStatus;
-                        _list.InspectionStartedOn = d.InspectionStartedOn;
-                        _list.InspectionEndOn = d.InspectionEndOn;
-                        _list.EmployeeId = d.EmployeeId;
-                        _list.CustomerId = d.CustomerId;
-                        _list.CustomerLocationId = d.CustomerLocationId;
-                        if (d.CustomerId != 0)
-                        {
-                            var cust = getCustomerById(d.CustomerId);
-                            if (cust != null) { _list.Customer = cust.CustomerName; }
-                            var customer = db.Customers.Where(x => x.CustomerId == d.CustomerId).FirstOrDefault();
-                            if (customer != null)
-                            {
+                        InspectionId = x.Inspection.InspectionId,
+                        InspectionDocumentNo = x.Inspection.InspectionDocumentNo,
+                        InspectionDocumentNoRef = x.Inspection.InspectionDocumentNoRef,
+                        InspectionType = x.Inspection.InspectionType,
+                        InspectionDate = x.Inspection.InspectionDate,
+                        Reportdate = x.Inspection.Reportdate,
+                        InspectionStatus = x.Inspection.InspectionStatus,
+                        InspectionStartedOn = x.Inspection.InspectionStartedOn,
+                        InspectionEndOn = x.Inspection.InspectionEndOn,
 
-                                if (customer.CustomerLogo != null)
-                                {
-                                    _list.CustomerLogo = host + "/img/logos/" + customer.CustomerLogo.Trim();
-                                }
-                                else
-                                {
-                                    _list.CustomerLogo = host + "/img/logos/defaultcompany.png";
-                                }
-                            }
-                        }
-                        if (d.CustomerLocationId != 0)
-                        {
-                            var loc = getCustomerLocationById(Convert.ToInt16(d.CustomerLocationId));
-                            if (loc != null) { _list.CustomerLocation = loc.LocationName; }
-                        }
-                        if (d.CustomerAreaID != 0)
-                        {
-                            var area = getAreaDetailsById(Convert.ToInt16(d.CustomerAreaID));
-                            if (area != null) { _list.CustomerArea = area.AreaName; }
-                        }
-                        if (d.CustomerFacilityID != 0)
-                        {
-                            _list.CustomerFacilityID = d.CustomerFacilityID;
-                            var facility = getFacilityDetailsById(Convert.ToInt64(d.CustomerFacilityID));
-                            if (facility != null) { _list.CustomerFacility = facility.FacilityName; }
-                        }
-                        if (d.EmployeeId != 0)
-                        {
-                            var emp = getEmployeeById(Convert.ToInt16(d.EmployeeId));
-                            if (emp != null) { _list.Employee = emp.EmployeeName; }
-                        }
-                        _list.InspectionPDFPath = d.InspectionPDFPath;
-                        _list.CreatedDate = d.CreatedDate;
-                        _listM.Add(_list);
-                    }
-                    return _listM;
-                }
-                return null;
+                        EmployeeId = x.Inspection.EmployeeId,
+                        Employee = x.Employee != null ? x.Employee.EmployeeName : "",
+
+                        CustomerId = x.Inspection.CustomerId,
+                        Customer = x.Customer.CustomerName,
+
+                        CustomerLocationId = x.Inspection.CustomerLocationId,
+                        CustomerLocation = x.Location != null ? x.Location.LocationName : "",
+
+                        CustomerFacilityID = x.Inspection.CustomerFacilityID,
+                        CustomerFacility = x.Facility != null ? x.Facility.FacilityName : "",
+
+                        CustomerArea = x.Area != null ? x.Area.AreaName : "",
+
+                        CustomerLogo = !string.IsNullOrEmpty(x.Customer.CustomerLogo)
+                            ? host + "/img/logos/" + x.Customer.CustomerLogo.Trim()
+                            : host + "/img/logos/defaultcompany.png",
+
+                        InspectionPDFPath = x.Inspection.InspectionPDFPath,
+                        CreatedDate = x.Inspection.CreatedDate
+                    })
+                    .ToList();
+
+                return result;
             }
         }
 
@@ -7196,6 +7813,167 @@ namespace CamV4.Helper
         }
         internal static List<CustomerLocationHistoryLegacyFileListing> GetAllCustomerDocumentsWithFilters(FilterFilesModel filters)
         {
+            try
+            {
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    List<CustomerLocationHistoryLegacyFileListing> lstResult =
+                        new List<CustomerLocationHistoryLegacyFileListing>();
+
+                    long userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+                    if (userId == 0)
+                        return lstResult;
+
+                    string host = new Uri(HttpContext.Current.Request.Url.AbsoluteUri)
+                        .GetLeftPart(UriPartial.Authority);
+
+                    // Filters
+                    int inspectionDocs = (filters != null && filters.InspectionDocs) ? 1 : 0;
+                    int historyDocs = (filters != null && filters.HistoricalDocs) ? 1 : 0;
+
+                    int provinceId = filters?.Province ?? 0;
+                    int cityId = filters?.City ?? 0;
+                    string region = filters?.Region;
+
+                    long locationId = filters?.CustomerLocationId ?? 0;
+                    long facilityId = filters?.CustomerFacilityId ?? 0;
+                    long areaId = filters?.CustomerAreaId ?? 0;
+
+                    string documentTypes = null;
+                    if (filters?.DocumentTypeList != null && filters.DocumentTypeList.Any())
+                        documentTypes = string.Join(",", filters.DocumentTypeList);
+
+                    // =========================================================
+                    // CUSTOMER ADMIN
+                    // =========================================================
+                    var customer = db.Customers.FirstOrDefault(x => x.UserID == userId);
+
+                    if (customer != null)
+                    {
+                        var documents = db.GetCustomerDocumentsLFAWithWithoutFilters(
+                            customer.CustomerId,
+                            inspectionDocs,
+                            historyDocs,
+                            provinceId,
+                            region,
+                            cityId,
+                            locationId,
+                            facilityId,
+                            areaId,
+                            documentTypes).ToList();
+
+                        foreach (var d in documents)
+                        {
+                            var location = db.CustomerLocations
+                                .FirstOrDefault(x => x.CustomerLocationID == d.CustomerLocationId);
+
+                            var facility = d.CustomerFacilityId.HasValue
+                                ? db.CustomerFacilities.FirstOrDefault(x => x.CustomerFacilityID == d.CustomerFacilityId.Value)
+                                : null;
+
+                            var area = d.CustomerAreaId.HasValue
+                                ? db.CustomerAreas.FirstOrDefault(x => x.AreaID == d.CustomerAreaId.Value)
+                                : null;
+
+                            lstResult.Add(new CustomerLocationHistoryLegacyFileListing
+                            {
+                                InspectionDocumentNo = d.InspectionDocumentNo,
+                                Region = d.Region,
+                                FileDrawingName = d.CustFilename,
+                                FileDrawingPath = host + d.CustFilePath,
+                                FileCategory = d.CustFileCategory,
+                                CustomerLocationID = d.CustomerLocationId,
+
+                                CustomerLocationName = string.Join(", ", new[] { area?.AreaName, facility?.FacilityName, location?.LocationName }.Where(x => !string.IsNullOrWhiteSpace(x)))
+                            });
+                        }
+
+                        return lstResult
+                            .OrderByDescending(x => x.InspectionDocumentNo)
+                            .ThenBy(x => x.CustomerLocationName)
+                            .ToList();
+                    }
+
+                    // =========================================================
+                    // CUSTOMER USER
+                    // =========================================================
+                    var locationContactIds = db.CustomerLocationContacts
+                        .Where(x => x.UserID == userId)
+                        .Select(x => x.LocationContactId)
+                        .ToList();
+
+                    if (!locationContactIds.Any())
+                        return lstResult;
+
+                    var customerLocationData = db.CustomersLocationsUsers
+                        .Where(x => locationContactIds.Contains(x.LocationContactId))
+                        .GroupBy(x => x.CustomerId)
+                        .Select(g => new
+                        {
+                            CustomerId = g.Key,
+                            LocationIds = g.Select(y => y.CustomerLocationID).Distinct().ToList()
+                        })
+                        .FirstOrDefault();
+
+                    if (customerLocationData == null)
+                        return lstResult;
+
+                    string locationIds = string.Join(",", customerLocationData.LocationIds);
+
+                    var customerInfo = db.Customers
+                        .FirstOrDefault(x => x.CustomerId == customerLocationData.CustomerId);
+
+                    var userDocuments = db.GetCustomerUsersDocumentsLFAWithWithoutFilters(
+                        customerLocationData.CustomerId,
+                        inspectionDocs,
+                        historyDocs,
+                        provinceId,
+                        region,
+                        cityId,
+                        locationIds,
+                        facilityId,
+                        areaId,
+                        documentTypes).ToList();
+
+                    foreach (var d in userDocuments)
+                    {
+                        var location = db.CustomerLocations
+                            .FirstOrDefault(x => x.CustomerLocationID == d.CustomerLocationId);
+
+                        var facility = d.CustomerFacilityId.HasValue
+                            ? db.CustomerFacilities.FirstOrDefault(x => x.CustomerFacilityID == d.CustomerFacilityId.Value)
+                            : null;
+
+                        var area = d.CustomerAreaId.HasValue
+                            ? db.CustomerAreas.FirstOrDefault(x => x.AreaID == d.CustomerAreaId.Value)
+                            : null;
+
+                        lstResult.Add(new CustomerLocationHistoryLegacyFileListing
+                        {
+                            InspectionDocumentNo = d.InspectionDocumentNo,
+                            Region = d.Region,
+                            FileDrawingName = d.CustFilename,
+                            FileDrawingPath = host + d.CustFilePath,
+                            FileCategory = d.CustFileCategory,
+                            CustomerLocationID = d.CustomerLocationId,
+                            CustomerLocationName = string.Join(", ", new[] { area?.AreaName, facility?.FacilityName, location?.LocationName }.Where(x => !string.IsNullOrWhiteSpace(x)))
+                        });
+                    }
+
+                    return lstResult
+                        .OrderByDescending(x => x.InspectionDocumentNo)
+                        .ThenBy(x => x.CustomerLocationName)
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                return new List<CustomerLocationHistoryLegacyFileListing>();
+            }
+        }
+        internal static List<CustomerLocationHistoryLegacyFileListing> GetAllCustomerDocumentsWithFilters_OLD(FilterFilesModel filters)
+        {
             using (DatabaseEntities db = new DatabaseEntities())
             {
                 List<CustomerLocationHistoryLegacyFileListing> _listM = new List<CustomerLocationHistoryLegacyFileListing>();
@@ -7223,11 +8001,12 @@ namespace CamV4.Helper
                         string tmpURL = HttpContext.Current.Request.Url.AbsoluteUri;
                         Uri url = new Uri(tmpURL);
                         string host = url.GetLeftPart(UriPartial.Authority);
-                        List<GetCustomerDocumentsWithFilters_Result> list;
+                        List<GetCustomerDocumentsLFAWithFilters_Result> list;
                         if (filters == null)
                         {
                             //5,NULL,0,NULL,0,0
-                            list = db.GetCustomerDocumentsWithFilters(customer.CustomerId, 0, 0, 0, null, 0, 0, null).ToList();
+                            //list = db.GetCustomerDocumentsLFAWithFilters(customer.CustomerId, 0, 0, 0, null, 0, 0, null).ToList();
+                            list = db.GetCustomerDocumentsLFAWithFilters(customer.CustomerId, 0, 0, 0, null, 0, 0, 0, 0, null).ToList();
                         }
                         else
                         {
@@ -7239,7 +8018,7 @@ namespace CamV4.Helper
                             {
                                 iHistoricalDocs = 1;
                             }
-                            list = db.GetCustomerDocumentsWithFilters(customer.CustomerId, iInspectionDocs, iHistoricalDocs, filters.Province, filters.Region, filters.City, Convert.ToInt64(filters.Location), sDocumentTypes).ToList();// filters.SelectedStatuses getAllInspection();// db.GetInspectionDetailsByCustomers(customer.CustomerId, // getAllInspection();                        
+                            list = db.GetCustomerDocumentsLFAWithFilters(customer.CustomerId, iInspectionDocs, iHistoricalDocs, filters.Province, filters.Region, filters.City, Convert.ToInt64(filters.CustomerLocationId), filters.CustomerFacilityId, filters.CustomerAreaId, sDocumentTypes).ToList();
                         }
 
                         if (list.Count != 0)
@@ -7271,7 +8050,7 @@ namespace CamV4.Helper
                         string tmpURL = HttpContext.Current.Request.Url.AbsoluteUri;
                         Uri url = new Uri(tmpURL);
                         string host = url.GetLeftPart(UriPartial.Authority);
-                        List<GetCustomerUsersDocumentsWithFilters_Result> list;
+                        List<GetCustomerUsersDocumentsLFAWithFilters_Result> list;
                         var locationContactIds = db.CustomerLocationContacts
                             .Where(clc => clc.UserID == userId)
                             .Select(clc => clc.LocationContactId)
@@ -7295,7 +8074,17 @@ namespace CamV4.Helper
                                 if (filters == null)
                                 {
 
-                                    list = db.GetCustomerUsersDocumentsWithFilters(customerLocationData[0].CustomerId, 0, 0, 0, null, 0, customerLocationIdsStr, null).ToList();
+                                    list = db.GetCustomerUsersDocumentsLFAWithFilters(customerLocationData[0].CustomerId,
+    0,          // Inspection Docs
+    0,          // History Docs
+    0,          // Province
+    null,       // Region
+    0,          // City
+    customerLocationIdsStr,
+    0,          // Facility
+    0,          // Area
+    null        // Document Types
+).ToList();
                                 }
                                 else
                                 {
@@ -7311,7 +8100,8 @@ namespace CamV4.Helper
                                     //{
                                     //    filters.Location = "0";
                                     //}                                    
-                                    list = db.GetCustomerUsersDocumentsWithFilters(customerLocationData[0].CustomerId, iInspectionDocs, iHistoricalDocs, filters.Province, filters.Region, filters.City, customerLocationIdsStr, sDocumentTypes).ToList();// filters.SelectedStatuses getAllInspection();// db.GetInspectionDetailsByCustomers(customer.CustomerId, // getAllInspection();                        
+                                    //list = db.GetCustomerUsersDocumentsLFAWithFilters(customerLocationData[0].CustomerId, iInspectionDocs, iHistoricalDocs, filters.Province, filters.Region, filters.City, customerLocationIdsStr, sDocumentTypes).ToList();// filters.SelectedStatuses getAllInspection();// db.GetInspectionDetailsByCustomers(customer.CustomerId, // getAllInspection();                        
+                                    list = db.GetCustomerUsersDocumentsLFAWithFilters(customerLocationData[0].CustomerId, iInspectionDocs, iHistoricalDocs, filters.Province, filters.Region, filters.City, customerLocationIdsStr, filters.CustomerFacilityId, filters.CustomerAreaId, sDocumentTypes).ToList();
                                 }
                                 if (list.Count != 0)
                                 {
@@ -7642,13 +8432,14 @@ namespace CamV4.Helper
                                 _list.custModel.CustomerLogo = cust.CustomerLogo;
                                 _list.custModel.CustomerEmail = cust.CustomerEmail;
                                 _list.custModel.CustomerContactName = cust.CustomerContactName;
+                                _list.CustomerFullAddress = cust.CustomerFullAddress;                               
+                            }
+                            else 
+                            {
+                                CustomerFullAddress = string.Join(",", FullAddress);
+                                _list.CustomerFullAddress = CustomerFullAddress;
                             }
                         }
-
-
-
-                        CustomerFullAddress = string.Join(",", FullAddress);
-                        _list.CustomerFullAddress = CustomerFullAddress;
 
                         if (list.EmployeeId != 0)
                         {
@@ -7839,6 +8630,10 @@ namespace CamV4.Helper
                         if (objTempQuotation != null)
                         {
                             _list.objQuotation = objTempQuotation;
+                            if (string.IsNullOrWhiteSpace(objTempQuotation.YourReference))
+                            {
+                                objTempQuotation.YourReference = "Rack Inspection Repair - " + (list.InspectionDate.Year.ToString() ?? "");
+                            }
                             //_list.objQuotation.objQuotationItems = objTempQuotation.objQuotationItems;
                         }
 
@@ -9127,8 +9922,6 @@ namespace CamV4.Helper
                         }
                         var tempQuotationComponent = db.QuotationItems.Where(x => x.QuotationId == tempQuotation.QuotationId).OrderBy(x => x.ItemPartNo.Contains("labour")).ThenBy(x => x.QuotationInspectionItemId).ToList();
                         //var tempQuotationComponent = db.QuotationItems.Where(x => x.QuotationId == tempQuotation.QuotationId).ToList();
-
-
                         tempQuotation.objQuotationItems = tempQuotationComponent;
                     }
                 }
@@ -11494,16 +12287,26 @@ namespace CamV4.Helper
                     quoteObj.CustomerLocationId = lCustomerLocationId;
                     quoteObj.CustomerAreaID = lCustomerAreaID;
 
-
-
-
-
                     quoteObj.QuotationNotes = sQuotationNotes;
 
                     var objPreviousQuotation = db.Quotations.Where(y => y.InspectionId == inspectionId && (y.QuotationStatus == 5 || y.QuotationStatus == 6)).OrderByDescending(y => y.QuotationId).FirstOrDefault();
                     if (objPreviousQuotation != null)
                     {
-                        quoteObj.YourReference = objPreviousQuotation.YourReference;
+                        if (string.IsNullOrWhiteSpace(quoteObj.YourReference))
+                        {
+                            if (itm != null)
+                            {
+                                quoteObj.YourReference = "Rack Inspection Repair - " + (itm.InspectionDate.Year.ToString() ?? "");
+                            }
+                            else
+                            {
+                                quoteObj.YourReference = "Rack Inspection Repair - " + (System.DateTime.Now.Year.ToString() ?? "");
+                            }
+                        }
+                        else
+                        {
+                            quoteObj.YourReference = objPreviousQuotation.YourReference;
+                        }
                         quoteObj.ValidTo = objPreviousQuotation.ValidTo;
                         quoteObj.PaymentTerms = objPreviousQuotation.PaymentTerms;
                         quoteObj.ShipmentMethod = objPreviousQuotation.ShipmentMethod;
@@ -11515,6 +12318,37 @@ namespace CamV4.Helper
                     }
                     else
                     {
+                        long? salesPersonId = null;
+                        string salesPersonName = "";
+                        // 2. If model SalesPersonId is null/0, get from Customer
+                        var customer = db.Customers.FirstOrDefault(x => x.CustomerId == lCustomerId);
+                        if (customer?.SalesRepresentativeId != null &&
+                            customer.SalesRepresentativeId != 0)
+                        {
+                            salesPersonId = customer.SalesRepresentativeId;
+                        }
+
+                        // 3. Get Employee using the final SalesPersonId
+                        if (salesPersonId.HasValue)
+                        {
+                            var empl = db.Employees
+                                .FirstOrDefault(x => x.EmployeeID == salesPersonId.Value);
+
+                            if (empl != null)
+                            {
+                                salesPersonName = empl.EmployeeName;
+                            }
+                            else
+                            {
+                                // Employee doesn't exist
+                                salesPersonId = null;
+                                salesPersonName = "";
+                            }
+                        }
+                        // 4. Save both values together
+                        quoteObj.QuotationSalesPersonId = salesPersonId;
+                        quoteObj.QuotationSalesPersonName = salesPersonName;
+
                         quoteObj.PaymentTerms = "NET 30";
                         quoteObj.ValidTo = sValidTo;
                         quoteObj.LabourUnitPrice = dLabour;
@@ -11522,6 +12356,21 @@ namespace CamV4.Helper
                     }
 
                     quoteObj.QuotationNo = strQuotationNumber;
+                    if (string.IsNullOrWhiteSpace(quoteObj.YourReference))
+                    {
+                        if (itm != null)
+                        {
+                            quoteObj.YourReference = "Rack Inspection Repair - " + (itm.InspectionDate.Year.ToString() ?? "");
+                        }
+                        else
+                        {
+                            quoteObj.YourReference = "Rack Inspection Repair - " + (System.DateTime.Now.Year.ToString() ?? "");
+                        }
+                    }
+                    else
+                    {
+                        quoteObj.YourReference = objPreviousQuotation.YourReference;
+                    }
                     quoteObj.GSTPer = dGSTPer;
                     quoteObj.Subtotal = 0;
                     quoteObj.GSTValue = 0;
@@ -11697,7 +12546,7 @@ namespace CamV4.Helper
                 //}
 
                 List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
-                objSalesList = DatabaseHelper.GetAllSalesRep();
+                objSalesList = DatabaseHelper.GetAllSalesRep(lCustomerId);
                 foreach (var sales in objSalesList)
                 {
                     var customerArray = sales.SalesCompanyListing?.Split(',');
@@ -11722,9 +12571,11 @@ namespace CamV4.Helper
                 {
                     strCustomerLocationName = loc.LocationName;
                 }
-                var toEmailEmployee = objUser.EmployeeEmail;
-                //var toEmail = "b.trivedi@camindustrial.net";
 
+                List<string> toEmailEmployee = new List<string>();
+                toEmailEmployee.Add(objUser.EmployeeEmail);
+
+                //var toEmail = "b.trivedi@camindustrial.net";
 
                 //Email to Employee for quotation
                 string strMSGEmployee = "";
@@ -11738,8 +12589,8 @@ namespace CamV4.Helper
                 strMSGEmployee += "<body>";
                 strMSGEmployee += "<div style='width: 1200px; height: auto; border: 0px solid #e3e4e8; margin: 0px; padding: 10px; float: left;'>";
                 strMSGEmployee += "<br/>";
-                strMSGEmployee += "<br/>";
                 strMSGEmployee += "<p> Attention " + objUser.EmployeeName + ",";
+                strMSGEmployee += "<br/>";
                 strMSGEmployee += "<p>This is to inform you that the customer has reviewed the deficiency list and selected the red and/or yellow deficiencies for below location. Please proceed with preparing the quotation based on these selections. </p>";
                 strMSGEmployee += "<p> - " + strCustomerLocationName
                                     + (string.IsNullOrWhiteSpace(strCustomerFacilityName) ? "" : "/" + strCustomerFacilityName)
@@ -11812,7 +12663,7 @@ namespace CamV4.Helper
                 strMSGEmployee += "</body>";
                 strMSGEmployee += "</html>";
 
-                var tEmailToEmployee = new Thread(() => EmailHelper.SendEmail(toEmailEmployee, strCustomerName + " Deficiency Selections for Quotation", null, strMSGEmployee, strCCEmailslist, null));
+                var tEmailToEmployee = new Thread(() => EmailHelper.SendEmail(toEmailEmployee, strCustomerName + "Deficiency Selections for Quotation", null, strMSGEmployee, strCCEmailslist, null));
                 tEmailToEmployee.Start();
 
                 //strMSGEmployee = "<html>";
@@ -11896,7 +12747,9 @@ namespace CamV4.Helper
                     if (cust.CustomerEmail != null)
                     {
                         string strMSGEmployeeCustomer = "";
-                        var toEmailCustomer = cust.CustomerEmail.Trim();
+
+                        List<string> toEmailCustomer = new List<string>();
+                        toEmailCustomer.Add(cust.CustomerEmail.Trim());
 
                         strMSGEmployeeCustomer = "";
                         strMSGEmployeeCustomer = "<html>";
@@ -11907,10 +12760,7 @@ namespace CamV4.Helper
                         strMSGEmployeeCustomer += "</head>";
                         strMSGEmployeeCustomer += "<body>";
                         strMSGEmployeeCustomer += "<div style='width: 1200px; height: auto; border: 0px solid #e3e4e8; margin: 0px; padding: 10px; float: left;'>";
-
                         strMSGEmployeeCustomer += "<br/>";
-                        strMSGEmployeeCustomer += "<br/>";
-
                         if (cust.CustomerContactName == null)
                         {
                             cust.CustomerContactName = "";
@@ -11924,8 +12774,6 @@ namespace CamV4.Helper
                         {
                             strMSGEmployeeCustomer += "<p>Attention " + strCustomerName + ",";
                         }
-
-
                         strMSGEmployeeCustomer += "<p>This is to confirm that you have successfully selected the deficiencies for the quotation for below location. Our team is currently working and, you will be notified as soon as the quotation is ready for your review on the Rack Manager portal.</p>";
                         strMSGEmployeeCustomer += "<p> - " + strCustomerLocationName
                                    + (string.IsNullOrWhiteSpace(strCustomerFacilityName) ? "" : "/" + strCustomerFacilityName)
@@ -11933,7 +12781,6 @@ namespace CamV4.Helper
                                + "</p>";
                         strMSGEmployeeCustomer += "<br/>";
                         strMSGEmployeeCustomer += "<p>If you have any questions in the meantime, please feel free to reach out.</p>";
-
                         strMSGEmployeeCustomer += "<div><div></div></div><br/><br/><div><div>";
                         strMSGEmployeeCustomer += "<table cellpadding='0' cellspacing='0' border='0' style='border-collapse:collapse; font-family:Verdana, sans-serif;'>";
                         strMSGEmployeeCustomer += "<tr>";
@@ -12003,7 +12850,7 @@ namespace CamV4.Helper
                         //await EmailHelper.SendEmailAsync(toEmailCustomer, strCustomerName + " Deficiency Selection Confirmed for Quotation", null, strMSGEmployeeCustomer, strCCEmailslist);
 
                         //toEmailCustomer = "nirav.m@siliconinfo.com";
-                        var tEmailToCustomer = new Thread(() => EmailHelper.SendEmail(toEmailCustomer, strCustomerName + " Deficiency Selection Confirmed for Quotation", null, strMSGEmployeeCustomer, strCCEmailslist2, null));
+                        var tEmailToCustomer = new Thread(() => EmailHelper.SendEmail(toEmailCustomer, strCustomerName + "Deficiency Selection Confirmed for Quotation", null, strMSGEmployeeCustomer, strCCEmailslist2, null));
                         tEmailToCustomer.Start();
                         //var tEmailCustomer = new Thread(() => EmailHelper.SendEmail(toEmailCustomer, strCustomerName + " Deficiency Selection Confirmed for Quotation", null, strMSGEmployeeCustomer, strCCEmailslist, null));
                         //tEmailCustomer.Start();
@@ -12173,7 +13020,15 @@ namespace CamV4.Helper
                     decimal dSubtotal = 0;
                     decimal dGSTPer = 0;
                     decimal dGSTValue = 0;
-
+                    long iEmployeeId = 0;
+                    string strCustomerLocationName = "";
+                    string strCustomerFacilityName = "";
+                    string strCustomerAreaName = "";
+                    long lCustomerId = 0;
+                    long lCustomerLocationId = 0;
+                    long? lCustomerAreaID = 0;
+                    long? lCustomerFacilityID = 0;
+                    var mainInspection = db.Inspections.Where(x => x.InspectionId == model.InspectionId).FirstOrDefault();
                     if (model.SendEmailForApproval == true)
                     {
                         model.QuotationStatus = 6;
@@ -12181,17 +13036,17 @@ namespace CamV4.Helper
                         //itmInspection.InspectionStatus = 6;
                         //itmInspection.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
                         //itmInspection.ModifiedDate = DateTime.Now;
-                        //db.Entry(itmInspection).State = EntityState.Modified;
-                        var itm = db.Inspections.Where(x => x.InspectionId == model.InspectionId).FirstOrDefault();
-                        if (itm != null)
+                        //db.Entry(itmInspection).State = EntityState.Modified;                        
+                        if (mainInspection != null)
                         {
-                            itm.InspectionStatus = 6;
-                            itm.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
-                            itm.ModifiedDate = DateTime.Now;
-                            db.Entry(itm).State = EntityState.Modified;
+                            mainInspection.InspectionStatus = 6;
+                            mainInspection.ModifiedBy = HttpContext.Current.Session["LoggedInUserId"].ToString();
+                            mainInspection.ModifiedDate = DateTime.Now;
+                            db.Entry(mainInspection).State = EntityState.Modified;
                             db.SaveChanges();
                         }
                     }
+
                     var objTempQuotation = db.Quotations.Where(x => x.QuotationId == model.QuotationId).FirstOrDefault();
 
                     var AllQuotationItems = db.QuotationItems.Where(x => x.QuotationId == model.QuotationId).ToList();
@@ -12279,23 +13134,73 @@ namespace CamV4.Helper
                     objTempQuotation.Total = dTotal;
                     objTempQuotation.TotalLabour = dLabourMinutes;
                     objTempQuotation.LabourUnitPrice = model.LabourUnitPrice;
-                    objTempQuotation.TotalUnitPrice = Math.Round(dTotalLabourCharges, 2); ;
-                    objTempQuotation.YourReference = model.YourReference;
+                    objTempQuotation.TotalUnitPrice = Math.Round(dTotalLabourCharges, 2);
+                    if (string.IsNullOrWhiteSpace(objTempQuotation.YourReference))
+                    {
+                        objTempQuotation.YourReference = "Rack Inspection Repair - " + (mainInspection.InspectionDate.Year.ToString() ?? "");
+                    }
+                    else
+                    {
+                        objTempQuotation.YourReference = model.YourReference;
+                    }
                     objTempQuotation.ValidTo = model.ValidTo;
                     objTempQuotation.PaymentTerms = model.PaymentTerms;
                     objTempQuotation.ShipmentMethod = model.ShipmentMethod;
-                    objTempQuotation.QuotationSalesPersonId = model.SalesPersonId;
+
                     objTempQuotation.QuotationSurcharge = model.QuotationSurcharge;
                     objTempQuotation.QuotationMarkup = model.QuotationMarkup;
 
-                    if (model.SalesPersonId != 0)
+                    //if (model.SalesPersonId != 0)
+                    //{
+                    //    var empl = db.Employees.Where(y => y.EmployeeID == model.SalesPersonId).FirstOrDefault();
+                    //    if (empl != null)
+                    //    {
+                    //        objTempQuotation.QuotationSalesPersonName = empl.EmployeeName;
+                    //    }
+                    //}
+
+                    long? salesPersonId = null;
+                    string salesPersonName = "";
+
+                    // 1. First priority: SalesPersonId from model
+                    if (model.SalesPersonId.HasValue && model.SalesPersonId.Value != 0)
                     {
-                        var empl = db.Employees.Where(y => y.EmployeeID == model.SalesPersonId).FirstOrDefault();
-                        if (empl != null)
+                        salesPersonId = model.SalesPersonId;
+                    }
+                    else
+                    {
+                        // 2. If model SalesPersonId is null/0, get from Customer
+                        var customer = db.Customers
+                            .FirstOrDefault(x => x.CustomerId == model.CustomerId);
+
+                        if (customer?.SalesRepresentativeId != null &&
+                            customer.SalesRepresentativeId != 0)
                         {
-                            objTempQuotation.QuotationSalesPersonName = empl.EmployeeName;
+                            salesPersonId = customer.SalesRepresentativeId;
                         }
                     }
+                    // 3. Get Employee using the final SalesPersonId
+                    if (salesPersonId.HasValue)
+                    {
+                        var empl = db.Employees
+                            .FirstOrDefault(x => x.EmployeeID == salesPersonId.Value);
+
+                        if (empl != null)
+                        {
+                            salesPersonName = empl.EmployeeName;
+                        }
+                        else
+                        {
+                            // Employee doesn't exist
+                            salesPersonId = null;
+                            salesPersonName = "";
+                        }
+                    }
+                    // 4. Save both values together
+                    objTempQuotation.QuotationSalesPersonId = salesPersonId;
+                    objTempQuotation.QuotationSalesPersonName = salesPersonName;
+
+
                     if (model.SendEmailForApproval == true)
                     {
                         objTempQuotation.QuotationStatus = 6;
@@ -12322,7 +13227,59 @@ namespace CamV4.Helper
                         var tempQuotationComponent = db.QuotationItems.Where(x => x.QuotationId == objQuotation.QuotationId).ToList();
                         objQuotation.objQuotationItems = tempQuotationComponent;
                     }
+                    var InspectionsDetails = db.Inspections.Where(x => x.InspectionId == model.InspectionId).FirstOrDefault();
+                    if (InspectionsDetails != null)
+                    {
+                        iEmployeeId = InspectionsDetails.EmployeeId;
+                        lCustomerId = InspectionsDetails.CustomerId;
+                        lCustomerLocationId = InspectionsDetails.CustomerLocationId;
+                        lCustomerAreaID = InspectionsDetails.CustomerAreaID;
+                        lCustomerFacilityID = InspectionsDetails.CustomerFacilityID;
 
+                        if (InspectionsDetails.CustomerLocationId != 0)
+                        {
+                            var Custloc = getCustomerLocationById(Convert.ToInt16(InspectionsDetails.CustomerLocationId));
+                            if (Custloc != null)
+                            {
+                                strCustomerLocationName = Custloc.LocationName;
+                            }
+
+                        }
+                        else
+                        {
+                            strCustomerLocationName = "";
+                        }
+
+
+
+                        if (InspectionsDetails != null && InspectionsDetails.CustomerFacilityID.GetValueOrDefault() != 0)
+                        {
+                            var facility = getFacilityDetailsById(Convert.ToInt16(InspectionsDetails.CustomerFacilityID));
+                            if (facility != null)
+                            {
+                                strCustomerFacilityName = facility.FacilityName;
+                                //FullAddress.Add(facility.AreaName);
+                            }
+                        }
+                        else
+                        {
+                            strCustomerFacilityName = "";
+                        }
+
+                        if (InspectionsDetails.CustomerAreaID != 0)
+                        {
+                            var area = getAreaDetailsById(Convert.ToInt16(InspectionsDetails.CustomerAreaID));
+                            if (area != null)
+                            {
+                                strCustomerAreaName = area.AreaName;
+                            }
+                        }
+                        else
+                        {
+                            strCustomerAreaName = "";
+                        }
+
+                    }
                     if (model.SendEmailForApproval == true)
                     {
                         List<string> strCCEmailslist = new List<string>();
@@ -12341,23 +13298,10 @@ namespace CamV4.Helper
                                 }
                             }
                         }
-
-                        List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
-                        objSalesList = DatabaseHelper.GetAllSalesRep();
-                        foreach (var sales in objSalesList)
-                        {
-                            var customerArray = sales.SalesCompanyListing?.Split(',');
-
-                            if (customerArray != null && customerArray.Contains(model.CustomerId.ToString()))
-                            {
-                                if (!string.IsNullOrWhiteSpace(sales.EmployeeEmail))
-                                {
-                                    strCCEmailslist.Add(sales.EmployeeEmail);
-                                }
-                            }
-                        }
-
-                        //strCCEmailslist.Add("nirav.m@siliconinfo.com");
+                        UserEmployeeViewModel objUser = new UserEmployeeViewModel();
+                        objUser = getUserEmployeeById(iEmployeeId);
+                        strCCEmailslist.Add(objUser.EmployeeEmail);
+                        //to Customer and customer user
                         if (model.LocationContactId != null)
                         {
                             string[] lContact = model.LocationContactId.Split(',');
@@ -12380,6 +13324,24 @@ namespace CamV4.Helper
                                 toCustContact.Add(iDetails.custModel.CustomerEmail);
                             }
                         }
+                        //To Sales Rep and Engineer
+                        List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
+                        objSalesList = DatabaseHelper.GetAllSalesRep(iDetails.CustomerId);
+                        foreach (var sales in objSalesList)
+                        {
+                            var salesRepArray = sales.SalesCompanyListing?.Split(',');
+
+                            if (salesRepArray != null && salesRepArray.Contains(model.CustomerId.ToString()))
+                            {
+                                if (!string.IsNullOrWhiteSpace(sales.EmployeeEmail))
+                                {
+                                    toCustContact.Add(sales.EmployeeEmail);
+                                }
+                            }
+                        }
+
+                        //strCCEmailslist.Add("nirav.m@siliconinfo.com");
+
                         string strMSG = "";
                         //var subject = "" + iDetails.InspectionDocumentNo + "-" + iDetails.Customer + "";
                         var subject = "Racking Inspection Repair Quotation Available for Review and Approval";
@@ -12416,6 +13378,10 @@ namespace CamV4.Helper
                         strMSG += "<p>I hope you're doing well.</p>";
                         strMSG += "<br/>";
                         strMSG += "<p>I'm pleased to inform you that the quotation for the selected deficiencies for below location is now available for your review and approval on the Rack Manager portal. You will find the quotation at the end of the racking inspection report.</p>";
+                        strMSG += "<p> - " + strCustomerLocationName
+                                   + (string.IsNullOrWhiteSpace(strCustomerFacilityName) ? "" : "/" + strCustomerFacilityName)
+                                   + (string.IsNullOrWhiteSpace(strCustomerAreaName) ? "" : "/" + strCustomerAreaName)
+                               + "</p>";
                         strMSG += "<br/>";
                         strMSG += "<p>Once you approve the quotation, we will proceed with ordering the necessary materials and scheduling the repairs.</p>";
                         strMSG += "<br/>";
@@ -12423,30 +13389,65 @@ namespace CamV4.Helper
                         strMSG += "<br/>";
                         strMSG += "<br/>";
                         strMSG += "<div><div></div></div><br/><br/><div><div>";
-                        strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7b7b7b' lang='EN-US'>Thanks,</span></p>";
-                        strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>Bhavik Trivedi </span></b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>P.Eng, M.Tech, PMP</span></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Engineering Manager</span></b></p>";
-                        strMSG += "<br/>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>cam|</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>industrial</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>20 7095 64 Street SE |";
-                        strMSG += "</span></b><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Calgary, AB, T2C 5C3</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                        strMSG += "<br/>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>E ~ &nbsp;</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#454545' lang='EN-US'>";
-                        strMSG += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank'><span lang='EN-US'>b.trivedi@camindustrial.net</span></a></span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>C ~</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 690-2976</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>D ~</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'> (587) 355-1346</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>F ~</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 720-7074</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                        strMSG += "<p><span><img style='width:2.618in;height:.6458in'";
-                        strMSG += "src='https://rack-manager.com/img/sigimg.png' alt='sig' data-image-whitelisted='' ";
-                        strMSG += "class='CToWUd' data-bit='iit' width='251' height='62' border='0'></span></p>";
+                        strMSG += "<table cellpadding='0' cellspacing='0' border='0' style='border-collapse:collapse; font-family:Verdana, sans-serif;'>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:10px 0 10px 0;'>";
+                        strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#7b7b7b; font-weight:bold;'>Best regards,</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 1px 0;'>";
+                        strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>Bhavik Trivedi </span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab;'>P.Eng, ing., M.Tech, PMP</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 18px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Engineering Manager</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>cam</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'> | industrial</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 12px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>20 7095 64 Street SE | </span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Calgary, AB, T2C 5C3</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>E&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank' style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold; text-decoration:underline;'>b.trivedi@camindustrial.net</a>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>C&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 690-2976</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>D&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(587) 355-1346</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 10px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>F&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 720-7074</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0;'>";
+                        strMSG += "<img src='https://rack-manager.com/img/sigimg.png' alt='cam industrial' width='251' height='62' border='0' style='display:block; width:251px; height:62px;'>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "</table>";
                         strMSG += "</div>";
                         strMSG += "</div>";
                         strMSG += "</div>";
@@ -12466,6 +13467,14 @@ namespace CamV4.Helper
         }
         internal static Quotation sendQuotationtoCustomerForApproval(AdminQuotation model)
         {
+            long iEmployeeId = 0;
+            string strCustomerLocationName = "";
+            string strCustomerFacilityName = "";
+            string strCustomerAreaName = "";
+            long lCustomerId = 0;
+            long lCustomerLocationId = 0;
+            long? lCustomerAreaID = 0;
+            long? lCustomerFacilityID = 0;
             Quotation objQuotation = new Quotation();
             var iDetails = DatabaseHelper.getInspectionDetailsForSheet(model.InspectionId);
             using (DatabaseEntities db = new DatabaseEntities())
@@ -12491,7 +13500,59 @@ namespace CamV4.Helper
                         db.Entry(itmQuotation).State = EntityState.Modified;
                         db.SaveChanges();
                     }
+                    var InspectionsDetails = db.Inspections.Where(x => x.InspectionId == model.InspectionId).FirstOrDefault();
+                    if (InspectionsDetails != null)
+                    {
+                        iEmployeeId = InspectionsDetails.EmployeeId;
+                        lCustomerId = InspectionsDetails.CustomerId;
+                        lCustomerLocationId = InspectionsDetails.CustomerLocationId;
+                        lCustomerAreaID = InspectionsDetails.CustomerAreaID;
+                        lCustomerFacilityID = InspectionsDetails.CustomerFacilityID;
 
+                        if (InspectionsDetails.CustomerLocationId != 0)
+                        {
+                            var Custloc = getCustomerLocationById(Convert.ToInt16(InspectionsDetails.CustomerLocationId));
+                            if (Custloc != null)
+                            {
+                                strCustomerLocationName = Custloc.LocationName;
+                            }
+
+                        }
+                        else
+                        {
+                            strCustomerLocationName = "";
+                        }
+
+
+
+                        if (InspectionsDetails != null && InspectionsDetails.CustomerFacilityID.GetValueOrDefault() != 0)
+                        {
+                            var facility = getFacilityDetailsById(Convert.ToInt16(InspectionsDetails.CustomerFacilityID));
+                            if (facility != null)
+                            {
+                                strCustomerFacilityName = facility.FacilityName;
+                                //FullAddress.Add(facility.AreaName);
+                            }
+                        }
+                        else
+                        {
+                            strCustomerFacilityName = "";
+                        }
+
+                        if (InspectionsDetails.CustomerAreaID != 0)
+                        {
+                            var area = getAreaDetailsById(Convert.ToInt16(InspectionsDetails.CustomerAreaID));
+                            if (area != null)
+                            {
+                                strCustomerAreaName = area.AreaName;
+                            }
+                        }
+                        else
+                        {
+                            strCustomerAreaName = "";
+                        }
+
+                    }
                     List<string> strCCEmailslist = new List<string>();
                     List<string> toCustContact = new List<string>();
 
@@ -12510,7 +13571,7 @@ namespace CamV4.Helper
                     }
 
                     List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
-                    objSalesList = DatabaseHelper.GetAllSalesRep();
+                    objSalesList = DatabaseHelper.GetAllSalesRep(model.CustomerId);
                     foreach (var sales in objSalesList)
                     {
                         var customerArray = sales.SalesCompanyListing?.Split(',');
@@ -12583,6 +13644,10 @@ namespace CamV4.Helper
                     strMSG += "<p>I hope you're doing well.</p>";
                     strMSG += "<br/>";
                     strMSG += "<p>I'm pleased to inform you that the quotation for the selected deficiencies for below location is now available for your review and approval on the Rack Manager portal. You will find the quotation at the end of the racking inspection report.</p>";
+                    strMSG += "<p> - " + strCustomerLocationName
+                                  + (string.IsNullOrWhiteSpace(strCustomerFacilityName) ? "" : "/" + strCustomerFacilityName)
+                                  + (string.IsNullOrWhiteSpace(strCustomerAreaName) ? "" : "/" + strCustomerAreaName)
+                              + "</p>";
                     strMSG += "<br/>";
                     strMSG += "<p>Once you approve the quotation, we will proceed with ordering the necessary materials and scheduling the repairs.</p>";
                     strMSG += "<br/>";
@@ -12590,30 +13655,65 @@ namespace CamV4.Helper
                     strMSG += "<br/>";
                     strMSG += "<br/>";
                     strMSG += "<div><div></div></div><br/><br/><div><div>";
-                    strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7b7b7b' lang='EN-US'>Thanks,</span></p>";
-                    strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>Bhavik Trivedi </span></b>";
-                    strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>P.Eng, M.Tech, PMP</span></p>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Engineering Manager</span></b></p>";
-                    strMSG += "<br/>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>cam|</span></b><b>";
-                    strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>industrial</span></b></p>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>20 7095 64 Street SE |";
-                    strMSG += "</span></b><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Calgary, AB, T2C 5C3</span></b></p>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                    strMSG += "<br/>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>E ~ &nbsp;</span></b><b>";
-                    strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#454545' lang='EN-US'>";
-                    strMSG += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank'><span lang='EN-US'>b.trivedi@camindustrial.net</span></a></span></b></p>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>C ~</span></b><b>";
-                    strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 690-2976</span></b></p>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>D ~</span></b><b>";
-                    strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'> (587) 355-1346</span></b></p>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>F ~</span></b><b>";
-                    strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 720-7074</span></b></p>";
-                    strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                    strMSG += "<p><span><img style='width:2.618in;height:.6458in'";
-                    strMSG += "src='https://rack-manager.com/img/sigimg.png' alt='sig' data-image-whitelisted='' ";
-                    strMSG += "class='CToWUd' data-bit='iit' width='251' height='62' border='0'></span></p>";
+                    strMSG += "<table cellpadding='0' cellspacing='0' border='0' style='border-collapse:collapse; font-family:Verdana, sans-serif;'>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:10px 0 10px 0;'>";
+                    strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#7b7b7b; font-weight:bold;'>Best regards,</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 1px 0;'>";
+                    strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>Bhavik Trivedi </span>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab;'>P.Eng, ing., M.Tech, PMP</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 18px 0;'>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Engineering Manager</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 2px 0;'>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>cam</span>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'> | industrial</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 12px 0;'>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>20 7095 64 Street SE | </span>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Calgary, AB, T2C 5C3</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 2px 0;'>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>E&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                    strMSG += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank' style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold; text-decoration:underline;'>b.trivedi@camindustrial.net</a>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 2px 0;'>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>C&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 690-2976</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 2px 0;'>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>D&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(587) 355-1346</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 10px 0;'>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>F&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 720-7074</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0;'>";
+                    strMSG += "<img src='https://rack-manager.com/img/sigimg.png' alt='cam industrial' width='251' height='62' border='0' style='display:block; width:251px; height:62px;'>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "</table>";
                     strMSG += "</div>";
                     strMSG += "</div>";
                     strMSG += "</div>";
@@ -13469,26 +14569,26 @@ namespace CamV4.Helper
                     objTempQuotation.TotalLabour = dLabourMinutes;
                     objTempQuotation.TotalUnitPrice = Math.Round(dTotalLabourCharges, 2);
 
-                    if (model.IsUpdateAll == true)
+                    //if (model.IsUpdateAll == true)
+                    //{
+                    objTempQuotation.LabourUnitPrice = model.LabourUnitPrice;
+                    objTempQuotation.YourReference = model.YourReference;
+                    objTempQuotation.ValidTo = model.ValidTo;
+                    objTempQuotation.PaymentTerms = model.PaymentTerms;
+                    objTempQuotation.ShipmentMethod = model.ShipmentMethod;
+                    objTempQuotation.QuotationSalesPersonId = model.SalesPersonId;
+                    objTempQuotation.QuotationSurcharge = model.QuotationSurcharge;
+                    objTempQuotation.QuotationMarkup = model.QuotationMarkup;
+                    if (model.SalesPersonId != 0)
                     {
-                        objTempQuotation.LabourUnitPrice = model.LabourUnitPrice;
-                        objTempQuotation.YourReference = model.YourReference;
-                        objTempQuotation.ValidTo = model.ValidTo;
-                        objTempQuotation.PaymentTerms = model.PaymentTerms;
-                        objTempQuotation.ShipmentMethod = model.ShipmentMethod;
-                        objTempQuotation.QuotationSalesPersonId = model.SalesPersonId;
-                        objTempQuotation.QuotationSurcharge = model.QuotationSurcharge;
-                        objTempQuotation.QuotationMarkup = model.QuotationMarkup;
-                        if (model.SalesPersonId != 0)
+                        var empl = db.Employees.FirstOrDefault(y => y.EmployeeID == model.SalesPersonId);
+                        if (empl != null)
                         {
-                            var empl = db.Employees.FirstOrDefault(y => y.EmployeeID == model.SalesPersonId);
-                            if (empl != null)
-                            {
-                                objTempQuotation.QuotationSalesPersonName = empl.EmployeeName;
-                            }
+                            objTempQuotation.QuotationSalesPersonName = empl.EmployeeName;
                         }
-                        objTempQuotation.QuotationNotes = model.QuotationNotes;
                     }
+                    objTempQuotation.QuotationNotes = model.QuotationNotes;
+                    //}
 
                     if (model.SendEmailForApproval == true)
                     {
@@ -13642,7 +14742,16 @@ namespace CamV4.Helper
             {
                 try
                 {
+                    long iEmployeeId = 0;
+                    string strCustomerLocationName = "";
+                    string strCustomerFacilityName = "";
+                    string strCustomerAreaName = "";
+                    long lCustomerId = 0;
+                    long lCustomerLocationId = 0;
+                    long? lCustomerAreaID = 0;
+                    long? lCustomerFacilityID = 0;
                     List<string> strCCEmailslist = new List<string>();
+                    List<string> strToPMEmaillist = new List<string>();
                     UserEmployeeViewModel objUser = new UserEmployeeViewModel();
                     Customer objCustomer = new Customer();
 
@@ -13672,8 +14781,64 @@ namespace CamV4.Helper
                     }
                     db.SaveChanges();
 
-                    var toEmail = Convert.ToString(objUser.EmployeeEmail);
+
+                    var InspectionsDetails = db.Inspections.Where(x => x.InspectionId == InspectionID).FirstOrDefault();
+                    if (InspectionsDetails != null)
+                    {
+                        iEmployeeId = InspectionsDetails.EmployeeId;
+                        lCustomerId = InspectionsDetails.CustomerId;
+                        lCustomerLocationId = InspectionsDetails.CustomerLocationId;
+                        lCustomerAreaID = InspectionsDetails.CustomerAreaID;
+                        lCustomerFacilityID = InspectionsDetails.CustomerFacilityID;
+
+                        if (InspectionsDetails.CustomerLocationId != 0)
+                        {
+                            var Custloc = getCustomerLocationById(Convert.ToInt16(InspectionsDetails.CustomerLocationId));
+                            if (Custloc != null)
+                            {
+                                strCustomerLocationName = Custloc.LocationName;
+                            }
+
+                        }
+                        else
+                        {
+                            strCustomerLocationName = "";
+                        }
+
+
+
+                        if (InspectionsDetails != null && InspectionsDetails.CustomerFacilityID.GetValueOrDefault() != 0)
+                        {
+                            var facility = getFacilityDetailsById(Convert.ToInt16(InspectionsDetails.CustomerFacilityID));
+                            if (facility != null)
+                            {
+                                strCustomerFacilityName = facility.FacilityName;
+                                //FullAddress.Add(facility.AreaName);
+                            }
+                        }
+                        else
+                        {
+                            strCustomerFacilityName = "";
+                        }
+
+                        if (InspectionsDetails.CustomerAreaID != 0)
+                        {
+                            var area = getAreaDetailsById(Convert.ToInt16(InspectionsDetails.CustomerAreaID));
+                            if (area != null)
+                            {
+                                strCustomerAreaName = area.AreaName;
+                            }
+                        }
+                        else
+                        {
+                            strCustomerAreaName = "";
+                        }
+
+                    }
+
+                    //var toEmail = Convert.ToString(objUser.EmployeeEmail);
                     strCCEmailslist.Add("b.trivedi@camindustrial.net");
+                    strCCEmailslist.Add(Convert.ToString(objUser.EmployeeEmail));
                     List<EmployeeViewModel> objPMList = new List<EmployeeViewModel>();
                     objPMList = DatabaseHelper.GetAllProjectManager();
                     if (objPMList != null && objPMList.Count != 0)
@@ -13682,13 +14847,13 @@ namespace CamV4.Helper
                         {
                             if (!string.IsNullOrWhiteSpace(pm.EmployeeEmail))
                             {
-                                strCCEmailslist.Add(pm.EmployeeEmail);
+                                strToPMEmaillist.Add(pm.EmployeeEmail);
                             }
                         }
                     }
 
                     List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
-                    objSalesList = DatabaseHelper.GetAllSalesRep();
+                    objSalesList = DatabaseHelper.GetAllSalesRep(itmInspection.CustomerId);
                     foreach (var sales in objSalesList)
                     {
                         var customerArray = sales.SalesCompanyListing?.Split(',');
@@ -13714,43 +14879,89 @@ namespace CamV4.Helper
                     strMSG += "<div style='width: 800px; height: auto; border: 0px solid #e3e4e8; margin: 0px; padding: 10px; float: left;'>";
                     strMSG += "<br/>";
                     strMSG += "<p></p>";
-                    strMSG += "<p>Attention " + objUser.EmployeeName + ",</p>";
+                    if (objPMList != null && objPMList.Count > 0)
+                    {
+                        strMSG += "<p>Attention " + string.Join(", ", objPMList.Select(pm => pm.EmployeeName)) + ",</p>";
+                    }
+                    else
+                    {
+                        strMSG += "<p>Attention,</p>";
+                    }
                     strMSG += "<br/>";
                     strMSG += "<p>I hope you're well.</p>";
                     strMSG += "<br/>";
-                    strMSG += "<p>I wanted to inform you that the customer has approved the quotation for the selected deficiencies. Please proceed with ordering the quoted materials at your earliest convenience. Additionally, kindly notify the sales coordinator about the approved quotation to ensure everything is aligned for the next steps.</p>";
+                    strMSG += "<p>I wanted to inform you that the customer has approved the quotation for the selected deficiencies for below location. Please proceed with ordering the quoted materials at your earliest convenience. Additionally, kindly notify the sales coordinator about the approved quotation to ensure everything is aligned for the next steps.</p>";
+                    strMSG += "<p> - " + strCustomerLocationName
+                                  + (string.IsNullOrWhiteSpace(strCustomerFacilityName) ? "" : "/" + strCustomerFacilityName)
+                                  + (string.IsNullOrWhiteSpace(strCustomerAreaName) ? "" : "/" + strCustomerAreaName)
+                              + "</p>";
                     strMSG += "<br/>";
                     strMSG += "<div><div></div><br/><div><div>";
-                    strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7b7b7b' lang='EN-US'>Thanks,</span></p>";
-                    strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>Bhavik Trivedi </span></b>";
-                    strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>P.Eng, M.Tech, PMP</span></p>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Engineering Manager</span></b></p>";
-                    strMSG += "<br/>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>cam|</span></b><b>";
-                    strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>industrial</span></b></p>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>20 7095 64 Street SE |";
-                    strMSG += "</span></b><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Calgary, AB, T2C 5C3</span></b></p>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                    strMSG += "<br/>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>E ~ &nbsp;</span></b><b>";
-                    strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#454545' lang='EN-US'>";
-                    strMSG += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank'><span lang='EN-US'>b.trivedi@camindustrial.net</span></a></span></b></p>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>C ~</span></b><b>";
-                    strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 690-2976</span></b></p>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>D ~</span></b><b>";
-                    strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'> (587) 355-1346</span></b></p>";
-                    strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>F ~</span></b><b>";
-                    strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 720-7074</span></b></p>";
-                    strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                    strMSG += "<p><span><img style='width:2.618in;height:.6458in'";
-                    strMSG += "src='https://rack-manager.com/img/sigimg.png' alt='sig' data-image-whitelisted='' ";
-                    strMSG += "class='CToWUd' data-bit='iit' width='251' height='62' border='0'></span></p>";
+                    strMSG += "<table cellpadding='0' cellspacing='0' border='0' style='border-collapse:collapse; font-family:Verdana, sans-serif;'>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:10px 0 10px 0;'>";
+                    strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#7b7b7b; font-weight:bold;'>Best regards,</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 1px 0;'>";
+                    strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>Bhavik Trivedi </span>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab;'>P.Eng, ing., M.Tech, PMP</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 18px 0;'>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Engineering Manager</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 2px 0;'>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>cam</span>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'> | industrial</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 12px 0;'>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>20 7095 64 Street SE | </span>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Calgary, AB, T2C 5C3</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 2px 0;'>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>E&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                    strMSG += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank' style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold; text-decoration:underline;'>b.trivedi@camindustrial.net</a>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 2px 0;'>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>C&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 690-2976</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 2px 0;'>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>D&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(587) 355-1346</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0 0 10px 0;'>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>F&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                    strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 720-7074</span>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "<tr>";
+                    strMSG += "<td style='padding:0;'>";
+                    strMSG += "<img src='https://rack-manager.com/img/sigimg.png' alt='cam industrial' width='251' height='62' border='0' style='display:block; width:251px; height:62px;'>";
+                    strMSG += "</td>";
+                    strMSG += "</tr>";
+                    strMSG += "</table>";
                     strMSG += "</div>";
                     strMSG += "</div>";
                     strMSG += "</div>";
                     strMSG += "</body>";
                     strMSG += "</html>";
-                    var tEmail = new Thread(() => EmailHelper.SendEmail(toEmail, objCustomer.CustomerName + " Approved Quotation - Proceed with Material Order", null, strMSG, strCCEmailslist, null));
+                    var tEmail = new Thread(() => EmailHelper.SendEmail(strToPMEmaillist, objCustomer.CustomerName + " Approved Quotation - Proceed with Material Order", null, strMSG, strCCEmailslist, null));
                     tEmail.Start();
                 }
                 catch (Exception ex)
@@ -14092,6 +15303,578 @@ namespace CamV4.Helper
             return objQuotation;
         }
 
+        #region Helper - Recalculate All Quotation Totals
+        /// <summary>
+        /// Recalculates all quotation totals in strict order
+        /// Order: Prices → Surcharge → Markup → ItemTotal → LineAmount → Labour → Subtotal → Tax → Total
+        /// </summary>
+        private static void RecalculateQuotationTotals(DatabaseEntities db, long quotationId)
+        {
+            try
+            {
+                var quotation = db.Quotations.FirstOrDefault(x => x.QuotationId == quotationId);
+                if (quotation == null) return;
+
+                var items = db.QuotationItems.Where(x => x.QuotationId == quotationId && x.IsTBD != true).ToList();
+
+                decimal dSubtotal = 0;
+                decimal dLabourMinutes = 0;
+
+                foreach (var item in items)
+                {
+                    dSubtotal += Convert.ToDecimal(item.LineTotal);
+                    dLabourMinutes += Convert.ToDecimal(item.ItemLabourTotal);
+                }
+
+                if (dLabourMinutes < 240) dLabourMinutes = 240;
+
+                decimal dHours = Math.Round(dLabourMinutes / 60, 2);
+                decimal labourUnitPrice = quotation.LabourUnitPrice ?? 0;
+                decimal dTotalLabourCharges = Math.Round(dHours * labourUnitPrice, 2);
+
+                dSubtotal = Math.Round(dSubtotal + dTotalLabourCharges, 2);
+
+                decimal dGSTPer = quotation.GSTPer ?? 0;
+                decimal dGSTPercentage = dGSTPer / 100;
+                decimal dGSTValue = Math.Round(dSubtotal * dGSTPercentage, 2);
+
+                decimal dTotal = Math.Round(dSubtotal + dGSTValue, 2);
+
+                quotation.Subtotal = dSubtotal;
+                quotation.GSTValue = dGSTValue;
+                quotation.Total = dTotal;
+                quotation.TotalLabour = dLabourMinutes;
+                quotation.TotalUnitPrice = dTotalLabourCharges;
+                quotation.ModifiedDate = DateTime.Now;
+                quotation.ModifiedBy = GetCurrentUserId();
+
+                db.Entry(quotation).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in RecalculateQuotationTotals: {ex.Message}");
+                throw;
+            }
+        }
+
+        #endregion
+
+        #region Operation 1: Update Price Admin
+        /// <summary>
+        /// Updates item prices from ComponentPriceList (Item Master)
+        /// Recalculates ItemPrice and all derived values
+        /// </summary>
+
+        internal static Quotation UpdatePriceAdmin(AdminQuotation model)
+        {
+            Quotation objQuotation = new Quotation();
+
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                try
+                {
+                    var quotation = db.Quotations.FirstOrDefault(x => x.QuotationId == model.QuotationId);
+                    if (quotation == null) return null;
+
+                    if (model.SalesPersonId > 0)
+                    {
+                        quotation.QuotationSalesPersonId = model.SalesPersonId;
+                        var employee = db.Employees.FirstOrDefault(e => e.EmployeeID == model.SalesPersonId);
+                        if (employee != null)
+                        {
+                            quotation.QuotationSalesPersonName = employee.EmployeeName;
+                        }
+                    }
+
+                    var quotationItems = db.QuotationItems.Where(x => x.QuotationId == model.QuotationId).ToList();
+
+                    foreach (var item in quotationItems)
+                    {
+                        if (item.IsTBD == true)
+                        {
+                            item.ItemPrice = 0;
+                            item.LineTotal = 0;
+                            item.ItemLabourTotal = 0;
+                            continue;
+                        }
+
+                        if (string.IsNullOrEmpty(item.ItemPartNo)) continue;
+
+                        var componentPrice = db.ComponentPriceLists
+                            .FirstOrDefault(x => x.ItemPartNo == item.ItemPartNo);
+
+                        if (componentPrice != null && componentPrice.ComponentPrice.HasValue)
+                        {
+                            item.ItemUnitPrice = componentPrice.ComponentPrice.Value;
+
+                            decimal surcharge = item.ItemSurcharge ?? 1;
+                            decimal markup = item.ItemMarkup ?? 1;
+                            decimal itemPrice = item.ItemUnitPrice * surcharge * markup;
+                            item.ItemPrice = Math.Round(itemPrice, 2);
+
+                            int quantity = item.ItemQuantity;
+                            decimal lineTotal = item.ItemPrice * quantity;
+                            item.LineTotal = Math.Round(lineTotal, 2);
+
+                            decimal weight = (decimal)item.ItemWeight;
+                            item.ItemWeightTotal = weight * quantity;
+
+                            decimal labour = item.ItemLabour;
+                            item.ItemLabourTotal = labour * quantity;
+                        }
+                        else
+                        {
+                            item.ItemPrice = 0;
+                            item.LineTotal = 0;
+                        }
+
+                        item.ModifiedDate = DateTime.Now;
+                        item.ModifiedBy = GetCurrentUserId();
+                        db.Entry(item).State = EntityState.Modified;
+                    }
+
+                    quotation.ModifiedDate = DateTime.Now;
+                    quotation.ModifiedBy = GetCurrentUserId();
+                    db.Entry(quotation).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    RecalculateQuotationTotals(db, model.QuotationId);
+
+                    objQuotation = db.Quotations.FirstOrDefault(x => x.QuotationId == model.QuotationId);
+                    if (objQuotation != null)
+                    {
+                        objQuotation.objQuotationItems = db.QuotationItems
+                            .Where(x => x.QuotationId == objQuotation.QuotationId)
+                            .ToList();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error in UpdatePriceAdmin: {ex.Message}");
+                }
+            }
+
+            return objQuotation;
+        }
+        #endregion
+
+        #region Operation 2: Update Surcharge Markup Admin
+        /// <summary>
+        /// Updates Surcharge and Markup values
+        /// Recalculates all item prices with new values
+        /// </summary>
+        internal static Quotation UpdateSurchargeMarkupAdmin(AdminQuotation model)
+        {
+            Quotation objQuotation = new Quotation();
+
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                try
+                {
+                    var quotation = db.Quotations.FirstOrDefault(x => x.QuotationId == model.QuotationId);
+                    if (quotation == null) return null;
+
+                    if (model.QuotationSurcharge != 0)
+                    {
+                        quotation.QuotationSurcharge = model.QuotationSurcharge;
+                    }
+
+                    if (model.QuotationMarkup != 0)
+                    {
+                        quotation.QuotationMarkup = model.QuotationMarkup;
+                    }
+
+                    if (model.SalesPersonId > 0)
+                    {
+                        quotation.QuotationSalesPersonId = model.SalesPersonId;
+                        var employee = db.Employees.FirstOrDefault(e => e.EmployeeID == model.SalesPersonId);
+                        if (employee != null)
+                        {
+                            quotation.QuotationSalesPersonName = employee.EmployeeName;
+                        }
+                    }
+
+                    var quotationItems = db.QuotationItems.Where(x => x.QuotationId == model.QuotationId).ToList();
+
+                    foreach (var item in quotationItems)
+                    {
+                        if (item.IsTBD == true)
+                        {
+                            item.ItemPrice = 0;
+                            item.LineTotal = 0;
+                            item.ItemLabourTotal = 0;
+                            continue;
+                        }
+
+                        if (model.QuotationSurcharge != 0)
+                        {
+                            item.ItemSurcharge = model.QuotationSurcharge;
+                        }
+
+                        if (model.QuotationMarkup != 0)
+                        {
+                            item.ItemMarkup = model.QuotationMarkup;
+                        }
+
+                        decimal unitPrice = item.ItemUnitPrice;
+                        decimal surcharge = item.ItemSurcharge ?? 1m;
+                        decimal markup = item.ItemMarkup ?? 1m;
+
+                        decimal itemPrice = unitPrice * surcharge * markup;
+                        item.ItemPrice = Math.Round(itemPrice, 2);
+
+                        int quantity = item.ItemQuantity;
+
+                        decimal lineTotal = item.ItemPrice * quantity;
+                        item.LineTotal = Math.Round(lineTotal, 2);
+
+                        decimal weight = item.ItemWeight ?? 0m;
+                        item.ItemWeightTotal = weight * quantity;
+
+                        decimal labour = item.ItemLabour;
+                        item.ItemLabourTotal = labour * quantity;
+
+                        item.ModifiedDate = DateTime.Now;
+                        item.ModifiedBy = GetCurrentUserId();
+                        db.Entry(item).State = EntityState.Modified;
+                    }
+
+                    quotation.ModifiedDate = DateTime.Now;
+                    quotation.ModifiedBy = GetCurrentUserId();
+                    db.Entry(quotation).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    RecalculateQuotationTotals(db, model.QuotationId);
+
+                    objQuotation = db.Quotations.FirstOrDefault(x => x.QuotationId == model.QuotationId);
+                    if (objQuotation != null)
+                    {
+                        objQuotation.objQuotationItems = db.QuotationItems
+                            .Where(x => x.QuotationId == objQuotation.QuotationId)
+                            .ToList();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error in UpdateSurchargeMarkupAdmin: {ex.Message}");
+                }
+            }
+
+            return objQuotation;
+        }
+        #endregion
+
+        #region Operation 3: Update All Admin
+        /// <summary>
+        /// Updates all quotation header fields (except table values)
+        /// Loads defaults from settings, updates all items
+        /// </summary>
+
+        internal static Quotation UpdateAllAdmin(AdminQuotation model)
+        {
+            Quotation objQuotation = new Quotation();
+
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                try
+                {
+                    var quotation = db.Quotations.FirstOrDefault(x => x.QuotationId == model.QuotationId);
+                    if (quotation == null) return null;
+
+                    quotation.YourReference = model.YourReference ?? quotation.YourReference;
+                    quotation.ValidTo = model.ValidTo ?? quotation.ValidTo;
+                    quotation.PaymentTerms = model.PaymentTerms ?? quotation.PaymentTerms;
+                    quotation.ShipmentMethod = model.ShipmentMethod ?? quotation.ShipmentMethod;
+
+                    if (model.QuotationSurcharge != 0)
+                    {
+                        quotation.QuotationSurcharge = model.QuotationSurcharge;
+                    }
+
+                    if (model.QuotationMarkup != 0)
+                    {
+                        quotation.QuotationMarkup = model.QuotationMarkup;
+                    }
+
+                    quotation.QuotationNotes = model.QuotationNotes ?? quotation.QuotationNotes;
+                    quotation.GSTPer = model.GSTPer ?? quotation.GSTPer;
+                    quotation.LabourUnitPrice = model.LabourUnitPrice ?? quotation.LabourUnitPrice;
+
+                    if (model.SalesPersonId > 0)
+                    {
+                        quotation.QuotationSalesPersonId = model.SalesPersonId;
+                        var employee = db.Employees.FirstOrDefault(e => e.EmployeeID == model.SalesPersonId);
+                        if (employee != null)
+                        {
+                            quotation.QuotationSalesPersonName = employee.EmployeeName;
+                        }
+                    }
+
+                    var quotationItems = db.QuotationItems.Where(x => x.QuotationId == model.QuotationId).ToList();
+
+                    foreach (var item in quotationItems)
+                    {
+                        if (item.IsTBD == true)
+                        {
+                            item.ItemPrice = 0;
+                            item.LineTotal = 0;
+                            item.ItemLabourTotal = 0;
+                            continue;
+                        }
+
+                        if (!string.IsNullOrEmpty(item.ItemPartNo))
+                        {
+                            var componentPrice = db.ComponentPriceLists
+                                .FirstOrDefault(x => x.ItemPartNo == item.ItemPartNo);
+                            if (componentPrice != null && componentPrice.ComponentPrice.HasValue)
+                            {
+                                item.ItemUnitPrice = componentPrice.ComponentPrice.Value;
+                            }
+                        }
+
+                        if (model.QuotationSurcharge != 0)
+                        {
+                            item.ItemSurcharge = model.QuotationSurcharge;
+                        }
+
+                        if (model.QuotationMarkup != 0)
+                        {
+                            item.ItemMarkup = model.QuotationMarkup;
+                        }
+
+                        decimal unitPrice = item.ItemUnitPrice;
+                        decimal surcharge = item.ItemSurcharge ?? 1;
+                        decimal markup = item.ItemMarkup ?? 1;
+                        decimal itemPrice = unitPrice * surcharge * markup;
+                        item.ItemPrice = Math.Round(itemPrice, 2);
+
+                        int quantity = item.ItemQuantity;
+                        decimal lineTotal = item.ItemPrice * quantity;
+                        item.LineTotal = Math.Round(lineTotal, 2);
+
+                        decimal weight = item.ItemWeight ?? 0;
+                        item.ItemWeightTotal = weight * quantity;
+
+                        decimal labour = item.ItemLabour;
+                        item.ItemLabourTotal = labour * quantity;
+
+                        item.ModifiedDate = DateTime.Now;
+                        item.ModifiedBy = GetCurrentUserId();
+                        db.Entry(item).State = EntityState.Modified;
+                    }
+
+                    quotation.ModifiedDate = DateTime.Now;
+                    quotation.ModifiedBy = GetCurrentUserId();
+                    db.Entry(quotation).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    RecalculateQuotationTotals(db, model.QuotationId);
+
+                    objQuotation = db.Quotations.FirstOrDefault(x => x.QuotationId == model.QuotationId);
+                    if (objQuotation != null)
+                    {
+                        objQuotation.objQuotationItems = db.QuotationItems
+                            .Where(x => x.QuotationId == objQuotation.QuotationId)
+                            .ToList();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error in UpdateAllAdmin: {ex.Message}");
+                }
+            }
+
+            return objQuotation;
+        }
+        #endregion
+
+        #region Operation 4: Update TBD Item Admin
+        /// <summary>
+        /// Updates TBD flag for a single item and recalculates totals
+        /// </summary>
+
+       
+
+        // UPDATE TBD ITEM ADMIN
+        internal static dynamic UpdateTBDItemAdmin(QuotationItemAdmin model)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                try
+                {
+                    var item = db.QuotationItems.FirstOrDefault(x => x.QuotationInspectionItemId == model.QuotationItemId);
+                    if (item == null)
+                    {
+                        return new { success = false, message = "Item not found" };
+                    }
+
+                    item.IsTBD = model.IsTBD ?? false;
+
+                    if ((bool)item.IsTBD)
+                    {
+                        item.ItemPrice = 0;
+                        item.LineTotal = 0;
+                        item.ItemLabourTotal = 0;
+                    }
+                    else
+                    {
+                        decimal surcharge = item.ItemSurcharge ?? 1;
+                        decimal markup = item.ItemMarkup ?? 1;
+                        decimal unitPrice = item.ItemUnitPrice;
+                        decimal itemPrice = unitPrice * surcharge * markup;
+                        item.ItemPrice = Math.Round(itemPrice, 2);
+
+                        int quantity = item.ItemQuantity;
+                        decimal lineTotal = item.ItemPrice * quantity;
+                        item.LineTotal = Math.Round(lineTotal, 2);
+
+                        decimal labour = item.ItemLabour;
+                        item.ItemLabourTotal = labour * quantity;
+                    }
+
+                    item.ModifiedDate = DateTime.Now;
+                    item.ModifiedBy = GetCurrentUserId();
+                    db.Entry(item).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    RecalculateQuotationTotals(db, model.QuotationId);
+
+                    var quotation = db.Quotations.FirstOrDefault(x => x.QuotationId == model.QuotationId);
+                    return new
+                    {
+                        success = true,
+                        Subtotal = quotation?.Subtotal ?? 0,
+                        GSTValue = quotation?.GSTValue ?? 0,
+                        Total = quotation?.Total ?? 0
+                    };
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error in UpdateTBDItemAdmin: {ex.Message}");
+                    return new { success = false, message = ex.Message };
+                }
+            }
+        }
+        #endregion
+
+        #region Operation 5: Edit Quotation Item Admin
+        /// <summary>
+        /// Edits a single quotation item with new values
+        /// Recalculates all derived fields and totals
+        /// </summary>
+        internal static dynamic EditQuotationItemAdmin(QuotationItemAdmin model)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                try
+                {
+                    var item = db.QuotationItems.FirstOrDefault(x => x.QuotationInspectionItemId == model.QuotationItemId);
+                    if (item == null)
+                    {
+                        return new { success = false, message = "Item not found" };
+                    }
+
+                    item.ItemPartNo = model.ItemPartNo ?? item.ItemPartNo;
+                    item.ItemDescription = model.ItemDescription ?? item.ItemDescription;
+                    item.ItemUnitPrice = model.ItemUnitPrice ?? item.ItemUnitPrice;
+                    item.ItemSurcharge = model.ItemSurcharge ?? item.ItemSurcharge;
+                    item.ItemMarkup = model.ItemMarkup ?? item.ItemMarkup;
+                    item.ItemQuantity = model.ItemQuantity ?? item.ItemQuantity;
+                    item.ItemWeight = model.ItemWeight ?? item.ItemWeight;
+                    item.ItemLabour = model.ItemLabour ?? item.ItemLabour;
+                    item.IsTBD = model.IsTBD ?? item.IsTBD;
+
+                    if (item.IsTBD == true)
+                    {
+                        item.ItemPrice = 0;
+                        item.LineTotal = 0;
+                        item.ItemLabourTotal = 0;
+                        item.ItemWeightTotal = 0;
+                    }
+                    else
+                    {
+                        decimal surcharge = item.ItemSurcharge ?? 1;
+                        decimal markup = item.ItemMarkup ?? 1;
+                        decimal unitPrice = item.ItemUnitPrice;
+                        decimal itemPrice = unitPrice * surcharge * markup;
+                        item.ItemPrice = Math.Round(itemPrice, 2);
+
+                        int quantity = item.ItemQuantity;
+                        decimal lineTotal = item.ItemPrice * quantity;
+                        item.LineTotal = Math.Round(lineTotal, 2);
+
+                        decimal weight = item.ItemWeight ?? 0;
+                        item.ItemWeightTotal = weight * quantity;
+
+                        decimal labour = item.ItemLabour;
+                        item.ItemLabourTotal = labour * quantity;
+                    }
+
+                    item.ModifiedDate = DateTime.Now;
+                    item.ModifiedBy = GetCurrentUserId();
+                    db.Entry(item).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    RecalculateQuotationTotals(db, model.QuotationId);
+
+                    var quotation = db.Quotations.FirstOrDefault(x => x.QuotationId == model.QuotationId);
+                    return new
+                    {
+                        success = true,
+                        Subtotal = quotation?.Subtotal ?? 0,
+                        GSTValue = quotation?.GSTValue ?? 0,
+                        Total = quotation?.Total ?? 0
+                    };
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error in EditQuotationItemAdmin: {ex.Message}");
+                    return new { success = false, message = ex.Message };
+                }
+            }
+        }
+        #endregion
+
+        #region Operation 6: Delete Quotation Item Admin
+        /// <summary>
+        /// Deletes a quotation item and recalculates totals
+        /// </summary>
+        internal static dynamic DeleteQuotationItemAdmin(QuotationItemAdmin model)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                try
+                {
+                    var item = db.QuotationItems.FirstOrDefault(x => x.QuotationInspectionItemId == model.QuotationItemId);
+                    if (item == null) return new { success = false };
+
+                    db.QuotationItems.Remove(item);
+                    db.SaveChanges();
+
+                    RecalculateQuotationTotals(db, model.QuotationId);
+
+                    var quotation = db.Quotations.FirstOrDefault(x => x.QuotationId == model.QuotationId);
+                    return new
+                    {
+                        success = true,
+                        Subtotal = quotation?.Subtotal ?? 0,
+                        GSTValue = quotation?.GSTValue ?? 0,
+                        Total = quotation?.Total ?? 0
+                    };
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error in DeleteQuotationItemAdmin: {ex.Message}");
+                    return new { success = false };
+                }
+            }
+        }
+        #endregion
+
+        // =============================================================================
+        // END OF QUOTATION OPERATIONS
+        // =============================================================================
         internal static string UpdateInspectionStatusTechnician(long inspectionId, int iStatus)
         {
             using (DatabaseEntities db = new DatabaseEntities())
@@ -15357,18 +17140,18 @@ namespace CamV4.Helper
                     //if (ar != null)
                     //{
                     //    locationDetails += " , " + ar.AreaName;
-                    //}
+                    //}                    
 
                     string locationDetails = objCustomerLocation.LocationName;
 
                     if (fac != null)
                     {
-                        locationDetails = fac.FacilityName + " / " + locationDetails;
+                        locationDetails += " / " + fac.FacilityName;
                     }
 
                     if (ar != null)
                     {
-                        locationDetails = ar.AreaName + " / " + locationDetails;
+                        locationDetails += " / " + ar.AreaName;
                     }
 
                     iObjNotification.NotificationID = notificationID;
@@ -15422,12 +17205,13 @@ namespace CamV4.Helper
                     //}
                     //else
                     //{
-                    await firebaseService.SendAndroidNotificationAsync(objUser.UserToken.Trim(), "CAM Industrial ", strMessage);
+                    if (!string.IsNullOrWhiteSpace(objUser.UserToken))
+                    {
+                        await firebaseService.SendAndroidNotificationAsync(objUser.UserToken.Trim(), "CAM Industrial", strMessage);                        
+                    }
                     //}                   
                     if (objCustomer.CustomerEmail != null)
                     {
-                        var toEmail = objCustomer.CustomerEmail.Trim();
-
                         string strMSG = "";
                         strMSG = "<html>";
                         strMSG += "<head>";
@@ -15437,12 +17221,16 @@ namespace CamV4.Helper
                         strMSG += "</head>";
                         strMSG += "<body>";
                         strMSG += "<div style='width: 800px; height: auto; border: 0px solid #e3e4e8; margin: 0px; padding: 10px; float: left;'>";
-                        if (toEmail == "")
+                        List<string> toEmail = new List<string>();
+                        if (!string.IsNullOrWhiteSpace(objCustomer.CustomerEmail))
                         {
-                            strMSG += "<p style='color:red;'>Customer email has been missing from system. Please update customer's email.  </p>";
-                            toEmail = objUser.EmployeeEmail;
+                            toEmail.Add(objCustomer.CustomerEmail.Trim());
                         }
-
+                        else
+                        {
+                            strMSG += "<p style='color:red;'>Customer email has been missing from system. Please update customer's email.</p>";
+                            toEmail.Add(objUser.EmployeeEmail);
+                        }
                         if (objCustomer.CustomerContactName == null)
                         {
                             objCustomer.CustomerContactName = "";
@@ -15755,26 +17543,49 @@ namespace CamV4.Helper
                     string tmpURL = HttpContext.Current.Request.Url.AbsoluteUri;
                     Uri url = new Uri(tmpURL);
                     string host = url.GetLeftPart(UriPartial.Authority);
-                    var listings = (from clh in db.CustomerLocationHistoryLegacyFiles
-                                    join c in db.Customers
-                                        on clh.CustomerId equals c.CustomerId
-                                    join cl in db.CustomerLocations
-                                        on clh.CustomerLocationID equals cl.CustomerLocationID into clGroup
-                                    from cl in clGroup.DefaultIfEmpty() // Left join
-                                    where clh.IsDeleted == 0 && c.CustomerId == id
-                                    select new CustomerLocationHistoryLegacyFileListing
-                                    {
-                                        CustomerLocationHistoryLegacyFileId = clh.CustomerLocationHistoryLegacyFileId,
-                                        CustomerId = clh.CustomerId,
-                                        CustomerLocationID = clh.CustomerLocationID,
-                                        FileDrawingPath = host + "/CustFilesHistory/" + clh.FileDrawingPath,
-                                        FileDrawingName = clh.FileDrawingName,
-                                        FileCategory = clh.FileCategory,
-                                        CustomerName = c.CustomerName,
-                                        Region = cl.Region,
-                                        CustomerLocationName = cl != null ? cl.LocationName : null
-                                    }).ToList();
+                    var listings = (
+                         from clh in db.CustomerLocationHistoryLegacyFiles
+                         join c in db.Customers
+                             on clh.CustomerId equals c.CustomerId
+                         join cl in db.CustomerLocations
+                             on clh.CustomerLocationID equals cl.CustomerLocationID into clGroup
+                         from cl in clGroup.DefaultIfEmpty()
+                         join cf in db.CustomerFacilities
+                             on clh.CustomerFacilityID equals cf.CustomerFacilityID into cfGroup
+                         from cf in cfGroup.DefaultIfEmpty()
+                         join ca in db.CustomerAreas
+                             on clh.CustomerAreaID equals ca.AreaID into caGroup
+                         from ca in caGroup.DefaultIfEmpty()
+                         where clh.IsDeleted == 0 && c.CustomerId == id
+                         select new
+                         {
+                             clh.CustomerLocationHistoryLegacyFileId,
+                             clh.CustomerId,
+                             clh.CustomerLocationID,
+                             clh.FileDrawingPath,
+                             clh.FileDrawingName,
+                             clh.FileCategory,
+                             CustomerName = c.CustomerName,
+                             Region = cl.Region,
+                             LocationName = cl.LocationName,
+                             FacilityName = cf != null ? cf.FacilityName : null,
+                             AreaName = ca != null ? ca.AreaName : null
+                         }).ToList()
+                         .Select(x => new CustomerLocationHistoryLegacyFileListing
+                         {
+                             CustomerLocationHistoryLegacyFileId = x.CustomerLocationHistoryLegacyFileId,
+                             CustomerId = x.CustomerId,
+                             CustomerLocationID = x.CustomerLocationID,
+                             FileDrawingPath = host + "/CustFilesHistory/" + x.FileDrawingPath,
+                             FileDrawingName = x.FileDrawingName,
+                             FileCategory = x.FileCategory,
+                             CustomerName = x.CustomerName,
+                             Region = x.Region,
 
+                             CustomerLocationName = string.Join(", ",
+                                 new[] { x.AreaName, x.FacilityName, x.LocationName }
+                                     .Where(s => !string.IsNullOrWhiteSpace(s)))
+                         }).ToList();
 
                     if (listings != null)
                     {
@@ -15834,10 +17645,12 @@ namespace CamV4.Helper
                         var originalFile = originalFiles[i];  // original.pdf
 
                         // check duplicates based on original name + location + customer
-                        var found = db.CustomerLocationHistoryLegacyFiles
-                                      .FirstOrDefault(x => x.FileDrawingName == originalFile
-                                                        && x.CustomerId == iCustomerId
-                                                        && x.CustomerLocationID == iCustomerLoationId);
+                        var found = db.CustomerLocationHistoryLegacyFiles.FirstOrDefault(x =>
+                                        x.FileDrawingName == originalFile &&
+                                        x.CustomerId == iCustomerId &&
+                                        x.CustomerLocationID == iCustomerLoationId &&
+                                        x.CustomerFacilityID == model.CustomerFacilityID &&
+                                        x.CustomerAreaID == model.CustomerAreaID);
 
                         if (found != null)
                         {
@@ -15849,9 +17662,11 @@ namespace CamV4.Helper
                         {
                             CustomerId = iCustomerId,
                             CustomerLocationID = iCustomerLoationId,
+                            CustomerFacilityID = model.CustomerFacilityID,
+                            CustomerAreaID = model.CustomerAreaID,
                             FileCategory = model.FileCategory,
-                            FileDrawingName = originalFile,   // original filename
-                            FileDrawingPath = renamedFile,    // renamed filename
+                            FileDrawingName = originalFile,
+                            FileDrawingPath = renamedFile,
                             CreatedBy = HttpContext.Current.Session["LoggedInUserId"].ToString(),
                             IsDeleted = 0,
                             CreatedDate = DateTime.Now,
@@ -16804,21 +18619,83 @@ namespace CamV4.Helper
             }
         }
 
-        internal static List<sp_getEmpInspection_Count_New_Result> getDoneEmpInspectionCountByYear(int year)
+        //internal static List<sp_getEmpInspection_Count_New_Result> getDoneEmpInspectionCountByYear(int year)
+        //{
+        //    using (DatabaseEntities db = new DatabaseEntities())
+        //    {
+        //        var data = db.sp_getEmpInspection_Count_New(year).ToList();
+        //        return data;
+        //    }
+        //}
+
+        //internal static List<sp_getApprovedInspection_Count_New_Result> getApprovedInspectionCountByYear(int year)
+        //{
+        //    using (DatabaseEntities db = new DatabaseEntities())
+        //    {
+        //        var data = db.sp_getApprovedInspection_Count_New(year).ToList();
+        //        return data;
+        //    }
+        //}
+
+        internal static List<DashboardEmployeeGraphVM> getDoneEmpInspectionCountByYear(int year)
         {
             using (DatabaseEntities db = new DatabaseEntities())
             {
-                var data = db.sp_getEmpInspection_Count_New(year).ToList();
-                return data;
+                long userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+
+                int userType = db.Users
+                    .Where(x => x.UserId == userId)
+                    .Select(x => x.UserType)
+                    .FirstOrDefault() ?? 0;
+
+                if (userType == 5)
+                {
+                    return db.sp_getEmpInspection_Count_Sales(userId, year)
+                        .Select(x => new DashboardEmployeeGraphVM
+                        {
+                            EmployeeId = x.EmployeeId,
+                            EmployeeName = x.EmployeeName,
+                            cnt = x.cnt
+                        }).ToList();
+                }
+
+                return db.sp_getEmpInspection_Count_New(year)
+                    .Select(x => new DashboardEmployeeGraphVM
+                    {
+                        EmployeeId = x.EmployeeId,
+                        EmployeeName = x.EmployeeName,
+                        cnt = x.cnt
+                    }).ToList();
             }
         }
 
-        internal static List<sp_getApprovedInspection_Count_New_Result> getApprovedInspectionCountByYear(int year)
+        internal static List<DashboardApprovedGraphVM> getApprovedInspectionCountByYear(int year)
         {
             using (DatabaseEntities db = new DatabaseEntities())
             {
-                var data = db.sp_getApprovedInspection_Count_New(year).ToList();
-                return data;
+                long userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+
+                int userType = db.Users
+                    .Where(x => x.UserId == userId)
+                    .Select(x => x.UserType)
+                    .FirstOrDefault() ?? 0;
+
+                if (userType == 5)
+                {
+                    return db.sp_getApprovedInspection_Count_Sales(userId, year)
+                        .Select(x => new DashboardApprovedGraphVM
+                        {
+                            iMonth = x.iMonth,
+                            iCount = x.iCount
+                        }).ToList();
+                }
+
+                return db.sp_getApprovedInspection_Count_New(year)
+                    .Select(x => new DashboardApprovedGraphVM
+                    {
+                        iMonth = x.iMonth,
+                        iCount = x.iCount
+                    }).ToList();
             }
         }
 
@@ -17389,7 +19266,8 @@ namespace CamV4.Helper
                     // To Customer ----
                     if (cust.CustomerEmail != null)
                     {
-                        var toEmail = cust.CustomerEmail.Trim();
+                        List<string> toEmail = new List<string>();
+                        toEmail.Add(cust.CustomerEmail.Trim());
 
                         string strMSG = "";
                         strMSG += "<html>";
@@ -17445,30 +19323,65 @@ namespace CamV4.Helper
                         strMSG += "<br/><br/>";
                         strMSG += "<p>Sincerely,</p>";
                         strMSG += "<div><div>";
-                        strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7b7b7b' lang='EN-US'>Thanks,</span></p>";
-                        strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>Bhavik Trivedi </span></b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>P.Eng, M.Tech, PMP</span></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Engineering Manager</span></b></p>";
-                        strMSG += "<br/>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>cam|</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>industrial</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>20 7095 64 Street SE |";
-                        strMSG += "</span></b><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Calgary, AB, T2C 5C3</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                        strMSG += "<br/>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>E ~ &nbsp;</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#454545' lang='EN-US'>";
-                        strMSG += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank'><span lang='EN-US'>b.trivedi@camindustrial.net</span></a></span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>C ~</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 690-2976</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>D ~</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'> (587) 355-1346</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>F ~</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 720-7074</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                        strMSG += "<p><span><img style='width:2.618in;height:.6458in' ";
-                        strMSG += "src='https://rack-manager.com/img/sigimg.png' data-image-whitelisted=''";
-                        strMSG += "class='CToWUd' data-bit='iit' width='251' height='62' border='0'></span></p>";
+                        strMSG += "<table cellpadding='0' cellspacing='0' border='0' style='border-collapse:collapse; font-family:Verdana, sans-serif;'>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:10px 0 10px 0;'>";
+                        strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#7b7b7b; font-weight:bold;'>Best regards,</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 1px 0;'>";
+                        strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>Bhavik Trivedi </span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab;'>P.Eng, ing., M.Tech, PMP</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 18px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Engineering Manager</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>cam</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'> | industrial</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 12px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>20 7095 64 Street SE | </span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Calgary, AB, T2C 5C3</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>E&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank' style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold; text-decoration:underline;'>b.trivedi@camindustrial.net</a>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>C&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 690-2976</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>D&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(587) 355-1346</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 10px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>F&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 720-7074</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0;'>";
+                        strMSG += "<img src='https://rack-manager.com/img/sigimg.png' alt='cam industrial' width='251' height='62' border='0' style='display:block; width:251px; height:62px;'>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "</table>";
                         strMSG += "</div>";
                         strMSG += "</div>";
                         strMSG += "</div>";
@@ -17479,7 +19392,8 @@ namespace CamV4.Helper
                         var tEmail = new Thread(() => EmailHelper.SendEmail(toEmail, "Incident Report Successfully Submitted to Cam Industrial", attachmentFiles, strMSG, null, null));
                         tEmail.Start();
                     }
-
+                    List<string> toEmailCam = new List<string>();
+                    toEmailCam.Add("b.trivedi@camindustrial.net");
                     string strMSGToCam = "";
                     strMSGToCam += "<html>";
                     strMSGToCam += "<head>";
@@ -17525,37 +19439,72 @@ namespace CamV4.Helper
                     strMSGToCam += "<p>Please take appropriate action at your earliest convenience.</p>";
                     strMSGToCam += "<br/>";
                     strMSGToCam += "<div><div>";
-                    strMSGToCam += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7b7b7b' lang='EN-US'>Thanks,</span></p>";
-                    strMSGToCam += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>Bhavik Trivedi </span></b>";
-                    strMSGToCam += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>P.Eng, M.Tech, PMP</span></p>";
-                    strMSGToCam += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Engineering Manager</span></b></p>";
-                    strMSGToCam += "<br/>";
-                    strMSGToCam += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>cam|</span></b><b>";
-                    strMSGToCam += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>industrial</span></b></p>";
-                    strMSGToCam += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>20 7095 64 Street SE |";
-                    strMSGToCam += "</span></b><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Calgary, AB, T2C 5C3</span></b></p>";
-                    strMSGToCam += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                    strMSGToCam += "<br/>";
-                    strMSGToCam += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>E ~ &nbsp;</span></b><b>";
-                    strMSGToCam += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#454545' lang='EN-US'>";
-                    strMSGToCam += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank'><span lang='EN-US'>b.trivedi@camindustrial.net</span></a></span></b></p>";
-                    strMSGToCam += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>C ~</span></b><b>";
-                    strMSGToCam += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 690-2976</span></b></p>";
-                    strMSGToCam += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>D ~</span></b><b>";
-                    strMSGToCam += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'> (587) 355-1346</span></b></p>";
-                    strMSGToCam += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>F ~</span></b><b>";
-                    strMSGToCam += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>(403) 720-7074</span></b></p>";
-                    strMSGToCam += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>&nbsp;</span></b></p>";
-                    strMSGToCam += "<p><span><img style='width:2.618in;height:.6458in' ";
-                    strMSGToCam += " src='https://rack-manager.com/img/sigimg.png'  data-image-whitelisted=''";
-                    strMSGToCam += "class='CToWUd' data-bit='iit' width='251' height='62' border='0'></span></p>";
+                    strMSGToCam += "<table cellpadding='0' cellspacing='0' border='0' style='border-collapse:collapse; font-family:Verdana, sans-serif;'>";
+                    strMSGToCam += "<tr>";
+                    strMSGToCam += "<td style='padding:10px 0 10px 0;'>";
+                    strMSGToCam += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#7b7b7b; font-weight:bold;'>Best regards,</span>";
+                    strMSGToCam += "</td>";
+                    strMSGToCam += "</tr>";
+                    strMSGToCam += "<tr>";
+                    strMSGToCam += "<td style='padding:0 0 1px 0;'>";
+                    strMSGToCam += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>Bhavik Trivedi </span>";
+                    strMSGToCam += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab;'>P.Eng, ing., M.Tech, PMP</span>";
+                    strMSGToCam += "</td>";
+                    strMSGToCam += "</tr>";
+                    strMSGToCam += "<tr>";
+                    strMSGToCam += "<td style='padding:0 0 18px 0;'>";
+                    strMSGToCam += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Engineering Manager</span>";
+                    strMSGToCam += "</td>";
+                    strMSGToCam += "</tr>";
+                    strMSGToCam += "<tr>";
+                    strMSGToCam += "<td style='padding:0 0 2px 0;'>";
+                    strMSGToCam += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>cam</span>";
+                    strMSGToCam += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'> | industrial</span>";
+                    strMSGToCam += "</td>";
+                    strMSGToCam += "</tr>";
+                    strMSGToCam += "<tr>";
+                    strMSGToCam += "<td style='padding:0 0 12px 0;'>";
+                    strMSGToCam += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>20 7095 64 Street SE | </span>";
+                    strMSGToCam += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Calgary, AB, T2C 5C3</span>";
+                    strMSGToCam += "</td>";
+                    strMSGToCam += "</tr>";
+                    strMSGToCam += "<tr>";
+                    strMSGToCam += "<td style='padding:0 0 2px 0;'>";
+                    strMSGToCam += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>E&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                    strMSGToCam += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank' style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold; text-decoration:underline;'>b.trivedi@camindustrial.net</a>";
+                    strMSGToCam += "</td>";
+                    strMSGToCam += "</tr>";
+                    strMSGToCam += "<tr>";
+                    strMSGToCam += "<td style='padding:0 0 2px 0;'>";
+                    strMSGToCam += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>C&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                    strMSGToCam += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 690-2976</span>";
+                    strMSGToCam += "</td>";
+                    strMSGToCam += "</tr>";
+                    strMSGToCam += "<tr>";
+                    strMSGToCam += "<td style='padding:0 0 2px 0;'>";
+                    strMSGToCam += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>D&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                    strMSGToCam += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(587) 355-1346</span>";
+                    strMSGToCam += "</td>";
+                    strMSGToCam += "</tr>";
+                    strMSGToCam += "<tr>";
+                    strMSGToCam += "<td style='padding:0 0 10px 0;'>";
+                    strMSGToCam += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>F&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                    strMSGToCam += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 720-7074</span>";
+                    strMSGToCam += "</td>";
+                    strMSGToCam += "</tr>";
+                    strMSGToCam += "<tr>";
+                    strMSGToCam += "<td style='padding:0;'>";
+                    strMSGToCam += "<img src='https://rack-manager.com/img/sigimg.png' alt='cam industrial' width='251' height='62' border='0' style='display:block; width:251px; height:62px;'>";
+                    strMSGToCam += "</td>";
+                    strMSGToCam += "</tr>";
+                    strMSGToCam += "</table>";
                     strMSGToCam += "</div>";
                     strMSGToCam += "</div>";
                     strMSGToCam += "</div>";
                     strMSGToCam += "</body>";
                     strMSGToCam += "</html>";
 
-                    var tEmail1 = new Thread(() => EmailHelper.SendEmail("b.trivedi@camindustrial.net", "New Incident Report Submitted by " + businessName + "- Immediate Follow-Up Required", attachmentFiles, strMSGToCam, null, null));
+                    var tEmail1 = new Thread(() => EmailHelper.SendEmail(toEmailCam, "New Incident Report Submitted by " + businessName + "- Immediate Follow-Up Required", attachmentFiles, strMSGToCam, null, null));
                     tEmail1.Start();
 
 
@@ -17951,6 +19900,14 @@ namespace CamV4.Helper
                                         x.LocationContactId))
                             .ToList();
 
+                    var userNamesById =
+                        db.Users
+                            .Where(
+                                x => contacts
+                                    .Where(c => c.UserID.HasValue)
+                                    .Select(c => c.UserID.Value)
+                                    .Contains(x.UserId))
+                            .ToDictionary(x => x.UserId, x => x.UserName);
 
                     // =====================================================
                     // STEP 3
@@ -17969,11 +19926,12 @@ namespace CamV4.Helper
                                                 x.LocationContactId,
 
                                             UserID =
-                                                x.UserID,
+                                                x.UserID ?? 0,
 
                                             UserName =
-                                                x.User != null
-                                                    ? x.User.UserName
+                                                x.UserID.HasValue &&
+                                                userNamesById.ContainsKey(x.UserID.Value)
+                                                    ? userNamesById[x.UserID.Value]
                                                     : null,
 
                                             CustomerId =
@@ -19097,6 +21055,7 @@ namespace CamV4.Helper
                 try
                 {
                     var req = HttpContext.Current.Request;
+                    string strInternalInspectionNumber = "";
                     long custId = II_ResolveCustomerId(db);
                     if (custId == 0) throw new Exception("Customer not found for logged-in user.");
 
@@ -19110,6 +21069,18 @@ namespace CamV4.Helper
                     string reportedBy = req.Form["ReportedBy"] ?? "";
                     int defCount = int.TryParse(req.Form["DeficiencyCount"], out var dc) ? dc : 0;
 
+                    string engineerReviewValue = db.ImpSettings
+    .Where(x => x.SettingType == "EngineerReview")
+    .Select(x => x.SettingValue)
+    .FirstOrDefault();
+
+                    decimal dEngineerReview = 50;
+
+                    if (!string.IsNullOrEmpty(engineerReviewValue))
+                    {
+                        decimal.TryParse(engineerReviewValue, out dEngineerReview);
+                    }
+
                     // Parse date safely
                     string inspDateStr = req.Form["InternalInspectionDate"] ?? "";
                     DateTime inspDate = DateTime.Now;
@@ -19119,12 +21090,13 @@ namespace CamV4.Helper
                     if (locationId == 0) throw new Exception("Location is required.");
 
                     InternalInspection inspection;
+                    strInternalInspectionNumber = GenerateInspectionDocumentNo(Convert.ToInt32(custId), Convert.ToInt32(locationId), "II");
 
                     if (inspectionId == 0)
                     {
                         inspection = new InternalInspection
                         {
-                            InternalInspectionNumber = II_GenerateInspectionNumber(db),
+                            InternalInspectionNumber = strInternalInspectionNumber,
                             InternalInspectionDate = inspDate,
                             CustomerID = custId,
                             CustomerLocationID = locationId,
@@ -19198,7 +21170,7 @@ namespace CamV4.Helper
                                 InternalAction = req.Form[pfx + "InternalAction"] ?? "",
                                 RecommendedAction = req.Form[pfx + "RecommendedAction"] ?? "",
                                 IsEngineerReviewRequested = engRev,
-                                EngineerReviewCost = engRev ? 20.00m : (decimal?)null,
+                                EngineerReviewCost = dEngineerReview,
                                 Status = "Open",
                                 IsActive = true,
                                 CreatedBy = auditUser,
@@ -19226,7 +21198,7 @@ namespace CamV4.Helper
                                 existing.InternalAction = req.Form[pfx + "InternalAction"] ?? "";
                                 existing.RecommendedAction = req.Form[pfx + "RecommendedAction"] ?? "";
                                 existing.IsEngineerReviewRequested = engRev;
-                                existing.EngineerReviewCost = engRev ? 20.00m : (decimal?)null;
+                                existing.EngineerReviewCost = dEngineerReview;
                                 existing.ModifiedBy = auditUser;
                                 existing.ModifiedDate = DateTime.Now;
                                 db.SaveChanges();
@@ -19434,6 +21406,20 @@ namespace CamV4.Helper
                 var facility = i.CustomerFacilityID.HasValue ? db.CustomerFacilities.Find(i.CustomerFacilityID.Value) : null;
                 var area = i.CustomerAreaID.HasValue ? db.CustomerAreas.Find(i.CustomerAreaID.Value) : null;
 
+                decimal engineerReviewRate = 0;
+                var setting = db.ImpSettings
+                    .FirstOrDefault(x => x.SettingType == "EngineerReview");
+
+                if (setting != null)
+                {
+                    decimal.TryParse(setting.SettingValue, out engineerReviewRate);
+                }
+                else
+                {
+                    engineerReviewRate = 20;
+                }
+
+
                 var deficiencies = db.InternalInspectionDeficiencies
                     .Where(x => x.InternalInspectionID == id && x.IsActive == true)
                     .OrderBy(x => x.CreatedDate).ToList()
@@ -19502,7 +21488,7 @@ namespace CamV4.Helper
                     Deficiencies = deficiencies,
                     DeficiencyCount = deficiencies.Count,
                     EngineerReviewCount = deficiencies.Count(d => d.IsEngineerReviewRequested),
-                    EngineerReviewTotalCost = deficiencies.Count(d => d.IsEngineerReviewRequested) * 20.00m,
+                    EngineerReviewTotalCost = deficiencies.Count(d => d.IsEngineerReviewRequested) * engineerReviewRate,
                     MinorCount = deficiencies.Count(d => d.InternalAssessment == "Minor"),
                     ModerateCount = deficiencies.Count(d => d.InternalAssessment == "Moderate"),
                     SevereCount = deficiencies.Count(d => d.InternalAssessment == "Severe")
@@ -19973,73 +21959,302 @@ namespace CamV4.Helper
         {
             try
             {
+                List<string> emailCCList = new List<string>();
+                emailCCList.Add("b.trivedi@camindustrial.net");
+
                 var reg = db.TrainingRegistrations.Find(regId);
+
+                // Check registration first
+                if (reg == null) return;
+
                 var customer = db.Customers.Find(reg.CustomerID);
-                if (reg == null || customer == null) return;
+
+                if (customer == null) return;
 
                 var persons = db.TrainingRegistrationPersons
-                    .Where(x => x.TrainingRegistrationID == regId && x.IsActive == true).ToList();
+                    .Where(x => x.TrainingRegistrationID == regId && x.IsActive == true)
+                    .ToList();
 
                 string custName = customer.CustomerContactName ?? customer.CustomerName;
+
                 string personRows = string.Join("", persons.Select(p =>
-                    "<tr><td>" + p.ContactName + "</td><td>" + p.ContactEmail + "</td><td>" +
-                    p.CourseName + "</td><td>$" + p.CoursePrice.ToString("0.00") + "</td></tr>"));
+                    "<tr>" +
+                    "<td>" + p.ContactName + "</td>" +
+                    "<td>" + p.ContactEmail + "</td>" +
+                    "<td>" + p.CourseName + "</td>" +
+                    "<td>$" + p.CoursePrice.ToString("0.00") + "</td>" +
+                    "</tr>"));
 
-                string body = TC_EmailTemplate(custName, customer.CustomerName,
+                string body = TC_EmailTemplate(
+                    custName,
+                    customer.CustomerName,
                     reg.RegistrationDate.ToString("MMMM dd, yyyy"),
-                    personRows, reg.TotalPrice.ToString("0.00"));
+                    personRows,
+                    reg.TotalPrice.ToString("0.00")
+                );
 
-                // To customer
+                // ---------------------------------------------------------
+                // 1. Email to Customer
+                // ---------------------------------------------------------
                 if (!string.IsNullOrEmpty(customer.CustomerEmail))
                 {
-                    string email = customer.CustomerEmail;
+                    List<string> email = new List<string>();
+                    email.Add(customer.CustomerEmail);
+
                     new System.Threading.Thread(() =>
-                        EmailHelper.SendEmail(email.Trim(), "CAM Training Center - Registration Confirmed", null, body, null, null)).Start();
+                        EmailHelper.SendEmail(
+                            email,
+                            "CAM Training Center - Registration Confirmed",
+                            null,
+                            body,
+                            null,
+                            null
+                        )
+                    ).Start();
                 }
 
-                // To CAM admin
-                new System.Threading.Thread(() =>
-                    EmailHelper.SendEmail("b.trivedi@camindustrial.net", "New Training Registration - " + customer.CustomerName, null, body, null, null)).Start();
+                // ---------------------------------------------------------
+                // 2. Email to CAM Admin
+                // ---------------------------------------------------------
+                List<string> toEmailCam = new List<string>();
+                toEmailCam.Add("b.trivedi@camindustrial.net");
 
-                // To each registered person
+                new System.Threading.Thread(() =>
+                    EmailHelper.SendEmail(
+                        toEmailCam,
+                        "New Training Registration - " + customer.CustomerName,
+                        null,
+                        body,
+                        null,
+                        null
+                    )
+                ).Start();
+
+                // ---------------------------------------------------------
+                // 3. Email to Each Registered Person
+                // ---------------------------------------------------------
                 foreach (var p in persons.Where(x => !string.IsNullOrEmpty(x.ContactEmail)))
                 {
-                    string personEmail = p.ContactEmail;
+                    List<string> toEmailRegPerson = new List<string>();
+                    toEmailRegPerson.Add(p.ContactEmail);
+
                     string personName = p.ContactName;
                     string courseName = p.CourseName;
                     string bizName = customer.CustomerName;
-                    string personBody = "<html><body style='font-family:Verdana;font-size:10pt;'>" +
+
+                    string personBody =
+                        "<html>" +
+                        "<body style='font-family:Verdana;font-size:10pt;color:#333;'>" +
+
                         "<p>Dear " + personName + ",</p>" +
-                        "<p>You have been registered for the <b>" + courseName + "</b> training course by <b>" + bizName + "</b>.</p>" +
+
+                        "<p>You have been registered for the <b>" +
+                        courseName +
+                        "</b> training course by <b>" +
+                        bizName +
+                        "</b>.</p>" +
+
                         "<p>Our team at cam|industrial will be in touch with your enrollment details in the Absorb LMS shortly.</p>" +
-                        "<p>If you have any questions please contact us at <a href='mailto:b.trivedi@camindustrial.net'>b.trivedi@camindustrial.net</a>.</p>" +
-                        "<p><b>cam|industrial</b></p></body></html>";
+
+                        "<p>If you have any questions please contact us at " +
+                        "<a href='mailto:b.trivedi@camindustrial.net'>" +
+                        "b.trivedi@camindustrial.net" +
+                        "</a>.</p>" +
+
+                        TC_EmailSignature() +
+
+                        "</body>" +
+                        "</html>";
+
                     new System.Threading.Thread(() =>
-                        EmailHelper.SendEmail(personEmail, "CAM Training Center - You Have Been Enrolled", null, personBody, null, null)).Start();
+                        EmailHelper.SendEmail(
+                            toEmailRegPerson,
+                            "CAM Training Center - You Have Been Enrolled",
+                            null,
+                            personBody,
+                            null,
+                            null
+                        )
+                    ).Start();
                 }
             }
-            catch { /* email failure must not break registration */ }
+            catch
+            {
+                // Email failure must not break registration
+            }
         }
 
-        private static string TC_EmailTemplate(string contactName, string bizName, string regDate, string personRows, string total)
+
+        private static string TC_EmailTemplate(
+            string contactName,
+            string bizName,
+            string regDate,
+            string personRows,
+            string total)
         {
-            return "<html><body style='font-family:Verdana;font-size:10pt;color:#333;'>" +
+            return
+                "<html>" +
+                "<body style='font-family:Verdana;font-size:10pt;color:#333;'>" +
+
                 "<p>Dear " + contactName + ",</p>" +
-                "<p>Thank you for registering with the <b>CAM Industrial Training Center</b>. " +
+
+                "<p>Thank you for registering with the " +
+                "<b>CAM Industrial Training Center</b>. " +
                 "Below is a summary of your registration.</p>" +
+
                 "<hr/>" +
+
                 "<p><b>Business:</b> " + bizName + "</p>" +
+
                 "<p><b>Registration Date:</b> " + regDate + "</p>" +
-                "<table border='1' cellpadding='6' cellspacing='0' style='border-collapse:collapse;width:100%;'>" +
-                "<thead><tr style='background:#003087;color:white;'>" +
-                "<th>Name</th><th>Email</th><th>Course</th><th>Price</th>" +
-                "</tr></thead><tbody>" + personRows + "</tbody>" +
-                "<tfoot><tr><td colspan='3' style='text-align:right;font-weight:bold;'>Total</td>" +
-                "<td>$" + total + "</td></tr></tfoot></table><br/>" +
-                "<p>Our team will enroll the registered personnel in the Absorb LMS training platform shortly. " +
-                "Please contact us at <a href='mailto:b.trivedi@camindustrial.net'>b.trivedi@camindustrial.net</a> " +
+
+                "<table border='1' cellpadding='6' cellspacing='0' " +
+                "style='border-collapse:collapse;width:100%;'>" +
+
+                "<thead>" +
+                "<tr style='background:#003087;color:white;'>" +
+                "<th>Name</th>" +
+                "<th>Email</th>" +
+                "<th>Course</th>" +
+                "<th>Price</th>" +
+                "</tr>" +
+                "</thead>" +
+
+                "<tbody>" +
+                personRows +
+                "</tbody>" +
+
+                "<tfoot>" +
+                "<tr>" +
+                "<td colspan='3' style='text-align:right;font-weight:bold;'>" +
+                "Total" +
+                "</td>" +
+                "<td>$" + total + "</td>" +
+                "</tr>" +
+                "</tfoot>" +
+
+                "</table>" +
+
+                "<br/>" +
+
+                "<p>Our team will enroll the registered personnel in the " +
+                "Absorb LMS training platform shortly. " +
+                "Please contact us at " +
+                "<a href='mailto:b.trivedi@camindustrial.net'>" +
+                "b.trivedi@camindustrial.net" +
+                "</a> " +
                 "or (403) 690-2976 for questions.</p>" +
-                "<p><b>cam|industrial</b></p></body></html>";
+
+                TC_EmailSignature() +
+
+                "</body>" +
+                "</html>";
+        }
+
+
+        private static string TC_EmailSignature()
+        {
+            return
+                "<table cellpadding='0' cellspacing='0' border='0' " +
+                "style='border-collapse:collapse;font-family:Verdana,sans-serif;'>" +
+
+                "<tr>" +
+                "<td style='padding:10px 0 10px 0;'>" +
+                "<span style='font-size:9pt;font-family:Verdana,sans-serif;" +
+                "color:#7b7b7b;font-weight:bold;'>Best regards,</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 1px 0;'>" +
+                "<span style='font-size:9pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;'>Bhavik Trivedi </span>" +
+
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;'>P.Eng, ing., M.Tech, PMP</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 18px 0;'>" +
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#7f7d7e;font-weight:bold;'>Engineering Manager</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 2px 0;'>" +
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;'>cam</span>" +
+
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#7f7d7e;font-weight:bold;'> | industrial</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 12px 0;'>" +
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;'>20 7095 64 Street SE | </span>" +
+
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#7f7d7e;font-weight:bold;'>Calgary, AB, T2C 5C3</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 2px 0;'>" +
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;'>E&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>" +
+
+                "<a href='mailto:b.trivedi@camindustrial.net' target='_blank' " +
+                "style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;text-decoration:underline;'>" +
+                "b.trivedi@camindustrial.net" +
+                "</a>" +
+
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 2px 0;'>" +
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;'>C&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>" +
+
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#7f7d7e;font-weight:bold;'>(403) 690-2976</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 2px 0;'>" +
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;'>D&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>" +
+
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#7f7d7e;font-weight:bold;'>(587) 355-1346</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 10px 0;'>" +
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;'>F&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>" +
+
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#7f7d7e;font-weight:bold;'>(403) 720-7074</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0;'>" +
+                "<img src='https://rack-manager.com/img/sigimg.png' " +
+                "alt='cam industrial' width='251' height='62' border='0' " +
+                "style='display:block;width:251px;height:62px;'>" +
+                "</td>" +
+                "</tr>" +
+
+                "</table>";
         }
 
         // ============================================================
@@ -20377,6 +22592,45 @@ namespace CamV4.Helper
         // ============================================================
         // TECHNICAL TALK
         // ============================================================
+
+        internal static List<TrainingTechnicalTalkViewModel> TC_GetPublishedTalksAll()
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                long? customerId = null;
+
+                var custid = HttpContext.Current.Session["LoggedInUserId"];
+                if (custid != null)
+                {
+                    long uid = Convert.ToInt64(custid);
+
+                    customerId = db.Customers
+                                   .Where(x => x.UserID == uid)
+                                   .Select(x => (long?)x.CustomerId)
+                                   .FirstOrDefault();
+                }
+
+                return (from t in db.TrainingTechnicalTalks
+                        where t.IsActive == true &&
+                             (
+                                t.IsPublished == true ||
+                                (customerId != null &&
+                                 t.CustomerID == customerId)
+                             )
+                        orderby t.DisplayOrder, t.CreatedDate descending
+                        select new TrainingTechnicalTalkViewModel
+                        {
+                            TrainingTechnicalTalkID = t.TrainingTechnicalTalkID,
+                            CustomerID = t.CustomerID,
+                            Question = t.Question,
+                            Answer = t.Answer,
+                            IsPublished = t.IsPublished,
+                            IsAdminCreated = t.IsAdminCreated,
+                            DisplayOrder = t.DisplayOrder,
+                            CreatedDate = t.CreatedDate
+                        }).ToList();
+            }
+        }
         internal static List<TrainingTechnicalTalkViewModel> TC_GetPublishedTalks()
         {
             using (DatabaseEntities db = new DatabaseEntities())
@@ -20404,7 +22658,7 @@ namespace CamV4.Helper
                         where t.IsActive == true
                         join c in db.Customers on t.CustomerID equals c.CustomerId into cJoin
                         from c in cJoin.DefaultIfEmpty()
-                        orderby t.IsPublished ascending, t.CreatedDate descending
+                        orderby t.DisplayOrder, t.IsPublished ascending
                         select new TrainingTechnicalTalkViewModel
                         {
                             TrainingTechnicalTalkID = t.TrainingTechnicalTalkID,
@@ -20422,7 +22676,7 @@ namespace CamV4.Helper
             }
         }
 
-        internal static string TC_SubmitQuestion(string question, Customer customer = null)
+        internal static string TC_SubmitQuestion(string question)
         {
             try
             {
@@ -20430,7 +22684,32 @@ namespace CamV4.Helper
                 using (DatabaseEntities db = new DatabaseEntities())
                 {
                     string au = TC_AuditUser();
+                    List<string> strToEmailslist = new List<string>();
                     List<string> strCCEmailslist = new List<string>();
+                    List<EmployeeViewModel> objAdminList = new List<EmployeeViewModel>();
+                    objAdminList = DatabaseHelper.GetAllCAMAdmin();
+                    if (objAdminList != null && objAdminList.Count != 0)
+                    {
+                        foreach (var pm in objAdminList)
+                        {
+                            if (!string.IsNullOrWhiteSpace(pm.EmployeeEmail))
+                            {
+                                strToEmailslist.Add(pm.EmployeeEmail);
+                            }
+                        }
+                    }
+
+                    Customer customer = new Customer();
+
+                    var uidObj = HttpContext.Current.Session["LoggedInUserId"];
+                    if (uidObj != null)
+                    {
+                        long uid = Convert.ToInt64(uidObj);
+                        customer = db.Customers.FirstOrDefault(x => x.UserID == uid);
+                    }
+
+                    //strToEmailslist.Add("b.trivedi@camindustrial.net");
+                    strToEmailslist.Add("nirav.m@siliconinfo.com");
                     db.TrainingTechnicalTalks.Add(new TrainingTechnicalTalk
                     {
                         CustomerID = customer != null && customer.CustomerId > 0 ? customer.CustomerId : (long?)null,
@@ -20444,6 +22723,7 @@ namespace CamV4.Helper
                         ModifiedDate = DateTime.Now
                     });
                     db.SaveChanges();
+
                     if (customer != null)
                     {
                         strCCEmailslist.Add(customer.CustomerEmail);
@@ -20469,28 +22749,70 @@ namespace CamV4.Helper
                         strMSG += "<br/>";
                         strMSG += "<p>Please review the question and provide your response through the admin panel.</p>";
                         strMSG += "</div></div><br/><br/><div><div>";
-                        strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7b7b7b'>Best regards,</span></b></p>";
-                        strMSG += "<br/>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab'>cam|</span></b><b>";
-                        strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e'>industrial</span></b></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab'>20 7095 64 Street SE |</span></b>";
-                        strMSG += "<b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e'>Calgary, AB, T2C 5C3</span></b></p>";
-                        strMSG += "<br/>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;color:#005aab'>E ~ </span></b>";
-                        strMSG += "<span style='font-size:8.0pt;color:#454545'><a href='mailto:b.trivedi@camindustrial.net'>b.trivedi@camindustrial.net</a></span></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;color:#005aab'>C ~</span></b>";
-                        strMSG += "<span style='font-size:8.0pt;color:#7f7d7e'>(403) 690-2976</span></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;color:#005aab'>D ~</span></b>";
-                        strMSG += "<span style='font-size:8.0pt;color:#7f7d7e'>(587) 355-1346</span></p>";
-                        strMSG += "<p><b><span style='font-size:8.0pt;color:#005aab'>F ~</span></b>";
-                        strMSG += "<span style='font-size:8.0pt;color:#7f7d7e'>(403) 720-7074</span></p>";
-                        strMSG += "<br/>";
-                        strMSG += "<p><img style='width:2.618in;height:.6458in' src='https://rack-manager.com/img/sigimg.png' /></p>";
+                        strMSG += "<table cellpadding='0' cellspacing='0' border='0' style='border-collapse:collapse; font-family:Verdana, sans-serif;'>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:10px 0 10px 0;'>";
+                        strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#7b7b7b; font-weight:bold;'>Best regards,</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 1px 0;'>";
+                        strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>Bhavik Trivedi </span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab;'>P.Eng, ing., M.Tech, PMP</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 18px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Engineering Manager</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>cam</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'> | industrial</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 12px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>20 7095 64 Street SE | </span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Calgary, AB, T2C 5C3</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>E&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank' style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold; text-decoration:underline;'>b.trivedi@camindustrial.net</a>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>C&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 690-2976</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 2px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>D&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(587) 355-1346</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0 0 10px 0;'>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>F&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                        strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 720-7074</span>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "<tr>";
+                        strMSG += "<td style='padding:0;'>";
+                        strMSG += "<img src='https://rack-manager.com/img/sigimg.png' alt='cam industrial' width='251' height='62' border='0' style='display:block; width:251px; height:62px;'>";
+                        strMSG += "</td>";
+                        strMSG += "</tr>";
+                        strMSG += "</table>";
                         strMSG += "</div></div></div>";
                         strMSG += "</body>";
                         strMSG += "</html>";
                         //"b.trivedi@camindustrial.net"
-                        var tEmailCust = new Thread(() => EmailHelper.SendEmail("b.trivedi@camindustrial.net", "New Question Submitted by " + customer.CustomerName + " - Action Required", null, strMSG, strCCEmailslist, null));
+                        var tEmailCust = new Thread(() => EmailHelper.SendEmail(strToEmailslist, "New Question Submitted by " + customer.CustomerName + " - Action Required", null, strMSG, strCCEmailslist, null));
                         tEmailCust.Start();
                     }
                     return "Ok";
@@ -20524,7 +22846,7 @@ namespace CamV4.Helper
 
                     string au = TC_AuditUser();
                     t.Answer = answer.Trim();
-                    t.IsPublished = true;          // now visible in FAQ list for all customers
+                    t.IsPublished = false;          // now visible in FAQ list for all customers
                     t.ModifiedBy = au;
                     t.ModifiedDate = DateTime.Now;
                     db.SaveChanges();
@@ -20554,8 +22876,23 @@ namespace CamV4.Helper
         {
             try
             {
+                List<EmployeeViewModel> objAdminList = new List<EmployeeViewModel>();
+                List<string> strToEmailslist = new List<string>();
                 List<string> strCCEmailslist = new List<string>();
-                strCCEmailslist.Add("b.trivedi@camindustrial.net");
+                strToEmailslist.Add(customer.CustomerEmail);
+
+                objAdminList = DatabaseHelper.GetAllCAMAdmin();
+                if (objAdminList != null && objAdminList.Count != 0)
+                {
+                    foreach (var pm in objAdminList)
+                    {
+                        if (!string.IsNullOrWhiteSpace(pm.EmployeeEmail))
+                        {
+                            strCCEmailslist.Add(pm.EmployeeEmail);
+                        }
+                    }
+                }
+                strCCEmailslist.Add("nirav.m@siliconinfo.com");
                 string strMSG = "";
                 strMSG = "<html>";
                 strMSG += "<head><style>p{margin:0px}</style></head>";
@@ -20575,27 +22912,69 @@ namespace CamV4.Helper
                 strMSG += "<p>You can also view the full Q&amp;A in the Community FAQ section of your portal.</p>";
                 strMSG += "</div>";
                 strMSG += "<div><br/><br/>";
-                strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7b7b7b'>Best regards,</span></b></p>";
-                strMSG += "<br/>";
-                strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab'>cam|</span></b>";
-                strMSG += "<b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e'>industrial</span></b></p>";
-                strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab'>20 7095 64 Street SE |</span></b>";
-                strMSG += "<b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e'>Calgary, AB, T2C 5C3</span></b></p>";
-                strMSG += "<br/>";
-                strMSG += "<p><b><span style='font-size:8.0pt;color:#005aab'>E ~ </span></b>";
-                strMSG += "<span style='font-size:8.0pt;color:#454545'><a href='mailto:b.trivedi@camindustrial.net'>b.trivedi@camindustrial.net</a></span></p>";
-                strMSG += "<p><b><span style='font-size:8.0pt;color:#005aab'>C ~</span></b>";
-                strMSG += "<span style='font-size:8.0pt;color:#7f7d7e'>(403) 690-2976</span></p>";
-                strMSG += "<p><b><span style='font-size:8.0pt;color:#005aab'>D ~</span></b>";
-                strMSG += "<span style='font-size:8.0pt;color:#7f7d7e'>(587) 355-1346</span></p>";
-                strMSG += "<p><b><span style='font-size:8.0pt;color:#005aab'>F ~</span></b>";
-                strMSG += "<span style='font-size:8.0pt;color:#7f7d7e'>(403) 720-7074</span></p>";
-                strMSG += "<br/>";
-                strMSG += "<p><img style='width:2.618in;height:.6458in' src='https://rack-manager.com/img/sigimg.png' /></p>";
+                strMSG += "<table cellpadding='0' cellspacing='0' border='0' style='border-collapse:collapse; font-family:Verdana, sans-serif;'>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:10px 0 10px 0;'>";
+                strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#7b7b7b; font-weight:bold;'>Best regards,</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 1px 0;'>";
+                strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>Bhavik Trivedi </span>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab;'>P.Eng, ing., M.Tech, PMP</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 18px 0;'>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Engineering Manager</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 2px 0;'>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>cam</span>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'> | industrial</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 12px 0;'>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>20 7095 64 Street SE | </span>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Calgary, AB, T2C 5C3</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 2px 0;'>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>E&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                strMSG += "<a href='mailto:b.trivedi@camindustrial.net' target='_blank' style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold; text-decoration:underline;'>b.trivedi@camindustrial.net</a>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 2px 0;'>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>C&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 690-2976</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 2px 0;'>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>D&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(587) 355-1346</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 10px 0;'>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>F&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 720-7074</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0;'>";
+                strMSG += "<img src='https://rack-manager.com/img/sigimg.png' alt='cam industrial' width='251' height='62' border='0' style='display:block; width:251px; height:62px;'>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "</table>";
                 strMSG += "</div>";
                 strMSG += "</body></html>";
 
-                var tEmail = new System.Threading.Thread(() => EmailHelper.SendEmail(customer.CustomerEmail, "Your Question Has Been Answered - Rack Manager", null, strMSG, strCCEmailslist, null));
+                var tEmail = new System.Threading.Thread(() => EmailHelper.SendEmail(strToEmailslist, "Your Question Has Been Answered - Rack Manager", null, strMSG, strCCEmailslist, null));
                 tEmail.Start();
             }
             catch
@@ -20768,19 +23147,27 @@ namespace CamV4.Helper
         public static List<GetInspectionListing_Result> GetInspectionListing(long userId, InspectionFilterModel filters)
         {
             userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+
             using (var db = new DatabaseEntities())
             {
+                filters = filters ?? new InspectionFilterModel();
+
                 string statusIds = null;
 
+                if (filters.SelectedStatusIds != null && filters.SelectedStatusIds.Any())
+                    statusIds = string.Join(",", filters.SelectedStatusIds);
 
-                if (filters.SelectedStatusIds != null &&
-                    filters.SelectedStatusIds.Any())
-                {
-                    statusIds = string.Join(",",
-                        filters.SelectedStatusIds);
-                }
-                return db.GetInspectionListing(userId, filters.InspectionTypeId, filters.Region, filters.ProvinceId, filters.CityId, filters.CustomerLocationId, filters.CustomerFacilityId, filters.CustomerAreaId, statusIds).ToList();
-
+                return db.GetInspectionListing(
+                    userId,
+                    filters.InspectionTypeId,
+                    filters.Region,
+                    filters.ProvinceId,
+                    filters.CityId,
+                    filters.CustomerLocationId,
+                    filters.CustomerFacilityId,
+                    filters.CustomerAreaId,
+                    statusIds
+                ).ToList();
             }
         }
 
@@ -20841,6 +23228,782 @@ namespace CamV4.Helper
                     .ToList();
             }
         }
+        #endregion
+
+        #region "Sales Person Area Fuction "
+
+        internal static List<GetInspectionListing_Result> GetSalesInspectionListing(InspectionFilterModel filters)
+        {
+            try
+            {
+                long userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    // Get logged in Sales Rep
+                    var employee = db.Employees.AsNoTracking()
+                        .FirstOrDefault(x => x.UserID == userId);
+
+                    if (employee == null)
+                        return new List<GetInspectionListing_Result>();
+
+                    // All customers assigned to this Sales Rep
+                    var customerIds = db.Customers.AsNoTracking()
+                        .Where(x => x.SalesRepresentativeId == employee.EmployeeID)
+                        .Select(x => x.CustomerId)
+                        .ToList();
+
+                    if (!customerIds.Any())
+                        return new List<GetInspectionListing_Result>();
+
+                    var data = (
+                    from i in db.Inspections
+                    join cl in db.CustomerLocations
+                        on i.CustomerLocationId equals cl.CustomerLocationID
+                    join it in db.InspectionTypes
+                        on i.InspectionType equals it.InspectionTypeCode into itJoin
+                    from it in itJoin.DefaultIfEmpty()
+
+                    join st in db.InspectionStatus
+                        on i.InspectionStatus equals st.InspectionStatusId into stJoin
+                    from st in stJoin.DefaultIfEmpty()
+
+                    join cf in db.CustomerFacilities
+                        on i.CustomerFacilityID equals cf.CustomerFacilityID into cfJoin
+                    from cf in cfJoin.DefaultIfEmpty()
+
+                    join ca in db.CustomerAreas
+                        on i.CustomerAreaID equals ca.AreaID into caJoin
+                    from ca in caJoin.DefaultIfEmpty()
+
+                    join emp in db.Employees
+                        on i.EmployeeId equals emp.EmployeeID into empJoin
+                    from emp in empJoin.DefaultIfEmpty()
+
+                    where i.IsActive == true &&
+                            customerIds.Contains(i.CustomerId)
+
+                    select new
+                    {
+                        i,
+                        cl,
+                        it,
+                        st,
+                        cf,
+                        ca,
+                        emp
+                    }).ToList();
+
+                    var inspections = data.Select(x => new GetInspectionListing_Result
+                    {
+                        InspectionId = x.i.InspectionId,
+                        InspectionDocumentNo = x.i.InspectionDocumentNo,
+                        InspectionDocumentNoRef = x.i.InspectionDocumentNoRef,
+
+                        InspectionType = x.i.InspectionType,
+                        InspectionTypeName = x.it?.InspectionTypeName,
+
+                        InspectionDate = x.i.InspectionDate,
+                        ReportDate = x.i.Reportdate,
+
+                        InspectionStatus = x.i.InspectionStatus,
+                        InspectionStatusName = x.st?.InspectionStatus,
+
+                        InspectionStartedOn = x.i.InspectionStartedOn,
+                        InspectionEndOn = x.i.InspectionEndOn,
+
+                        CustomerId = x.i.CustomerId,
+
+                        CustomerLocationId = x.i.CustomerLocationId,
+                        LocationName = x.cl.LocationName,
+
+                        CustomerFacilityID = x.i.CustomerFacilityID,
+                        FacilityName = x.cf?.FacilityName,
+
+                        CustomerAreaID = x.i.CustomerAreaID,
+                        AreaName = x.ca?.AreaName,
+
+                        Region = x.cl.Region,
+                        ProvinceID = x.cl.ProvinceID,
+                        CityID = x.cl.CityID,
+
+                        EmployeeName = x.emp?.EmployeeName,
+                        InspectionPDFPath = x.i.InspectionPDFPath,
+                        CreatedDate = x.i.CreatedDate
+                    }).ToList();
+
+                    // Apply Filters
+                    if (!string.IsNullOrWhiteSpace(filters?.InspectionTypeId))
+                    {
+                        string inspectionType = filters.InspectionTypeId.Trim();
+
+                        inspections = inspections
+                            .Where(x =>
+                                string.Equals(
+                                    (x.InspectionType ?? "").Trim(),
+                                    inspectionType,
+                                    StringComparison.OrdinalIgnoreCase))
+                            .ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(filters?.Region))
+                        inspections = inspections.Where(x => x.Region == filters.Region).ToList();
+
+                    if ((filters?.ProvinceId ?? 0) > 0)
+                        inspections = inspections.Where(x => x.ProvinceID == filters.ProvinceId).ToList();
+
+                    if ((filters?.CityId ?? 0) > 0)
+                        inspections = inspections.Where(x => x.CityID == filters.CityId).ToList();
+
+                    if ((filters?.CustomerLocationId ?? 0) > 0)
+                        inspections = inspections.Where(x => x.CustomerLocationId == filters.CustomerLocationId).ToList();
+
+                    if ((filters?.CustomerFacilityId ?? 0) > 0)
+                        inspections = inspections.Where(x => x.CustomerFacilityID == filters.CustomerFacilityId).ToList();
+
+                    if ((filters?.CustomerAreaId ?? 0) > 0)
+                        inspections = inspections.Where(x => x.CustomerAreaID == filters.CustomerAreaId).ToList();
+
+                    if (filters?.SelectedStatusIds != null && filters.SelectedStatusIds.Any())
+                        inspections = inspections.Where(x => filters.SelectedStatusIds.Contains(x.InspectionStatus)).ToList();
+
+                    return inspections.OrderBy(x => x.InspectionStatus).ThenBy(x => x.CustomerId).ThenByDescending(x => x.InspectionDate).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                return new List<GetInspectionListing_Result>();
+            }
+        }
+
+        //internal static List<CustomerLocationHistoryLegacyFileListing> GetSalesDocumentsWithFilters(FilterFilesModel filters)
+        //{
+        //    try
+        //    {
+        //        using (DatabaseEntities db = new DatabaseEntities())
+        //        {
+        //            List<CustomerLocationHistoryLegacyFileListing> lstResult =
+        //                new List<CustomerLocationHistoryLegacyFileListing>();
+
+        //            long userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+        //            if (userId == 0)
+        //                return lstResult;
+
+        //            string host = new Uri(HttpContext.Current.Request.Url.AbsoluteUri)
+        //                .GetLeftPart(UriPartial.Authority);
+
+        //            // Logged in Sales Rep
+        //            var employee = db.Employees.FirstOrDefault(x => x.UserID == userId);
+        //            if (employee == null)
+        //                return lstResult;
+
+        //            // Customers assigned to Sales Rep
+        //            var customerIds = db.Customers
+        //                .Where(x => x.SalesRepresentativeId == employee.EmployeeID)
+        //                .Select(x => x.CustomerId)
+        //                .ToList();
+
+        //            if (!customerIds.Any())
+        //                return lstResult;
+
+        //            // Filters
+        //            int inspectionDocs = (filters != null && filters.InspectionDocs) ? 1 : 0;
+        //            int historyDocs = (filters != null && filters.HistoricalDocs) ? 1 : 0;
+
+        //            int provinceId = filters?.Province ?? 0;
+        //            int cityId = filters?.City ?? 0;
+        //            string region = filters?.Region;
+
+        //            long locationId = filters?.CustomerLocationId ?? 0;
+        //            long facilityId = filters?.CustomerFacilityId ?? 0;
+        //            long areaId = filters?.CustomerAreaId ?? 0;
+
+        //            string documentTypes = null;
+        //            if (filters?.DocumentTypeList != null && filters.DocumentTypeList.Any())
+        //                documentTypes = string.Join(",", filters.DocumentTypeList);
+
+        //            // Load documents for each assigned customer
+        //            foreach (var customerId in customerIds)
+        //            {
+        //                var documents = db.GetCustomerDocumentsWithWithoutFilters(
+        //                    customerId,
+        //                    inspectionDocs,
+        //                    historyDocs,
+        //                    provinceId,
+        //                    region,
+        //                    cityId,
+        //                    locationId,
+        //                    facilityId,
+        //                    areaId,
+        //                    documentTypes).ToList();
+
+        //                foreach (var d in documents)
+        //                {
+        //                    var location = db.CustomerLocations
+        //                        .FirstOrDefault(x => x.CustomerLocationID == d.CustomerLocationId);
+
+        //                    var facility = d.CustomerFacilityId.HasValue
+        //                        ? db.CustomerFacilities.FirstOrDefault(x => x.CustomerFacilityID == d.CustomerFacilityId.Value)
+        //                        : null;
+
+        //                    var area = d.CustomerAreaId.HasValue
+        //                        ? db.CustomerAreas.FirstOrDefault(x => x.AreaID == d.CustomerAreaId.Value)
+        //                        : null;
+
+        //                    lstResult.Add(new CustomerLocationHistoryLegacyFileListing
+        //                    {
+        //                        InspectionDocumentNo = d.InspectionDocumentNo,
+        //                        Region = d.Region,
+        //                        FileDrawingName = d.CustFilename,
+        //                        FileDrawingPath = host + d.CustFilePath,
+        //                        FileCategory = d.CustFileCategory,
+        //                        CustomerLocationID = d.CustomerLocationId,
+
+        //                        CustomerLocationName =
+        //                            (location != null ? location.LocationName : "") +
+        //                            (facility != null ? ", " + facility.FacilityName : "") +
+        //                            (area != null ? ", " + area.AreaName : "")
+        //                    });
+        //                }
+        //            }
+
+        //            return lstResult
+        //                .OrderByDescending(x => x.InspectionDocumentNo)
+        //                .ThenBy(x => x.CustomerLocationName)
+        //                .ToList();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        System.Diagnostics.Debug.WriteLine(ex.ToString());
+        //        return new List<CustomerLocationHistoryLegacyFileListing>();
+        //    }
+        //}
+
+        internal static List<CustomerLocationHistoryLegacyFileListing> GetSalesDocumentsWithFilters(FilterFilesModel filters)
+        {
+            try
+            {
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    List<CustomerLocationHistoryLegacyFileListing> lstResult =
+                        new List<CustomerLocationHistoryLegacyFileListing>();
+
+                    long userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+                    if (userId == 0)
+                        return lstResult;
+
+                    string host = new Uri(HttpContext.Current.Request.Url.AbsoluteUri)
+                        .GetLeftPart(UriPartial.Authority);
+
+                    // Logged in Sales Rep
+                    var employee = db.Employees.FirstOrDefault(x => x.UserID == userId);
+                    if (employee == null)
+                        return lstResult;
+
+                    // Customers assigned to Sales Rep
+                    var customerIds = db.Customers
+                        .Where(x => x.SalesRepresentativeId == employee.EmployeeID)
+                        .Select(x => x.CustomerId)
+                        .ToList();
+
+                    if (!customerIds.Any())
+                        return lstResult;
+
+                    // Filters
+                    int inspectionDocs = (filters != null && filters.InspectionDocs) ? 1 : 0;
+                    int historyDocs = (filters != null && filters.HistoricalDocs) ? 1 : 0;
+
+                    int provinceId = filters?.Province ?? 0;
+                    int cityId = filters?.City ?? 0;
+                    string region = filters?.Region;
+
+                    long locationId = filters?.CustomerLocationId ?? 0;
+                    long facilityId = filters?.CustomerFacilityId ?? 0;
+                    long areaId = filters?.CustomerAreaId ?? 0;
+
+                    string documentTypes = null;
+                    if (filters?.DocumentTypeList != null && filters.DocumentTypeList.Any())
+                        documentTypes = string.Join(",", filters.DocumentTypeList);
+
+                    // Load documents for each assigned customer
+                    // Load documents for each assigned customer
+                    foreach (var customerId in customerIds)
+                    {
+                        var customer = db.Customers
+                            .FirstOrDefault(x => x.CustomerId == customerId);
+
+                        var documents = db.GetCustomerDocumentsLFAWithWithoutFilters(
+                            customerId,
+                            inspectionDocs,
+                            historyDocs,
+                            provinceId,
+                            region,
+                            cityId,
+                            locationId,
+                            facilityId,
+                            areaId,
+                            documentTypes
+                        ).ToList();
+
+                        foreach (var d in documents)
+                        {
+                            var location = db.CustomerLocations
+                                .FirstOrDefault(x => x.CustomerLocationID == d.CustomerLocationId);
+
+                            var facility = d.CustomerFacilityId.HasValue
+                                ? db.CustomerFacilities.FirstOrDefault(x => x.CustomerFacilityID == d.CustomerFacilityId.Value)
+                                : null;
+
+                            var area = d.CustomerAreaId.HasValue
+                                ? db.CustomerAreas.FirstOrDefault(x => x.AreaID == d.CustomerAreaId.Value)
+                                : null;
+
+                            lstResult.Add(new CustomerLocationHistoryLegacyFileListing
+                            {
+                                CustomerName = customer?.CustomerName,
+                                InspectionDocumentNo = d.InspectionDocumentNo,
+                                Region = d.Region,
+                                FileDrawingName = d.CustFilename,
+                                FileDrawingPath = host + d.CustFilePath,
+                                FileCategory = d.CustFileCategory,
+                                CustomerLocationID = d.CustomerLocationId,
+                                CustomerLocationName = string.Join(", ", new[] { area?.AreaName, facility?.FacilityName, location?.LocationName }.Where(x => !string.IsNullOrWhiteSpace(x)))
+                            });
+                        }
+                    }
+
+                    return lstResult
+                        .OrderByDescending(x => x.InspectionDocumentNo)
+                        .ThenBy(x => x.CustomerLocationName)
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                return new List<CustomerLocationHistoryLegacyFileListing>();
+            }
+        }
+        internal static List<IncidentViewModel> GetSalesIncidentListing(FilterCustomerModel filters)
+        {
+            try
+            {
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    List<IncidentViewModel> listResult = new List<IncidentViewModel>();
+
+                    long userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+
+                    // Logged in Sales Representative
+                    var employee = db.Employees.FirstOrDefault(x => x.UserID == userId);
+
+                    if (employee == null)
+                        return listResult;
+
+                    // Customers assigned to Sales Rep
+                    var customerIds = db.Customers
+                        .Where(x => x.SalesRepresentativeId == employee.EmployeeID)
+                        .Select(x => x.CustomerId)
+                        .ToList();
+
+                    if (!customerIds.Any())
+                        return listResult;
+
+                    var incidents = (
+    from i in db.IncidentReports
+
+    join cl in db.CustomerLocations
+        on i.CustomerLocationId equals cl.CustomerLocationID
+
+    join cf in db.CustomerFacilities
+        on i.CustomerFacilityID equals cf.CustomerFacilityID into cfJoin
+    from cf in cfJoin.DefaultIfEmpty()
+
+    join ca in db.CustomerAreas
+        on i.CustomerAreaID equals ca.AreaID into caJoin
+    from ca in caJoin.DefaultIfEmpty()
+
+    where i.CustomerId.HasValue &&
+          customerIds.Contains(i.CustomerId.Value)
+
+    select new
+    {
+        i,
+        cl,
+        cf,
+        ca
+    }).ToList();
+
+                    listResult = incidents.Select(x => new IncidentViewModel
+                    {
+                        IncidentReportId = x.i.IncidentReportId,
+                        IncidentNumber = x.i.IncidentNumber,
+                        IncidentReportedBy = x.i.IncidentReportedBy,
+                        IncidentType = x.i.IncidentType,
+                        IncidentDate = x.i.IncidentDate,
+
+                        CustomerId = x.i.CustomerId ?? 0,
+                        CustomerLocationId = x.i.CustomerLocationId,
+
+                        CustomerFacilityID = x.i.CustomerFacilityID,
+                        CustomerAreaID = x.i.CustomerAreaID,
+
+                        LocationName = x.cl.LocationName,
+                        FacilityName = x.cf != null ? x.cf.FacilityName : "",
+                        AreaName = x.ca != null ? x.ca.AreaName : "",
+
+                        Region = x.cl.Region,
+                        ProvinceID = x.cl.ProvinceID,
+                        CityID = x.cl.CityID,
+
+                        IncidentSummary = x.i.IncidentSummary,
+                        CreatedDate = x.i.CreatedDate
+                    }).ToList();
+
+                    // -------------------------
+                    // Apply Filters
+                    // -------------------------
+
+                    if (!string.IsNullOrWhiteSpace(filters?.Region))
+                        listResult = listResult.Where(x => x.Region == filters.Region).ToList();
+
+                    if ((filters?.Province ?? 0) > 0)
+                        listResult = listResult.Where(x => x.ProvinceID == filters.Province).ToList();
+
+                    if ((filters?.City ?? 0) > 0)
+                        listResult = listResult.Where(x => x.CityID == filters.City).ToList();
+
+                    if ((filters?.CustomerLocationId ?? 0) > 0)
+                        listResult = listResult.Where(x => x.CustomerLocationId == filters.CustomerLocationId).ToList();
+
+                    if ((filters?.CustomerFacilityId ?? 0) > 0)
+                        listResult = listResult.Where(x => x.CustomerFacilityID == filters.CustomerFacilityId).ToList();
+
+                    if ((filters?.CustomerAreaId ?? 0) > 0)
+                        listResult = listResult.Where(x => x.CustomerAreaID == filters.CustomerAreaId).ToList();
+
+                    if (!string.IsNullOrWhiteSpace(filters?.IncidentType))
+                        listResult = listResult.Where(x => x.IncidentType == filters.IncidentType).ToList();
+
+                    return listResult
+                        .OrderByDescending(x => x.IncidentDate)
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                return new List<IncidentViewModel>();
+            }
+        }
+
+        internal static List<InternalInspectionViewModel> GetSalesInternalInspections(long? customerLocationId = null, long? customerFacilityId = null, long? customerAreaId = null, string region = null)
+        {
+            try
+            {
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    long userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+
+                    // Logged in Sales Representative
+                    var employee = db.Employees.FirstOrDefault(x => x.UserID == userId);
+
+                    if (employee == null)
+                        return new List<InternalInspectionViewModel>();
+
+                    // Assigned customers
+                    var customerIds = db.Customers
+                        .Where(x => x.SalesRepresentativeId == employee.EmployeeID)
+                        .Select(x => x.CustomerId)
+                        .ToList();
+
+                    if (!customerIds.Any())
+                        return new List<InternalInspectionViewModel>();
+
+                    var query = db.InternalInspections.Where(i =>
+                        i.IsActive == true &&
+                        customerIds.Contains(i.CustomerID));
+
+                    if (customerLocationId.HasValue && customerLocationId.Value > 0)
+                        query = query.Where(i => i.CustomerLocationID == customerLocationId.Value);
+
+                    if (customerFacilityId.HasValue && customerFacilityId.Value > 0)
+                        query = query.Where(i => i.CustomerFacilityID == customerFacilityId.Value);
+
+                    if (customerAreaId.HasValue && customerAreaId.Value > 0)
+                        query = query.Where(i => i.CustomerAreaID == customerAreaId.Value);
+
+                    var list = BuildInspectionList(db, query, null, null);
+
+                    if (!string.IsNullOrWhiteSpace(region))
+                    {
+                        list = list.Where(x => x.Region == region).ToList();
+                    }
+
+                    return list
+                        .OrderByDescending(x => x.CreatedDate)
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("GetSalesInternalInspections");
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+
+                return new List<InternalInspectionViewModel>();
+            }
+        }
+
+        internal static List<InventoryFileDto> GetSalesInventoryFilesFiltered(InventoryFilterDto filter)
+        {
+            try
+            {
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    long userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+
+                    var employee = db.Employees.FirstOrDefault(x => x.UserID == userId);
+                    if (employee == null)
+                        return new List<InventoryFileDto>();
+
+                    // Customers assigned to this Sales Rep
+                    var customerIds = db.Customers
+                        .Where(x => x.SalesRepresentativeId == employee.EmployeeID)
+                        .Select(x => x.CustomerId)
+                        .ToList();
+
+                    if (!customerIds.Any())
+                        return new List<InventoryFileDto>();
+
+                    var query = db.InventoryFiles
+                        .Where(f => f.IsActive && customerIds.Contains(f.CustomerId));
+
+                    // Location
+                    if (filter?.LocationID > 0)
+                        query = query.Where(f => f.CustomerLocationID == filter.LocationID);
+
+                    // Facility
+                    if (filter?.FacilityID > 0)
+                        query = query.Where(f => f.CustomerFacilityID == filter.FacilityID);
+
+                    // Area
+                    if (filter?.AreaID > 0)
+                        query = query.Where(f => f.AreaID == filter.AreaID);
+
+                    // Status
+                    if (!string.IsNullOrWhiteSpace(filter?.Status))
+                        query = query.Where(f => f.Status == filter.Status);
+
+                    // Region / Province / City
+                    if (!string.IsNullOrWhiteSpace(filter?.Region))
+                    {
+                        var ids = db.CustomerLocations
+                            .Where(x => x.Region == filter.Region)
+                            .Select(x => x.CustomerLocationID)
+                            .ToList();
+
+                        query = query.Where(f => ids.Contains(f.CustomerLocationID));
+                    }
+                    else if (filter?.ProvinceID > 0)
+                    {
+                        var ids = db.CustomerLocations
+                            .Where(x => x.ProvinceID == filter.ProvinceID)
+                            .Select(x => x.CustomerLocationID)
+                            .ToList();
+
+                        query = query.Where(f => ids.Contains(f.CustomerLocationID));
+                    }
+                    else if (filter?.CityID > 0)
+                    {
+                        var ids = db.CustomerLocations
+                            .Where(x => x.CityID == filter.CityID)
+                            .Select(x => x.CustomerLocationID)
+                            .ToList();
+
+                        query = query.Where(f => ids.Contains(f.CustomerLocationID));
+                    }
+
+                    var raw = (from f in query
+                               join loc in db.CustomerLocations
+                                   on f.CustomerLocationID equals loc.CustomerLocationID
+                               join fac in db.CustomerFacilities
+                                   on f.CustomerFacilityID equals fac.CustomerFacilityID into facJ
+                               from fac in facJ.DefaultIfEmpty()
+                               join ar in db.CustomerAreas
+                                   on f.AreaID equals ar.AreaID into arJ
+                               from ar in arJ.DefaultIfEmpty()
+                               orderby f.CreatedDate descending
+                               select new
+                               {
+                                   f.InventoryFileId,
+                                   f.InventoryDocumentName,
+                                   loc.LocationName,
+                                   loc.Region,
+                                   f.CustomerLocationID,
+                                   f.CustomerFacilityID,
+                                   FacilityName = fac != null ? fac.FacilityName : "",
+                                   f.AreaID,
+                                   AreaName = ar != null ? ar.AreaName : "",
+                                   f.RowCount,
+                                   f.FileSizeBytes,
+                                   f.CreatedBy,
+                                   f.CreatedDate,
+                                   f.ModifiedDate,
+                                   f.Status,
+                                   f.Description
+                               }).ToList();
+
+                    var result = raw.Select(x => new InventoryFileDto
+                    {
+                        FileID = x.InventoryFileId,
+                        FileName = x.InventoryDocumentName,
+                        LocationName = x.LocationName,
+                        Region = x.Region,
+                        LocationID = x.CustomerLocationID,
+                        FacilityID = x.CustomerFacilityID,
+                        FacilityName = x.FacilityName,
+                        AreaID = x.AreaID,
+                        AreaName = x.AreaName,
+                        RowCount = x.RowCount,
+                        FileSize = FormatFileSize(x.FileSizeBytes),
+                        UploadedBy = x.CreatedBy,
+                        UploadDate = x.CreatedDate.ToString("MMM d, yyyy"),
+                        UpdatedAt = (x.ModifiedDate ?? x.CreatedDate).ToString("MMM d, yyyy HH:mm"),
+                        Status = x.Status,
+                        Description = x.Description
+                    }).ToList();
+
+                    if (!string.IsNullOrWhiteSpace(filter?.Search))
+                    {
+                        string s = filter.Search.ToLower();
+
+                        result = result.Where(x =>
+                            (x.FileName ?? "").ToLower().Contains(s) ||
+                            (x.LocationName ?? "").ToLower().Contains(s) ||
+                            (x.FacilityName ?? "").ToLower().Contains(s) ||
+                            (x.AreaName ?? "").ToLower().Contains(s))
+                            .ToList();
+                    }
+
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                return new List<InventoryFileDto>();
+            }
+        }
+
+        internal static List<TrainingCourseViewModel> TC_GetSalesCourses()
+        {
+            return TC_GetAllCourses(true);
+        }
+
+        internal static TrainingCourseViewModel TC_GetSalesCourseById(long id)
+        {
+            return TC_GetAllCourses(false).FirstOrDefault(x => x.TrainingCourseID == id);
+        }
+
+        internal static List<TrainingWebinarViewModel> TC_GetSalesWebinars()
+        {
+            return TC_GetAllWebinars(true);
+        }
+
+        internal static TrainingWebinarViewModel TC_GetSalesWebinarById(long id)
+        {
+            return TC_GetAllWebinars(false).FirstOrDefault(x => x.TrainingWebinarID == id);
+        }
+
+        internal static List<TrainingBlogViewModel> TC_GetSalesBlogs()
+        {
+            return TC_GetAllBlogs(true);
+        }
+
+        internal static TrainingBlogViewModel TC_GetSalesBlogById(long id)
+        {
+            return TC_GetAllBlogs(false).FirstOrDefault(x => x.TrainingBlogID == id);
+        }
+
+        internal static List<TrainingTechnicalTalkViewModel> TC_GetSalesTechnicalTalks()
+        {
+            return TC_GetPublishedTalksAll();
+        }
+
+        internal static TrainingTechnicalTalkViewModel TC_GetSalesTechnicalTalkById(long id)
+        {
+            return TC_GetPublishedTalksAll().FirstOrDefault(x => x.TrainingTechnicalTalkID == id);
+        }
+
+        internal static List<TrainingRegistrationViewModel> TC_GetSalesRegistrations()
+        {
+            try
+            {
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    long userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+
+                    var employee = db.Employees.FirstOrDefault(x => x.UserID == userId);
+                    if (employee == null)
+                        return new List<TrainingRegistrationViewModel>();
+
+                    var customerIds = db.Customers
+                        .Where(x => x.SalesRepresentativeId == employee.EmployeeID)
+                        .Select(x => x.CustomerId)
+                        .ToList();
+
+                    if (!customerIds.Any())
+                        return new List<TrainingRegistrationViewModel>();
+
+                    // Reuse existing method and filter by assigned customers
+                    return TC_GetAllRegistrations()
+                        .Where(x => customerIds.Contains(x.CustomerID))
+                        .OrderByDescending(x => x.CreatedDate)
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                return new List<TrainingRegistrationViewModel>();
+            }
+        }
+        internal static TrainingRegistrationViewModel TC_GetSalesRegistrationById(long id)
+        {
+            try
+            {
+                using (DatabaseEntities db = new DatabaseEntities())
+                {
+                    long userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
+
+                    var employee = db.Employees.FirstOrDefault(x => x.UserID == userId);
+                    if (employee == null)
+                        return null;
+
+                    var customerIds = db.Customers
+                        .Where(x => x.SalesRepresentativeId == employee.EmployeeID)
+                        .Select(x => x.CustomerId)
+                        .ToList();
+
+                    var registration = TC_GetRegistrationById(id);
+
+                    if (registration == null)
+                        return null;
+
+                    return customerIds.Contains(registration.CustomerID)
+                        ? registration
+                        : null;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                return null;
+            }
+        }
+
         #endregion
 
         #region "Spare Material "       
@@ -21120,6 +24283,158 @@ namespace CamV4.Helper
                     Status = f.Status,
                     Description = f.Description
                 }).ToList();
+            }
+        }
+
+        //  Filtered file listing 
+
+        public static List<InventoryFileDto> GetInventoryFilesFiltered(
+            long userId, int userType,
+            InventoryFilterDto filter,
+            long? scopedCustomerId = null)
+        {
+            using (var db = new DatabaseEntities())
+            {
+                IQueryable<CamV4.Models.InventoryFile> query =
+                    db.InventoryFiles.Where(f => f.IsActive);
+
+                // Scope: Admin locked to one customer via ManageCustomer link
+                if (scopedCustomerId.HasValue && IsInternalStaff(userType))
+                {
+                    query = query.Where(f => f.CustomerId == scopedCustomerId.Value);
+                }
+                // Scope: Customer-side user — own customer + accessible locations only
+                else if (IsCustomerUser(userType))
+                {
+                    var cid = GetCustomerIdForUser(userId);
+                    if (!cid.HasValue) return new List<InventoryFileDto>();
+
+                    // UserType 4 = Customer Admin — sees ALL files for their customer
+                    // UserType 9 = Customer User  — sees only their accessible locations
+                    if (userType == 4)
+                    {
+                        query = query.Where(f => f.CustomerId == cid.Value);
+                    }
+                    else
+                    {
+                        var locIds = GetAccessibleLocationIdsForUser(userId);
+                        query = query.Where(f =>
+                            f.CustomerId == cid.Value &&
+                            locIds.Contains(f.CustomerLocationID));
+                    }
+                }
+
+                // Apply sidebar filters
+                if (filter != null)
+                {
+                    if (filter.LocationID.HasValue && filter.LocationID > 0)
+                        query = query.Where(f => f.CustomerLocationID == filter.LocationID.Value);
+
+                    if (filter.FacilityID.HasValue && filter.FacilityID > 0)
+                        query = query.Where(f => f.CustomerFacilityID == filter.FacilityID.Value);
+
+                    if (filter.AreaID.HasValue && filter.AreaID > 0)
+                        query = query.Where(f => f.AreaID == filter.AreaID.Value);
+
+                    if (!string.IsNullOrEmpty(filter.Status))
+                        query = query.Where(f => f.Status == filter.Status);
+
+                    if (filter.CityID.HasValue && filter.CityID > 0)
+                    {
+                        var ids = db.CustomerLocations
+                            .Where(l => l.CityID == filter.CityID && l.IsActive == true)
+                            .Select(l => l.CustomerLocationID).ToList();
+                        query = query.Where(f => ids.Contains(f.CustomerLocationID));
+                    }
+                    else if (filter.ProvinceID.HasValue && filter.ProvinceID > 0)
+                    {
+                        var ids = db.CustomerLocations
+                            .Where(l => l.ProvinceID == filter.ProvinceID && l.IsActive == true)
+                            .Select(l => l.CustomerLocationID).ToList();
+                        query = query.Where(f => ids.Contains(f.CustomerLocationID));
+                    }
+
+                    if (!string.IsNullOrEmpty(filter.Region))
+                    {
+                        var ids = db.CustomerLocations
+                            .Where(l => l.Region == filter.Region && l.IsActive == true)
+                            .Select(l => l.CustomerLocationID).ToList();
+                        query = query.Where(f => ids.Contains(f.CustomerLocationID));
+                    }
+                }
+
+                //  Pull raw data first (server-side, no .ToString(format) here —
+                //    EF/LINQ-to-Entities cannot translate string-format calls
+                //    into SQL, which was the cause of the runtime error) 
+                var rawRows = (from f in query
+                               join loc in db.CustomerLocations
+                                   on f.CustomerLocationID equals loc.CustomerLocationID
+                               join fac in db.CustomerFacilities
+                                   on f.CustomerFacilityID equals fac.CustomerFacilityID into facJ
+                               from fac in facJ.DefaultIfEmpty()
+                               join ar in db.CustomerAreas
+                                   on f.AreaID equals ar.AreaID into arJ
+                               from ar in arJ.DefaultIfEmpty()
+                               orderby f.CreatedDate descending
+                               select new
+                               {
+                                   FileID = f.InventoryFileId,
+                                   FileName = f.InventoryDocumentName,
+                                   LocationName = loc.LocationName,
+                                   LocationID = loc.CustomerLocationID,
+                                   Region = loc.Region,
+                                   FacilityID = f.CustomerFacilityID,
+                                   FacilityName = fac != null ? fac.FacilityName : null,
+                                   AreaID = f.AreaID,
+                                   AreaName = ar != null ? ar.AreaName : null,
+                                   RowCount = f.RowCount,
+                                   FileSizeBytes = f.FileSizeBytes,
+                                   UploadedBy = f.CreatedBy,
+                                   CreatedDate = f.CreatedDate,
+                                   ModifiedDate = f.ModifiedDate,
+                                   Status = f.Status,
+                                   Description = f.Description
+                               }).ToList(); // <-- materialize BEFORE formatting
+
+                //  Map to DTO with string formatting now done in-memory (C#),
+                //    not inside the EF query 
+                var result = rawRows.Select(f => new InventoryFileDto
+                {
+                    FileID = f.FileID,
+                    FileName = f.FileName,
+                    LocationName = f.LocationName,
+                    LocationID = f.LocationID,
+                    Region = f.Region,
+                    FacilityID = f.FacilityID,
+                    FacilityName = f.FacilityName,
+                    AreaID = f.AreaID,
+                    AreaName = f.AreaName,
+                    RowCount = f.RowCount,
+                    FileSize = f.FileSizeBytes != null
+                        ? (f.FileSizeBytes < 1048576
+                            ? (f.FileSizeBytes / 1024).ToString() + " KB"
+                            : (f.FileSizeBytes / 1048576).ToString() + " MB")
+                        : "0 KB",
+                    UploadedBy = f.UploadedBy,
+                    UploadDate = f.CreatedDate.ToString("MMM d, yyyy"),
+                    UpdatedAt = (f.ModifiedDate ?? f.CreatedDate).ToString("MMM d, yyyy HH:mm"),
+                    Status = f.Status,
+                    Description = f.Description
+                }).ToList();
+
+                if (filter != null && !string.IsNullOrEmpty(filter.Search))
+                {
+                    var q = filter.Search.ToLower();
+                    result = result.Where(r =>
+                        (r.FileName ?? "").ToLower().Contains(q) ||
+                        (r.LocationName ?? "").ToLower().Contains(q) ||
+                        (r.FacilityName ?? "").ToLower().Contains(q) ||
+                        (r.AreaName ?? "").ToLower().Contains(q) ||
+                        (r.UploadedBy ?? "").ToLower().Contains(q)
+                    ).ToList();
+                }
+
+                return result;
             }
         }
 
@@ -21739,157 +25054,7 @@ namespace CamV4.Helper
             }
         }
 
-        //  Filtered file listing 
 
-        public static List<InventoryFileDto> GetInventoryFilesFiltered(
-            long userId, int userType,
-            InventoryFilterDto filter,
-            long? scopedCustomerId = null)
-        {
-            using (var db = new DatabaseEntities())
-            {
-                IQueryable<CamV4.Models.InventoryFile> query =
-                    db.InventoryFiles.Where(f => f.IsActive);
-
-                // Scope: Admin locked to one customer via ManageCustomer link
-                if (scopedCustomerId.HasValue && IsInternalStaff(userType))
-                {
-                    query = query.Where(f => f.CustomerId == scopedCustomerId.Value);
-                }
-                // Scope: Customer-side user — own customer + accessible locations only
-                else if (IsCustomerUser(userType))
-                {
-                    var cid = GetCustomerIdForUser(userId);
-                    if (!cid.HasValue) return new List<InventoryFileDto>();
-
-                    // UserType 4 = Customer Admin — sees ALL files for their customer
-                    // UserType 9 = Customer User  — sees only their accessible locations
-                    if (userType == 4)
-                    {
-                        query = query.Where(f => f.CustomerId == cid.Value);
-                    }
-                    else
-                    {
-                        var locIds = GetAccessibleLocationIdsForUser(userId);
-                        query = query.Where(f =>
-                            f.CustomerId == cid.Value &&
-                            locIds.Contains(f.CustomerLocationID));
-                    }
-                }
-
-                // Apply sidebar filters
-                if (filter != null)
-                {
-                    if (filter.LocationID.HasValue && filter.LocationID > 0)
-                        query = query.Where(f => f.CustomerLocationID == filter.LocationID.Value);
-
-                    if (filter.FacilityID.HasValue && filter.FacilityID > 0)
-                        query = query.Where(f => f.CustomerFacilityID == filter.FacilityID.Value);
-
-                    if (filter.AreaID.HasValue && filter.AreaID > 0)
-                        query = query.Where(f => f.AreaID == filter.AreaID.Value);
-
-                    if (!string.IsNullOrEmpty(filter.Status))
-                        query = query.Where(f => f.Status == filter.Status);
-
-                    if (filter.CityID.HasValue && filter.CityID > 0)
-                    {
-                        var ids = db.CustomerLocations
-                            .Where(l => l.CityID == filter.CityID && l.IsActive == true)
-                            .Select(l => l.CustomerLocationID).ToList();
-                        query = query.Where(f => ids.Contains(f.CustomerLocationID));
-                    }
-                    else if (filter.ProvinceID.HasValue && filter.ProvinceID > 0)
-                    {
-                        var ids = db.CustomerLocations
-                            .Where(l => l.ProvinceID == filter.ProvinceID && l.IsActive == true)
-                            .Select(l => l.CustomerLocationID).ToList();
-                        query = query.Where(f => ids.Contains(f.CustomerLocationID));
-                    }
-
-                    if (!string.IsNullOrEmpty(filter.Region))
-                    {
-                        var ids = db.CustomerLocations
-                            .Where(l => l.Region == filter.Region && l.IsActive == true)
-                            .Select(l => l.CustomerLocationID).ToList();
-                        query = query.Where(f => ids.Contains(f.CustomerLocationID));
-                    }
-                }
-
-                //  Pull raw data first (server-side, no .ToString(format) here —
-                //    EF/LINQ-to-Entities cannot translate string-format calls
-                //    into SQL, which was the cause of the runtime error) 
-                var rawRows = (from f in query
-                               join loc in db.CustomerLocations
-                                   on f.CustomerLocationID equals loc.CustomerLocationID
-                               join fac in db.CustomerFacilities
-                                   on f.CustomerFacilityID equals fac.CustomerFacilityID into facJ
-                               from fac in facJ.DefaultIfEmpty()
-                               join ar in db.CustomerAreas
-                                   on f.AreaID equals ar.AreaID into arJ
-                               from ar in arJ.DefaultIfEmpty()
-                               orderby f.CreatedDate descending
-                               select new
-                               {
-                                   FileID = f.InventoryFileId,
-                                   FileName = f.InventoryDocumentName,
-                                   LocationName = loc.LocationName,
-                                   LocationID = loc.CustomerLocationID,
-                                   Region = loc.Region,
-                                   FacilityID = f.CustomerFacilityID,
-                                   FacilityName = fac != null ? fac.FacilityName : null,
-                                   AreaID = f.AreaID,
-                                   AreaName = ar != null ? ar.AreaName : null,
-                                   RowCount = f.RowCount,
-                                   FileSizeBytes = f.FileSizeBytes,
-                                   UploadedBy = f.CreatedBy,
-                                   CreatedDate = f.CreatedDate,
-                                   ModifiedDate = f.ModifiedDate,
-                                   Status = f.Status,
-                                   Description = f.Description
-                               }).ToList(); // <-- materialize BEFORE formatting
-
-                //  Map to DTO with string formatting now done in-memory (C#),
-                //    not inside the EF query 
-                var result = rawRows.Select(f => new InventoryFileDto
-                {
-                    FileID = f.FileID,
-                    FileName = f.FileName,
-                    LocationName = f.LocationName,
-                    LocationID = f.LocationID,
-                    Region = f.Region,
-                    FacilityID = f.FacilityID,
-                    FacilityName = f.FacilityName,
-                    AreaID = f.AreaID,
-                    AreaName = f.AreaName,
-                    RowCount = f.RowCount,
-                    FileSize = f.FileSizeBytes != null
-                        ? (f.FileSizeBytes < 1048576
-                            ? (f.FileSizeBytes / 1024).ToString() + " KB"
-                            : (f.FileSizeBytes / 1048576).ToString() + " MB")
-                        : "0 KB",
-                    UploadedBy = f.UploadedBy,
-                    UploadDate = f.CreatedDate.ToString("MMM d, yyyy"),
-                    UpdatedAt = (f.ModifiedDate ?? f.CreatedDate).ToString("MMM d, yyyy HH:mm"),
-                    Status = f.Status,
-                    Description = f.Description
-                }).ToList();
-
-                if (filter != null && !string.IsNullOrEmpty(filter.Search))
-                {
-                    var q = filter.Search.ToLower();
-                    result = result.Where(r =>
-                        (r.FileName ?? "").ToLower().Contains(q) ||
-                        (r.LocationName ?? "").ToLower().Contains(q) ||
-                        (r.FacilityName ?? "").ToLower().Contains(q) ||
-                        (r.AreaName ?? "").ToLower().Contains(q) ||
-                        (r.UploadedBy ?? "").ToLower().Contains(q)
-                    ).ToList();
-                }
-
-                return result;
-            }
-        }
 
         //  Excel import  (ClosedXML — free MIT licence) 
         // Install-Package ClosedXML
@@ -22048,11 +25213,13 @@ namespace CamV4.Helper
         {
             try
             {
+                List<string> strToEmailslist = new List<string>();
                 List<string> strCCEmailslist = new List<string>();
+                strToEmailslist.Add(toEmail);
                 strCCEmailslist.Add("b.trivedi@camindustrial.net");
 
                 var subject = "We received your account deletion request";
-                var toCustContact = toEmail;
+
 
                 string strMSG = "";
                 strMSG = "<html>";
@@ -22082,26 +25249,67 @@ namespace CamV4.Helper
                 strMSG += "<br/>";
 
                 strMSG += "<div><div></div></div><br/><br/><div><div>";
-                strMSG += "<p><b><span style='font-size:9.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7b7b7b' lang='EN-US'>Best regards,</span></p>";
-                strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>Rack Manager Support Team</span></b></p>";
-                strMSG += "<br/>";
-                strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>cam|</span></b><b>";
-                strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>industrial</span></b></p>";
-                strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>20 7095 64 Street SE |";
-                strMSG += "</span></b><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'>Calgary, AB, T2C 5C3</span></b></p>";
-                strMSG += "<br/>";
-                strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='ES'>E ~ &nbsp;</span></b><b>";
-                strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#454545' lang='EN-US'>";
-                strMSG += "<a href='mailto:support@cam-industrial.com' target='_blank'><span lang='ES'>support@cam-industrial.com</span></a></span></b></p>";
-                strMSG += "<p><b><span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#005aab' lang='EN-US'>P ~</span></b><b>";
-                strMSG += "<span style='font-size:8.0pt;font-family:&quot;Verdana&quot;,sans-serif;color:#7f7d7e' lang='EN-US'> +1 800 772 3213</span></b></p>";
+
+                strMSG += "<table cellpadding='0' cellspacing='0' border='0' style='border-collapse:collapse; font-family:Verdana, sans-serif;'>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:10px 0 10px 0;'>";
+                strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#7b7b7b; font-weight:bold;'>Best regards,</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 1px 0;'>";
+                strMSG += "<span style='font-size:9pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>Rack Manager Support Team</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 2px 0;'>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>cam</span>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'> | industrial</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 12px 0;'>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>20 7095 64 Street SE | </span>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>Calgary, AB, T2C 5C3</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 2px 0;'>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>E&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                strMSG += "<a href='mailto:support@cam-industrial.com' target='_blank' style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold; text-decoration:underline;'>support@cam-industrial.com</a>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 2px 0;'>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>C&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>+1 800 772 3213</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 2px 0;'>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>D&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(587) 355-1346</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0 0 10px 0;'>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#005aab; font-weight:bold;'>F&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>";
+                strMSG += "<span style='font-size:8pt; font-family:Verdana,sans-serif; color:#7f7d7e; font-weight:bold;'>(403) 720-7074</span>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "<tr>";
+                strMSG += "<td style='padding:0;'>";
+                strMSG += "<img src='https://rack-manager.com/img/sigimg.png' alt='cam industrial' width='251' height='62' border='0' style='display:block; width:251px; height:62px;'>";
+                strMSG += "</td>";
+                strMSG += "</tr>";
+                strMSG += "</table>";
                 strMSG += "</div>";
                 strMSG += "</div>";
                 strMSG += "</div>";
                 strMSG += "</body>";
                 strMSG += "</html>";
 
-                var tEmail = new Thread(() => EmailHelper.SendEmail(toCustContact, subject, null, strMSG, strCCEmailslist, null));
+                var tEmail = new Thread(() => EmailHelper.SendEmail(strToEmailslist, subject, null, strMSG, strCCEmailslist, null));
                 tEmail.Start();
                 return "Send";
             }

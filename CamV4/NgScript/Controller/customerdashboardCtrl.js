@@ -124,16 +124,22 @@
             // 
             //  B2: Load Facilities
             // 
-            $scope.custDash_LoadFacilities = function (locationId) {
-                var request = locationId
-                    ? $http.get('/api/pageview/getFacilityByLocationId', { params: { id: locationId } })
-                    : $http.get('/api/pageview/getFacilityByCustomer');
-
-                request.then(function (res) {
+            $scope.custDash_LoadFacilities = function () {
+                $http.get('/api/pageview/getFacilityByCustomer').then(function (res) {
                     $scope.custDash_facilityList = res.data || [];
-                    if (locationId) {
-                        $scope.custDash_selectedFacilityId = null;
-                    }
+                    console.log($scope.custDash_facilityList);
+                }, function (err) {
+                    console.error('CustDash: error loading facilities all', err);
+                });
+            };
+
+            // B2: Load Facilities (optionally scoped to a location)
+            $scope.custDash_LoadFacilitiesLocation = function (locationId) {
+                var params = {};
+                if (locationId) { params.locationId = locationId; }
+                $http.get('/api/pageview/getFacilitiesByLocationId', { params: params }).then(function (res) {
+                    $scope.custDash_facilityList = res.data || [];
+                    $scope.custDash_selectedFacilityId = null;
                 }, function (err) {
                     console.error('CustDash: error loading facilities', err);
                 });

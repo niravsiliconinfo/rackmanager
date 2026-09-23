@@ -1394,6 +1394,30 @@ warning 6002: The table/view 'racklive.dbo.InspectionStatus' does not have a pri
           <Parameter Name="ProvinceId" Type="int" Mode="In" />
           <Parameter Name="Region" Type="nvarchar" Mode="In" />
         </Function>
+        <Function Name="GetCustomerDocumentsLFAWithFilters" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerId" Type="bigint" Mode="In" />
+          <Parameter Name="InspectionDocument" Type="int" Mode="In" />
+          <Parameter Name="HistoryDocument" Type="int" Mode="In" />
+          <Parameter Name="ProvinceId" Type="int" Mode="In" />
+          <Parameter Name="Region" Type="nvarchar" Mode="In" />
+          <Parameter Name="CityId" Type="int" Mode="In" />
+          <Parameter Name="CustomerLocationId" Type="bigint" Mode="In" />
+          <Parameter Name="CustomerFacilityId" Type="bigint" Mode="In" />
+          <Parameter Name="CustomerAreaId" Type="bigint" Mode="In" />
+          <Parameter Name="DocumentTypeList" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="GetCustomerDocumentsLFAWithWithoutFilters" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerId" Type="bigint" Mode="In" />
+          <Parameter Name="InspectionDocument" Type="int" Mode="In" />
+          <Parameter Name="HistoryDocument" Type="int" Mode="In" />
+          <Parameter Name="ProvinceId" Type="int" Mode="In" />
+          <Parameter Name="Region" Type="nvarchar" Mode="In" />
+          <Parameter Name="CityId" Type="int" Mode="In" />
+          <Parameter Name="CustomerLocationId" Type="bigint" Mode="In" />
+          <Parameter Name="CustomerFacilityId" Type="bigint" Mode="In" />
+          <Parameter Name="CustomerAreaId" Type="bigint" Mode="In" />
+          <Parameter Name="DocumentTypeList" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="GetCustomerDocumentsWithFilters" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CustomerId" Type="bigint" Mode="In" />
           <Parameter Name="InspectionDocument" Type="int" Mode="In" />
@@ -1402,6 +1426,18 @@ warning 6002: The table/view 'racklive.dbo.InspectionStatus' does not have a pri
           <Parameter Name="Region" Type="nvarchar" Mode="In" />
           <Parameter Name="CityId" Type="int" Mode="In" />
           <Parameter Name="CustomerLocationId" Type="bigint" Mode="In" />
+          <Parameter Name="DocumentTypeList" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="GetCustomerDocumentsWithWithoutFilters" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerId" Type="bigint" Mode="In" />
+          <Parameter Name="InspectionDocument" Type="int" Mode="In" />
+          <Parameter Name="HistoryDocument" Type="int" Mode="In" />
+          <Parameter Name="ProvinceId" Type="int" Mode="In" />
+          <Parameter Name="Region" Type="nvarchar" Mode="In" />
+          <Parameter Name="CityId" Type="int" Mode="In" />
+          <Parameter Name="CustomerLocationId" Type="bigint" Mode="In" />
+          <Parameter Name="CustomerFacilityId" Type="bigint" Mode="In" />
+          <Parameter Name="CustomerAreaId" Type="bigint" Mode="In" />
           <Parameter Name="DocumentTypeList" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="GetCustomerFacilities" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -1421,6 +1457,30 @@ warning 6002: The table/view 'racklive.dbo.InspectionStatus' does not have a pri
         <Function Name="GetCustomerRegions" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="UserId" Type="bigint" Mode="In" />
         </Function>
+        <Function Name="GetCustomerUsersDocumentsLFAWithFilters" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerId" Type="bigint" Mode="In" />
+          <Parameter Name="InspectionDocument" Type="int" Mode="In" />
+          <Parameter Name="HistoryDocument" Type="int" Mode="In" />
+          <Parameter Name="ProvinceId" Type="int" Mode="In" />
+          <Parameter Name="Region" Type="nvarchar" Mode="In" />
+          <Parameter Name="CityId" Type="int" Mode="In" />
+          <Parameter Name="CustomerLocationId" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="CustomerFacilityId" Type="bigint" Mode="In" />
+          <Parameter Name="CustomerAreaId" Type="bigint" Mode="In" />
+          <Parameter Name="DocumentTypeList" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="GetCustomerUsersDocumentsLFAWithWithoutFilters" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerId" Type="bigint" Mode="In" />
+          <Parameter Name="InspectionDocument" Type="int" Mode="In" />
+          <Parameter Name="HistoryDocument" Type="int" Mode="In" />
+          <Parameter Name="ProvinceId" Type="int" Mode="In" />
+          <Parameter Name="Region" Type="nvarchar" Mode="In" />
+          <Parameter Name="CityId" Type="int" Mode="In" />
+          <Parameter Name="CustomerLocationId" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="CustomerFacilityId" Type="bigint" Mode="In" />
+          <Parameter Name="CustomerAreaId" Type="bigint" Mode="In" />
+          <Parameter Name="DocumentTypeList" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="GetCustomerUsersDocumentsWithFilters" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CustomerId" Type="bigint" Mode="In" />
           <Parameter Name="InspectionDocument" Type="int" Mode="In" />
@@ -1428,7 +1488,21 @@ warning 6002: The table/view 'racklive.dbo.InspectionStatus' does not have a pri
           <Parameter Name="ProvinceId" Type="int" Mode="In" />
           <Parameter Name="Region" Type="nvarchar" Mode="In" />
           <Parameter Name="CityId" Type="int" Mode="In" />
-          <Parameter Name="CustomerLocationId" Type="nvarchar" Mode="In" />
+          <Parameter Name="CustomerLocationId" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="CustomerFacilityId" Type="bigint" Mode="In" />
+          <Parameter Name="CustomerAreaId" Type="bigint" Mode="In" />
+          <Parameter Name="DocumentTypeList" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="GetCustomerUsersDocumentsWithWithoutFilters" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerId" Type="bigint" Mode="In" />
+          <Parameter Name="InspectionDocument" Type="int" Mode="In" />
+          <Parameter Name="HistoryDocument" Type="int" Mode="In" />
+          <Parameter Name="ProvinceId" Type="int" Mode="In" />
+          <Parameter Name="Region" Type="nvarchar" Mode="In" />
+          <Parameter Name="CityId" Type="int" Mode="In" />
+          <Parameter Name="CustomerLocationId" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="CustomerFacilityId" Type="bigint" Mode="In" />
+          <Parameter Name="CustomerAreaId" Type="bigint" Mode="In" />
           <Parameter Name="DocumentTypeList" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="GetDocumentListing" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -1593,6 +1667,10 @@ warning 6002: The table/view 'racklive.dbo.InspectionStatus' does not have a pri
           <Parameter Name="USERID" Type="bigint" Mode="In" />
           <Parameter Name="YEAR" Type="int" Mode="In" />
         </Function>
+        <Function Name="sp_getApprovedInspection_Count_Sales" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="bigint" Mode="In" />
+          <Parameter Name="YEAR" Type="int" Mode="In" />
+        </Function>
         <Function Name="SP_GetCustomerDashboard_All" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="USERID" Type="bigint" Mode="In" />
           <Parameter Name="YEAR" Type="int" Mode="In" />
@@ -1617,6 +1695,10 @@ warning 6002: The table/view 'racklive.dbo.InspectionStatus' does not have a pri
         </Function>
         <Function Name="sp_getEmpInspection_Count_New_AllUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="USERID" Type="bigint" Mode="In" />
+          <Parameter Name="YEAR" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_getEmpInspection_Count_Sales" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="bigint" Mode="In" />
           <Parameter Name="YEAR" Type="int" Mode="In" />
         </Function>
         <Function Name="sp_GetIncidentReportsByCustomer" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -2604,6 +2686,8 @@ warning 6002: The table/view 'racklive.dbo.InspectionStatus' does not have a pri
             <Parameter Name="Region" Mode="In" Type="String" />
             <Parameter Name="CityId" Mode="In" Type="Int32" />
             <Parameter Name="CustomerLocationId" Mode="In" Type="String" />
+            <Parameter Name="CustomerFacilityId" Mode="In" Type="Int64" />
+            <Parameter Name="CustomerAreaId" Mode="In" Type="Int64" />
             <Parameter Name="DocumentTypeList" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetInspectionCustomerUserWithFilters" ReturnType="Collection(admin_rackauditorModel.GetInspectionCustomerUserWithFilters_Result)">
@@ -2879,7 +2963,87 @@ warning 6002: The table/view 'racklive.dbo.InspectionStatus' does not have a pri
           <EntitySet Name="InventoryFiles" EntityType="admin_rackauditorModel.InventoryFile" />
           <EntitySet Name="InventoryItems" EntityType="admin_rackauditorModel.InventoryItem" />
           <EntitySet Name="InventoryItemValues" EntityType="admin_rackauditorModel.InventoryItemValue" />
-          <EntitySet Name="AccountDeletionRequests" EntityType="admin_rackauditorModel.AccountDeletionRequest" />         
+          <EntitySet Name="AccountDeletionRequests" EntityType="admin_rackauditorModel.AccountDeletionRequest" />
+          <FunctionImport Name="GetCustomerDocumentsWithWithoutFilters" ReturnType="Collection(admin_rackauditorModel.GetCustomerDocumentsWithWithoutFilters_Result)">
+            <Parameter Name="CustomerId" Mode="In" Type="Int64" />
+            <Parameter Name="InspectionDocument" Mode="In" Type="Int32" />
+            <Parameter Name="HistoryDocument" Mode="In" Type="Int32" />
+            <Parameter Name="ProvinceId" Mode="In" Type="Int32" />
+            <Parameter Name="Region" Mode="In" Type="String" />
+            <Parameter Name="CityId" Mode="In" Type="Int32" />
+            <Parameter Name="CustomerLocationId" Mode="In" Type="Int64" />
+            <Parameter Name="CustomerFacilityId" Mode="In" Type="Int64" />
+            <Parameter Name="CustomerAreaId" Mode="In" Type="Int64" />
+            <Parameter Name="DocumentTypeList" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetCustomerUsersDocumentsWithWithoutFilters" ReturnType="Collection(admin_rackauditorModel.GetCustomerUsersDocumentsWithWithoutFilters_Result1)">
+            <Parameter Name="CustomerId" Mode="In" Type="Int64" />
+            <Parameter Name="InspectionDocument" Mode="In" Type="Int32" />
+            <Parameter Name="HistoryDocument" Mode="In" Type="Int32" />
+            <Parameter Name="ProvinceId" Mode="In" Type="Int32" />
+            <Parameter Name="Region" Mode="In" Type="String" />
+            <Parameter Name="CityId" Mode="In" Type="Int32" />
+            <Parameter Name="CustomerLocationId" Mode="In" Type="String" />
+            <Parameter Name="CustomerFacilityId" Mode="In" Type="Int64" />
+            <Parameter Name="CustomerAreaId" Mode="In" Type="Int64" />
+            <Parameter Name="DocumentTypeList" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_getApprovedInspection_Count_Sales" ReturnType="Collection(admin_rackauditorModel.sp_getApprovedInspection_Count_Sales_Result)">
+            <Parameter Name="UserID" Mode="In" Type="Int64" />
+            <Parameter Name="YEAR" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_getEmpInspection_Count_Sales" ReturnType="Collection(admin_rackauditorModel.sp_getEmpInspection_Count_Sales_Result)">
+            <Parameter Name="UserID" Mode="In" Type="Int64" />
+            <Parameter Name="YEAR" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetCustomerDocumentsLFAWithFilters" ReturnType="Collection(admin_rackauditorModel.GetCustomerDocumentsLFAWithFilters_Result)">
+            <Parameter Name="CustomerId" Mode="In" Type="Int64" />
+            <Parameter Name="InspectionDocument" Mode="In" Type="Int32" />
+            <Parameter Name="HistoryDocument" Mode="In" Type="Int32" />
+            <Parameter Name="ProvinceId" Mode="In" Type="Int32" />
+            <Parameter Name="Region" Mode="In" Type="String" />
+            <Parameter Name="CityId" Mode="In" Type="Int32" />
+            <Parameter Name="CustomerLocationId" Mode="In" Type="Int64" />
+            <Parameter Name="CustomerFacilityId" Mode="In" Type="Int64" />
+            <Parameter Name="CustomerAreaId" Mode="In" Type="Int64" />
+            <Parameter Name="DocumentTypeList" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetCustomerDocumentsLFAWithWithoutFilters" ReturnType="Collection(admin_rackauditorModel.GetCustomerDocumentsLFAWithWithoutFilters_Result)">
+            <Parameter Name="CustomerId" Mode="In" Type="Int64" />
+            <Parameter Name="InspectionDocument" Mode="In" Type="Int32" />
+            <Parameter Name="HistoryDocument" Mode="In" Type="Int32" />
+            <Parameter Name="ProvinceId" Mode="In" Type="Int32" />
+            <Parameter Name="Region" Mode="In" Type="String" />
+            <Parameter Name="CityId" Mode="In" Type="Int32" />
+            <Parameter Name="CustomerLocationId" Mode="In" Type="Int64" />
+            <Parameter Name="CustomerFacilityId" Mode="In" Type="Int64" />
+            <Parameter Name="CustomerAreaId" Mode="In" Type="Int64" />
+            <Parameter Name="DocumentTypeList" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetCustomerUsersDocumentsLFAWithFilters" ReturnType="Collection(admin_rackauditorModel.GetCustomerUsersDocumentsLFAWithFilters_Result)">
+            <Parameter Name="CustomerId" Mode="In" Type="Int64" />
+            <Parameter Name="InspectionDocument" Mode="In" Type="Int32" />
+            <Parameter Name="HistoryDocument" Mode="In" Type="Int32" />
+            <Parameter Name="ProvinceId" Mode="In" Type="Int32" />
+            <Parameter Name="Region" Mode="In" Type="String" />
+            <Parameter Name="CityId" Mode="In" Type="Int32" />
+            <Parameter Name="CustomerLocationId" Mode="In" Type="String" />
+            <Parameter Name="CustomerFacilityId" Mode="In" Type="Int64" />
+            <Parameter Name="CustomerAreaId" Mode="In" Type="Int64" />
+            <Parameter Name="DocumentTypeList" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetCustomerUsersDocumentsLFAWithWithoutFilters" ReturnType="Collection(admin_rackauditorModel.GetCustomerUsersDocumentsLFAWithWithoutFilters_Result)">
+            <Parameter Name="CustomerId" Mode="In" Type="Int64" />
+            <Parameter Name="InspectionDocument" Mode="In" Type="Int32" />
+            <Parameter Name="HistoryDocument" Mode="In" Type="Int32" />
+            <Parameter Name="ProvinceId" Mode="In" Type="Int32" />
+            <Parameter Name="Region" Mode="In" Type="String" />
+            <Parameter Name="CityId" Mode="In" Type="Int32" />
+            <Parameter Name="CustomerLocationId" Mode="In" Type="String" />
+            <Parameter Name="CustomerFacilityId" Mode="In" Type="Int64" />
+            <Parameter Name="CustomerAreaId" Mode="In" Type="Int64" />
+            <Parameter Name="DocumentTypeList" Mode="In" Type="String" />
+          </FunctionImport>         
           </EntityContainer>
         <ComplexType Name="Get_DeficienciesBreakdownCategories_Result">
           <Property Type="Int32" Name="DeficiencyCategoryId" Nullable="false" />
@@ -4036,7 +4200,84 @@ warning 6002: The table/view 'racklive.dbo.InspectionStatus' does not have a pri
           <Property Name="IpAddress" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
           <Property Name="ProcessedDateUtc" Type="DateTime" Precision="3" />
           <Property Name="ProcessedBy" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-        </EntityType>        
+        </EntityType>
+        <ComplexType Name="GetCustomerUsersDocumentsWithWithoutFilters_Result">
+          <Property Type="String" Name="InspectionDocumentNo" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="CustFileCategory" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="CustFilePath" Nullable="false" MaxLength="518" />
+          <Property Type="String" Name="CustFilename" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="CustomerLocationName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Region" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="GetCustomerDocumentsWithWithoutFilters_Result">
+          <Property Type="String" Name="InspectionDocumentNo" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="CustFileCategory" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="CustFilePath" Nullable="false" MaxLength="518" />
+          <Property Type="String" Name="CustFilename" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="CustomerLocationName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Region" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="GetCustomerUsersDocumentsWithWithoutFilters_Result1">
+          <Property Type="String" Name="InspectionDocumentNo" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="CustFileCategory" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="CustFilePath" Nullable="false" MaxLength="518" />
+          <Property Type="String" Name="CustFilename" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="CustomerLocationName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Region" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="sp_getApprovedInspection_Count_Sales_Result">
+          <Property Type="String" Name="iMonth" Nullable="true" MaxLength="30" />
+          <Property Type="Int32" Name="iCount" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_getEmpInspection_Count_Sales_Result">
+          <Property Type="Int64" Name="EmployeeId" Nullable="false" />
+          <Property Type="String" Name="EmployeeName" Nullable="false" MaxLength="250" />
+          <Property Type="Int32" Name="cnt" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetCustomerDocumentsLFAWithFilters_Result">
+          <Property Type="String" Name="InspectionDocumentNo" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="CustFileCategory" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="CustFilePath" Nullable="false" MaxLength="518" />
+          <Property Type="String" Name="CustFilename" Nullable="true" MaxLength="500" />
+          <Property Type="Int64" Name="CustomerLocationId" Nullable="true" />
+          <Property Type="Int64" Name="CustomerFacilityId" Nullable="true" />
+          <Property Type="Int64" Name="CustomerAreaId" Nullable="true" />
+          <Property Type="String" Name="CustomerLocationName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Region" Nullable="false" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="GetCustomerDocumentsLFAWithWithoutFilters_Result">
+          <Property Type="String" Name="InspectionDocumentNo" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="CustFileCategory" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="CustFilePath" Nullable="false" MaxLength="518" />
+          <Property Type="String" Name="CustFilename" Nullable="true" MaxLength="500" />
+          <Property Type="Int64" Name="CustomerLocationId" Nullable="true" />
+          <Property Type="Int64" Name="CustomerFacilityId" Nullable="true" />
+          <Property Type="Int64" Name="CustomerAreaId" Nullable="true" />
+          <Property Type="String" Name="CustomerLocationName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Region" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="GetCustomerUsersDocumentsLFAWithFilters_Result">
+          <Property Type="String" Name="InspectionDocumentNo" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="CustFileCategory" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="CustFilePath" Nullable="false" MaxLength="518" />
+          <Property Type="String" Name="CustFilename" Nullable="true" MaxLength="500" />
+          <Property Type="Int64" Name="CustomerLocationId" Nullable="true" />
+          <Property Type="Int64" Name="CustomerFacilityId" Nullable="true" />
+          <Property Type="Int64" Name="CustomerAreaId" Nullable="true" />
+          <Property Type="String" Name="CustomerLocationName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Region" Nullable="false" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="GetCustomerUsersDocumentsLFAWithWithoutFilters_Result">
+          <Property Type="String" Name="InspectionDocumentNo" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="CustFileCategory" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="CustFilePath" Nullable="false" MaxLength="518" />
+          <Property Type="String" Name="CustFilename" Nullable="true" MaxLength="500" />
+          <Property Type="Int64" Name="CustomerLocationId" Nullable="true" />
+          <Property Type="Int64" Name="CustomerFacilityId" Nullable="true" />
+          <Property Type="Int64" Name="CustomerAreaId" Nullable="true" />
+          <Property Type="String" Name="CustomerLocationName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Region" Nullable="true" MaxLength="100" />
+        </ComplexType>        
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -6206,7 +6447,108 @@ warning 6002: The table/view 'racklive.dbo.InspectionStatus' does not have a pri
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
-          </EntitySetMapping>         
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetCustomerDocumentsWithWithoutFilters" FunctionName="admin_rackauditorModel.Store.GetCustomerDocumentsWithWithoutFilters">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="admin_rackauditorModel.GetCustomerDocumentsWithWithoutFilters_Result">
+                <ScalarProperty Name="InspectionDocumentNo" ColumnName="InspectionDocumentNo" />
+                <ScalarProperty Name="CustFileCategory" ColumnName="CustFileCategory" />
+                <ScalarProperty Name="CustFilePath" ColumnName="CustFilePath" />
+                <ScalarProperty Name="CustFilename" ColumnName="CustFilename" />
+                <ScalarProperty Name="CustomerLocationName" ColumnName="CustomerLocationName" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetCustomerUsersDocumentsWithWithoutFilters" FunctionName="admin_rackauditorModel.Store.GetCustomerUsersDocumentsWithWithoutFilters">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="admin_rackauditorModel.GetCustomerUsersDocumentsWithWithoutFilters_Result1">
+                <ScalarProperty Name="InspectionDocumentNo" ColumnName="InspectionDocumentNo" />
+                <ScalarProperty Name="CustFileCategory" ColumnName="CustFileCategory" />
+                <ScalarProperty Name="CustFilePath" ColumnName="CustFilePath" />
+                <ScalarProperty Name="CustFilename" ColumnName="CustFilename" />
+                <ScalarProperty Name="CustomerLocationName" ColumnName="CustomerLocationName" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_getApprovedInspection_Count_Sales" FunctionName="admin_rackauditorModel.Store.sp_getApprovedInspection_Count_Sales">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="admin_rackauditorModel.sp_getApprovedInspection_Count_Sales_Result">
+                <ScalarProperty Name="iMonth" ColumnName="iMonth" />
+                <ScalarProperty Name="iCount" ColumnName="iCount" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_getEmpInspection_Count_Sales" FunctionName="admin_rackauditorModel.Store.sp_getEmpInspection_Count_Sales">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="admin_rackauditorModel.sp_getEmpInspection_Count_Sales_Result">
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+                <ScalarProperty Name="EmployeeName" ColumnName="EmployeeName" />
+                <ScalarProperty Name="cnt" ColumnName="cnt" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetCustomerDocumentsLFAWithFilters" FunctionName="admin_rackauditorModel.Store.GetCustomerDocumentsLFAWithFilters">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="admin_rackauditorModel.GetCustomerDocumentsLFAWithFilters_Result">
+                <ScalarProperty Name="InspectionDocumentNo" ColumnName="InspectionDocumentNo" />
+                <ScalarProperty Name="CustFileCategory" ColumnName="CustFileCategory" />
+                <ScalarProperty Name="CustFilePath" ColumnName="CustFilePath" />
+                <ScalarProperty Name="CustFilename" ColumnName="CustFilename" />
+                <ScalarProperty Name="CustomerLocationId" ColumnName="CustomerLocationId" />
+                <ScalarProperty Name="CustomerFacilityId" ColumnName="CustomerFacilityId" />
+                <ScalarProperty Name="CustomerAreaId" ColumnName="CustomerAreaId" />
+                <ScalarProperty Name="CustomerLocationName" ColumnName="CustomerLocationName" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetCustomerDocumentsLFAWithWithoutFilters" FunctionName="admin_rackauditorModel.Store.GetCustomerDocumentsLFAWithWithoutFilters">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="admin_rackauditorModel.GetCustomerDocumentsLFAWithWithoutFilters_Result">
+                <ScalarProperty Name="InspectionDocumentNo" ColumnName="InspectionDocumentNo" />
+                <ScalarProperty Name="CustFileCategory" ColumnName="CustFileCategory" />
+                <ScalarProperty Name="CustFilePath" ColumnName="CustFilePath" />
+                <ScalarProperty Name="CustFilename" ColumnName="CustFilename" />
+                <ScalarProperty Name="CustomerLocationId" ColumnName="CustomerLocationId" />
+                <ScalarProperty Name="CustomerFacilityId" ColumnName="CustomerFacilityId" />
+                <ScalarProperty Name="CustomerAreaId" ColumnName="CustomerAreaId" />
+                <ScalarProperty Name="CustomerLocationName" ColumnName="CustomerLocationName" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetCustomerUsersDocumentsLFAWithFilters" FunctionName="admin_rackauditorModel.Store.GetCustomerUsersDocumentsLFAWithFilters">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="admin_rackauditorModel.GetCustomerUsersDocumentsLFAWithFilters_Result">
+                <ScalarProperty Name="InspectionDocumentNo" ColumnName="InspectionDocumentNo" />
+                <ScalarProperty Name="CustFileCategory" ColumnName="CustFileCategory" />
+                <ScalarProperty Name="CustFilePath" ColumnName="CustFilePath" />
+                <ScalarProperty Name="CustFilename" ColumnName="CustFilename" />
+                <ScalarProperty Name="CustomerLocationId" ColumnName="CustomerLocationId" />
+                <ScalarProperty Name="CustomerFacilityId" ColumnName="CustomerFacilityId" />
+                <ScalarProperty Name="CustomerAreaId" ColumnName="CustomerAreaId" />
+                <ScalarProperty Name="CustomerLocationName" ColumnName="CustomerLocationName" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetCustomerUsersDocumentsLFAWithWithoutFilters" FunctionName="admin_rackauditorModel.Store.GetCustomerUsersDocumentsLFAWithWithoutFilters">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="admin_rackauditorModel.GetCustomerUsersDocumentsLFAWithWithoutFilters_Result">
+                <ScalarProperty Name="InspectionDocumentNo" ColumnName="InspectionDocumentNo" />
+                <ScalarProperty Name="CustFileCategory" ColumnName="CustFileCategory" />
+                <ScalarProperty Name="CustFilePath" ColumnName="CustFilePath" />
+                <ScalarProperty Name="CustFilename" ColumnName="CustFilename" />
+                <ScalarProperty Name="CustomerLocationId" ColumnName="CustomerLocationId" />
+                <ScalarProperty Name="CustomerFacilityId" ColumnName="CustomerFacilityId" />
+                <ScalarProperty Name="CustomerAreaId" ColumnName="CustomerAreaId" />
+                <ScalarProperty Name="CustomerLocationName" ColumnName="CustomerLocationName" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>         
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

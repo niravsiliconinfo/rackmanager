@@ -131,14 +131,24 @@ namespace CamV4.Helper
             }
         }
 
-        public static void SendEmail(string to, string subject, List<FileContentResult> attachmentFiles, string body, List<string> strCCEmails, List<string> strBCCEmails)
+        public static void SendEmail(List<string> strTo, string subject, List<FileContentResult> attachmentFiles, string body, List<string> strCCEmails, List<string> strBCCEmails)
         {
 
             MailMessage message = new MailMessage();
             SmtpClient smtp = new SmtpClient();
             var _se = DatabaseHelper.GetEmailInformation();
             message.From = new MailAddress(_se.SE_FROM_EMAIL);
-            message.To.Add(new MailAddress(to));
+            if (strTo != null)
+            {
+                foreach (var item in strTo)
+                {
+                    if (item != "")
+                    {
+                        message.To.Add(new MailAddress(item.ToString()));
+                    }                    
+                }
+            }
+            
             if (strCCEmails != null)
             {
                 foreach (var item in strCCEmails)
@@ -245,10 +255,10 @@ namespace CamV4.Helper
                     string tmpURL = HttpContext.Current.Request.Url.AbsoluteUri;
                     Uri url = new Uri(tmpURL);
                     string host = url.GetLeftPart(UriPartial.Authority);
-
+                    List<string> strToEmailslist = new List<string>();
                     List<string> strCCEmailslist = new List<string>();
                     List<string> strBCCEmailslist = new List<string>();
-                    string toCustContact;
+                    
                     strBCCEmailslist.Add("b.trivedi@camindustrial.net");
 
                     //var fac = model.CustomerFacilityID.HasValue ? db.CustomerFacilities.FirstOrDefault(x => x.CustomerFacilityID == model.CustomerFacilityID.Value) : null;
@@ -296,7 +306,7 @@ namespace CamV4.Helper
 
                     //strCCEmailslist.Add("nirav.m@siliconinfo.com");
 
-                    toCustContact = model.ContactEmail;
+                    strToEmailslist.Add(model.ContactEmail);
 
                     //var subject = "" + iDetails.InspectionDocumentNo + "-" + iDetails.Customer + "";
                     var subject = "You have been receiving this email as primary contact to access “Rack Manager” for below locations.";
@@ -569,7 +579,7 @@ namespace CamV4.Helper
                     strMSG += "</body>";
                     strMSG += "</html>";
 
-                    var tEmail = new Thread(() => EmailHelper.SendEmail(toCustContact, subject, null, strMSG, strCCEmailslist, strBCCEmailslist)); //attachmentFile
+                    var tEmail = new Thread(() => EmailHelper.SendEmail(strToEmailslist, subject, null, strMSG, strCCEmailslist, strBCCEmailslist)); //attachmentFile
                     tEmail.Start();
                     return "Send";
                 }
@@ -584,14 +594,16 @@ namespace CamV4.Helper
         public static string sendPassword(int CustomerID)
         {
             string strReturn = "Ok";
+            
             var cust = DatabaseHelper.getCustomerById(CustomerID);
             if (cust != null)
             {
                 string strMSG = "";
-                string strCustomerEmail = "", strCustomerName = "", strUsername = "";
+                List<string> strCustomerEmail = new List<string>();
+                string  strCustomerName = "", strUsername = "";
 
                 strCustomerName = cust.CustomerName;
-                strCustomerEmail = cust.CustomerEmail;
+                strCustomerEmail.Add(cust.CustomerEmail);
                 using (DatabaseEntities db = new DatabaseEntities())
                 {
                     var _user = db.Users.Where(x => x.UserId == cust.UserID).FirstOrDefault();
@@ -601,7 +613,7 @@ namespace CamV4.Helper
                     }
                 }
                 //strCustomerEmail = "nirav.m@siliconinfo.com";
-                if (!string.IsNullOrEmpty(strCustomerEmail) && !string.IsNullOrEmpty(strUsername) && !string.IsNullOrEmpty(cust.CustomerPharse))
+                if (strCustomerEmail != null && !string.IsNullOrEmpty(strUsername) && !string.IsNullOrEmpty(cust.CustomerPharse))
                 {
                     strMSG = "";
                     strMSG = "<html>";

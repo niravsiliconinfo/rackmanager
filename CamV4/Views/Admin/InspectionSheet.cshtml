@@ -57,7 +57,7 @@
         }
     }
 </script>
-<style>
+<style>  
     @@keyframes spin {
         0% {
             transform: rotate(0deg);
@@ -81,7 +81,7 @@
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Inspection</li>
                 </ol>
                 <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
-            </nav>
+            </nav>           
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                 </div>
@@ -238,15 +238,23 @@
                                         <div class="col-sm-2">
                                             <span>Location ID :</span>
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-2">
                                             <div class="input-group input-group-outline mb-3">
                                                 {{getInspectionDetailsForSheet.CustomerLocation}}
                                             </div>
                                         </div>
                                         <div class="col-sm-2">
-                                            <span>Area Name :</span>
+                                            <span>Facility :</span>
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-2">
+                                            <div class="input-group input-group-outline mb-3">
+                                                {{getInspectionDetailsForSheet.CustomerFacility}}
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <span>Area :</span>
+                                        </div>
+                                        <div class="col-sm-2">
                                             <div class="input-group input-group-outline mb-3">
                                                 {{getInspectionDetailsForSheet.CustomerArea}}
                                             </div>
@@ -302,7 +310,7 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-2">
-                                            <span>Selected Stamping Engineer :</span>
+                                            <span>Selected Stamping Eng.:</span>
                                         </div>
                                         <div class="col-sm-4">{{getInspectionDetailsForSheet.empStampingEngModel.EmployeeName}}</div>
                                     </div>
@@ -525,7 +533,7 @@
                                                         <div class="" style="padding-top: 50px;font-size: 26px;line-height: 40px;">
                                                             <div class="name">{{getInspectionDetailsForSheet.Customer}}</div>
                                                             <div class="name" style="font-size: 14px;">{{getInspectionDetailsForSheet.CustomerArea}} {{getInspectionDetailsForSheet.CustomerLocation}}</div>
-                                                            <div class="name" style="font-size: 14px;">{{getInspectionDetailsForSheet.custModel.CustomerAddress}}</div>
+                                                            <div class="name" style="font-size: 14px;">{{getInspectionDetailsForSheet.CustomerFullAddress}}</div>
                                                             <div class="customer-logo"><img src="{{getInspectionDetailsForSheet.custModel.CustomerLogo}}" style="width: 200px;height: auto;"></div>
                                                         </div>
 
@@ -1823,7 +1831,7 @@
                                 </div>
                             </div>
                             <div class="custom-card-body collapsed">
-                                <section ng-if="getInspectionDetailsForSheet.objQuotation.QuotationNo != null" style="width: 100%;background: white;box-shadow: 0 .5mm 2mm rgba(0,0,0,.3);margin: 5mm auto;padding: 5mm;box-sizing: border-box;">
+                                <section style="width: 100%;background: white;box-shadow: 0 .5mm 2mm rgba(0,0,0,.3);margin: 5mm auto;padding: 5mm;box-sizing: border-box;">
                                     <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" _ngcontent-c10="" style="display: table; height: 100%; color: #000000;">
                                         <thead>
                                             <tr class="header"><td><img src="~/Content/V2/images/quoteheader.png" style="max-width: 100%;"></td></tr>
@@ -1838,79 +1846,129 @@
                                             <tr _ngcontent-c10="">
                                                 <td _ngcontent-c10="" align="left" valign="top" class="" style="padding: 20px 100px;">
                                                     <div style="width: 40%;float: left;line-height: 22px">{{getInspectionDetailsForSheet.Customer}}<br>{{getInspectionDetailsForSheet.CustomerArea}} <br>{{getInspectionDetailsForSheet.CustomerLocation}}</div>
-                                                    <div style="width: 40%;float: left;line-height: 22px"><b>Ship to: </b><br>{{getInspectionDetailsForSheet.Customer}}<br>{{getInspectionDetailsForSheet.custModel.CustomerAddress}}</div>
+                                                    <div style="width: 40%;float: left;line-height: 22px"><b>Ship to: </b><br>{{getInspectionDetailsForSheet.Customer}}<br>{{getInspectionDetailsForSheet.CustomerFullAddress}}</div>
                                                     <div style="width: 20%;float: left;text-align: right"></div>
                                                 </td>
                                             </tr>
+
+                                            <!-- QUOTATION HEADER FIELDS -->
                                             <tr _ngcontent-c10="">
                                                 @if (userType == "1")
                                                 {
                                                     <td _ngcontent-c10="" align="left" valign="top" class="" style="padding: 20px 100px;">
-                                                        <div style="width: 15%;float: left;line-height: 22px"><b>Your Reference</b><br><input type="text" class="inspectionviewtextbox" id="yourReference" ng-model="getInspectionDetailsForSheet.objQuotation.YourReference" /></div>
-                                                        <div style="width: 15%;float: left;line-height: 22px"><b>Quotation Valid For</b><br><input type="text" class="inspectionviewtextbox" id="validto" ng-model="getInspectionDetailsForSheet.objQuotation.ValidTo" /></div>
-                                                        <div style="width: 20%;float: left;text-align: left ">
-                                                            <b>Sales Person</b><br>
-                                                            @*<select name="QuotationSalesPersonId" id="QuotationSalesPersonId" class="ng-pristine ng-valid ng-empty ng-touched inspectionviewtextbox" style="width:200px;" ng-model="quotationsalespersonid" ng-init="quotationsalespersonid = getInspectionDetailsForSheet.objQuotation.QuotationSalesPersonId" >
-                                                                    <option value="">-- Select --</option>
-                                                                    <option ng-repeat="d in getAllSalesPerson"  ng-selected="quotationsalespersonid == d.EmployeeSalesID">{{d.EmployeeSalesName}}</option>
-                                                                </select>*@
-                                                            <select name="QuotationSalesPersonId" id="QuotationSalesPersonId"
-                                                                    class="ng-pristine ng-valid ng-touched inspectionviewtextbox"
-                                                                    style="width:200px;"
-                                                                    ng-model="quotationsalespersonid"
-                                                                    ng-init="quotationsalespersonid = getInspectionDetailsForSheet.objQuotation.QuotationSalesPersonId.toString();">
-                                                                @*<option value="">-- Select --</option>*@
-                                                                <option ng-repeat="d in getAllSalesPerson" value="{{d.EmployeeSalesID | number}}">
-                                                                    {{d.EmployeeSalesName}}
-                                                                </option>
-                                                            </select>
-
-
-                                                        </div>
-                                                        @*<input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.QuotationSalesPersonId" class="demoSalesPerId" style='width: 100%' />*@
-                                                        <div style="width: 15%;float: left;text-align: left"><b>Payment Terms</b><br><input type="text" class="inspectionviewtextbox" id="paymentterms" ng-model="getInspectionDetailsForSheet.objQuotation.PaymentTerms" /></div>
-                                                        <div style="width: 15%;float: left;text-align: left">
-                                                            <b>Shipment Method</b><br><input type="text" class="inspectionviewtextbox" id="shipmentmethod" ng-model="getInspectionDetailsForSheet.objQuotation.ShipmentMethod" />
-                                                        </div>
-                                                        <div style="width: 15%;float: left;text-align: left">
-                                                            <b>Unit Price(Hr)</b><br><input type="text" class="inspectionviewtextbox" id="LabourUnitPrice" ng-model="getInspectionDetailsForSheet.objQuotation.LabourUnitPrice" />
+                                                        <div class="quotation-header-controls">
+                                                            <div class="quotation-header-section" style="flex: 0 0 15%;">
+                                                                <label>Your Reference</label>
+                                                                <input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.YourReference" class="inspectionviewtextbox" />
+                                                            </div>
+                                                            <div class="quotation-header-section" style="flex: 0 0 15%;">
+                                                                <label>Valid For</label>
+                                                                <input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.ValidTo" class="inspectionviewtextbox" />
+                                                            </div>
+                                                           <div class="quotation-header-section" style="flex:0 0 20%;">
+                                                               <label>Sales Person</label>
+                                                               <select id="QuotationSalesPersonId"
+                                                                       class="inspectionviewtextbox"
+                                                                       style="width:100%; padding:8px 10px;"
+                                                                       ng-model="quotationsalespersonid"
+                                                                       ng-init="quotationsalespersonid = getInspectionDetailsForSheet.objQuotation.QuotationSalesPersonId"
+                                                                       ng-options="d.EmployeeSalesID as d.EmployeeSalesName for d in getAllSalesPerson">
+                                                                   <option value="">Select Sales Person</option>
+                                                               </select>
+                                                           </div>
+                                                            <div class="quotation-header-section" style="flex: 0 0 15%;">
+                                                                <label>Payment Terms</label>
+                                                                <input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.PaymentTerms" class="inspectionviewtextbox" />
+                                                            </div>
+                                                            <div class="quotation-header-section" style="flex: 0 0 15%;">
+                                                                <label>Shipment Method</label>
+                                                                <input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.ShipmentMethod" class="inspectionviewtextbox" />
+                                                            </div>
+                                                            <div class="quotation-header-section" style="flex: 0 0 15%;">
+                                                                <label>Unit Price(Hr)</label>
+                                                                <input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.LabourUnitPrice" class="inspectionviewtextbox" />
+                                                            </div>
                                                         </div>
                                                     </td>
                                                 }
                                                 else
                                                 {
                                                     <td _ngcontent-c10="" align="left" valign="top" class="" style="padding: 20px 100px;">
-                                                        <div style="width: 15%;float: left;line-height: 22px"><b>Your Reference</b><br><div class="input-group input-group-outline mb-3">{{getInspectionDetailsForSheet.objQuotation.YourReference}} </div></div>
-                                                        <div style="width: 15%;float: left;line-height: 22px"><b>Quotation Valid For</b><br><div class="input-group input-group-outline mb-3">{{getInspectionDetailsForSheet.objQuotation.ValidTo}}</div></div>
-                                                        <div style="width: 20%;float: left;text-align: left ">
-                                                            <b>Sales Person</b><br><div class="input-group input-group-outline mb-3">{{getInspectionDetailsForSheet.objQuotation.QuotationSalesPersonName}}</div>
-                                                        </div>
-                                                        <div style="width: 15%;float: left;text-align: left"><b>Payment Terms</b><br><div class="input-group input-group-outline mb-3">{{getInspectionDetailsForSheet.objQuotation.PaymentTerms}}</div></div>
-                                                        <div style="width: 15%;float: left;text-align: left">
-                                                            <b>Shipment Method</b><br><div class="input-group input-group-outline mb-3">{{getInspectionDetailsForSheet.objQuotation.ShipmentMethod}}</div>
-                                                        </div>
-                                                        <div style="width: 15%;float: left;text-align: left">
-                                                            <b>Unit Price(Hr)</b><br><div class="input-group input-group-outline mb-3">{{getInspectionDetailsForSheet.objQuotation.LabourUnitPrice}}</div>
+                                                        <div class="quotation-header-controls">
+                                                            <div class="quotation-header-section" style="flex: 0 0 15%;">
+                                                                <label>Your Reference</label>
+                                                                <div>{{getInspectionDetailsForSheet.objQuotation.YourReference}}</div>
+                                                            </div>
+                                                            <div class="quotation-header-section" style="flex: 0 0 15%;">
+                                                                <label>Valid For</label>
+                                                                <div>{{getInspectionDetailsForSheet.objQuotation.ValidTo}}</div>
+                                                            </div>
+                                                            <div class="quotation-header-section" style="flex: 0 0 20%;">
+                                                                <label>Sales Person</label>
+                                                                <div>{{getInspectionDetailsForSheet.objQuotation.QuotationSalesPersonName}}</div>
+                                                            </div>
+                                                            <div class="quotation-header-section" style="flex: 0 0 15%;">
+                                                                <label>Payment Terms</label>
+                                                                <div>{{getInspectionDetailsForSheet.objQuotation.PaymentTerms}}</div>
+                                                            </div>
+                                                            <div class="quotation-header-section" style="flex: 0 0 15%;">
+                                                                <label>Shipment Method</label>
+                                                                <div>{{getInspectionDetailsForSheet.objQuotation.ShipmentMethod}}</div>
+                                                            </div>
+                                                            <div class="quotation-header-section" style="flex: 0 0 15%;">
+                                                                <label>Unit Price(Hr)</label>
+                                                                <div>{{getInspectionDetailsForSheet.objQuotation.LabourUnitPrice}}</div>
+                                                            </div>
                                                         </div>
                                                     </td>
                                                 }
                                             </tr>
-                                            <tr _ngcontent-c10="">
-                                                <td _ngcontent-c10="" align="left" valign="top" class="" style="padding: 20px 100px;">
-                                                    <div style="width: 55%;font-size: 18px;float: left; line-height: 22px; ">Rack Inspection Repair - {{getInspectionDetailsForSheet.InspectionDate| date:'yyyy'}} <input type="text" class="inspectionviewtextbox " id="inSurcharge" maxlength="20" style="width:120px;" ng-model="getInspectionDetailsForSheet.objQuotation.GSTPer" hidden /></div>
-                                                    @if (userType == "1")
-                                                    {
-                                                        <div style="width: 20%;float: left;line-height: 22px"><span style="font-size: 14px;"><b>Surcharge:</b> </span><input type="text" class="inspectionviewtextbox " id="inSurcharge" maxlength="20" style="width:120px;" ng-model="getInspectionDetailsForSheet.objQuotation.QuotationSurcharge" /><br><button class="btn btn-lg bg-gradient-info btn-lg mb-0" style="width: 220px; margin:10px;" hidden ng-click="">Update Surcharge</button> </div>
-                                                        <div style="width: 20%;float: left;line-height: 22px"><span style="font-size: 14px;"><b>Markup: </b></span><input type="text" class="inspectionviewtextbox " id="inMarkup" maxlength="20" style="width:120px;" ng-model="getInspectionDetailsForSheet.objQuotation.QuotationMarkup" /><br><button class="btn btn-lg bg-gradient-info btn-lg mb-0" style="width: 220px; margin: 10px;" hidden ng-click="">Update Markup</button> </div>
-                                                    }
+
+                                            <!-- SURCHARGE & MARKUP SECTION -->
+                                            <tr>
+                                                <td style="padding: 0 100px;">
+                                                    <div class="surcharge-markup-row">
+                                                        @if (userType == "1")
+                                                        {
+                                                            <div class="surcharge-markup-field">
+                                                                <label>Surcharge:</label>
+                                                                <input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.QuotationSurcharge" class="inspectionviewtextbox" />
+                                                            </div>
+                                                            <div class="surcharge-markup-field">
+                                                                <label>Markup:</label>
+                                                                <input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.QuotationMarkup" class="inspectionviewtextbox" />
+                                                            </div>
+                                                            <button type="button"
+                                                                    class="btn-quotation-action btn-update-surcharge"
+                                                                    ng-click="updateSurchargeAndMarkup(getInspectionDetailsForSheet.InspectionId)"
+                                                                    ng-disabled="isLoadingButton"
+                                                                    title="Update Surcharge and Markup">
+                                                                <i class="material-icons">refresh</i>
+                                                                Update Surcharge & Markup
+                                                            </button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="surcharge-markup-field">
+                                                                <label>Surcharge:</label>
+                                                                <div>{{getInspectionDetailsForSheet.objQuotation.QuotationSurcharge}}</div>
+                                                            </div>
+                                                            <div class="surcharge-markup-field">
+                                                                <label>Markup:</label>
+                                                                <div>{{getInspectionDetailsForSheet.objQuotation.QuotationMarkup}}</div>
+                                                            </div>
+                                                        }
+                                                    </div>
                                                 </td>
                                             </tr>
+
+                                            <!-- QUOTATION ITEMS SECTION -->
                                             <tr>
                                                 <td style="padding: 10px 10px;">
                                                     <div class="card my-4">
                                                         <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
                                                             <div class="pt-4 pb-4">
-                                                                <div class="row">
+                                                                <div class="row align-items-center">
                                                                     <div class="col-6 d-flex align-items-center">
                                                                         <h6 class="text-white text-capitalize ps-3 mb-0">Quotation Items</h6>
                                                                     </div>
@@ -1918,234 +1976,292 @@
                                                                         @if (userType == "1" || userType == "2")
                                                                         {
                                                                             <div ng-if="getInspectionDetailsForSheet.empModel.UserID == @userId || '@userType' == '1'">
-                                                                                @*<input id="chkUpdateAll" type="checkbox" ng-model="getInspectionDetailsForSheet.objQuotation.updateAll" /><span class="text-white text-capitalize ps-1">Update All?</span>*@
-                                                                                <button type="submit" ng-click="" class="btn bg-gradient-info bg-gradient-requestquotation" style="margin-right: 10px; margin-bottom: 0px !important;" ng-disabled="isProcessing">Update Quotation</button>
-                                                                                <button type="submit" ng-click="Updateitempriceadmin(getInspectionDetailsForSheet.InspectionId)" class="btn bg-gradient-info bg-gradient-requestquotation" style="margin-right: 10px; margin-bottom: 0px !important;" ng-disabled="isProcessing">Update Item Price</button>
+                                                                                <div class="quotation-buttons-group" style="padding-right: 15px;">
+                                                                                    <button type="button"
+                                                                                            class="btn-quotation-action btn-update-price"
+                                                                                            ng-click="updatePrice(getInspectionDetailsForSheet.InspectionId)"
+                                                                                            ng-disabled="isLoadingButton"
+                                                                                            title="Update prices from Item Master">
+                                                                                        <i class="material-icons">update</i>
+                                                                                        Update Price
+                                                                                    </button>
+                                                                                    <button type="button"
+                                                                                            class="btn-quotation-action btn-update-all"
+                                                                                            ng-click="updateAll(getInspectionDetailsForSheet.InspectionId)"
+                                                                                            ng-disabled="isLoadingButton"
+                                                                                            title="Update complete quotation">
+                                                                                        <i class="material-icons">done_all</i>
+                                                                                        Update All
+                                                                                    </button>
+                                                                                </div>
                                                                             </div>
                                                                         }
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
+
                                                         <div class="card-body pb-2">
-                                                            <div class="table-responsive p-0">
-                                                                <table class="table align-items-center mb-0">
+                                                            <div class="quotation-table-wrapper">
+                                                                <table class="quotation-items-table">
                                                                     <thead>
                                                                         @if (userType == "1")
                                                                         {
                                                                             <tr style="position: relative; z-index: 9999;">
-                                                                                <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:5%"><input id="chkTBD" type="checkbox" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.IsTBD" ng-change="checkTBD()" /></th>
-                                                                                <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:10%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemPartNo" class="inspectionviewtextbox " id="inItemNo" maxlength="20" style="width:100%;" ng-blur="fetchItemDetails()" /></th>
-                                                                                <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:20%">
-                                                                                    <textarea type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemDescription" ng-change="getSuggestions()" class="inspectionviewtextbox" id="inDescription" style="width:100%;"></textarea>
+                                                                                <th style="width:5%"><input id="chkTBD" type="checkbox" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.IsTBD" ng-change="checkTBD()" title="To Be Determined" /></th>
+                                                                                <th style="width:8%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemPartNo" class="inspectionviewtextbox" id="inItemNo" maxlength="20" style="width:100%;" ng-blur="fetchItemDetails()" placeholder="Item No" /></th>
+                                                                                <th style="width:18%">
+                                                                                    <textarea type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemDescription" ng-change="getSuggestions()" class="inspectionviewtextbox" id="inDescription" style="width:100%; height: 30px;"></textarea>
                                                                                     <ul class="suggestions" ng-show="suggestions.length > 0">
                                                                                         <li ng-repeat="suggestion in suggestions" ng-click="selectSuggestion(suggestion)">
                                                                                             {{ suggestion.ComponentPriceDescription }}
                                                                                         </li>
                                                                                     </ul>
                                                                                 </th>
-                                                                                <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:8%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice" class="inspectionviewtextbox" id="inUnitPrice" style="width:100%;" ng-pattern="/^\d+(\.\d+)?$/" required /></th>
-                                                                                <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:7%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.QuotationSurcharge" class="inspectionviewtextbox" id="inSurchrage" style="width:100%;" ng-pattern="/^\d+(\.\d+)?$/" required /></th>
-                                                                                <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:7%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.QuotationMarkup" class="inspectionviewtextbox" id="inMarkup" style="width:100%;" ng-pattern="/^\d+(\.\d+)?$/" required /></th>
-                                                                                <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:8%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemPrice" class="inspectionviewtextbox" id="inMarkup" style="width:100%;" readonly="readonly" required /></th>
-                                                                                <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:7%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemWeight" class="inspectionviewtextbox" id="inWeight" style="width:100%;" ng-pattern="/^\d+(\.\d+)?$/" required /></th>
-                                                                                <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:7%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemQuantity" class="inspectionviewtextbox" id="inQuantity" style="width:100%;" ng-pattern="/^\d+(\.\d+)?$/" ng-change="calculateTotals()" required /></th>
-                                                                                <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:8%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemWeightTotal" class="inspectionviewtextbox" id="inWeightTotal" style="width:100%;" readonly="readonly" /></th>
-                                                                                <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:10%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.LineTotal" class="inspectionviewtextbox" id="inAmount" style="width:100%;" readonly="readonly" /></th>
-                                                                                <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:10%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemLabour" class="inspectionviewtextbox" id="inItemLabour" style="width:100%;" /></th>
-                                                                                <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:10%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemLabourTotal" class="inspectionviewtextbox" id="inItemLabourTotal" style="width:100%;" readonly="readonly" /></th>
-                                                                                <th class="text-secondary opacity-7" style="width:10%;"><button ng-click="btnAddItemComponentPrice()"><i class="material-icons text-lg">add</i></button></th>
+                                                                                <th style="width:7%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemUnitPrice" class="inspectionviewtextbox" id="inUnitPrice" style="width:100%;" ng-pattern="/^\d+(\.\d+)?$/" required placeholder="Price" /></th>
+                                                                                <th style="width:6%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.QuotationSurcharge" class="inspectionviewtextbox" id="inSurchrage" style="width:100%;" ng-pattern="/^\d+(\.\d+)?$/" required placeholder="Surch" /></th>
+                                                                                <th style="width:6%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.QuotationMarkup" class="inspectionviewtextbox" id="inMarkup" style="width:100%;" ng-pattern="/^\d+(\.\d+)?$/" required placeholder="Markup" /></th>
+                                                                                <th style="width:7%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemPrice" class="inspectionviewtextbox" id="inPrice" style="width:100%;" readonly="readonly" required placeholder="Total" /></th>
+                                                                                <th style="width:6%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemWeight" class="inspectionviewtextbox" id="inWeight" style="width:100%;" ng-pattern="/^\d+(\.\d+)?$/" required placeholder="Weight" /></th>
+                                                                                <th style="width:5%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemQuantity" class="inspectionviewtextbox" id="inQuantity" style="width:100%;" ng-pattern="/^\d+(\.\d+)?$/" ng-change="calculateTotals()" required placeholder="Qty" /></th>
+                                                                                <th style="width:7%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemWeightTotal" class="inspectionviewtextbox" id="inWeightTotal" style="width:100%;" readonly="readonly" placeholder="Wt Total" /></th>
+                                                                                <th style="width:8%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.LineTotal" class="inspectionviewtextbox" id="inAmount" style="width:100%;" readonly="readonly" placeholder="Line Amt" /></th>
+                                                                                <th style="width:6%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemLabour" class="inspectionviewtextbox" id="inItemLabour" style="width:100%;" placeholder="Labour" /></th>
+                                                                                <th style="width:8%"><input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.objQuotationComponent.ItemLabourTotal" class="inspectionviewtextbox" id="inItemLabourTotal" style="width:100%;" readonly="readonly" placeholder="Labour Ttl" /></th>
+                                                                                <th style="width:8%;"><button ng-click="btnAddItemComponentPrice()" class="btn btn-sm btn-primary"><i class="material-icons text-lg">add</i></button></th>
                                                                             </tr>
                                                                         }
                                                                         <tr>
                                                                             @if (userType == "1")
                                                                             {
-                                                                                <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">TBD?</th>
+                                                                                <th>TBD</th>
                                                                             }
-                                                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Item No.</th>
-                                                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Description</th>
-                                                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Price</th>
-                                                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Surcharge</th>
-                                                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Markup</th>
-                                                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Total</th>
-                                                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Weight</th>
-                                                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Qty</th>
-                                                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Wt Total</th>
-                                                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Line Amount</th>
-                                                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Labour</th>
-                                                                            <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Labour Total</th>
-                                                                            <th class="text-secondary opacity-7"></th>
+                                                                            <th>Item No</th>
+                                                                            <th>Description</th>
+                                                                            <th>Price</th>
+                                                                            <th>Surcharge</th>
+                                                                            <th>Markup</th>
+                                                                            <th>Total</th>
+                                                                            <th>Weight</th>
+                                                                            <th>Qty</th>
+                                                                            <th>Wt Total</th>
+                                                                            <th>Line Amount</th>
+                                                                            <th>Labour</th>
+                                                                            <th>Labour Total</th>
+                                                                            @if (userType == "1")
+                                                                            {
+                                                                                <th></th>
+                                                                            }
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
-                                                                        <tr ng-repeat="item in getInspectionDetailsForSheet.objQuotation.objQuotationItems">
-                                                                            @if (userType == "1")
-                                                                            {
-                                                                                <td><input id="chkTBDInner" type="checkbox" ng-model="item.IsTBD" ng-change="checkTBDInner(item)" /></td>
-                                                                            }
-                                                                            <td class="align-middle text-sm">
-                                                                                <span style="display:none;">{{item.QuotationInspectionItemId}}</span>
-                                                                                <span ng-if="!item.isEditing">{{item.ItemPartNo}}</span>
-                                                                                <input ng-if="item.isEditing" type="text" ng-model="item.ItemPartNo" class="inspectionviewtextbox" style='width:100%' ng-blur="fetchItemDetailsChild(item)" />
-                                                                            </td>
-                                                                            <td class="align-middle text-sm">
-                                                                                <span ng-if="!item.isEditing">{{item.ItemDescription}}</span>
-                                                                                <input ng-if="item.isEditing" type="text" ng-model="item.ItemDescription" class="inspectionviewtextbox" style='width: 100%' />
-                                                                            </td>
-                                                                            <td class="align-middle text-sm">
-                                                                                <span ng-if="!item.isEditing">{{item.ItemUnitPrice}}</span>
-                                                                                <input ng-if="item.isEditing" type="text" ng-model="item.ItemUnitPrice" class="inspectionviewtextbox" style='width: 100%' />
-                                                                            </td>
-                                                                            <td class="align-middle text-sm">
-                                                                                <span ng-if="!item.isEditing">{{item.ItemSurcharge}}</span>
-                                                                                <input ng-if="item.isEditing" type="text" ng-model="item.ItemSurcharge" class="inspectionviewtextbox" style='width: 100%' />
-                                                                            </td>
-                                                                            <td class="align-middle text-sm">
-                                                                                <span ng-if="!item.isEditing">{{item.ItemMarkup}}</span>
-                                                                                <input ng-if="item.isEditing" type="text" ng-model="item.ItemMarkup" class="inspectionviewtextbox" style="width: 100%" />
-                                                                            </td>
-                                                                            <td class="align-right text-sm">
-                                                                                <span ng-if="!item.isEditing">{{item.ItemPrice}}</span>
-                                                                                <input ng-if="item.isEditing" type="text" ng-model="item.ItemPrice" class="inspectionviewtextbox" style="width: 100%" />
-                                                                            </td>
-                                                                            <td class="align-right text-sm">
-                                                                                <span class="" ng-if="!item.isEditing">{{item.ItemWeight}}</span>
-                                                                                <input ng-if="item.isEditing" type="text" ng-model="item.ItemWeight" class="inspectionviewtextbox" style="width: 100%" />
-                                                                            </td>
-                                                                            <td class="align-right text-sm">
-                                                                                <span class="" ng-if="!item.isEditing">{{item.ItemQuantity}}</span>
-                                                                                <input ng-if="item.isEditing" type="text" ng-model="item.ItemQuantity" class="inspectionviewtextbox" style="width: 100%" />
-                                                                            </td>
-                                                                            <td class="align-right text-sm">
-                                                                                <span class="" ng-if="!item.isEditing">{{item.ItemWeightTotal}}</span>
-                                                                                <input ng-if="item.isEditing" type="text" ng-model="item.ItemWeightTotal" class="inspectionviewtextbox" readonly style="width: 100%" />
-                                                                            </td>
-                                                                            <td class="align-right text-sm">
-                                                                                <span class="" ng-if="!item.isEditing">{{item.LineTotal}}</span>
-                                                                                <input ng-if="item.isEditing" type="text" ng-model="item.LineTotal" class="inspectionviewtextbox" readonly style="width: 100%" />
-                                                                            </td>
-                                                                            <td class="align-right text-sm">
-                                                                                <span class="" ng-if="!item.isEditing">{{item.ItemLabour}}</span>
-                                                                                <input ng-if="item.isEditing" type="text" ng-model="item.ItemLabour" class="inspectionviewtextbox" style="width: 100%" />
-                                                                            </td>
-                                                                            <td class="align-right text-sm">
-                                                                                <span class="" ng-if="!item.isEditing">{{item.ItemLabourTotal}}</span>
-                                                                                <input ng-if="item.isEditing" type="text" ng-model="item.ItemLabourTotal" class="inspectionviewtextbox" readonly style="width: 100%" />
-                                                                            </td>
-                                                                            <td class="align-middle">
-                                                                                @if (userType == "1")
-                                                                                {
-                                                                                    <button ng-click="saveItem(item)" ng-show="item.isEditing"><i class="material-icons text-lg">save</i></button>
-                                                                                    <button ng-click="editItem(item)"><i class="material-icons text-lg">edit</i></button>
-                                                                                    <button ng-click="removeQuotaionItem(item.QuotationInspectionItemId)"><i class="material-icons text-lg">delete</i></button>
-                                                                                }
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            @if (userType == "1")
-                                                                            {
-                                                                                <td></td>
-                                                                            }
-                                                                            <td class="align-middle text-sm">
-                                                                                <span>Labour Cost</span>
-                                                                            </td>
-                                                                            <td class="align-middle text-sm">
-                                                                            </td>
-                                                                            <td class="align-middle text-sm">
-                                                                            </td>
-                                                                            <td class="align-middle text-sm">
-                                                                            </td>
-                                                                            <td class="align-middle text-sm">
-                                                                            </td>
-                                                                            <td class="align-right text-sm">
-                                                                            </td>
-                                                                            <td class="align-right text-sm">
-                                                                            </td>
-                                                                            <td class="align-right text-sm">
-                                                                            </td>
-                                                                            <td class="align-right text-sm">
-                                                                            </td>
-                                                                            <td class="align-right text-sm">
-                                                                            </td>
-                                                                            <td class="align-right text-sm">
-                                                                                <span ng-if="!isEditingLabour">{{getInspectionDetailsForSheet.objQuotation.TotalLabour}}</span>
-                                                                                <input ng-if="isEditingLabour" type="text" ng-model="getInspectionDetailsForSheet.objQuotation.TotalLabour" class="inspectionviewtextbox" style="width: 100%" />
-                                                                            </td>
-                                                                            <td class="align-right text-sm">
-                                                                                <span class="">{{getInspectionDetailsForSheet.objQuotation.TotalUnitPrice}}</span>
-                                                                            </td>
-                                                                            <td class="align-middle">
-                                                                                @if (userType == "1")
-                                                                                {
-                                                                                    <button ng-click="saveItemlabour(isEditingLabour)" ng-show="isEditingLabour"><i class="material-icons text-lg">save</i></button>
-                                                                                    <button ng-click="editItemlabour()"><i class="material-icons text-lg">edit</i></button>
-                                                                                }
-                                                                            </td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                    <tfoot>
+                                                                    <tbody>
 
-                                                                        <tr>
-                                                                            <td colspan="8" rowspan="5" style="cursor: default; vertical-align: top;">
-                                                                                <textarea type="text" id="txtquotationnotes" ng-model="getInspectionDetailsForSheet.objQuotation.QuotationNotes" style='width: 100%; height: 140px;'></textarea>
+                                                                        <!-- DISPLAY ROW -->
+                                                                        <tr ng-repeat-start="item in getInspectionDetailsForSheet.objQuotation.objQuotationItems"
+                                                                            ng-show="!item.isEditing">
+
+                                                                            @if (userType == "1")
+                                                                            {
+                                                                                <td class="text-center">
+                                                                                    <input type="checkbox"
+                                                                                           ng-model="item.IsTBD"
+                                                                                           ng-change="updateTBD(item)" />
+                                                                                </td>
+                                                                            }
+
+                                                                            <td>{{item.ItemPartNo}}</td>
+                                                                            <td>{{item.ItemDescription}}</td>
+                                                                            <td class="text-end">{{item.ItemUnitPrice | currency:'$'}}</td>
+                                                                            <td class="text-end">{{item.ItemSurcharge}}</td>
+                                                                            <td class="text-end">{{item.ItemMarkup}}</td>
+                                                                            <td class="text-end">{{item.ItemPrice | currency:'$'}}</td>
+                                                                            <td class="text-end">{{item.ItemWeight}}</td>
+                                                                            <td class="text-end">{{item.ItemQuantity}}</td>
+                                                                            <td class="text-end">{{item.ItemWeightTotal}}</td>
+                                                                            <td class="text-end">{{item.LineTotal | currency:'$'}}</td>
+                                                                            <td class="text-end">{{item.ItemLabour}}</td>
+                                                                            <td class="text-end">{{item.ItemLabourTotal}}</td>
+
+                                                                            @if (userType == "1")
+                                                                            {
+                                                                                <td class="text-center" style="white-space:nowrap;">
+                                                                                    <button style="padding: 4px 8px; font-size: 12px; cursor: pointer; background-color: #f0f0f0; border: 1px solid #ddd; border-radius: 2px; color: #1976d2;"
+                                                                                            ng-click="startEditQuotationItem(item)"
+                                                                                            title="Edit">
+                                                                                        <i class="material-icons" style="font-size:16px;">edit</i>
+                                                                                    </button>
+
+                                                                                    <button style="padding: 4px 8px; font-size: 12px; cursor: pointer; background-color: #f0f0f0; border: 1px solid #ddd; border-radius: 2px; color: #d32f2f; margin-left: 4px;"
+                                                                                            ng-click="deleteQuotationItem(item)"
+                                                                                            title="Delete">
+                                                                                        <i class="material-icons" style="font-size:16px;">delete</i>
+                                                                                    </button>
+                                                                                </td>
+                                                                            }
+
+                                                                        </tr>
+
+                                                                        <!-- EDIT ROW -->
+                                                                        <tr ng-repeat-end
+                                                                            ng-show="item.isEditing"
+                                                                            class="table-warning">
+
+                                                                            @if (userType == "1")
+                                                                            {
+                                                                                <td class="text-center">
+                                                                                    <input type="checkbox"
+                                                                                           ng-model="item.IsTBD"
+                                                                                           ng-change="recalculateItemRow(item)" />
+                                                                                </td>
+                                                                            }
+
+                                                                            <td>
+                                                                                <input type="text"
+                                                                                       class="form-control form-control-sm"
+                                                                                       ng-model="item.ItemPartNo" />
                                                                             </td>
-                                                                            <td colspan="2" style="font-size: 16px; font-family: arial; color: #000; padding: 20px 0px 0px 0px; cursor: default;" align="center">Sub Total</td>
-                                                                            <td colspan="1" align="right" style="font-size: 18px; font-family: arial; color: #000; padding: 20px 0px 0px 0px; cursor: default;">${{getInspectionDetailsForSheet.objQuotation.Subtotal}}</td>
-                                                                            <td colspan="3" style="cursor: default;">&nbsp;</td>
+
+                                                                            <td>
+                                                                                <textarea class="form-control form-control-sm"
+                                                                                          rows="2"
+                                                                                          ng-model="item.ItemDescription"></textarea>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <input type="number"
+                                                                                       class="form-control form-control-sm text-end"
+                                                                                       ng-model="item.ItemUnitPrice"
+                                                                                       ng-change="recalculateItemRow(item)" />
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <input type="number"
+                                                                                       class="form-control form-control-sm text-end"
+                                                                                       ng-model="item.ItemSurcharge"
+                                                                                       ng-change="recalculateItemRow(item)" />
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <input type="number"
+                                                                                       class="form-control form-control-sm text-end"
+                                                                                       ng-model="item.ItemMarkup"
+                                                                                       ng-change="recalculateItemRow(item)" />
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <input type="text"
+                                                                                       class="form-control form-control-sm text-end"
+                                                                                       ng-model="item.ItemPrice"
+                                                                                       readonly />
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <input type="number"
+                                                                                       class="form-control form-control-sm text-end"
+                                                                                       ng-model="item.ItemWeight"
+                                                                                       ng-change="recalculateItemRow(item)" />
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <input type="number"
+                                                                                       class="form-control form-control-sm text-end"
+                                                                                       ng-model="item.ItemQuantity"
+                                                                                       ng-change="recalculateItemRow(item)" />
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <input type="text"
+                                                                                       class="form-control form-control-sm text-end"
+                                                                                       ng-model="item.ItemWeightTotal"
+                                                                                       readonly />
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <input type="text"
+                                                                                       class="form-control form-control-sm text-end"
+                                                                                       ng-model="item.LineTotal"
+                                                                                       readonly />
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <input type="number"
+                                                                                       class="form-control form-control-sm text-end"
+                                                                                       ng-model="item.ItemLabour"
+                                                                                       ng-change="recalculateItemRow(item)" />
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <input type="text"
+                                                                                       class="form-control form-control-sm text-end"
+                                                                                       ng-model="item.ItemLabourTotal"
+                                                                                       readonly />
+                                                                            </td>
+
+                                                                            <td class="text-center" style="white-space:nowrap;">
+
+                                                                                <button style="padding: 4px 8px; font-size: 12px; cursor: pointer; background-color: #28a745; color: white; border: none; border-radius: 2px;"
+                                                                                        ng-click="saveEditQuotationItem(item)"
+                                                                                        ng-disabled="isLoadingButton"
+                                                                                        title="Save">
+                                                                                    <i class="material-icons" style="font-size:16px;">save</i>
+                                                                                </button>
+
+                                                                                <button style="padding: 4px 8px; font-size: 12px; cursor: pointer; background-color: #6c757d; color: white; border: none; border-radius: 2px; margin-left: 4px;"
+                                                                                        ng-click="cancelEditQuotationItem(item)"
+                                                                                        title="Cancel">
+                                                                                    <i class="material-icons" style="font-size:16px;">close</i>
+                                                                                </button>
+
+                                                                            </td>
+
                                                                         </tr>
-                                                                        @if (userType == "1")
-                                                                        {
-                                                                            <tr>
-                                                                                @*<td colspan="8" style="cursor: default;">&nbsp;</td>*@
-                                                                                <td colspan="2" style="font-size: 16px; font-family: arial; color: #000; padding: 5px 0px 0px 0px; cursor: default;" align="center">
-                                                                                    TAX(<input type="text" class="inspectionviewtextbox ng-pristine ng-untouched ng-empty ng-invalid ng-invalid-required ng-valid-pattern" id="GST" style="width:20% !important; " ng-model="getInspectionDetailsForSheet.objQuotation.GSTPer" ng-change="updateGSTTotals()" />%)
-                                                                                </td>
-                                                                                <td colspan="1" align="right" style="font-size: 18px; font-family: arial; color: #000; padding: 5px 0px 0px 0px; cursor: default;">${{getInspectionDetailsForSheet.objQuotation.GSTValue}}</td>
-                                                                                <td colspan="3" style="cursor: default;">&nbsp;</td>
-                                                                            </tr>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <tr>
-                                                                                @*<td colspan="8" style="cursor: default;">&nbsp;</td>*@
-                                                                                <td colspan="2" style="font-size: 16px; font-family: arial; color: #000; padding: 5px 0px 0px 0px; cursor: default;" align="center">
-                                                                                    TAX({{getInspectionDetailsForSheet.objQuotation.GSTPer}}%)
-                                                                                </td>
-                                                                                <td colspan="1" align="right" style="font-size: 18px; font-family: arial; color: #000; padding: 5px 0px 0px 0px; cursor: default;">${{getInspectionDetailsForSheet.objQuotation.GSTValue}}</td>
-                                                                                <td colspan="3" style="cursor: default;">&nbsp;</td>
-                                                                            </tr>
-                                                                        }
-                                                                        <tr>
-                                                                            @*<td colspan="8" style="cursor: default;">&nbsp;</td>*@
-                                                                            <td colspan="2" style="font-size: 16px; font-family: arial; color: #000; padding: 20px 0px 0px 0px; cursor: default;" align="center"><b>Total</b> </td>
-                                                                            <td colspan="1" align="right" style="font-size: 18px; font-family: arial; color: #000; padding: 20px 0px 0px 0px; cursor: default;"><b>${{getInspectionDetailsForSheet.objQuotation.Total}}</b></td>
-                                                                            <td colspan="3" style="cursor: default;">&nbsp;</td>
-                                                                        </tr>
-                                                                    </tfoot>
+
+                                                                    </tbody>
+</tbody>
                                                                 </table>
+                                                            </div>
+
+                                                            <!-- NOTES AND TOTALS SECTION -->
+                                                            <div style="margin-top: 20px;">
+                                                                <div class="quotation-notes-section">
+                                                                    <label>Remarks:</label>
+                                                                    <textarea ng-model="getInspectionDetailsForSheet.objQuotation.QuotationNotes"></textarea>
+                                                                </div>
+
+                                                                <div class="quotation-totals">
+                                                                    <div class="quotation-total-item">
+                                                                        <div class="quotation-total-label">Sub Total:</div>
+                                                                        <div class="quotation-total-value">${{getInspectionDetailsForSheet.objQuotation.Subtotal}}</div>
+                                                                    </div>
+                                                                    @if (userType == "1")
+                                                                    {
+                                                                        <div class="quotation-total-item">
+                                                                            <div class="quotation-total-label">TAX (<input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.GSTPer" ng-change="updateGSTTotals()" style="width: 40px; padding: 4px; border: 1px solid #ddd;" />%):</div>
+                                                                            <div class="quotation-total-value">${{getInspectionDetailsForSheet.objQuotation.GSTValue}}</div>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="quotation-total-item">
+                                                                            <div class="quotation-total-label">TAX ({{getInspectionDetailsForSheet.objQuotation.GSTPer}}%):</div>
+                                                                            <div class="quotation-total-value">${{getInspectionDetailsForSheet.objQuotation.GSTValue}}</div>
+                                                                        </div>
+                                                                    }
+                                                                    <div class="quotation-total-item">
+                                                                        <div class="quotation-total-label" style="font-size: 16px;"><b>Total:</b></div>
+                                                                        <div class="quotation-total-value" style="font-size: 16px;"><b>${{getInspectionDetailsForSheet.objQuotation.Total}}</b></div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td style="padding: 20px 100px;">
-                                                </td>
-                                            </tr>
-                                            <tr _ngcontent-c10="">
-                                                <td _ngcontent-c10="" align="left" valign="top" class="" style="padding: 20px 100px;">
-                                                    <div style="width: 25%;float: left;line-height: 22px"><span style="font-size: 14px;font-weight: 600">VAT Registration No.</span><br>R100741693</div>
-                                                    <div style="width: 25%;float: left;line-height: 22px"><span style="font-size: 14px;font-weight: 600">Home Page</span><br>www.camindustrial.net</div>
-                                                    <div style="width: 25%;float: left;text-align: left "><span style="font-size: 14px;font-weight: 600">Phone No.</span><br>(403) 720-0076 </div>
-                                                    <div style="width: 25%;float: left;text-align: left"><span style="font-size: 14px;font-weight: 600">Email</span><br>info@camindustrial.net</div>
-                                                </td>
-                                            </tr>
                                         </tbody>
-                                        <tfoot>
-                                            <tr class="footer"><td><img src="~/Content/V2/images/quotefooter.png" style="max-width: 100%;"></td></tr>
-                                        </tfoot>
                                     </table>
                                 </section>
+                                
                             </div>
                         </div>
                     </div>

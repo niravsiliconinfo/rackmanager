@@ -485,9 +485,11 @@ namespace CamV4.Controllers
                             if (model.UserType == 0)
                                 message.AppendLine("Please select User Type.");
 
-                            if (model.IsStampingEngineer == null)
-                                message.AppendLine("Please select Stamping Engineer option.");
-
+                            if (model.IsProfileEdit == false)
+                            {
+                                if (model.IsStampingEngineer == null)
+                                    message.AppendLine("Please select Stamping Engineer option.");
+                            }
                             if (message.Length > 0)
                             {
                                 return Json(message.ToString());
@@ -1476,7 +1478,7 @@ namespace CamV4.Controllers
                         //strCCEmailslist.Add("nirav.m@siliconinfo.com");
 
                         List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
-                        objSalesList = DatabaseHelper.GetAllSalesRep();
+                        objSalesList = DatabaseHelper.GetAllSalesRep(iDetails.CustomerId);
                         foreach (var sales in objSalesList)
                         {
                             var customerArray = sales.SalesCompanyListing?.Split(',');

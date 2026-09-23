@@ -78,14 +78,45 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
-                                        <select name="CustomerLocationId" id="CustomerLocationId" class="form-control" ng-model="customerLocationId" ng-change="GetAreaByLocationIdDrpd(customerLocationId)" required>
+                                        <select name="CustomerLocationId" id="CustomerLocationId" class="form-control" ng-model="customerLocationId" ng-change="OnLocationChange(customerLocationId)" required>
                                             <option value="">-- Select --</option>
                                             <option ng-repeat="d in getCustomerLocationByCustomerIdDrpd" value="{{d.CustomerLocationID}}">{{d.LocationName}}</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
-
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <span>Facility</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select class="form-control"
+                                                ng-model="customerFacilityId"
+                                                ng-change="OnFacilityChange(customerFacilityId)">
+                                            <option value="">-- Select Facility --</option>
+                                            <option ng-repeat="f in getFacilityDetailsByLocationId"
+                                                    ng-value="f.CustomerFacilityID">
+                                                {{f.FacilityName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span>Area</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <select class="form-control" ng-model="customerAreaId">
+                                            <option value="">-- Select Area --</option>
+                                            <option ng-repeat="a in getAreaDetailsByLocationId"
+                                                    ng-value="a.AreaID">
+                                                {{a.AreaName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-sm-2">
                                     <span>Document Type</span>

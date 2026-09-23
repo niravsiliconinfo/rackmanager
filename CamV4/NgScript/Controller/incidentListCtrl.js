@@ -52,7 +52,7 @@
         console.log('-----------incidentListCtrl--------------');
         $scope.getAllIncidentByCustomerId = [];
 
-        $scope.incidentFilter = sharedFilterService.getIncidentFilters() || {};
+       
 
         $scope.viewby = '50';
         $scope.currentPage = '1';
@@ -73,36 +73,29 @@
 
         function init() {
                         
-            var incident = sharedFilterService.getIncidentFilters();
+           
+            var filters = sharedFilterService.getIncidentFilters();
 
             if (window.location.pathname == "/Customer/IncidentReport") {
-                //loadDueInspections();
-                if (incident && Object.keys(incident).length > 0) {
-                    console.log('from init for loadIncident filter');
-                    $scope.incidentFilter = incident;
-                    loadIncident(incident);
+
+                if (filters && Object.keys(filters).length > 0) {
+                    loadIncident(filters);
                 } else {
-                    console.log('from init for loadIncident All');
-                    loadIncident(); // Load default data
+                    loadIncident();
                 }
             }
+
             if (window.location.pathname == "/Admin/IncidentReportList") {
                 console.log('Calling ----> loadIncidentAdminList');
                 loadIncidentAdminList();
             } 
         }
 
-        //$scope.$on(
-        //    'incidentFiltersUpdated',
-        //    function (event, filters) {
-        //        loadIncidents(filters);
-        //    });
-        $scope.$on(
-            'incidentFiltersUpdated',
-            function (event, filters) {
-                console.log('incidentFiltersUpdated received', filters);
-                loadIncident(filters);  // Your load function
-            });
+   
+        $scope.$on("incidentFiltersUpdated", function (event, filters) {
+            console.log("Received Customer Filters", filters);
+            loadIncident(filters);
+        });
 
         function loadIncidentAdminList()
         {
@@ -122,22 +115,46 @@
         }
        
 
+        //function loadIncident(filter) {
+        //    console.log('Calling ----> loadIncident');
+        //    const filters = filter;
+        //    console.log("------XXXXXXXXXXXXXXXXXXXX------ CALL ------- -----getDueInspectionsCustomerFilters");
+        //    $http.post('/api/pageview/getAllIncidentByCustomerId', filters)
+        //        .then(function (response) {
+        //            $scope.getAllIncidentByCustomerId = response.data;
+        //            console.log('$scope.getAllIncidentByCustomerId', $scope.getAllIncidentByCustomerId);
+        //            if ($scope.getAllIncidentByCustomerId != null) { $scope.getAllIncidentByCustomerIdcount = $scope.getAllIncidentByCustomerId.length; }
+        //            else { $scope.getAllIncidentByCustomerIdcount = 0; }
+        //            $scope.totalgetAllIncidentByCustomerId = $scope.getAllIncidentByCustomerIdcount;
+        //        }, function (error) {
+        //            console.error("Error loading due inspections:", error);
+        //        });
+        //}
         function loadIncident(filter) {
-            console.log('Calling ----> loadIncident');
-            const filters = filter;
-            console.log("------XXXXXXXXXXXXXXXXXXXX------ CALL ------- -----getDueInspectionsCustomerFilters");
-            $http.post('/api/pageview/getAllIncidentByCustomerId', filters)
+
+            filter = filter || {};
+
+            console.log('Calling ----> loadIncident', filter);
+            console.log(JSON.stringify(filter));
+            $http.post('/api/pageview/getAllIncidentByCustomerId', filter)
                 .then(function (response) {
-                    $scope.getAllIncidentByCustomerId = response.data;
-                    console.log('$scope.getAllIncidentByCustomerId', $scope.getAllIncidentByCustomerId);
-                    if ($scope.getAllIncidentByCustomerId != null) { $scope.getAllIncidentByCustomerIdcount = $scope.getAllIncidentByCustomerId.length; }
-                    else { $scope.getAllIncidentByCustomerIdcount = 0; }
-                    $scope.totalgetAllIncidentByCustomerId = $scope.getAllIncidentByCustomerIdcount;
+
+                    $scope.getAllIncidentByCustomerId = response.data || [];
+
+                    $scope.getAllIncidentByCustomerIdcount =
+                        $scope.getAllIncidentByCustomerId.length;
+
+                    $scope.totalgetAllIncidentByCustomerId =
+                        $scope.getAllIncidentByCustomerIdcount;
+
+                    // Reset paging
+                    $scope.currentPage = 1;
+                    $scope.pageChanged();
+
                 }, function (error) {
-                    console.error("Error loading due inspections:", error);
+                    console.error("Error loading incidents:", error);
                 });
         }
-
        
 
         // Expose refresh methods for button calls

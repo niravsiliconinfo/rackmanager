@@ -91,32 +91,91 @@
             }
         }
 
-        $scope.$on(
-            'documentFiltersUpdated',
-            function (event, filters) {
+        loadDocuments(sharedFilterService.getDocumentFilters() || {});
 
-                loadDocuments(filters);
-
-            });
+        $scope.$on('documentFiltersUpdated', function (e, filters) {
+            loadDocuments(filters);
+        });
 
         function loadDocuments(filter) {
-            const filters = filter;
-            console.log('Calling ----> loadDocuments---------------------------', filters);
-            $http.post('/api/pageview/getAllCustomerDocumentsWithFilters', filters)
+
+            filter = filter || {};
+
+            console.log('Calling ----> loadDocuments', filter);
+
+            $http.post('/api/pageview/getAllCustomerDocumentsWithFilters', filter)
                 .then(function (response) {
-                    $scope.getAllHistoryDocument = response.data;                                        
-                    if ($scope.getAllHistoryDocument != null) { $scope.getAllHistoryDocumentcount = $scope.getAllHistoryDocument.length; }
-                    else { $scope.getAllHistoryDocumentcount = 0; }
+
+                    $scope.getAllHistoryDocument = response.data || [];
+                    $scope.getAllHistoryDocumentcount = $scope.getAllHistoryDocument.length;
                     $scope.totalgetAllHistoryDocument = $scope.getAllHistoryDocumentcount;
+
+                    // Reset pagination
+                    $scope.currentPage = 1;
+                    $scope.pageChanged();
+
                 }, function (error) {
-                    console.error("Error loading all inspections:", error);
+                    console.error("Error loading documents:", error);
                 });
         }
 
+        $scope.OnLocationChange = function (id) {
 
+            $scope.customerFacilityId = null;
+            $scope.customerAreaId = null;
+
+            // Load facilities
+            $scope.GetFacilityByLocationIdDrpd(id);
+
+            // Default areas from location
+            $scope.GetAreaByLocationIdDrpd(id);
+        };
+
+        $scope.OnFacilityChange = function (id) {
+
+            $scope.customerAreaId = null;
+
+            if (id) {
+                // Facility selected
+                $scope.GetAreaByFacilityIdDrpd(id);
+            } else {
+                // Facility cleared
+                $scope.GetAreaByLocationIdDrpd($scope.customerLocationId);
+            }
+        };
+
+        $scope.GetFacilityByLocationIdDrpd = function (id) {
+            console.log('GetFacilityByLocationIdDrpd', id);
+            $http.get('/api/pageview/getFacilityByLocationId', { params: { id: id } }).then(function (response) {
+                $scope.getFacilityDetailsByLocationId = response.data;
+                console.log('getAreaDetailsByLocationId--', response.data);
+            }, function (response) {
+                $scope.waiting = false;
+            });
+        };
+
+        $scope.GetAreaByLocationIdDrpd = function (id) {
+            console.log('getAreaDetailsByLocationId', id);
+            $http.get('/api/pageview/getAreaDetailsByLocationId', { params: { id: id } }).then(function (response) {
+                $scope.getAreaDetailsByLocationId = response.data;
+                console.log('getAreaDetailsByLocationId--', $scope.getAreaDetailsByLocationId);
+            }, function (response) {
+                $scope.waiting = false;
+            });
+        };
+       
+        $scope.GetAreaByFacilityIdDrpd = function (id) {
+            console.log('getAreaDetailsByFacilityId', id);
+            $http.get('/api/pageview/getAreaDetailsByFacilityId', { params: { id: id } }).then(function (response) {
+                $scope.getAreaDetailsByLocationId = response.data;
+                console.log('getAreaDetailsByLocationId--', $scope.getAreaDetailsByLocationId);                
+            }, function (response) {
+                $scope.waiting = false;
+            });
+        };
 
         $scope.refreshAllDocuments = function () {
-            loadDocuments();
+            loadDocuments(sharedFilterService.getDocumentFilters() || {});
         };
 
         $rootScope.$on('docsFilterUpdated', function () {
@@ -138,15 +197,6 @@
             });
         };
 
-        $scope.GetAreaByLocationIdDrpd = function (id) {
-            console.log('getAreaDetailsByLocationId', id);
-            $http.get('/api/pageview/getAreaDetailsByLocationId', { params: { id: id } }).then(function (response) {
-                $scope.getAreaDetailsByLocationId = response.data;
-                console.log('getAreaDetailsByLocationId--', $scope.getAreaDetailsByLocationId);
-            }, function (response) {
-                $scope.waiting = false;
-            });
-        };
 
         if (window.location.pathname == "/Admin/ManageHistoryLegacyDocuments") {
             var para = window.location.search;
@@ -166,7 +216,7 @@
             });
         }
         //if (window.location.pathname == "/Admin/DeleteHistoryLegacyDocuments") {
-        //    //var params = new URLSearchParams(window.location.search);            
+        //    //var params = new URLSearchParams(window.location.search);
         //    //var paraMain = params.get('custid');
         //    //console.log('paramain', paramain);
         //    $scope.RemoveHistoryLegacyFile = function (id) {
@@ -189,6 +239,38 @@
         //    }
         //}
 
+        $scope.RemoveHistoryLegacyFile = function (id) {
+
+            if (!confirm("Are you sure you want to delete this document?")) {
+                return;
+            }
+
+            var params = new URLSearchParams(window.location.search);
+            var custid = params.get('id');   // Manage page uses ?id=
+
+            var config = {
+                CustomerLocationHistoryLegacyFileId: id
+            };
+
+            $http({
+                url: '/api/pageview/deleteHistoryLegacyFile',
+                method: "POST",
+                params: config,
+                headers: { "Content-Type": "application/json" }
+            }).then(function (response) {
+
+                if (response.data === "File deleted successfully.") {
+                    toastr.success("File deleted successfully!");
+                    $scope.GetHistoryLegacyDocuments(custid);   // Refresh grid
+                } else {
+                    toastr.error(response.data);
+                }
+
+            }, function (error) {
+                toastr.error("Error deleting file.");
+            });
+
+        };
         if (window.location.pathname == "/Admin/DeleteHistoryLegacyDocuments") {
             $scope.RemoveHistoryLegacyFile = function (id) {
                 var params = new URLSearchParams(window.location.search);
@@ -425,7 +507,7 @@
                 var extension = name.substring(name.lastIndexOf('.'));
                 var timestamp = new Date().toISOString().replace(/[-:.TZ]/g, "").substring(0, 14); // yyyyMMddHHmmss
                 var safeName = fileNameWithoutExt.replace(/\s+/g, "_");
-                var safeLocation = (CustomerLocation || "Unknown").replace(/\s+/g, "_");
+                var safeLocation = (CustomerLocation || "Unknown").replace(/\s+/g, "_");                
                 var finalFileName = customerID + "_" + safeLocation + "_" + safeName + "_" + timestamp + extension;
 
                 // Append the file and file name to FormData
@@ -457,6 +539,8 @@
             $scope.UploadHistoryLegacyFile = function () {
                 var customerid = $scope.customerId;
                 var customerLocationID = $scope.customerLocationId;
+                var customerFacilityID = $scope.customerFacilityId || null;
+                var customerAreaID = $scope.customerAreaId || null;
 
                 if (!customerLocationID) {
                     $scope.validationShow = 'Please select Customer Location.';
@@ -468,55 +552,72 @@
                     return;
                 }
 
+                //console.log({
+                //    CustomerLocationID: customerLocationID,
+                //    CustomerFacilityID: customerFacilityID,
+                //    CustomerAreaID: customerAreaID
+                //});
+                //return;
+
                 var uploadPromises = [];
+
                 for (var i = 0; i < $scope.fileList.length; i++) {
-                    uploadPromises.push($scope.UploadFileIndividualHistory(
-                        $scope.fileList[i].file,
-                        $scope.fileList[i].file.name,
-                        $scope.fileList[i].file.type,
-                        $scope.fileList[i].file.size,
-                        i,
-                        customerid,
-                        customerLocationID
-                    ));
+
+                    uploadPromises.push(
+                        $scope.UploadFileIndividualHistory(
+                            $scope.fileList[i].file,
+                            $scope.fileList[i].file.name,
+                            $scope.fileList[i].file.type,
+                            $scope.fileList[i].file.size,
+                            i,
+                            customerid,
+                            customerLocationID
+                        )
+                    );
+
                 }
-                console.log('$scope.fileList', $scope.fileList);
+
                 Promise.all(uploadPromises).then(function () {
-                    var PdfList = [];      // renamed files
-                    var OriginalList = []; // original names
+
+                    var PdfList = [];
+                    var OriginalList = [];
 
                     for (var i = 0; i < $scope.fileList.length; i++) {
-                        PdfList[i] = $scope.fileList[i].savedName;
-                        OriginalList[i] = $scope.fileList[i].originalName;
+                        PdfList.push($scope.fileList[i].savedName);
+                        OriginalList.push($scope.fileList[i].originalName);
                     }
 
                     var config = {
                         CustomerId: customerid,
                         CustomerLocationID: customerLocationID,
+                        CustomerFacilityID: customerFacilityID,
+                        CustomerAreaID: customerAreaID,
                         FileCategory: $scope.fileCategory,
                         FileDrawingPath: PdfList.toString(),
                         FileDrawingName: OriginalList.toString()
                     };
-                    console.log('File listing', config);
+
                     return $http.post('/api/pageview/uploadHistoryLegacyFile', config, {
                         headers: {
                             "Content-Type": "application/json",
                             "RequestVerificationToken": $scope.antiForgeryToken
                         }
-                    }).then(function (response) {
-                        console.log('on file save in database :..................' , response);
-                        if (response.data != 0) {
-                            var url = '/Admin/ManageHistoryLegacyDocuments?id=' + paraMain;
-                            window.location = url;
-                        } else {
-                            $scope.validationShow = 'Failed to save file information to database.';
-                        }
-                    }, function (error) {
-                        $scope.validationShow = 'Error saving file information: ' + error.data;
                     });
-                }, function (error) {
+
+                }).then(function (response) {
+
+                    if (response.data != 0) {
+                        window.location = '/Admin/ManageHistoryLegacyDocuments?id=' + paraMain;
+                    } else {
+                        $scope.validationShow = 'Failed to save file information.';
+                    }
+
+                }, function () {
+
                     $scope.validationShow = 'One or more file uploads failed.';
+
                 });
+
             };
             //$scope.UploadHistoryLegacyFile = function () {
             //    var customerid = $scope.customerId;

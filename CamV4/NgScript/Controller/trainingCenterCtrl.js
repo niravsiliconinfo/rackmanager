@@ -225,11 +225,150 @@ angular.module('myApp')
             $http.get('/api/pageview/tc_getAllWebinars').then(function (res) { $scope.webinarList = res.data || []; });
             $http.get('/api/pageview/tc_getAllBlogs').then(function (res) { $scope.blogList = res.data || []; });
         }
+
+        // ============================================================
+        // ADMIN - TECHNICAL TALK MANAGEMENT
+        // /Admin/TrainingCenterTechnicalTalk
+        // ============================================================
+        console.log("Current Path:", path);
+        console.log("Window Path:", window.location.pathname);
+        if (path.indexOf('managetrainingcentertechnicaltalk') !== -1) {
+            console.log('ManageTrainingCenterTechnicalTalk load load');
+            // ---- State ----
+            $scope.talkList = [];
+            $scope.talkForm = {};
+            $scope.showTalkForm = false;
+            $scope.talkError = '';
+            $scope.talkSuccess = '';
+
+            // Customer-question answer panel state
+            $scope.answerForm = null;   // null = panel closed
+            $scope.answerError = '';
+            $scope.answerSuccess = '';
+            $scope.talkFilter = 'all';  // 'all' | 'unanswered' | 'answered' | 'admin'
+
+            // ---- Filtered view ----
+            $scope.filteredTalkList = [];
+            var applyFilter = function () {
+
+                $scope.filteredTalkList = angular.copy($scope.talkList);
+
+                if ($scope.talkFilter === 'unanswered') {
+                    $scope.filteredTalkList = $scope.filteredTalkList.filter(function (t) {
+                        return !t.IsAdminCreated &&
+                            (!t.Answer || t.Answer.trim() === '');
+                    });
+
+                } else if ($scope.talkFilter === 'answered') {
+                    $scope.filteredTalkList = $scope.filteredTalkList.filter(function (t) {
+                        return !t.IsAdminCreated &&
+                            t.Answer && t.Answer.trim() !== '';
+                    });
+
+                } else if ($scope.talkFilter === 'admin') {
+                    $scope.filteredTalkList = $scope.filteredTalkList.filter(function (t) {
+                        return t.IsAdminCreated;
+                    });
+                }
+                console.log("talkList:", $scope.talkList.length);
+                console.log("filtered:", $scope.filteredTalkList.length);
+            };
+
+            var loadTalks = function () {
+                $http.get('/api/pageview/tc_getAllTalks').then(function (res) {
+                    $scope.talkList = res.data || [];                        
+                    applyFilter();
+                });
+            };
+            loadTalks();
+
+            console.log("talkList", $scope.talkList.length);
+            console.log("filtered", $scope.filteredTalkList.length);
+
+            $scope.SetTalkFilter = function (f) {
+                $scope.talkFilter = f;
+                applyFilter();
+            };
+
+            // ---- Knowledge-base Q&A form (admin-authored entries) ----
+            $scope.OpenTalkForm = function (t) {
+                $scope.talkError = $scope.talkSuccess = '';
+                $scope.answerForm = null;   // close answer panel if open
+                $scope.talkForm = t
+                    ? angular.copy(t)
+                    : {
+                        TrainingTechnicalTalkID: 0, Question: '', Answer: '',
+                        IsPublished: false, DisplayOrder: 0, IsActive: true
+                    };
+                $scope.showTalkForm = true;
+            };
+            $scope.CloseTalkForm = function () { $scope.showTalkForm = false; $scope.talkError = $scope.talkSuccess = ''; };
+
+            $scope.SaveTalk = function () {
+                $scope.talkError = $scope.talkSuccess = '';
+                if (!$scope.talkForm.Question) { $scope.talkError = 'Question is required.'; return; }
+                $http({
+                    url: '/api/pageview/tc_saveTechnicalTalk', method: 'POST',
+                    data: $scope.talkForm, headers: { 'Content-Type': 'application/json' }
+                }).then(function (res) {
+                    if (res.data === 'Ok') {
+                        $scope.talkSuccess = 'Saved successfully.';
+                        $scope.showTalkForm = false;
+                        loadTalks();
+                    } else { $scope.talkError = res.data; }
+                }, function () { $scope.talkError = 'An error occurred.'; });
+            };
+
+            $scope.DeleteTalk = function (id) {
+                if (!confirm('Delete this entry?')) return;
+                $http({
+                    url: '/api/pageview/tc_deleteTechnicalTalk', method: 'POST',
+                    data: { id: id }, headers: { 'Content-Type': 'application/json' }
+                }).then(function () { loadTalks(); });
+            };
+
+            // ---- Answer a customer-submitted question ----
+            $scope.OpenAnswerForm = function (t) {
+                $scope.showTalkForm = false;   // close create/edit form if open
+                $scope.answerError = '';
+                $scope.answerSuccess = '';
+                $scope.answerForm = {
+                    TrainingTechnicalTalkID: t.TrainingTechnicalTalkID,
+                    CustomerName: t.CustomerName || 'Customer',
+                    Question: t.Question,
+                    Answer: t.Answer || ''
+                };
+            };
+            $scope.CloseAnswerForm = function () { $scope.answerForm = null; $scope.answerError = $scope.answerSuccess = ''; };
+
+            $scope.SubmitAnswer = function () {
+                $scope.answerError = $scope.answerSuccess = '';
+                if (!$scope.answerForm.Answer || !$scope.answerForm.Answer.trim()) {
+                    $scope.answerError = 'Answer cannot be empty.';
+                    return;
+                }
+                $http({
+                    url: '/api/pageview/tc_answerQuestion', method: 'POST',
+                    data: {
+                        TrainingTechnicalTalkID: $scope.answerForm.TrainingTechnicalTalkID,
+                        Answer: $scope.answerForm.Answer.trim()
+                    },
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(function (res) {
+                    if (res.data === 'Ok') {
+                        $scope.answerSuccess = 'Answer saved and customer notified by email.';
+                        $scope.answerForm = null;
+                        loadTalks();
+                    } else { $scope.answerError = res.data || 'Failed to save.'; }
+                }, function () { $scope.answerError = 'An error occurred.'; });
+            };
+        }
+
         // ============================================================
         // CUSTOMER - TECHNICAL TALK
         // /Customer/TrainingCenterTechnicalTalk
         // ============================================================
-        if (path.indexOf('trainingcentertechnicaltalk') !== -1 && path.indexOf('admin') === -1) {
+        if (path.indexOf('trainingcentertechnicaltalk') !== -1) {
 
             // --- Published Q&A (existing) ---
             $scope.talkList = [];
@@ -237,42 +376,62 @@ angular.module('myApp')
             $scope.questionError = '';
             $scope.questionSent = false;
 
-            $http.get('/api/pageview/tc_getPublishedTalks').then(function (res) {
-                $scope.talkList = res.data || [];
-            });
+            $scope.loadTalks = function () {
+                $http.get('/api/pageview/tc_getPublishedTalksAll')
+                    .then(function (res) {
+                        $scope.talkList = res.data || [];
+                    });
+            };
+            $scope.loadTalks();
 
             // --- My submitted questions (NEW) ---
-            $scope.myQuestions = [];
+            //$scope.myQuestions = [];
 
-            var loadMyQuestions = function () {
-                $http.get('/api/pageview/tc_getMyQuestions').then(function (res) {
-                    $scope.myQuestions = res.data || [];
-                });
-            };
-            loadMyQuestions();
+            //var loadMyQuestions = function () {
+            //    $http.get('/api/pageview/tc_getPublishedTalksAll').then(function (res) {
+            //        $scope.myQuestions = res.data || [];
+            //    });
+            //};
+            //loadMyQuestions();
 
-            // SubmitQuestion � extended (was already partially stubbed)
-            $scope.SubmitQuestion = function () {
-                $scope.questionError = '';
-                if (!$scope.newQuestion.trim()) {
-                    $scope.questionError = 'Please enter your question.';
+            // SubmitQuestion extended (was already partially stubbed)
+            $scope.isSubmitting = false;            
+            $scope.questionError = "";
+            $scope.submitQuestion = function () {
+                console.time("submit");
+                $scope.questionError = "";
+                // Validation
+                if (!$scope.newQuestion || !$scope.newQuestion.trim()) {
+                    $scope.questionError = "Please enter your question.";
                     return;
                 }
-                $http({
-                    url: '/api/pageview/tc_submitQuestion', method: 'POST',
-                    data: { question: $scope.newQuestion.trim() },
-                    headers: { 'Content-Type': 'application/json' }
-                }).then(function (res) {
-                    if (res.data === 'Ok') {
-                        $scope.questionSent = true;
-                        $scope.newQuestion = '';
-                        loadMyQuestions();          // refresh "My Questions" list
-                    } else {
-                        $scope.questionError = res.data || 'Failed to submit.';
-                    }
-                }, function () {
-                    $scope.questionError = 'An error occurred.';
-                });
+                console.timeLog("submit", "Before HTTP");
+                // Prevent multiple clicks
+                if ($scope.isSubmitting)
+                    return;
+
+                $scope.isSubmitting = true;
+
+                $http.post('/api/pageview/tc_submitQuestion', {
+                    question: $scope.newQuestion.trim()
+                })
+                    .then(function (response) {
+                        console.timeEnd("submit");
+                        if (response.data === "Ok") {
+                            $scope.questionError = "Your question has been submitted successfully.";
+                            $scope.newQuestion = "";                            
+                            $scope.loadTalks(); 
+                        } else {
+                            $scope.questionError = response.data;
+                        }
+
+                    })
+                    .catch(function () {
+                        $scope.questionError = "Something went wrong. Please try again.";
+                    })
+                    .finally(function () {
+                        $scope.isSubmitting = false;
+                    });
             };
         }
 
@@ -514,129 +673,6 @@ angular.module('myApp')
             };
         }
 
-        // ============================================================
-        // ADMIN - TECHNICAL TALK MANAGEMENT
-        // /Admin/TrainingCenterTechnicalTalk
-        // ============================================================
-        if (path.indexOf('trainingcentertechnicaltalk') !== -1 && path.indexOf('admin') !== -1) {
-
-            // ---- State ----
-            $scope.talkList = [];
-            $scope.talkForm = {};
-            $scope.showTalkForm = false;
-            $scope.talkError = '';
-            $scope.talkSuccess = '';
-
-            // Customer-question answer panel state
-            $scope.answerForm = null;   // null = panel closed
-            $scope.answerError = '';
-            $scope.answerSuccess = '';
-            $scope.talkFilter = 'all';  // 'all' | 'unanswered' | 'answered' | 'admin'
-
-            // ---- Filtered view ----
-            $scope.filteredTalkList = [];
-            var applyFilter = function () {
-                var f = $scope.talkFilter;
-                if (f === 'all') {
-                    $scope.filteredTalkList = $scope.talkList;
-                } else if (f === 'unanswered') {
-                    $scope.filteredTalkList = $scope.talkList.filter(function (t) {
-                        return !t.IsAdminCreated && (!t.Answer || t.Answer.trim() === '');
-                    });
-                } else if (f === 'answered') {
-                    $scope.filteredTalkList = $scope.talkList.filter(function (t) {
-                        return !t.IsAdminCreated && t.Answer && t.Answer.trim() !== '';
-                    });
-                } else if (f === 'admin') {
-                    $scope.filteredTalkList = $scope.talkList.filter(function (t) { return t.IsAdminCreated; });
-                }
-            };
-
-            var loadTalks = function () {
-                $http.get('/api/pageview/tc_getAllTalks').then(function (res) {
-                    $scope.talkList = res.data || [];
-                    applyFilter();
-                });
-            };
-            loadTalks();
-
-            $scope.SetTalkFilter = function (f) {
-                $scope.talkFilter = f;
-                applyFilter();
-            };
-
-            // ---- Knowledge-base Q&A form (admin-authored entries) ----
-            $scope.OpenTalkForm = function (t) {
-                $scope.talkError = $scope.talkSuccess = '';
-                $scope.answerForm = null;   // close answer panel if open
-                $scope.talkForm = t
-                    ? angular.copy(t)
-                    : {
-                        TrainingTechnicalTalkID: 0, Question: '', Answer: '',
-                        IsPublished: false, DisplayOrder: 0, IsActive: true
-                    };
-                $scope.showTalkForm = true;
-            };
-            $scope.CloseTalkForm = function () { $scope.showTalkForm = false; $scope.talkError = $scope.talkSuccess = ''; };
-
-            $scope.SaveTalk = function () {
-                $scope.talkError = $scope.talkSuccess = '';
-                if (!$scope.talkForm.Question) { $scope.talkError = 'Question is required.'; return; }
-                $http({
-                    url: '/api/pageview/tc_saveTechnicalTalk', method: 'POST',
-                    data: $scope.talkForm, headers: { 'Content-Type': 'application/json' }
-                }).then(function (res) {
-                    if (res.data === 'Ok') {
-                        $scope.talkSuccess = 'Saved successfully.';
-                        $scope.showTalkForm = false;
-                        loadTalks();
-                    } else { $scope.talkError = res.data; }
-                }, function () { $scope.talkError = 'An error occurred.'; });
-            };
-
-            $scope.DeleteTalk = function (id) {
-                if (!confirm('Delete this entry?')) return;
-                $http({
-                    url: '/api/pageview/tc_deleteTechnicalTalk', method: 'POST',
-                    data: { id: id }, headers: { 'Content-Type': 'application/json' }
-                }).then(function () { loadTalks(); });
-            };
-
-            // ---- Answer a customer-submitted question ----
-            $scope.OpenAnswerForm = function (t) {
-                $scope.showTalkForm = false;   // close create/edit form if open
-                $scope.answerError = '';
-                $scope.answerSuccess = '';
-                $scope.answerForm = {
-                    TrainingTechnicalTalkID: t.TrainingTechnicalTalkID,
-                    CustomerName: t.CustomerName || 'Customer',
-                    Question: t.Question,
-                    Answer: t.Answer || ''
-                };
-            };
-            $scope.CloseAnswerForm = function () { $scope.answerForm = null; $scope.answerError = $scope.answerSuccess = ''; };
-
-            $scope.SubmitAnswer = function () {
-                $scope.answerError = $scope.answerSuccess = '';
-                if (!$scope.answerForm.Answer || !$scope.answerForm.Answer.trim()) {
-                    $scope.answerError = 'Answer cannot be empty.';
-                    return;
-                }
-                $http({
-                    url: '/api/pageview/tc_answerQuestion', method: 'POST',
-                    data: {
-                        TrainingTechnicalTalkID: $scope.answerForm.TrainingTechnicalTalkID,
-                        Answer: $scope.answerForm.Answer.trim()
-                    },
-                    headers: { 'Content-Type': 'application/json' }
-                }).then(function (res) {
-                    if (res.data === 'Ok') {
-                        $scope.answerSuccess = 'Answer saved and customer notified by email.';
-                        $scope.answerForm = null;
-                        loadTalks();
-                    } else { $scope.answerError = res.data || 'Failed to save.'; }
-                }, function () { $scope.answerError = 'An error occurred.'; });
-            };
-        }
+        
 
     });

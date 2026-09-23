@@ -1,0 +1,130 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="~/NgScript/Controller/salesInternalInspectionCtrl.js"></script>
+<main class="main-content2 position-relative max-height-vh-100 h-100 border-radius-lg" ng-controller="salesInternalInspectionCtrl">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="@Url.Action("Index","Admi")">Dashboard</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Internal Inspections</li>
+                </ol>
+                <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
+            </nav>
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                </div>
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="@Url.Action("Login", "Account")" class="nav-link text-body font-weight-bold px-0">
+                            <i class="fa fa-sign-out me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header card-blue p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="pt-4 pb-4">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="text-white text-capitalize ps-3 mt-2">Internal Inspections Listing</h6>
+                                </div>
+                                <div class="col-6 text-end pe-4 d-flex align-items-center justify-content-end">
+                                   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pb-2">                                            
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Inspection #</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Date</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Prepared By</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Area,Facility,Location</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Region</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Deficiencies</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Status</th>
+                                        <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-if="!getAllInternalInspectionBySales || getAllInternalInspectionBySales.length == 0">
+                                        <td colspan="10" class="text-center text-sm py-3">No inspections found.</td>
+                                    </tr>
+                                    <tr ng-repeat="d in getAllInternalInspectionBySales | startFrom:(liPaging.current-1)*liPaging.size | limitTo:liPaging.size">
+                                        <td><p class="text-sm font-weight-bold mb-0 ps-2">{{d.InternalInspectionNumber}}</p></td>
+                                        <td><p class="text-sm mb-0">{{d.InternalInspectionDateFormatted || '-'}}</p></td>
+                                        <td><p class="text-sm mb-0">{{d.ReportedByName || '-'}}</p></td>
+                                        <td>
+                                            <p class="text-sm mb-0">
+                                                <span class="text-secondary text-xs">
+                                                    {{d.CustomerAreaName}}
+                                                    <span ng-if="d.CustomerAreaName && (d.CustomerFacilityName || d.CustomerLocationName)">, </span>
+                                                    <span ng-if="d.CustomerFacilityName">
+                                                        {{d.CustomerFacilityName}}
+                                                        <span ng-if="d.CustomerLocationName">, </span>
+                                                    </span>
+                                                    {{d.CustomerLocationName}}
+                                                </span>
+                                            </p>
+                                        </td>
+                                        <td><p class="text-sm mb-0">{{d.Region || '-'}}</p></td>
+                                        <td class="text-center"><span class="badge bg-gradient-secondary">{{d.DeficiencyCount}}</span></td>
+                                        <td>
+                                            <span class="badge bg-gradient-info" ng-if="d.Status=='Draft'">Draft</span>
+                                            <span class="badge bg-gradient-primary" ng-if="d.Status=='Submitted'">Submitted</span>
+                                            <span class="badge bg-gradient-warning" ng-if="d.Status=='Reviewed'">Reviewed</span>
+                                            <span class="badge bg-gradient-success" ng-if="d.Status=='Closed'">Closed</span>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <button class="btn btn-link text-info mb-0"
+                                                    ng-click="viewInternalInspection(d.InternalInspectionID)">
+                                                <i class="material-icons">visibility</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    Show
+                                    <select ng-model="viewby"
+                                            ng-change="setItemsPerPage(viewby)">
+                                        <option>10</option>
+                                        <option>25</option>
+                                        <option>50</option>
+                                        <option>100</option>
+                                    </select>
+
+                                    of {{totalItems}} Internal Inspections
+                                </div>
+
+                                <div class="col-md-6 text-end">
+                                    <pagination total-items="totalItems"
+                                                ng-model="currentPage"
+                                                max-size="maxSize"
+                                                items-per-page="itemsPerPage"
+                                                ng-change="pageChanged()"
+                                                boundary-links="true">
+                                    </pagination>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.Partial("_FooterLayout")
+    </div>
+</main>

@@ -47,6 +47,9 @@
                 if (window.location.pathname == "/Customer/IncidentReportView") {
                     loadIncidentReportView();
                 }
+                if (window.location.pathname == "/Admin/IncidentReportView") {
+                    loadIncidentReportView();
+                }
             }
 
             function GetCustomerLocationByCustomerIdDrpd(id) {
@@ -210,3 +213,4 @@
         }]);
 
 })();
+

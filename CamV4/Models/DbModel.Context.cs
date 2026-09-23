@@ -323,7 +323,7 @@ namespace CamV4.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerDocumentsWithFilters_Result>("GetCustomerDocumentsWithFilters", customerIdParameter, inspectionDocumentParameter, historyDocumentParameter, provinceIdParameter, regionParameter, cityIdParameter, customerLocationIdParameter, documentTypeListParameter);
         }
     
-        public virtual ObjectResult<GetCustomerUsersDocumentsWithFilters_Result> GetCustomerUsersDocumentsWithFilters(Nullable<long> customerId, Nullable<int> inspectionDocument, Nullable<int> historyDocument, Nullable<int> provinceId, string region, Nullable<int> cityId, string customerLocationId, string documentTypeList)
+        public virtual ObjectResult<GetCustomerUsersDocumentsWithFilters_Result> GetCustomerUsersDocumentsWithFilters(Nullable<long> customerId, Nullable<int> inspectionDocument, Nullable<int> historyDocument, Nullable<int> provinceId, string region, Nullable<int> cityId, string customerLocationId, Nullable<long> customerFacilityId, Nullable<long> customerAreaId, string documentTypeList)
         {
             var customerIdParameter = customerId.HasValue ?
                 new ObjectParameter("CustomerId", customerId) :
@@ -353,11 +353,19 @@ namespace CamV4.Models
                 new ObjectParameter("CustomerLocationId", customerLocationId) :
                 new ObjectParameter("CustomerLocationId", typeof(string));
     
+            var customerFacilityIdParameter = customerFacilityId.HasValue ?
+                new ObjectParameter("CustomerFacilityId", customerFacilityId) :
+                new ObjectParameter("CustomerFacilityId", typeof(long));
+    
+            var customerAreaIdParameter = customerAreaId.HasValue ?
+                new ObjectParameter("CustomerAreaId", customerAreaId) :
+                new ObjectParameter("CustomerAreaId", typeof(long));
+    
             var documentTypeListParameter = documentTypeList != null ?
                 new ObjectParameter("DocumentTypeList", documentTypeList) :
                 new ObjectParameter("DocumentTypeList", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerUsersDocumentsWithFilters_Result>("GetCustomerUsersDocumentsWithFilters", customerIdParameter, inspectionDocumentParameter, historyDocumentParameter, provinceIdParameter, regionParameter, cityIdParameter, customerLocationIdParameter, documentTypeListParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerUsersDocumentsWithFilters_Result>("GetCustomerUsersDocumentsWithFilters", customerIdParameter, inspectionDocumentParameter, historyDocumentParameter, provinceIdParameter, regionParameter, cityIdParameter, customerLocationIdParameter, customerFacilityIdParameter, customerAreaIdParameter, documentTypeListParameter);
         }
     
         public virtual ObjectResult<GetInspectionCustomerUserWithFilters_Result> GetInspectionCustomerUserWithFilters(Nullable<long> customerId, string inspectionTypeId, Nullable<int> provinceId, string region, Nullable<int> cityId, string customerLocationId, string inspectionStatusList)
@@ -1182,6 +1190,302 @@ namespace CamV4.Models
                 new ObjectParameter("UserId", typeof(long));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("GetRegions", userIdParameter);
+        }
+    
+        public virtual ObjectResult<GetCustomerDocumentsWithWithoutFilters_Result> GetCustomerDocumentsWithWithoutFilters(Nullable<long> customerId, Nullable<int> inspectionDocument, Nullable<int> historyDocument, Nullable<int> provinceId, string region, Nullable<int> cityId, Nullable<long> customerLocationId, Nullable<long> customerFacilityId, Nullable<long> customerAreaId, string documentTypeList)
+        {
+            var customerIdParameter = customerId.HasValue ?
+                new ObjectParameter("CustomerId", customerId) :
+                new ObjectParameter("CustomerId", typeof(long));
+    
+            var inspectionDocumentParameter = inspectionDocument.HasValue ?
+                new ObjectParameter("InspectionDocument", inspectionDocument) :
+                new ObjectParameter("InspectionDocument", typeof(int));
+    
+            var historyDocumentParameter = historyDocument.HasValue ?
+                new ObjectParameter("HistoryDocument", historyDocument) :
+                new ObjectParameter("HistoryDocument", typeof(int));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            var cityIdParameter = cityId.HasValue ?
+                new ObjectParameter("CityId", cityId) :
+                new ObjectParameter("CityId", typeof(int));
+    
+            var customerLocationIdParameter = customerLocationId.HasValue ?
+                new ObjectParameter("CustomerLocationId", customerLocationId) :
+                new ObjectParameter("CustomerLocationId", typeof(long));
+    
+            var customerFacilityIdParameter = customerFacilityId.HasValue ?
+                new ObjectParameter("CustomerFacilityId", customerFacilityId) :
+                new ObjectParameter("CustomerFacilityId", typeof(long));
+    
+            var customerAreaIdParameter = customerAreaId.HasValue ?
+                new ObjectParameter("CustomerAreaId", customerAreaId) :
+                new ObjectParameter("CustomerAreaId", typeof(long));
+    
+            var documentTypeListParameter = documentTypeList != null ?
+                new ObjectParameter("DocumentTypeList", documentTypeList) :
+                new ObjectParameter("DocumentTypeList", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerDocumentsWithWithoutFilters_Result>("GetCustomerDocumentsWithWithoutFilters", customerIdParameter, inspectionDocumentParameter, historyDocumentParameter, provinceIdParameter, regionParameter, cityIdParameter, customerLocationIdParameter, customerFacilityIdParameter, customerAreaIdParameter, documentTypeListParameter);
+        }
+    
+        public virtual ObjectResult<GetCustomerUsersDocumentsWithWithoutFilters_Result1> GetCustomerUsersDocumentsWithWithoutFilters(Nullable<long> customerId, Nullable<int> inspectionDocument, Nullable<int> historyDocument, Nullable<int> provinceId, string region, Nullable<int> cityId, string customerLocationId, Nullable<long> customerFacilityId, Nullable<long> customerAreaId, string documentTypeList)
+        {
+            var customerIdParameter = customerId.HasValue ?
+                new ObjectParameter("CustomerId", customerId) :
+                new ObjectParameter("CustomerId", typeof(long));
+    
+            var inspectionDocumentParameter = inspectionDocument.HasValue ?
+                new ObjectParameter("InspectionDocument", inspectionDocument) :
+                new ObjectParameter("InspectionDocument", typeof(int));
+    
+            var historyDocumentParameter = historyDocument.HasValue ?
+                new ObjectParameter("HistoryDocument", historyDocument) :
+                new ObjectParameter("HistoryDocument", typeof(int));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            var cityIdParameter = cityId.HasValue ?
+                new ObjectParameter("CityId", cityId) :
+                new ObjectParameter("CityId", typeof(int));
+    
+            var customerLocationIdParameter = customerLocationId != null ?
+                new ObjectParameter("CustomerLocationId", customerLocationId) :
+                new ObjectParameter("CustomerLocationId", typeof(string));
+    
+            var customerFacilityIdParameter = customerFacilityId.HasValue ?
+                new ObjectParameter("CustomerFacilityId", customerFacilityId) :
+                new ObjectParameter("CustomerFacilityId", typeof(long));
+    
+            var customerAreaIdParameter = customerAreaId.HasValue ?
+                new ObjectParameter("CustomerAreaId", customerAreaId) :
+                new ObjectParameter("CustomerAreaId", typeof(long));
+    
+            var documentTypeListParameter = documentTypeList != null ?
+                new ObjectParameter("DocumentTypeList", documentTypeList) :
+                new ObjectParameter("DocumentTypeList", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerUsersDocumentsWithWithoutFilters_Result1>("GetCustomerUsersDocumentsWithWithoutFilters", customerIdParameter, inspectionDocumentParameter, historyDocumentParameter, provinceIdParameter, regionParameter, cityIdParameter, customerLocationIdParameter, customerFacilityIdParameter, customerAreaIdParameter, documentTypeListParameter);
+        }
+    
+        public virtual ObjectResult<sp_getApprovedInspection_Count_Sales_Result> sp_getApprovedInspection_Count_Sales(Nullable<long> userID, Nullable<int> yEAR)
+        {
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(long));
+    
+            var yEARParameter = yEAR.HasValue ?
+                new ObjectParameter("YEAR", yEAR) :
+                new ObjectParameter("YEAR", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_getApprovedInspection_Count_Sales_Result>("sp_getApprovedInspection_Count_Sales", userIDParameter, yEARParameter);
+        }
+    
+        public virtual ObjectResult<sp_getEmpInspection_Count_Sales_Result> sp_getEmpInspection_Count_Sales(Nullable<long> userID, Nullable<int> yEAR)
+        {
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(long));
+    
+            var yEARParameter = yEAR.HasValue ?
+                new ObjectParameter("YEAR", yEAR) :
+                new ObjectParameter("YEAR", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_getEmpInspection_Count_Sales_Result>("sp_getEmpInspection_Count_Sales", userIDParameter, yEARParameter);
+        }
+    
+        public virtual ObjectResult<GetCustomerDocumentsLFAWithFilters_Result> GetCustomerDocumentsLFAWithFilters(Nullable<long> customerId, Nullable<int> inspectionDocument, Nullable<int> historyDocument, Nullable<int> provinceId, string region, Nullable<int> cityId, Nullable<long> customerLocationId, Nullable<long> customerFacilityId, Nullable<long> customerAreaId, string documentTypeList)
+        {
+            var customerIdParameter = customerId.HasValue ?
+                new ObjectParameter("CustomerId", customerId) :
+                new ObjectParameter("CustomerId", typeof(long));
+    
+            var inspectionDocumentParameter = inspectionDocument.HasValue ?
+                new ObjectParameter("InspectionDocument", inspectionDocument) :
+                new ObjectParameter("InspectionDocument", typeof(int));
+    
+            var historyDocumentParameter = historyDocument.HasValue ?
+                new ObjectParameter("HistoryDocument", historyDocument) :
+                new ObjectParameter("HistoryDocument", typeof(int));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            var cityIdParameter = cityId.HasValue ?
+                new ObjectParameter("CityId", cityId) :
+                new ObjectParameter("CityId", typeof(int));
+    
+            var customerLocationIdParameter = customerLocationId.HasValue ?
+                new ObjectParameter("CustomerLocationId", customerLocationId) :
+                new ObjectParameter("CustomerLocationId", typeof(long));
+    
+            var customerFacilityIdParameter = customerFacilityId.HasValue ?
+                new ObjectParameter("CustomerFacilityId", customerFacilityId) :
+                new ObjectParameter("CustomerFacilityId", typeof(long));
+    
+            var customerAreaIdParameter = customerAreaId.HasValue ?
+                new ObjectParameter("CustomerAreaId", customerAreaId) :
+                new ObjectParameter("CustomerAreaId", typeof(long));
+    
+            var documentTypeListParameter = documentTypeList != null ?
+                new ObjectParameter("DocumentTypeList", documentTypeList) :
+                new ObjectParameter("DocumentTypeList", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerDocumentsLFAWithFilters_Result>("GetCustomerDocumentsLFAWithFilters", customerIdParameter, inspectionDocumentParameter, historyDocumentParameter, provinceIdParameter, regionParameter, cityIdParameter, customerLocationIdParameter, customerFacilityIdParameter, customerAreaIdParameter, documentTypeListParameter);
+        }
+    
+        public virtual ObjectResult<GetCustomerDocumentsLFAWithWithoutFilters_Result> GetCustomerDocumentsLFAWithWithoutFilters(Nullable<long> customerId, Nullable<int> inspectionDocument, Nullable<int> historyDocument, Nullable<int> provinceId, string region, Nullable<int> cityId, Nullable<long> customerLocationId, Nullable<long> customerFacilityId, Nullable<long> customerAreaId, string documentTypeList)
+        {
+            var customerIdParameter = customerId.HasValue ?
+                new ObjectParameter("CustomerId", customerId) :
+                new ObjectParameter("CustomerId", typeof(long));
+    
+            var inspectionDocumentParameter = inspectionDocument.HasValue ?
+                new ObjectParameter("InspectionDocument", inspectionDocument) :
+                new ObjectParameter("InspectionDocument", typeof(int));
+    
+            var historyDocumentParameter = historyDocument.HasValue ?
+                new ObjectParameter("HistoryDocument", historyDocument) :
+                new ObjectParameter("HistoryDocument", typeof(int));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            var cityIdParameter = cityId.HasValue ?
+                new ObjectParameter("CityId", cityId) :
+                new ObjectParameter("CityId", typeof(int));
+    
+            var customerLocationIdParameter = customerLocationId.HasValue ?
+                new ObjectParameter("CustomerLocationId", customerLocationId) :
+                new ObjectParameter("CustomerLocationId", typeof(long));
+    
+            var customerFacilityIdParameter = customerFacilityId.HasValue ?
+                new ObjectParameter("CustomerFacilityId", customerFacilityId) :
+                new ObjectParameter("CustomerFacilityId", typeof(long));
+    
+            var customerAreaIdParameter = customerAreaId.HasValue ?
+                new ObjectParameter("CustomerAreaId", customerAreaId) :
+                new ObjectParameter("CustomerAreaId", typeof(long));
+    
+            var documentTypeListParameter = documentTypeList != null ?
+                new ObjectParameter("DocumentTypeList", documentTypeList) :
+                new ObjectParameter("DocumentTypeList", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerDocumentsLFAWithWithoutFilters_Result>("GetCustomerDocumentsLFAWithWithoutFilters", customerIdParameter, inspectionDocumentParameter, historyDocumentParameter, provinceIdParameter, regionParameter, cityIdParameter, customerLocationIdParameter, customerFacilityIdParameter, customerAreaIdParameter, documentTypeListParameter);
+        }
+    
+        public virtual ObjectResult<GetCustomerUsersDocumentsLFAWithFilters_Result> GetCustomerUsersDocumentsLFAWithFilters(Nullable<long> customerId, Nullable<int> inspectionDocument, Nullable<int> historyDocument, Nullable<int> provinceId, string region, Nullable<int> cityId, string customerLocationId, Nullable<long> customerFacilityId, Nullable<long> customerAreaId, string documentTypeList)
+        {
+            var customerIdParameter = customerId.HasValue ?
+                new ObjectParameter("CustomerId", customerId) :
+                new ObjectParameter("CustomerId", typeof(long));
+    
+            var inspectionDocumentParameter = inspectionDocument.HasValue ?
+                new ObjectParameter("InspectionDocument", inspectionDocument) :
+                new ObjectParameter("InspectionDocument", typeof(int));
+    
+            var historyDocumentParameter = historyDocument.HasValue ?
+                new ObjectParameter("HistoryDocument", historyDocument) :
+                new ObjectParameter("HistoryDocument", typeof(int));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            var cityIdParameter = cityId.HasValue ?
+                new ObjectParameter("CityId", cityId) :
+                new ObjectParameter("CityId", typeof(int));
+    
+            var customerLocationIdParameter = customerLocationId != null ?
+                new ObjectParameter("CustomerLocationId", customerLocationId) :
+                new ObjectParameter("CustomerLocationId", typeof(string));
+    
+            var customerFacilityIdParameter = customerFacilityId.HasValue ?
+                new ObjectParameter("CustomerFacilityId", customerFacilityId) :
+                new ObjectParameter("CustomerFacilityId", typeof(long));
+    
+            var customerAreaIdParameter = customerAreaId.HasValue ?
+                new ObjectParameter("CustomerAreaId", customerAreaId) :
+                new ObjectParameter("CustomerAreaId", typeof(long));
+    
+            var documentTypeListParameter = documentTypeList != null ?
+                new ObjectParameter("DocumentTypeList", documentTypeList) :
+                new ObjectParameter("DocumentTypeList", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerUsersDocumentsLFAWithFilters_Result>("GetCustomerUsersDocumentsLFAWithFilters", customerIdParameter, inspectionDocumentParameter, historyDocumentParameter, provinceIdParameter, regionParameter, cityIdParameter, customerLocationIdParameter, customerFacilityIdParameter, customerAreaIdParameter, documentTypeListParameter);
+        }
+    
+        public virtual ObjectResult<GetCustomerUsersDocumentsLFAWithWithoutFilters_Result> GetCustomerUsersDocumentsLFAWithWithoutFilters(Nullable<long> customerId, Nullable<int> inspectionDocument, Nullable<int> historyDocument, Nullable<int> provinceId, string region, Nullable<int> cityId, string customerLocationId, Nullable<long> customerFacilityId, Nullable<long> customerAreaId, string documentTypeList)
+        {
+            var customerIdParameter = customerId.HasValue ?
+                new ObjectParameter("CustomerId", customerId) :
+                new ObjectParameter("CustomerId", typeof(long));
+    
+            var inspectionDocumentParameter = inspectionDocument.HasValue ?
+                new ObjectParameter("InspectionDocument", inspectionDocument) :
+                new ObjectParameter("InspectionDocument", typeof(int));
+    
+            var historyDocumentParameter = historyDocument.HasValue ?
+                new ObjectParameter("HistoryDocument", historyDocument) :
+                new ObjectParameter("HistoryDocument", typeof(int));
+    
+            var provinceIdParameter = provinceId.HasValue ?
+                new ObjectParameter("ProvinceId", provinceId) :
+                new ObjectParameter("ProvinceId", typeof(int));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            var cityIdParameter = cityId.HasValue ?
+                new ObjectParameter("CityId", cityId) :
+                new ObjectParameter("CityId", typeof(int));
+    
+            var customerLocationIdParameter = customerLocationId != null ?
+                new ObjectParameter("CustomerLocationId", customerLocationId) :
+                new ObjectParameter("CustomerLocationId", typeof(string));
+    
+            var customerFacilityIdParameter = customerFacilityId.HasValue ?
+                new ObjectParameter("CustomerFacilityId", customerFacilityId) :
+                new ObjectParameter("CustomerFacilityId", typeof(long));
+    
+            var customerAreaIdParameter = customerAreaId.HasValue ?
+                new ObjectParameter("CustomerAreaId", customerAreaId) :
+                new ObjectParameter("CustomerAreaId", typeof(long));
+    
+            var documentTypeListParameter = documentTypeList != null ?
+                new ObjectParameter("DocumentTypeList", documentTypeList) :
+                new ObjectParameter("DocumentTypeList", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCustomerUsersDocumentsLFAWithWithoutFilters_Result>("GetCustomerUsersDocumentsLFAWithWithoutFilters", customerIdParameter, inspectionDocumentParameter, historyDocumentParameter, provinceIdParameter, regionParameter, cityIdParameter, customerLocationIdParameter, customerFacilityIdParameter, customerAreaIdParameter, documentTypeListParameter);
         }
     }
 }

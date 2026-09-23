@@ -77,14 +77,18 @@
         CustomerAreaId: null
     };
 
-
+    var inspectionFilters = {};
+    var documentFilters = {};
+    var incidentFilters = {};
+    var internalInspectionFilters = {};
+    var inventoryFilters = {};
 
     // =====================================
     // INSPECTION FILTERS METHODS
     // =====================================
 
     service.setInspectionFilters = function (filters) {
-        console.log('Broadcasting inspectionFiltersUpdated', filters);
+        console.log('Broadcasting setInspectionFilters', filters);
         inspectionFilters = angular.copy(filters);
         $rootScope.$broadcast(
             'inspectionFiltersUpdated',
@@ -110,6 +114,9 @@
 
     service.setDocumentFilters = function (filters) {
         documentFilters = angular.copy(filters);
+
+        console.log('In applyDocFilters in SharedFilterServices');
+
         $rootScope.$broadcast(
             'documentFiltersUpdated',
             documentFilters
@@ -120,7 +127,7 @@
         return angular.copy(documentFilters);
     };
 
-    // Alias methods (if controller uses singular form)
+    // Alias methods
     service.setDocumentFilter = function (filters) {
         service.setDocumentFilters(filters);
     };
@@ -274,6 +281,102 @@
 
     service.getStatusFilter = function () {
         return service.getInspectionFilters();
+    };
+
+    // Sales Person Filters --------------------------------------
+    var salesInspectionFilters = {};
+
+    service.setSalesInspectionFilters = function (filters) {
+        salesInspectionFilters = angular.copy(filters);
+
+        $rootScope.$broadcast(
+            "salesInspectionFiltersUpdated",
+            salesInspectionFilters
+        );
+    };
+
+    service.getSalesInspectionFilters = function () {
+        return angular.copy(salesInspectionFilters);
+    };
+
+    //====================================================
+    // SALES DOCUMENT FILTERS
+    //====================================================
+
+    var salesDocumentFilters = {};
+
+    service.setSalesDocumentFilters = function (filters) {
+
+        salesDocumentFilters = angular.copy(filters);
+
+        $rootScope.$broadcast(
+            'salesDocumentFiltersUpdated',
+            salesDocumentFilters
+        );
+    };
+
+    service.getSalesDocumentFilters = function () {
+        return angular.copy(salesDocumentFilters);
+    };
+
+    //=========================================
+    // SALES INCIDENT FILTER
+    //=========================================
+
+    var salesIncidentFilters = {};
+
+    service.setSalesIncidentFilters = function (filters) {
+
+        salesIncidentFilters = angular.copy(filters);
+
+        $rootScope.$broadcast(
+            "salesIncidentFiltersUpdated",
+            salesIncidentFilters
+        );
+    };
+
+    service.getSalesIncidentFilters = function () {
+
+        return angular.copy(salesIncidentFilters);
+
+    };
+
+    //==================================================
+    // SALES INTERNAL INSPECTION
+    //==================================================
+
+    var salesInternalFilters = {};
+
+    service.setSalesInternalFilters = function (filters) {
+
+        salesInternalFilters = angular.copy(filters);
+
+        $rootScope.$broadcast(
+            "salesInternalFiltersUpdated",
+            salesInternalFilters
+        );
+    };
+
+    service.getSalesInternalFilters = function () {
+
+        return angular.copy(salesInternalFilters);
+
+    };
+
+    var salesInventoryFilters = {};
+
+    service.setSalesInventoryFilters = function (filters) {
+
+        salesInventoryFilters = angular.copy(filters);
+
+        $rootScope.$broadcast(
+            "salesInventoryFiltersUpdated",
+            salesInventoryFilters
+        );
+    };
+
+    service.getSalesInventoryFilters = function () {
+        return angular.copy(salesInventoryFilters);
     };
 
     return service;

@@ -153,7 +153,7 @@
                 EmployeeEmail: $scope.email, EmployeeAddress: $scope.address, CityID: $scope.city, CountryID: $scope.country,
                 ProvianceID: $scope.province, Pincode: $scope.pin, Gender: $scope.gender, TitleDegrees: $scope.titledegree, MobileNo: $scope.mobileNo,
                 UserType: $scope.usertype,
-                IsStampingEngineer : $scope.isstampingengineer
+                IsStampingEngineer: $scope.isstampingengineer, IsProfileEdit:false
             }
             console.log('adduseremployee', config);
             return $http({
@@ -186,7 +186,7 @@
                 UserName: $scope.username, UserPassword: $scope.password, Active: $scope.Active, EmployeeName: $scope.employeename,
                 EmployeeEmail: $scope.email, EmployeeAddress: $scope.address, CityID: $scope.city, CountryID: $scope.country,
                 ProvinceID: $scope.province, Pincode: $scope.pin, Gender: $scope.gender, TitleDegrees: $scope.titledegree, MobileNo: $scope.mobileNo,
-                UserType: $scope.usertype, IsStampingEngineer: $scope.isstampingengineer, UserId: id
+                UserType: $scope.usertype, IsStampingEngineer: $scope.isstampingengineer, UserId: id, IsProfileEdit: false
             }
             console.log('edituseremployee', config);
             return $http({

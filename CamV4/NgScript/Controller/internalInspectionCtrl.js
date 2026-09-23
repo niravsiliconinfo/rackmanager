@@ -256,7 +256,7 @@ angular.module('myApp')
                     }, function () { $scope.formError = 'Failed to load inspection.'; });
             };
 
-            $scope.SaveInspection = function () {
+            $scope.SaveInternalInspection = function () {
                 $scope.formError = $scope.formSuccess = '';
                 if (!$scope.form.customerLocationId) { $scope.formError = 'Location is required.'; return; }
                 $scope.saving = true;
@@ -290,7 +290,7 @@ angular.module('myApp')
                         fd.append('DeficiencyPhotos_' + i, file);
                     });
                 });
-
+                console.log('Internal Inspection : fd', fd);
                 $http({
                     url: '/api/pageview/saveInternalInspection', method: 'POST',
                     data: fd, transformRequest: angular.identity,
@@ -318,7 +318,10 @@ angular.module('myApp')
             var id = new URLSearchParams(window.location.search).get('id');
             if (id && id !== '0') {
                 $http.get('/api/pageview/getInternalInspectionById', { params: { id: id } })
-                    .then(function (res) { $scope.inspection = res.data; },
+                    .then(function (res) {
+                        $scope.inspection = res.data;
+                        console.log(res.data);
+                    },
                           function ()    { $scope.inspection = null; });
             }
 
@@ -341,6 +344,49 @@ angular.module('myApp')
                         $scope.downloading   = false;
                         $scope.downloadError = 'Failed to generate report.';
                     });
+            };
+
+            // ======================================================
+            // Engineer Review Cost Calculations
+            // ======================================================
+
+            $scope.getEngineerReviewCount = function (assessment) {
+                if (!$scope.inspection || !$scope.inspection.Deficiencies) return 0;
+
+                return $scope.inspection.Deficiencies.filter(function (d) {
+                    return d.IsEngineerReviewRequested &&
+                        d.InternalAssessment === assessment;
+                }).length;
+            };
+
+            $scope.getEngineerReviewCost = function (assessment) {
+                if (!$scope.inspection || !$scope.inspection.Deficiencies) return 0;
+
+                var total = 0;
+
+                angular.forEach($scope.inspection.Deficiencies, function (d) {
+                    if (d.IsEngineerReviewRequested &&
+                        d.InternalAssessment === assessment) {
+
+                        total += Number(d.EngineerReviewCost || 0);
+                    }
+                });
+
+                return total;
+            };
+
+            $scope.getEngineerReviewGrandTotal = function () {
+                if (!$scope.inspection || !$scope.inspection.Deficiencies) return 0;
+
+                var total = 0;
+
+                angular.forEach($scope.inspection.Deficiencies, function (d) {
+                    if (d.IsEngineerReviewRequested) {
+                        total += Number(d.EngineerReviewCost || 0);
+                    }
+                });
+
+                return total;
             };
         }
 

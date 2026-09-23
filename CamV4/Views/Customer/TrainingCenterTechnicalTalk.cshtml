@@ -69,12 +69,21 @@
                                 <textarea class="form-control" ng-model="newQuestion" rows="4"
                                           placeholder="Type your question here..." maxlength="2000"></textarea>
                             </div>
-                            <div class="text-danger text-sm mb-2" ng-show="questionError">{{questionError}}</div>
+                            @*<div class="text-danger text-sm mb-2" ng-show="questionError">{{questionError}}</div>
                             <button type="button" class="btn bg-gradient-info btn-lg mb-0"
                                     ng-click="SubmitQuestion()">
                                 <i class="material-icons text-sm me-1" style="vertical-align:middle;">send</i>
                                 Submit Question
-                            </button>
+                            </button>*@
+                        <button type="button" class="btn bg-gradient-info btn-lg mb-0" ng-click="submitQuestion()" ng-disabled="isSubmitting">
+                            <i class="material-icons text-sm me-1" style="vertical-align:middle;">send</i> <span ng-if="!isSubmitting">Submit Question</span>
+                            <span ng-if="isSubmitting">
+                                <i class="fa fa-spinner fa-spin"></i> Submitting...
+                            </span>
+                        </button>
+                            <div class="text-danger text-sm mb-2" ng-if="questionError">
+                                {{questionError}}
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -545,6 +545,7 @@
     <Compile Include="Controllers\CustomerLocationContactController.cs" />
     <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\PageViewController.cs" />
+    <Compile Include="Controllers\SalesManagerController.cs" />
     <Compile Include="Enum\UserRoles.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -702,7 +703,16 @@
     <Compile Include="Models\GetCustomerCities_Result.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetCustomerDocumentsLFAWithFilters_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCustomerDocumentsLFAWithWithoutFilters_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetCustomerDocumentsWithFilters_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCustomerDocumentsWithWithoutFilters_Result.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetCustomerFacilities_Result.cs">
@@ -714,7 +724,19 @@
     <Compile Include="Models\GetCustomerProvinces_Result.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetCustomerUsersDocumentsLFAWithFilters_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCustomerUsersDocumentsLFAWithWithoutFilters_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetCustomerUsersDocumentsWithFilters_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCustomerUsersDocumentsWithWithoutFilters_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCustomerUsersDocumentsWithWithoutFilters_Result1.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetDocumentListing_Result.cs">
@@ -925,6 +947,9 @@
     <Compile Include="Models\sp_getApprovedInspection_Count_Result.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\sp_getApprovedInspection_Count_Sales_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SP_GetCustomerDashboard_AllAdmin_Result.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
@@ -938,6 +963,9 @@
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sp_getEmpInspection_Count_Result.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sp_getEmpInspection_Count_Sales_Result.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sp_GetIncidentReportsByCustomer_Result.cs">
@@ -1694,6 +1722,7 @@
     <Content Include="NgScript\Controller\inspectionlistingCtrlDT.js" />
     <Content Include="NgScript\Controller\inspectionlistingCtrl.js" />
     <Content Include="NgScript\Controller\internalInspectionCtrl.js" />
+    <Content Include="NgScript\Controller\salesInternalInspectionCtrl.js" />
     <Content Include="NgScript\Controller\inventoryFilesCtrl.js" />
     <Content Include="NgScript\Controller\inventoryFilters.js" />
     <Content Include="NgScript\Controller\inventoryGridCtrl.js" />
@@ -1710,13 +1739,19 @@
     <Content Include="NgScript\Controller\otherCtrl.js" />
     <Content Include="NgScript\Controller\palletRackIncidentCtrl.js" />
     <Content Include="NgScript\Controller\rackingCtrl.js" />
+    <Content Include="NgScript\Controller\salesDocumentsCtrl.js" />
+    <Content Include="NgScript\Controller\salesIncidentCtrl.js" />
+    <Content Include="NgScript\Controller\salesInspectionCtrl.js" />
+    <Content Include="NgScript\Controller\salesSpareMaterialCtrl.js" />
     <Content Include="NgScript\Controller\sharedFilterService.js" />
     <Content Include="NgScript\Controller\shelvingchecklistCtrl.js" />
     <Content Include="NgScript\Controller\shelvingchecklistdeficiencyCtrl.js" />
     <Content Include="NgScript\Controller\shelvingchecklisttypeCtrl.js" />
+    <Content Include="NgScript\Controller\salesTrainingCenterCtrl.js" />
     <Content Include="NgScript\Controller\trainingCenterCtrl.js" />
     <Content Include="NgScript\Controller\userCtrl.js" />
     <Content Include="NgScript\Module\Authentication.js" />
+    <Content Include="NgScript\Controller\profileCtrl.js" />
     <Content Include="Scripts\angular-animate.js" />
     <Content Include="Scripts\angular-animate.min.js" />
     <Content Include="Scripts\angular-aria.js" />
@@ -3175,7 +3210,6 @@
     <Content Include="Views\Admin\TrainingCenterRegistration.cshtml" />
     <Content Include="Views\Admin\TrainingCenterPersonStatus.cshtml" />
     <Content Include="Views\Admin\TrainingCenterAdditionalResources.cshtml" />
-    <Content Include="Views\Admin\TrainingCenterTechnicalTalk.cshtml" />
     <Content Include="Views\Admin\AuditLog.cshtml" />
     <Content Include="Views\Admin\InventoryGrid.cshtml" />
     <Content Include="Views\Customer\InventoryGrid.cshtml" />
@@ -3185,6 +3219,19 @@
     <Content Include="Views\Admin\SpareMaterialGrid.cshtml" />
     <Content Include="Views\Customer\customerSpareMaterialListing.cshtml" />
     <Content Include="Views\Account\AccountDeletion.cshtml" />
+    <Content Include="Views\Admin\ManageTrainingCenterTechnicalTalk.cshtml" />
+    <Content Include="Views\SalesManager\ManageInspectionSales.cshtml" />
+    <Content Include="Views\SalesManager\ManageDocumentSales.cshtml" />
+    <Content Include="Views\SalesManager\ManageIncidentReportSales.cshtml" />
+    <Content Include="Views\SalesManager\ManageInternalInspectionSales.cshtml" />
+    <Content Include="Views\SalesManager\ViewInternalIncidentReportView.cshtml" />
+    <Content Include="Views\SalesManager\ManageSpareMaterialSales.cshtml" />
+    <Content Include="Views\SalesManager\TrainingCenterSales.cshtml" />
+    <Content Include="Views\SalesManager\TrainingCenterRegistrationSales.cshtml" />
+    <Content Include="Views\SalesManager\TrainingCenterTechnicalTalkSales.cshtml" />
+    <Content Include="Views\SalesManager\TrainingCenterCourseStatusSales.cshtml" />
+    <Content Include="Views\SalesManager\TrainingCenterCoursesSales.cshtml" />
+    <Content Include="Views\SalesManager\TrainingCenterAdditionalResourcesSales.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -3250,7 +3297,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>52242</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44309/</IISUrl>
+          <IISUrl>https://localhost:44310/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -27794,3 +27794,323 @@ pre[class*="language-"] {
         transform: rotate(360deg);
     }
 }
+/* All left-side field titles */
+.col-sm-2 > span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #003DA6;
+    text-transform: uppercase;    
+}
+
+/* All field values */
+.input-group {
+    font-size: 15px;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+/* Qutation Table Styling */
+.quotation-table-container {
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.quotation-header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.quotation-header-section {
+    flex: 1;
+    min-width: 250px;
+}
+
+    .quotation-header-section label {
+        display: block;
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .quotation-header-section input {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        font-size: 13px;
+    }
+
+.quotation-buttons-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.btn-quotation-action {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+    .btn-quotation-action:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-quotation-action:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .btn-quotation-action i {
+        font-size: 16px;
+    }
+
+.btn-update-price {
+    background-color: #17a2b8;
+    color: white;
+}
+
+    .btn-update-price:hover:not(:disabled) {
+        background-color: #0c7ba7;
+    }
+
+.btn-update-surcharge {
+    background-color: #ffc107;
+    color: #333;
+}
+
+    .btn-update-surcharge:hover:not(:disabled) {
+        background-color: #e0a800;
+    }
+
+.btn-update-all {
+    background-color: #28a745;
+    color: white;
+}
+
+    .btn-update-all:hover:not(:disabled) {
+        background-color: #1f7e34;
+    }
+
+.surcharge-markup-row {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    margin: 15px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 3px;
+}
+
+.surcharge-markup-field {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+    .surcharge-markup-field label {
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .surcharge-markup-field input {
+        width: 100px;
+        padding: 8px 10px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        font-size: 13px;
+    }
+
+/* Quotation Table */
+.quotation-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+    .quotation-items-table thead {
+        background-color: #2c3e50;
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+        .quotation-items-table thead th {
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 2px solid #34495e;
+            white-space: nowrap;
+        }
+
+    .quotation-items-table tbody tr {
+        border-bottom: 1px solid #e0e0e0;
+        transition: background-color 0.2s ease;
+    }
+
+        .quotation-items-table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+    .quotation-items-table tbody td {
+        padding: 10px 8px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+        .quotation-items-table tbody td.text-left {
+            text-align: left;
+        }
+
+        .quotation-items-table tbody td.text-right {
+            text-align: right;
+        }
+
+    /* Input Styling in Table */
+    .quotation-items-table input[type="text"],
+    .quotation-items-table input[type="number"],
+    .quotation-items-table textarea {
+        background-color: #fffbf0;
+        border: 1px solid #ffc966;
+        padding: 4px 6px;
+        font-size: 12px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .quotation-items-table input[readonly] {
+        background-color: #f0f0f0;
+        border: 1px solid #d0d0d0;
+        color: #666;
+    }
+
+        .quotation-items-table input[readonly]:focus {
+            outline: none;
+        }
+
+/* Table Actions */
+.quotation-table-actions {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+}
+
+    .quotation-table-actions button {
+        padding: 4px 8px;
+        font-size: 12px;
+        cursor: pointer;
+        background-color: #f0f0f0;
+        border: 1px solid #ddd;
+        border-radius: 2px;
+        transition: all 0.2s ease;
+    }
+
+        .quotation-table-actions button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .quotation-table-actions button.delete {
+            color: #d32f2f;
+        }
+
+            .quotation-table-actions button.delete:hover {
+                background-color: #ffebee;
+            }
+
+        .quotation-table-actions button.edit {
+            color: #1976d2;
+        }
+
+            .quotation-table-actions button.edit:hover {
+                background-color: #e3f2fd;
+            }
+
+    .quotation-table-actions i {
+        font-size: 14px;
+    }
+
+/* Wrapper for horizontal scroll */
+.quotation-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 3px;
+}
+
+/* Totals Section */
+.quotation-totals {
+    display: flex;
+    justify-content: flex-end;
+    gap: 30px;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 3px;
+}
+
+.quotation-total-item {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.quotation-total-label {
+    font-weight: 600;
+    font-size: 13px;
+    color: #333;
+    min-width: 100px;
+}
+
+.quotation-total-value {
+    font-weight: 600;
+    font-size: 14px;
+    color: #2c3e50;
+    min-width: 80px;
+    text-align: right;
+}
+
+/* Notes Section */
+.quotation-notes-section {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 3px;
+}
+
+    .quotation-notes-section label {
+        display: block;
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .quotation-notes-section textarea {
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        font-size: 12px;
+        font-family: Arial, sans-serif;
+        resize: vertical;
+    }
