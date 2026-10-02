@@ -14,7 +14,7 @@ try {
 } catch (e) {}
 
 angular.module('myApp')
-    .controller('internalInspectionCtrl', function ($scope, $http, $window, $filter, sharedFilterService) {
+    .controller('internalInspectionCtrl', function ($scope, $http, $window, $filter, sharedFilterService, myService) {
 
         var path = window.location.pathname.toLowerCase();
         console.log('path-----------------',path);
@@ -62,34 +62,81 @@ angular.module('myApp')
             $scope.activeFilter   = {};
             $scope.filterApplied  = false;
 
-            var loadInspections = function (filter) {
-                var params = {};
-                if (filter) {
-                    if (filter.location) params.CustomerLocationID = filter.location;
-                    if (filter.facility) params.CustomerFacilityID = filter.facility;
-                    if (filter.area)     params.CustomerAreaID     = filter.area;
-                    if (filter.Region)   params.Region             = filter.Region;
-                }
-                $http.get('/api/pageview/getMyInternalInspections', { params: params })
+            //var loadInternalInspections = function (filter) {
+            //    var params = {};
+            //    if (filter) {
+            //        if (filter.location) params.CustomerLocationID = filter.location;
+            //        if (filter.facility) params.CustomerFacilityID = filter.facility;
+            //        if (filter.area)     params.CustomerAreaID     = filter.area;
+            //        if (filter.Region)   params.Region             = filter.Region;
+            //    }
+            //    $http.get('/api/pageview/getMyInternalInspections', { params: params })
+            //        .then(function (res) {
+            //            $scope.inspectionList   = res.data || [];
+            //            $scope.liPaging.current = 1;
+            //        }, function () { $scope.inspectionList = []; });
+            //};
+
+            var loadInternalInspections = function (filter) {
+
+                var filters = filter || {};
+
+                var params = {
+                    CustomerLocationID: parseInt(filters.CustomerLocationId || 0, 10),
+                    CustomerFacilityID: parseInt(filters.CustomerFacilityId || 0, 10),
+                    CustomerAreaID: parseInt(filters.CustomerAreaId || 0, 10),
+                    ProvinceID: parseInt(filters.ProvinceId || 0, 10),
+                    CityID: parseInt(filters.CityId || 0, 10),
+                    Region: filters.Region || ''
+                };
+
+                console.log(
+                    'Loading Internal Inspections:',
+                    params
+                );
+
+                myService.getMyInternalInspections(params)
                     .then(function (res) {
-                        $scope.inspectionList   = res.data || [];
+
+                        console.log(
+                            'Internal Inspection result:',
+                            res.data
+                        );
+
+                        $scope.inspectionList = res.data || [];
                         $scope.liPaging.current = 1;
-                    }, function () { $scope.inspectionList = []; });
+
+                    })
+                    .catch(function (err) {
+
+                        console.error(
+                            'Failed to load Internal Inspections:',
+                            err
+                        );
+
+                        $scope.inspectionList = [];
+                    });
             };
 
-            loadInspections(null);
+            loadInternalInspections(null);
 
             //$scope.$on('internalInspectionFiltersUpdated', function () {
             //    var f = sharedFilterService.getInternalFilter();
             //    $scope.activeFilter  = f;
             //    $scope.filterApplied = !!(f.location || f.facility || f.area || f.Region);
-            //    loadInspections(f);
+            //    loadInternalInspections(f);
             //});
 
-            $scope.$on('internalInspectionFiltersUpdated',function (event, filters) {
-                    console.log('internalInspectionFiltersUpdated received', filters);
-                    loadInspections(filters);  // Your load function
-                });
+            //$scope.$on('internalInspectionFiltersUpdated',function (event, filters) {
+            //        console.log('internalInspectionFiltersUpdated received', filters);
+            //        loadInternalInspections(filters);  // Your load function
+            //});
+            $scope.$on('internalInspectionFiltersUpdated', function (event, filters) {
+
+                console.log('Internal filters received:', filters);
+
+                loadInternalInspections(filters);
+            });
 
             //$scope.$on('internalInspectionFiltersUpdated', function (event, filters) {
             //    console.log('internalInspectionFiltersUpdated received', filters);
@@ -99,7 +146,7 @@ angular.module('myApp')
             $scope.ClearInternalFilter = function () {
                 $scope.activeFilter  = {};
                 $scope.filterApplied = false;
-                loadInspections(null);
+                loadInternalInspections(null);
             };
 
             $http.get('/api/pageview/getEngineerReviewCost')

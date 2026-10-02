@@ -174,12 +174,24 @@ this.getLocations = function (region, provinceId, cityId) {
     // ===========================
 
     this.getInternalInspectionListing = function (filters) {
+        return $http.post('/api/pageview/getInternalInspectionListing', filters);
+    };
+
+    this.getMyInternalInspections = function (filters) {
+        return $http.get('/api/pageview/getMyInternalInspections', {params: filters});
+    };
+
+
+    // ===========================
+    // INVENTORY
+    // ===========================
+
+    this.getInventoryListing = function (filters) {
         return $http.post(
-            '/api/pageview/getInternalInspectionListing',
+            '/api/pageview/getInventoryFilesFiltered',
             filters
         );
     };
-
   
     this.getInspectionTypes = function () {
         return $http.get('/api/pageview/getInspectionTypes');

@@ -2185,13 +2185,19 @@ namespace CamV4.Controllers
         //    return details;
         //}
 
+        //[Route("GenerateQuotationFromCustomer")]
+        //[HttpPost]
+        //public string GenerateQuotationFromCustomer(long inspectionId, string sCustomerSelectedDeficiencyIds)
+        //{
+        //    return DatabaseHelper.GenerateQuotationFromCustomerAsync(inspectionId, sCustomerSelectedDeficiencyIds);
+        //}
+
         [Route("GenerateQuotationFromCustomer")]
         [HttpPost]
-        public string GenerateQuotationFromCustomer(long inspectionId, string sCustomerSelectedDeficiencyIds)
+        public string GenerateQuotationFromCustomer(GenerateQuotationRequest request)
         {
-            return DatabaseHelper.GenerateQuotationFromCustomerAsync(inspectionId, sCustomerSelectedDeficiencyIds);
+            return DatabaseHelper.GenerateQuotationFromCustomerAsync(request.inspectionId,request.sCustomerSelectedDeficiencyIds);
         }
-
 
         [Route("saveQuotationItemsByAdmin")]
         [HttpPost]
@@ -3870,19 +3876,32 @@ namespace CamV4.Controllers
         [Route("getMyInternalInspections")]
         [HttpGet]
         public IHttpActionResult GetMyInternalInspections(
-            long? CustomerLocationID = null,
-            long? CustomerFacilityID = null,
-            long? CustomerAreaID = null,
-            string Region = null)
+    long? CustomerLocationID = null,
+    long? CustomerFacilityID = null,
+    long? CustomerAreaID = null,
+    string Region = null,
+    int? ProvinceID = null,
+    int? CityID = null)
         {
             try
             {
                 var result = DatabaseHelper.GetInternalInspectionsByCurrentCustomer(
-                    CustomerLocationID, CustomerFacilityID, CustomerAreaID, Region);
+                    CustomerLocationID,
+                    CustomerFacilityID,
+                    CustomerAreaID,
+                    Region,
+                    ProvinceID,
+                    CityID);
+
                 return Ok(result ?? new List<InternalInspectionViewModel>());
             }
-            catch (Exception ex) { return InternalServerError(ex); }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
+
+       
 
         // ---- 3. Inspections by customerId (admin/engineer) ----
         [Route("getInternalInspectionsByCustomerId")]
@@ -4456,11 +4475,10 @@ namespace CamV4.Controllers
 
         [HttpPost]
         [Route("getInternalInspectionListing")]
-        public async Task<List<GetInternalInspectionListing_Result>> GetInternalInspectionListing(
-        InternalInspectionFilterModel filters)
+        public async Task<List<GetInternalInspectionListing_Result>> GetInternalInspectionListing(InternalInspectionFilterModel filters)
         {
-            long userId = Convert.ToInt64(User.Identity.GetUserId());
-
+            //long userId = Convert.ToInt64(User.Identity.GetUserId());
+            long userId = GetCurrentUserId();
             return DatabaseHelper.GetInternalInspectionListing(
                 userId,
                 filters);

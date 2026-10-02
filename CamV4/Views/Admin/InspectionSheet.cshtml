@@ -57,7 +57,7 @@
         }
     }
 </script>
-<style>  
+<style>
     @@keyframes spin {
         0% {
             transform: rotate(0deg);
@@ -81,7 +81,7 @@
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Inspection</li>
                 </ol>
                 <h6 class="font-weight-bolder mb-0">Hello @Session["LoggedInUserFullName"]!</h6>
-            </nav>           
+            </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                 </div>
@@ -385,29 +385,29 @@
                                                 </table>
                                             </div>
                                             <!--<div class="col-sm-4">
-        <input id="chkInspectionStatus" type="checkbox" ng-true-value="4" ng-false-value="0" ng-model="chkInspectionStatus" /> Approved & Completed
-    </div>
-    <div class="col-sm-4">
-        <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="chkSentEmailtoCustomer" /> Sent Email to Customer
-    </div>
-    <div class="col-sm-4">
-        <input type="checkbox" ng-true-value="6" ng-false-value="0" ng-model="chkQuotationApprovalToCustomer" /> Sent Quotation to Customer for Approval
-    </div>
-    <div class="col-sm-4" ng-show="getInspectionDetailsForSheet.InspectionStatus >= 4">
-        <input type="checkbox" ng-true-value="9" ng-false-value="0" ng-model="chkIsInspectionFinished" /> Is The Inspection Finished?
-    </div>
-    <div class="col-sm-4">
-        <div class="text-center">-->
+                                                <input id="chkInspectionStatus" type="checkbox" ng-true-value="4" ng-false-value="0" ng-model="chkInspectionStatus" /> Approved & Completed
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="chkSentEmailtoCustomer" /> Sent Email to Customer
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <input type="checkbox" ng-true-value="6" ng-false-value="0" ng-model="chkQuotationApprovalToCustomer" /> Sent Quotation to Customer for Approval
+                                            </div>
+                                            <div class="col-sm-4" ng-show="getInspectionDetailsForSheet.InspectionStatus >= 4">
+                                                <input type="checkbox" ng-true-value="9" ng-false-value="0" ng-model="chkIsInspectionFinished" /> Is The Inspection Finished?
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="text-center">-->
                                             @*<button type="submit" ng-click="ApproveInspectionClick(getInspectionDetailsForSheet.InspectionId)" class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0">Update Inspection</button>*@
                                             <!--<button type="submit"
-                    ng-click="ApproveInspectionClick(getInspectionDetailsForSheet.InspectionId)"
-                    class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0"
-                    ng-disabled="isProcessing">
-                <span ng-hide="isProcessing">Update Inspection</span>
-                <span ng-show="isProcessing">Processing...</span>
-            </button>
-        </div>
-    </div>-->
+                                                            ng-click="ApproveInspectionClick(getInspectionDetailsForSheet.InspectionId)"
+                                                            class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0"
+                                                            ng-disabled="isProcessing">
+                                                        <span ng-hide="isProcessing">Update Inspection</span>
+                                                        <span ng-show="isProcessing">Processing...</span>
+                                                    </button>
+                                                </div>
+                                            </div>-->
 
                                             <div class="col-sm-4">
                                                 <input id="chkInspectionStatus" type="checkbox" ng-true-value="4" ng-false-value="0" ng-model="chkInspectionStatus" /> Approved & Completed
@@ -532,8 +532,14 @@
                                                         </div>
                                                         <div class="" style="padding-top: 50px;font-size: 26px;line-height: 40px;">
                                                             <div class="name">{{getInspectionDetailsForSheet.Customer}}</div>
-                                                            <div class="name" style="font-size: 14px;">{{getInspectionDetailsForSheet.CustomerArea}} {{getInspectionDetailsForSheet.CustomerLocation}}</div>
-                                                            <div class="name" style="font-size: 14px;">{{getInspectionDetailsForSheet.CustomerFullAddress}}</div>
+                                                            <div class="name" style="font-size: 14px;">
+                                                                {{getInspectionDetailsForSheet.CustomerArea}}
+                                                                <span ng-if="getInspectionDetailsForSheet.CustomerArea && (getInspectionDetailsForSheet.CustomerFacility || getInspectionDetailsForSheet.CustomerLocation)">,</span>
+                                                                {{getInspectionDetailsForSheet.CustomerFacility}}
+                                                                <span ng-if="getInspectionDetailsForSheet.CustomerFacility && getInspectionDetailsForSheet.CustomerLocation">,</span>
+                                                                {{getInspectionDetailsForSheet.CustomerLocation}}
+                                                            </div>
+                                                            <div class="name" style="font-size: 14px;">{{getInspectionDetailsForSheet.CustomerLocationFullAddress}}</div>
                                                             <div class="customer-logo"><img src="{{getInspectionDetailsForSheet.custModel.CustomerLogo}}" style="width: 200px;height: auto;"></div>
                                                         </div>
 
@@ -818,7 +824,7 @@
                                                         <p style="text-align: center;">
                                                             <img src="~/Content/V2/images/Farme-img.png" width="720" />
                                                         </p>
-                                                        <h4 style="font-size: 15px;font-weight: bold;line-height: 24px;margin: 10px 0px;text-align:center;">Figure 1:<span>Measurement method of damages to the frame components</span></h4>                                                        
+                                                        <h4 style="font-size: 15px;font-weight: bold;line-height: 24px;margin: 10px 0px;text-align:center;">Figure 1:<span>Measurement method of damages to the frame components</span></h4>
                                                         <div style="margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;">
                                                             <div style="width: 20%;float: left;font-size:12px!important;font-weight: bold;">{{getInspectionDetailsForSheet.InspectionTypeCode == 'MI' ? 'MATERIAL INSPECTION REPORT' : 'RACKING INSPECTION REPORT'}}<span> - {{getInspectionDetailsForSheet.Customer}}</span></div>
                                                             <div style="text-align: center;float: left;width: 70%;"><img src="/Content/V2/images/footer-logo.jpg" style="width: 70%;"></div>
@@ -1321,7 +1327,7 @@
                                                                             <tr>
                                                                                 <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Location/ Address</td>
                                                                                 <td style="padding:2px;border-width: 1px;">
-                                                                                    {{getInspectionDetailsForSheet.CustomerFullAddress}}
+                                                                                    {{getInspectionDetailsForSheet.CustomerLocationFullAddress}}
                                                                                 </td>
                                                                                 <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Date of Inspection</td>
                                                                                 <td style="padding:2px;border-width: 1px;">
@@ -1345,7 +1351,7 @@
                                                                 </tr>
                                                                 <tr _ngcontent-c10="">
                                                                     <td _ngcontent-c10="" align="center" valign="top" class="">
-                                                                  
+
                                                                         <table width="100%" border="1" cellspacing="0" cellpadding="0">
                                                                             <tr>
                                                                                 <td colspan="5" bgcolor="#79ADDD" style="padding:2px;border-width: 1px;text-align: center">Racking Classification</td>
@@ -1367,9 +1373,9 @@
                                                                             <tr bgcolor="#ffffcc">
                                                                                 <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Item ID</div></td>
                                                                                 @*<td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Row Number</div></td>
-                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Bay ID/ Number</div></td>
-                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Bay/ Frame Side</div></td>
-                                                                                <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Beam/ Frame Level</div></td>*@
+                                                                                    <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Bay ID/ Number</div></td>
+                                                                                    <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Bay/ Frame Side</div></td>
+                                                                                    <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width: 1px;"><div style="writing-mode: vertical-rl;-webkit-transform: rotate(180deg);transform: rotate(180deg);left: calc(50% - .5rem);position: relative;">Beam/ Frame Level</div></td>*@
 
                                                                                 <td valign="middle" style="width:2rem;text-align:center;padding:5px;border-width:1px;">
                                                                                     <div style="writing-mode: vertical-rl; -webkit-transform: rotate(180deg); transform: rotate(180deg); left: calc(50% - .5rem); position: relative;">
@@ -1501,7 +1507,7 @@
                                                             </tr>
                                                             <tr>
                                                                 <td bgcolor="#ffffcc" style="padding: 2px 5px;border-width: 1px;">Location & Address</td>
-                                                                <td colspan="4" style="padding: 2px 5px;border-width: 1px;"> {{getInspectionDetailsForSheet.CustomerFullAddress}}</td>
+                                                                <td colspan="4" style="padding: 2px 5px;border-width: 1px;"> {{getInspectionDetailsForSheet.CustomerLocationFullAddress}}</td>
                                                                 <td align="center" bgcolor="#ffffcc" style="padding: 2px 5px;border-width: 1px;">Date of Inspection:</td>
                                                                 <td colspan="3" style="padding: 2px 5px; border-width: 1px;">{{getInspectionDetailsForSheet.InspectionDate| date:'MMMM dd, yyyy'}}</td>
                                                             </tr>
@@ -1845,9 +1851,17 @@
                                             </tr>
                                             <tr _ngcontent-c10="">
                                                 <td _ngcontent-c10="" align="left" valign="top" class="" style="padding: 20px 100px;">
-                                                    <div style="width: 40%;float: left;line-height: 22px">{{getInspectionDetailsForSheet.Customer}}<br>{{getInspectionDetailsForSheet.CustomerArea}} <br>{{getInspectionDetailsForSheet.CustomerLocation}}</div>
-                                                    <div style="width: 40%;float: left;line-height: 22px"><b>Ship to: </b><br>{{getInspectionDetailsForSheet.Customer}}<br>{{getInspectionDetailsForSheet.CustomerFullAddress}}</div>
-                                                    <div style="width: 20%;float: left;text-align: right"></div>
+                                                    <div style="width: 45%;float: left;line-height: 22px"><b>&nbsp;</b><br>{{getInspectionDetailsForSheet.Customer}}<br>{{getInspectionDetailsForSheet.CustomerFullAddress}}</div>
+                                                    <div style="width: 45%;float: left;line-height: 22px">
+                                                        <b>Ship to: </b><br>{{getInspectionDetailsForSheet.Customer}}<br>
+                                                        {{getInspectionDetailsForSheet.CustomerArea}}
+                                                        <span ng-if="getInspectionDetailsForSheet.CustomerArea && (getInspectionDetailsForSheet.CustomerFacility || getInspectionDetailsForSheet.CustomerLocation)">,</span>
+                                                        {{getInspectionDetailsForSheet.CustomerFacility}}
+                                                        <span ng-if="getInspectionDetailsForSheet.CustomerFacility && getInspectionDetailsForSheet.CustomerLocation">,</span>
+                                                        {{getInspectionDetailsForSheet.CustomerLocation}}<br />
+                                                        {{getInspectionDetailsForSheet.CustomerLocationFullAddress}}
+                                                    </div>
+                                                    <div style="width: 10%;float: left;text-align: right"></div>
                                                 </td>
                                             </tr>
 
@@ -1865,17 +1879,17 @@
                                                                 <label>Valid For</label>
                                                                 <input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.ValidTo" class="inspectionviewtextbox" />
                                                             </div>
-                                                           <div class="quotation-header-section" style="flex:0 0 20%;">
-                                                               <label>Sales Person</label>
-                                                               <select id="QuotationSalesPersonId"
-                                                                       class="inspectionviewtextbox"
-                                                                       style="width:100%; padding:8px 10px;"
-                                                                       ng-model="quotationsalespersonid"
-                                                                       ng-init="quotationsalespersonid = getInspectionDetailsForSheet.objQuotation.QuotationSalesPersonId"
-                                                                       ng-options="d.EmployeeSalesID as d.EmployeeSalesName for d in getAllSalesPerson">
-                                                                   <option value="">Select Sales Person</option>
-                                                               </select>
-                                                           </div>
+                                                            <div class="quotation-header-section" style="flex:0 0 20%;">
+                                                                <label>Sales Person</label>
+                                                                <select id="QuotationSalesPersonId"
+                                                                        class="inspectionviewtextbox"
+                                                                        style="width:100%; padding:8px 10px;"
+                                                                        ng-model="quotationsalespersonid"
+                                                                        ng-init="quotationsalespersonid = getInspectionDetailsForSheet.objQuotation.QuotationSalesPersonId"
+                                                                        ng-options="d.EmployeeSalesID as d.EmployeeSalesName for d in getAllSalesPerson">
+                                                                    <option value="">Select Sales Person</option>
+                                                                </select>
+                                                            </div>
                                                             <div class="quotation-header-section" style="flex: 0 0 15%;">
                                                                 <label>Payment Terms</label>
                                                                 <input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.PaymentTerms" class="inspectionviewtextbox" />
@@ -2218,57 +2232,57 @@
                                                                         </tr>
 
                                                                     </tbody>
-</tbody>
-                                                                </table>
-                                                            </div>
-
-                                                            <!-- NOTES AND TOTALS SECTION -->
-                                                            <div style="margin-top: 20px;">
-                                                                <div class="quotation-notes-section">
-                                                                    <label>Remarks:</label>
-                                                                    <textarea ng-model="getInspectionDetailsForSheet.objQuotation.QuotationNotes"></textarea>
-                                                                </div>
-
-                                                                <div class="quotation-totals">
-                                                                    <div class="quotation-total-item">
-                                                                        <div class="quotation-total-label">Sub Total:</div>
-                                                                        <div class="quotation-total-value">${{getInspectionDetailsForSheet.objQuotation.Subtotal}}</div>
-                                                                    </div>
-                                                                    @if (userType == "1")
-                                                                    {
-                                                                        <div class="quotation-total-item">
-                                                                            <div class="quotation-total-label">TAX (<input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.GSTPer" ng-change="updateGSTTotals()" style="width: 40px; padding: 4px; border: 1px solid #ddd;" />%):</div>
-                                                                            <div class="quotation-total-value">${{getInspectionDetailsForSheet.objQuotation.GSTValue}}</div>
-                                                                        </div>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div class="quotation-total-item">
-                                                                            <div class="quotation-total-label">TAX ({{getInspectionDetailsForSheet.objQuotation.GSTPer}}%):</div>
-                                                                            <div class="quotation-total-value">${{getInspectionDetailsForSheet.objQuotation.GSTValue}}</div>
-                                                                        </div>
-                                                                    }
-                                                                    <div class="quotation-total-item">
-                                                                        <div class="quotation-total-label" style="font-size: 16px;"><b>Total:</b></div>
-                                                                        <div class="quotation-total-value" style="font-size: 16px;"><b>${{getInspectionDetailsForSheet.objQuotation.Total}}</b></div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
                                         </tbody>
                                     </table>
-                                </section>
-                                
+                            </div>
+
+                            <!-- NOTES AND TOTALS SECTION -->
+                            <div style="margin-top: 20px;">
+                                <div class="quotation-notes-section">
+                                    <label>Remarks:</label>
+                                    <textarea ng-model="getInspectionDetailsForSheet.objQuotation.QuotationNotes"></textarea>
+                                </div>
+
+                                <div class="quotation-totals">
+                                    <div class="quotation-total-item">
+                                        <div class="quotation-total-label">Sub Total:</div>
+                                        <div class="quotation-total-value">${{getInspectionDetailsForSheet.objQuotation.Subtotal}}</div>
+                                    </div>
+                                    @if (userType == "1")
+                                    {
+                                        <div class="quotation-total-item">
+                                            <div class="quotation-total-label">TAX (<input type="text" ng-model="getInspectionDetailsForSheet.objQuotation.GSTPer" ng-change="updateGSTTotals()" style="width: 40px; padding: 4px; border: 1px solid #ddd;" />%):</div>
+                                            <div class="quotation-total-value">${{getInspectionDetailsForSheet.objQuotation.GSTValue}}</div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="quotation-total-item">
+                                            <div class="quotation-total-label">TAX ({{getInspectionDetailsForSheet.objQuotation.GSTPer}}%):</div>
+                                            <div class="quotation-total-value">${{getInspectionDetailsForSheet.objQuotation.GSTValue}}</div>
+                                        </div>
+                                    }
+                                    <div class="quotation-total-item">
+                                        <div class="quotation-total-label" style="font-size: 16px;"><b>Total:</b></div>
+                                        <div class="quotation-total-value" style="font-size: 16px;"><b>${{getInspectionDetailsForSheet.objQuotation.Total}}</b></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    </td>
+                    </tr>
+                    </tbody>
+                    </table>
+                    </section>
+
                 </div>
-                @Html.Partial("_FooterLayout")
             </div>
         </div>
+    </div>
+    @Html.Partial("_FooterLayout")
+    </div>
+    </div>
     </div>
 </main>
 

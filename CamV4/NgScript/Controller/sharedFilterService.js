@@ -68,7 +68,7 @@
     // INTERNAL INVENTORY FILTERS
     // =====================================
 
-    var internalInventoryFilters = {
+    var inventoryFilters = {
         Region: '',
         ProvinceId: null,
         CityId: null,
@@ -77,29 +77,24 @@
         CustomerAreaId: null
     };
 
-    var inspectionFilters = {};
-    var documentFilters = {};
-    var incidentFilters = {};
-    var internalInspectionFilters = {};
-    var inventoryFilters = {};
-
     // =====================================
     // INSPECTION FILTERS METHODS
     // =====================================
 
     service.setInspectionFilters = function (filters) {
-        console.log('Broadcasting setInspectionFilters', filters);
+
         inspectionFilters = angular.copy(filters);
+
         $rootScope.$broadcast(
             'inspectionFiltersUpdated',
-            inspectionFilters);
+            angular.copy(inspectionFilters)
+        );
     };
 
     service.getInspectionFilters = function () {
         return angular.copy(inspectionFilters);
     };
 
-    // Alias methods (if controller uses singular form)
     service.setInspectionFilter = function (filters) {
         service.setInspectionFilters(filters);
     };
@@ -113,13 +108,12 @@
     // =====================================
 
     service.setDocumentFilters = function (filters) {
-        documentFilters = angular.copy(filters);
 
-        console.log('In applyDocFilters in SharedFilterServices');
+        documentFilters = angular.copy(filters);
 
         $rootScope.$broadcast(
             'documentFiltersUpdated',
-            documentFilters
+            angular.copy(documentFilters)
         );
     };
 
@@ -127,7 +121,6 @@
         return angular.copy(documentFilters);
     };
 
-    // Alias methods
     service.setDocumentFilter = function (filters) {
         service.setDocumentFilters(filters);
     };
@@ -141,10 +134,12 @@
     // =====================================
 
     service.setIncidentFilters = function (filters) {
+
         incidentFilters = angular.copy(filters);
+
         $rootScope.$broadcast(
             'incidentFiltersUpdated',
-            incidentFilters
+            angular.copy(incidentFilters)
         );
     };
 
@@ -152,7 +147,6 @@
         return angular.copy(incidentFilters);
     };
 
-    // Alias methods (if controller uses singular form) - THIS FIXES YOUR ERROR
     service.setIncidentFilter = function (filters) {
         service.setIncidentFilters(filters);
     };
@@ -166,10 +160,12 @@
     // =====================================
 
     service.setInternalInspectionFilters = function (filters) {
+
         internalInspectionFilters = angular.copy(filters);
+
         $rootScope.$broadcast(
             'internalInspectionFiltersUpdated',
-            internalInspectionFilters
+            angular.copy(internalInspectionFilters)
         );
     };
 
@@ -177,7 +173,6 @@
         return angular.copy(internalInspectionFilters);
     };
 
-    // Alias methods (if controller uses singular form)
     service.setInternalInspectionFilter = function (filters) {
         service.setInternalInspectionFilters(filters);
     };
@@ -186,36 +181,56 @@
         return service.getInternalInspectionFilters();
     };
 
+    service.clearInternalInspectionFilters = function () {
+
+        internalInspectionFilters = {
+            Status: '',
+            Region: '',
+            ProvinceId: null,
+            CityId: null,
+            CustomerLocationId: null,
+            CustomerFacilityId: null,
+            CustomerAreaId: null
+        };
+
+        $rootScope.$broadcast(
+            'internalInspectionFiltersUpdated',
+            angular.copy(internalInspectionFilters)
+        );
+    };
     // =====================================
     // INTERNAL INVENTORY FILTERS METHODS
     // =====================================
 
-    service.setInternalInventoryFilters = function (filters) {
-        internalInventoryFilters = angular.copy(filters);
+    service.setInventoryFilters = function (filters) {
+
+        inventoryFilters = angular.copy(filters);
+
         $rootScope.$broadcast(
-            'internalInventoryFiltersUpdated',
-            internalInventoryFilters
+            'inventoryFiltersUpdated',
+            angular.copy(inventoryFilters)
         );
     };
 
-    service.getInternalInventoryFilters = function () {
-        return angular.copy(internalInventoryFilters);
+    service.getInventoryFilters = function () {
+        return angular.copy(inventoryFilters);
     };
 
-    // Alias methods (if controller uses singular form)
-    service.setInternalInventoryFilter = function (filters) {
-        service.setInternalInventoryFilters(filters);
+    service.setInventoryFilter = function (filters) {
+        service.setInventoryFilters(filters);
     };
 
-    service.getInternalInventoryFilter = function () {
-        return service.getInternalInventoryFilters();
+    service.getInventoryFilter = function () {
+        return service.getInventoryFilters();
     };
-
     // =====================================
     // RESET ALL FILTERS
     // =====================================
 
+    
+
     service.clearAll = function () {
+
         inspectionFilters = {
             InspectionTypeId: '',
             SelectedStatusIds: [],
@@ -234,8 +249,10 @@
             CustomerLocationId: null,
             CustomerFacilityId: null,
             CustomerAreaId: null,
+
             IncludeInspectionDocuments: true,
             IncludeHistoricalDocuments: true,
+
             InspectionCategories: [],
             HistoricalCategories: []
         };
@@ -260,7 +277,7 @@
             CustomerAreaId: null
         };
 
-        internalInventoryFilters = {
+        inventoryFilters = {
             Region: '',
             ProvinceId: null,
             CityId: null,

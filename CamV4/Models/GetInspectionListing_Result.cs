@@ -14,6 +14,7 @@ namespace CamV4.Models
     public partial class GetInspectionListing_Result
     {
         public long InspectionId { get; set; }
+        
         public string InspectionDocumentNo { get; set; }
         public string InspectionDocumentNoRef { get; set; }
         public string InspectionType { get; set; }
@@ -25,6 +26,7 @@ namespace CamV4.Models
         public Nullable<System.DateTime> InspectionStartedOn { get; set; }
         public Nullable<System.DateTime> InspectionEndOn { get; set; }
         public long CustomerId { get; set; }
+        public string CustomerName { get; set; }
         public long CustomerLocationId { get; set; }
         public string LocationName { get; set; }
         public Nullable<long> CustomerFacilityID { get; set; }

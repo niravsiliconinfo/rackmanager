@@ -3158,14 +3158,16 @@
         $scope.GenerateQuotationFromCustomer = function (inspectionId) {
             $scope.isLoadingButton = true;
             $scope.isProcessing = true;
+            var selectedIds = [];
 
+            if ($scope.getInspectionDetailsForSheet &&
+                $scope.getInspectionDetailsForSheet.iDefModel) {
 
-            let selectedIds = [];
-
-            if ($scope.getInspectionDetailsForSheet.iDefModel) {
                 $scope.getInspectionDetailsForSheet.iDefModel.forEach(function (d) {
-                    // When checkbox checked
-                    if (d.InspectionDeficiencyRequestQuotation === true || d.InspectionDeficiencyRequestQuotation === 1) {
+
+                    if (d.InspectionDeficiencyRequestQuotation === true ||
+                        d.InspectionDeficiencyRequestQuotation === 1) {
+
                         selectedIds.push(d.InspectionDeficiencyId);
                     }
                 });
@@ -3176,28 +3178,42 @@
                 sCustomerSelectedDeficiencyIds: selectedIds.join(',')
             };
 
-            console.log("Sending quotation request data:", data);
+            console.log("Sending quotation request:", data);
 
             $http({
                 url: '/api/pageview/GenerateQuotationFromCustomer',
                 method: 'POST',
-                params: data,
-                headers: { 'Content-Type': 'application/json' }
+                data: data,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             })
                 .then(function (response) {
-                    $scope.isLoadingButton = false;
-                    $scope.isProcessing = false;
                     if (response.data === "Ok") {
-                        window.location = '/Customer/ManageInspection';
+                        $scope.isLoadingButton = false;
+                        $scope.isProcessing = false;
+                        window.location.href = '/Customer/ManageInspection';
+                    } else {
+                        $scope.isLoadingButton = false;
+                        $scope.isProcessing = false;
+                        console.error("Unexpected response:", response.data);
+                        alert("Quotation generation failed.");
                     }
                 })
                 .catch(function (error) {
+
                     $scope.isLoadingButton = false;
                     $scope.isProcessing = false;
-                    console.error('GenerateQuotationFromCustomer error:', error);
-                    alert('Error: ' + error.statusText);
+
+                    console.error("GenerateQuotationFromCustomer error:", error);
+
+                    alert(
+                        "Error generating quotation. " +
+                        (error.statusText || "Please try again.")
+                    );
                 });
         };
+
 
 
         if (window.location.pathname == "/Admin/ManageInspectionFiles") {

@@ -132,9 +132,12 @@ namespace CamV4.Models
         public string PinCode { get; set; }
         public string Region { get; set; }
         public string CreatedBy { get; set; }
-        public Nullable<System.DateTime> CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
         public string ModifiedBy { get; set; }
-        public Nullable<System.DateTime> ModifiedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+
+        // New property
+        public string CustomerLocationFullAddress { get; set; }
     }
 
     public partial class CustomerViewModel
@@ -285,6 +288,7 @@ namespace CamV4.Models
         public string CustomerContactName { get; set; }
         public long CustomerLocationId { get; set; }
         public string CustomerLocation { get; set; }
+        public string CustomerLocationFullAddress { get; set; }
         public string Region { get; set; }
         public Nullable<long> CustomerAreaID { get; set; }
         public string CustomerArea { get; set; }
@@ -331,8 +335,7 @@ namespace CamV4.Models
         public Nullable<int> PlanElevationDrawing { get; set; }
         public Quotation objQuotation { get; set; }
         public List<ShelvingCheckListViewModel> ShelvingCheckLists { get; set; }
-    }
-
+    }   
     public class DropdownMasterViewModel
     {
         public List<DropdownItem> Regions { get; set; }
@@ -936,7 +939,7 @@ namespace CamV4.Models
         public string ItemPartNo { get; set; }
         public string ItemDescription { get; set; }
         public decimal? ItemUnitPrice { get; set; }
-        public decimal? ItemSurcharge { get; set; }
+        public decimal? ItemSurcharge { get; set; } 
         public decimal? ItemMarkup { get; set; }
         public decimal? ItemPrice { get; set; }
         public int? ItemQuantity { get; set; }
@@ -1031,7 +1034,11 @@ namespace CamV4.Models
         public Nullable<decimal> ItemLabourTotal { get; set; }
         public Nullable<bool> IsTBD { get; set; }
     }
-
+    public class GenerateQuotationRequest
+    {
+        public long inspectionId { get; set; }
+        public string sCustomerSelectedDeficiencyIds { get; set; }
+    }
     public class InspectionDeficiencyMTOItemDetail
     {
         public long ComponentPropertyTypeId { get; set; }
@@ -1284,7 +1291,11 @@ namespace CamV4.Models
         public Nullable<DateTime> CreatedDate { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<DateTime> ModifiedDate { get; set; }
-
+        public int? ProvinceId { get; set; }
+        public int? CityId { get; set; }
+        public long? CustomerLocationId { get; set; }
+        public long? CustomerFacilityId { get; set; }
+        public long? CustomerAreaId { get; set; }
         // Child collections
         public List<InternalInspectionDeficiencyViewModel> Deficiencies { get; set; }
 
@@ -1721,6 +1732,8 @@ namespace CamV4.Models
         public string Reason { get; set; }
         public bool ConfirmDelete { get; set; }
     }
+    
+
     #endregion
 
 }

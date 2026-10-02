@@ -93,21 +93,21 @@
                             <button class="btn btn-sm btn-success mb-0"
                                     ng-disabled="statusUpdating || inspection.Status === 'Approved'"
                                     ng-click="updateInspectionStatus('Approved')">
-                                <i class="material-icons text-sm">check_circle</i> Approve All
+                                <i class="material-icons text-sm">check_circle</i> Review Complete
                             </button>
-                            <button class="btn btn-sm btn-danger mb-0"
+                            @*<button class="btn btn-sm btn-danger mb-0"
                                     ng-disabled="statusUpdating || inspection.Status === 'Rejected'"
                                     ng-click="updateInspectionStatus('Rejected')">
                                 <i class="material-icons text-sm">cancel</i> Reject
-                            </button>
+                            </button>*@
                             <button class="btn btn-sm bg-gradient-dark mb-0"
                                     ng-click="downloadPdf(inspection.InternalInspectionID)">
                                 <i class="material-icons text-sm">picture_as_pdf</i> PDF
                             </button>
-                            <button class="btn btn-sm bg-gradient-secondary mb-0"
+                            @*<button class="btn btn-sm bg-gradient-secondary mb-0"
                                     onclick="window.print()">
                                 <i class="material-icons text-sm">print</i> Print
-                            </button>
+                            </button>*@
                         </div>
                     </div>
                 </div>

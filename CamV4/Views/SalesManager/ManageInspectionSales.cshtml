@@ -66,6 +66,7 @@
                                 <thead>
                                     <tr>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Document No</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Company</th>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Inspection Date</th>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Site Contact</th>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Inspection Type</th>
@@ -79,6 +80,9 @@
                                         ng-style="{'cursor': d.InspectionStatus > 0 ? 'pointer' : 'not-allowed'}">
                                         <td class="align-middle text-sm">
                                             <span class="text-secondary text-xs font-weight-bold">{{d.InspectionDocumentNo}}</span>
+                                        </td>
+                                        <td class="align-middle text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">{{d.CustomerName}}</span>
                                         </td>
                                         <td class="align-middle text-sm">
                                             <span class="text-secondary text-xs font-weight-bold">{{d.InspectionDate | date:'dd MMM yyyy'}}</span>

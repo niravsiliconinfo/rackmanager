@@ -103,10 +103,24 @@
                                         <td><p class="text-sm mb-0">{{d.Region || '-'}}</p></td>                                        
                                         <td class="text-center"><span class="badge bg-gradient-secondary">{{d.DeficiencyCount}}</span></td>
                                         <td>
-                                            <span class="badge bg-gradient-info" ng-if="d.Status=='Draft'">Draft</span>
-                                            <span class="badge bg-gradient-primary" ng-if="d.Status=='Submitted'">Submitted</span>
-                                            <span class="badge bg-gradient-warning" ng-if="d.Status=='Reviewed'">Reviewed</span>
-                                            <span class="badge bg-gradient-success" ng-if="d.Status=='Closed'">Closed</span>
+                                            <span class="badge bg-gradient-primary"
+                                                  ng-if="d.Status == 'Submitted'">
+                                                Submitted
+                                            </span>
+                                            <span class="badge bg-gradient-warning"
+                                                  ng-if="d.Status == 'Under Review'">
+                                                Under Review
+                                            </span>
+
+                                            <span class="badge bg-gradient-success"
+                                                  ng-if="d.Status == 'Approved'">
+                                                Review Complete
+                                            </span>
+
+                                            @*<span class="badge bg-gradient-danger"
+                                                  ng-if="d.Status == 'Rejected'">
+                                                Rejected
+                                            </span>*@
                                         </td>
                                         <td class="align-middle">
                                             <a href="/Customer/customerInternalInspectionView?id={{d.InternalInspectionID}}" title="View">

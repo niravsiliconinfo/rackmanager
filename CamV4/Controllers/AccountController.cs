@@ -1,4 +1,5 @@
-﻿using CamV4.Helper;
+﻿using CamV4.Enum;
+using CamV4.Helper;
 using CamV4.Models;
 using ExcelDataReader;
 using NLog;
@@ -70,6 +71,136 @@ namespace CamV4.Controllers
 
         //
         // POST: /Account/Login
+        //[AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //[HttpPost]
+        //public ActionResult Login(LoginViewModel model)
+        //{
+        //    try
+        //    {
+
+        //        //FirebaseHelper firebaseService = new FirebaseHelper();
+        //        //FirebaseHelper.InitializeFirebase();
+        //        //firebaseService.SendAndroidNotificationAsync("ePldgA9ATo6xh4IC_qmGDd:APA91bHhbvnOLMJa3HDYZ_j4xW1X226YtnH7RuFrOyNBp9sDprfDQBBuaJd8b-BVJNTbW40YxCT6o4L0fmwan9SxmhddQB78dNJhaOGpZ_af5714C8H6pns", "CAM Industrial ", "Dummy Message");
+
+        //        var _password = MD5Hash(model.UserPassword);
+        //        var user = db.Users.Where(x => x.UserName == model.UserName && x.UserPassword == _password).FirstOrDefault();
+        //        if (user != null)
+        //        {
+        //            if (user.UserType == 9)
+        //            {
+        //                Session["LoggedInUserId"] = user.UserId;
+        //                Session["LoggedInUserName"] = user.UserName;
+        //                var customerContact = db.CustomerLocationContacts.Where(y => y.UserID == user.UserId && y.ContactEmail == user.UserName).FirstOrDefault();
+        //                if (customerContact != null)
+        //                {
+        //                    Session["LoggedInUserName"] = user.UserName;
+        //                    Session["LoggedInUserType"] = user.UserType;
+        //                    Session["LoggedInUserFullName"] = customerContact.ContactName;
+        //                }
+        //            }
+        //            else if (user.UserType == 4)
+        //            {
+        //                Session["LoggedInUserId"] = user.UserId;
+        //                Session["LoggedInUserName"] = user.UserName;
+        //                var customerContact = db.Customers.Where(y => y.UserID == user.UserId).FirstOrDefault();
+        //                if (customerContact != null)
+        //                {
+        //                    Session["LoggedInUserName"] = user.UserName;
+        //                    Session["LoggedInUserType"] = user.UserType;
+
+        //                    Session["LoggedInUserFullName"] = string.IsNullOrWhiteSpace(customerContact.CustomerContactName)
+        //                        ? user.UserName
+        //                        : customerContact.CustomerContactName;
+        //                }
+        //                else
+        //                {
+        //                    Session["LoggedInUserName"] = user.UserName;
+        //                    Session["LoggedInUserType"] = user.UserType;
+        //                    Session["LoggedInUserFullName"] = user.UserName;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                var EmployeeInformation = db.Employees.Where(y => y.UserID == user.UserId).FirstOrDefault();
+        //                if (EmployeeInformation != null)
+        //                {
+
+        //                    //Session["LoggedInUserName"] = EmployeeInformation.EmployeeName;
+        //                    Session["LoggedInUserName"] = user.UserName;
+        //                    Session["LoggedInUserFullName"] = EmployeeInformation.EmployeeName;
+        //                }
+        //                else
+        //                {
+        //                    Session["LoggedInUserName"] = user.UserName;
+        //                    Session["LoggedInUserFullName"] = user.UserName;
+        //                }
+        //                Session["LoggedInUserId"] = user.UserId;
+        //                Session["LoggedInUserType"] = user.UserType;
+        //            }
+        //            if (model.RememberMe)
+        //            {
+        //                HttpCookie mycookie = new HttpCookie("LoginDetail");
+        //                mycookie.Values["Username"] = user.UserName;
+        //                mycookie.Values["Password"] = user.UserPassword;
+        //                mycookie.Expires = System.DateTime.Now.AddDays(365);
+        //                Response.Cookies.Add(mycookie);
+        //            }
+
+        //            if (user.UserType == 1 || user.UserType == 6 || user.UserType == 3 || user.UserType == 5)
+        //            {
+        //                var emp = DatabaseHelper.getUserEmployeeByUserId(user.UserId);
+        //                if (emp != null)
+        //                {
+        //                    Session["EmployeeID"] = emp.EmployeeID;
+        //                    Session["EmployeeName"] = emp.EmployeeName;
+        //                    Session["LoggedInUserFullName"] = emp.EmployeeName;
+        //                }
+        //                return RedirectToAction("Index", "Admin");
+        //            }
+        //            else if (user.UserType == 2)
+        //            {
+        //                var emp = DatabaseHelper.getUserEmployeeByUserId(user.UserId);
+        //                if (emp != null)
+        //                {
+        //                    Session["EmployeeID"] = emp.EmployeeID;
+        //                    Session["EmployeeName"] = emp.EmployeeName;
+        //                    Session["LoggedInUserFullName"] = emp.EmployeeName;
+        //                }
+        //                Session["LoggedInUserId"] = user.UserId;
+        //                return RedirectToAction("Index", "Employee");
+        //            }
+        //            else if (user.UserType == 4)
+        //            {
+        //                return RedirectToAction("Index", "Customer");
+        //            }
+        //            else if (user.UserType == 9)
+        //            {
+        //                return RedirectToAction("Index", "Customer");
+        //            }
+        //            //else if (user.UserType == 5)
+        //            //{
+        //            //    return RedirectToAction("Index", "CustomerLocationContact");
+        //            //}
+        //            else
+        //            {
+        //                //return RedirectToAction("Index", "User");
+        //                ViewBag.Message = string.Format("You are not authorized.");
+        //                return View();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            ViewBag.Message = string.Format("Login failed. User doesn't exist.");
+        //            return View();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ViewBag.Message = "User Name or Password incorrect. " + ex.ToString();
+        //        return View();
+        //    }
+        //}
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         [HttpPost]
@@ -77,127 +208,109 @@ namespace CamV4.Controllers
         {
             try
             {
+                //if (!ModelState.IsValid)
+                //    return View(model);
 
-                //FirebaseHelper firebaseService = new FirebaseHelper();
-                //FirebaseHelper.InitializeFirebase();
-                //firebaseService.SendAndroidNotificationAsync("ePldgA9ATo6xh4IC_qmGDd:APA91bHhbvnOLMJa3HDYZ_j4xW1X226YtnH7RuFrOyNBp9sDprfDQBBuaJd8b-BVJNTbW40YxCT6o4L0fmwan9SxmhddQB78dNJhaOGpZ_af5714C8H6pns", "CAM Industrial ", "Dummy Message");
+                string password = MD5Hash(model.UserPassword);
 
-                var _password = MD5Hash(model.UserPassword);
-                var user = db.Users.Where(x => x.UserName == model.UserName && x.UserPassword == _password).FirstOrDefault();
-                if (user != null)
+                // Authenticate
+                var user = db.Users
+                             .FirstOrDefault(x => x.UserName == model.UserName &&
+                                                  x.UserPassword == password);
+
+                if (user == null)
                 {
-                    if (user.UserType == 9)
-                    {
-                        Session["LoggedInUserId"] = user.UserId;
-                        Session["LoggedInUserName"] = user.UserName;
-                        var customerContact = db.CustomerLocationContacts.Where(y => y.UserID == user.UserId).FirstOrDefault();
-                        if (customerContact != null)
-                        {
-                            Session["LoggedInUserName"] = user.UserName;
-                            Session["LoggedInUserType"] = user.UserType;
-                            Session["LoggedInUserFullName"] = customerContact.ContactName;
-                        }
-                    }
-                    else if (user.UserType == 4)
-                    {
-                        Session["LoggedInUserId"] = user.UserId;
-                        Session["LoggedInUserName"] = user.UserName;
-                        var customerContact = db.Customers.Where(y => y.UserID == user.UserId).FirstOrDefault();
-                        if (customerContact != null)
-                        {
-                            Session["LoggedInUserName"] = user.UserName;
-                            Session["LoggedInUserType"] = user.UserType;
-
-                            Session["LoggedInUserFullName"] = string.IsNullOrWhiteSpace(customerContact.CustomerContactName)
-                                ? user.UserName
-                                : customerContact.CustomerContactName;
-                        }
-                        else
-                        {
-                            Session["LoggedInUserName"] = user.UserName;
-                            Session["LoggedInUserType"] = user.UserType;
-                            Session["LoggedInUserFullName"] = user.UserName;
-                        }
-                    }
-                    else
-                    {
-                        var EmployeeInformation = db.Employees.Where(y => y.UserID == user.UserId).FirstOrDefault();
-                        if (EmployeeInformation != null)
-                        {
-
-                            //Session["LoggedInUserName"] = EmployeeInformation.EmployeeName;
-                            Session["LoggedInUserName"] = user.UserName;
-                            Session["LoggedInUserFullName"] = EmployeeInformation.EmployeeName;
-                        }
-                        else
-                        {
-                            Session["LoggedInUserName"] = user.UserName;
-                            Session["LoggedInUserFullName"] = user.UserName;
-                        }
-                        Session["LoggedInUserId"] = user.UserId;
-                        Session["LoggedInUserType"] = user.UserType;
-                    }
-                    if (model.RememberMe)
-                    {
-                        HttpCookie mycookie = new HttpCookie("LoginDetail");
-                        mycookie.Values["Username"] = user.UserName;
-                        mycookie.Values["Password"] = user.UserPassword;
-                        mycookie.Expires = System.DateTime.Now.AddDays(365);
-                        Response.Cookies.Add(mycookie);
-                    }
-
-                    if (user.UserType == 1 || user.UserType == 6 || user.UserType == 3 || user.UserType == 5)
-                    {
-                        var emp = DatabaseHelper.getUserEmployeeByUserId(user.UserId);
-                        if (emp != null)
-                        {
-                            Session["EmployeeID"] = emp.EmployeeID;
-                            Session["EmployeeName"] = emp.EmployeeName;
-                            Session["LoggedInUserFullName"] = emp.EmployeeName;
-                        }
-                        return RedirectToAction("Index", "Admin");
-                    }
-                    else if (user.UserType == 2)
-                    {
-                        var emp = DatabaseHelper.getUserEmployeeByUserId(user.UserId);
-                        if (emp != null)
-                        {
-                            Session["EmployeeID"] = emp.EmployeeID;
-                            Session["EmployeeName"] = emp.EmployeeName;
-                            Session["LoggedInUserFullName"] = emp.EmployeeName;
-                        }
-                        Session["LoggedInUserId"] = user.UserId;
-                        return RedirectToAction("Index", "Employee");
-                    }
-                    else if (user.UserType == 4)
-                    {
-                        return RedirectToAction("Index", "Customer");
-                    }
-                    else if (user.UserType == 9)
-                    {
-                        return RedirectToAction("Index", "Customer");
-                    }
-                    //else if (user.UserType == 5)
-                    //{
-                    //    return RedirectToAction("Index", "CustomerLocationContact");
-                    //}
-                    else
-                    {
-                        //return RedirectToAction("Index", "User");
-                        ViewBag.Message = string.Format("You are not authorized.");
-                        return View();
-                    }
+                    ViewBag.Message = "Invalid username or password.";
+                    return View(model);
                 }
-                else
+
+                // Common Session
+                Session["LoggedInUserId"] = user.UserId;
+                Session["LoggedInUserName"] = user.UserName;
+                Session["LoggedInUserType"] = user.UserType;
+
+                // Role specific data
+                switch ((UserRoles)user.UserType)
                 {
-                    ViewBag.Message = string.Format("Login failed. User doesn't exist.");
-                    return View();
+                    case UserRoles.CustomerLocationAdmin:
+
+                        var locationContact = db.CustomerLocationContacts
+                            .FirstOrDefault(x => x.UserID == user.UserId &&
+                                                 x.ContactEmail == user.UserName);
+
+                        Session["LoggedInUserFullName"] =
+                            locationContact?.ContactName ?? user.UserName;
+
+                        break;
+
+                    case UserRoles.CustomerAdmin:
+
+                        var customer = db.Customers
+                            .FirstOrDefault(x => x.UserID == user.UserId);
+
+                        Session["LoggedInUserFullName"] =
+                            !string.IsNullOrWhiteSpace(customer?.CustomerContactName)
+                                ? customer.CustomerContactName
+                                : user.UserName;
+
+                        break;
+
+                    default:
+
+                        var employee = db.Employees
+                            .FirstOrDefault(x => x.UserID == user.UserId);
+
+                        if (employee != null)
+                        {
+                            Session["EmployeeID"] = employee.EmployeeID;
+                            Session["EmployeeName"] = employee.EmployeeName;
+                            Session["LoggedInUserFullName"] = employee.EmployeeName;
+                        }
+                        else
+                        {
+                            Session["LoggedInUserFullName"] = user.UserName;
+                        }
+
+                        break;
+                }
+
+                // Remember Me
+                if (model.RememberMe)
+                {
+                    HttpCookie cookie = new HttpCookie("LoginDetail");
+                    cookie.Values["Username"] = user.UserName;
+                    cookie.Values["Password"] = user.UserPassword;
+                    cookie.Expires = DateTime.Now.AddDays(365);
+
+                    Response.Cookies.Add(cookie);
+                }
+
+                // Redirect by role
+                switch ((UserRoles)user.UserType)
+                {
+                    case UserRoles.Admin:
+                    case UserRoles.Technician:
+                    case UserRoles.Sales:
+                    case UserRoles.ProjectManager:
+                    case UserRoles.Consultant:
+                        return RedirectToAction("Index", "Admin");
+
+                    case UserRoles.Engineer:
+                        return RedirectToAction("Index", "Employee");
+
+                    case UserRoles.CustomerAdmin:
+                    case UserRoles.CustomerLocationAdmin:
+                        return RedirectToAction("Index", "Customer");
+
+                    default:
+                        ViewBag.Message = "You are not authorized.";
+                        return View(model);
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                ViewBag.Message = "User Name or Password incorrect. " + ex.ToString();
-                return View();
+                ViewBag.Message = "Username or password is incorrect.";
+                return View(model);
             }
         }
 

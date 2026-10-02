@@ -91,7 +91,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="input-group input-group-outline mb-3">
-                                        <input type="password" class="form-control" name="Password" id="Password" ng-model="userPassword" required>                                        
+                                        <input type="password" class="form-control" name="Password" id="Password" ng-model="userPassword" required>
                                     </div>
                                 </div>
                             </div>
@@ -104,24 +104,63 @@
                                         <ul class="navbar-nav form-control">
                                             <li ng-repeat="f in getCustomerLocationByCustomerId" required>
                                                 <label for="chkCustomerLocationEdit_{{f.CustomerLocationID}}">
-                                                    <input id="chkCustomerLocationEdit_{{f.CustomerLocationID}}" type="checkbox" ng-model="f.selected" />
+                                                    <input id="chkCustomerLocationEdit_{{f.CustomerLocationID}}" type="checkbox" ng-model="f.selected"  ng-change="onLocationChangeAdd()" />
                                                     @*{{f.LocationName}}({{f.City}})*@
                                                     {{ f.LocationName }}{{ f.City ? ' (' + f.City + ')' : '' }}
                                                 </label>
                                             </li>
                                         </ul>
                                     </div>
-                                </div>                               
+                                </div>
+                                <div class="col-sm-2"><span>Facility</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3 scroller">
+                                        <ul class="navbar-nav form-control">
+                                            @*<li ng-if="facilitiesForAdd.length == 0">
+                            <span class="text-muted small">Select a location first</span>
+                        </li>*@
+                                            <li ng-repeat="f in facilitiesForAdd">
+                                                <label for="chkAddFacility_{{f.CustomerFacilityID}}">
+                                                    <input id="chkAddFacility_{{f.CustomerFacilityID}}"
+                                                           type="checkbox"
+                                                           ng-model="f.selected"
+                                                          ng-change="onFacilityChangeAdd()" />
+                                                    {{ f.FacilityName }}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2"><span>Area</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3 scroller">
+                                        <ul class="navbar-nav form-control">
+                                            @*<li ng-if="areasForAdd.length == 0">
+                            <span class="text-muted small">Select a location first</span>
+                        </li>*@
+                                            <li ng-repeat="a in areasForAdd">
+                                                <label for="chkAddArea_{{a.AreaID}}">
+                                                    <input id="chkAddArea_{{a.AreaID}}"
+                                                           type="checkbox"
+                                                           ng-model="a.selected" />
+                                                    {{ a.AreaName }}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="text-center float-end">
-                                        <span style="color:red">{{validationShow}}</span>                                        
+                                        <span style="color:red">{{validationShow}}</span>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="text-center float-end">
-                                        <button type="submit" ng-click="SaveLocationContact(@ViewData["CustLocID"])" class="btn btn-md bg-gradient-info btn-lg w-100 mb-0">Save Contact</button>                                        
+                                        <button type="submit" ng-click="SaveLocationContact(@ViewData["CustLocID"])" class="btn btn-md bg-gradient-info btn-lg w-100 mb-0">Save Contact</button>
                                     </div>
                                 </div>
                             </div>
@@ -183,9 +222,48 @@
                                         <ul class="navbar-nav form-control">
                                             <li ng-repeat="f in getCustomerLocationByCustomerId">
                                                 <label for="chkCustomerLocationEdit_{{f.CustomerLocationID}}">
-                                                    <input id="chkCustomerLocationEdit_{{f.CustomerLocationID}}" type="checkbox" ng-model="f.selected" />
+                                                    <input id="chkCustomerLocationEdit_{{f.CustomerLocationID}}" type="checkbox" ng-model="f.selected" ng-change="IsEdit ? onLocationChangeEdit() : onLocationChangeAdd()" />
                                                     @*{{f.LocationName}}({{f.City}})*@
                                                     {{ f.LocationName }}{{ f.City ? ' (' + f.City + ')' : '' }}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2"><span>Facility</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3 scroller">
+                                        <ul class="navbar-nav form-control">
+                                            @*<li ng-if="facilitiesForAdd.length == 0">
+                            <span class="text-muted small">Select a location first</span>
+                        </li>*@
+                                            <li ng-repeat="f in facilitiesForAdd">
+                                                <label for="chkAddFacility_{{f.CustomerFacilityID}}">
+                                                    <input id="chkAddFacility_{{f.CustomerFacilityID}}"
+                                                           type="checkbox"
+                                                           ng-model="f.selected"
+                                                             ng-change="IsEdit ? onFacilityChangeEdit() : onFacilityChangeAdd()" />
+                                                    {{ f.FacilityName }}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2"><span>Area</span></div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-outline mb-3 scroller">
+                                        <ul class="navbar-nav form-control">
+                                            @*<li ng-if="areasForAdd.length == 0">
+                            <span class="text-muted small">Select a location first</span>
+                        </li>*@
+                                            <li ng-repeat="a in areasForAdd">
+                                                <label for="chkAddArea_{{a.AreaID}}">
+                                                    <input id="chkAddArea_{{a.AreaID}}"
+                                                           type="checkbox"
+                                                           ng-model="a.selected" />
+                                                    {{ a.AreaName }}
                                                 </label>
                                             </li>
                                         </ul>
@@ -230,7 +308,9 @@
                                     <tr>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Contact Name</th>
                                         <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Email/Contact Phone</th>
-                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Location ID(City)</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:20%">Location ID(City)</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:20%">Facility</th>
+                                        <th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width:20%">Area</th>
                                         @*<th class="text-dark text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Customer</th>*@
                                         <th class="text-secondary opacity-7"></th>
                                     </tr>
@@ -250,6 +330,12 @@
                                         </td>
                                         <td>
                                             <p class="text-xs font-weight-bold mb-0">{{d.LinkedLocationNames}}</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.LinkedFacilityNames || '-'}}</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{d.LinkedAreaNames || '-'}}</p>
                                         </td>
                                         @*<td>
                                             <p class="text-xs font-weight-bold mb-0">{{d.Customer}}</p>

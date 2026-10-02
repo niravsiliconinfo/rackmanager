@@ -3391,7 +3391,8 @@ namespace CamV4.Helper
                     if (customer != null)
                     {
                         //list = getLocationContactDetailsByLocationIdBoth(customer.CustomerId);
-                        list = GetCustomerAllContactDetailsByCustomerId(customer.CustomerId);
+                        //list = GetCustomerAllContactDetailsByCustomerId();
+                        list = getLocationContactDetailsByCustomerID(customer.CustomerId);
                     }
                 }
             }
@@ -8320,7 +8321,7 @@ namespace CamV4.Helper
                     Uri url = new Uri(tmpURL);
                     string host = url.GetLeftPart(UriPartial.Authority);
                     string CustomerFullAddress = "";
-                    List<string> FullAddress = new List<string>();
+                    //List<string> FullAddress = new List<string>();
                     var list = db.Inspections.Where(x => x.InspectionId == id && x.IsActive == true).FirstOrDefault();
                     if (list != null)
                     {
@@ -8360,36 +8361,30 @@ namespace CamV4.Helper
                         if (list.CustomerLocationId != 0)
                         {
                             _list.CustomerLocationId = list.CustomerLocationId;
-                            var loc = getCustomerLocationById(Convert.ToInt16(list.CustomerLocationId));
-                            if (loc != null)
-                            {
-                                _list.CustomerLocation = loc.LocationName;
-                                FullAddress.Add(loc.LocationName);
-                                if (loc.CustomerAddress != null)
-                                {
-                                    FullAddress.Add(loc.CustomerAddress);
-                                    //FullAddress.Add(loc.Pincode);
-                                    _list.custModel.CustomerAddress = loc.CustomerAddress;
-                                }
-                            }
 
+                            var location = GetCustomerLocationDetails(list.CustomerLocationId);
+
+                            if (location != null)
+                            {
+                                _list.CustomerLocation = location.LocationName;
+                                _list.CustomerLocationFullAddress = location.CustomerLocationFullAddress;
+                            }
                         }
                         else
                         {
                             _list.CustomerLocationId = 0;
                             _list.CustomerLocation = "";
+                            _list.CustomerLocationFullAddress = "";
                         }
 
-
-                        if (list != null && list.CustomerFacilityID.GetValueOrDefault() != 0)
+                        if (list.CustomerFacilityID.GetValueOrDefault() != 0)
                         {
                             _list.CustomerFacilityID = list.CustomerFacilityID;
+
                             var facility = getFacilityDetailsById(Convert.ToInt16(list.CustomerFacilityID));
+
                             if (facility != null)
-                            {
                                 _list.CustomerFacility = facility.FacilityName;
-                                //FullAddress.Add(facility.AreaName);
-                            }
                         }
                         else
                         {
@@ -8400,12 +8395,11 @@ namespace CamV4.Helper
                         if (list.CustomerAreaID != 0)
                         {
                             _list.CustomerAreaID = list.CustomerAreaID;
+
                             var area = getAreaDetailsById(Convert.ToInt16(list.CustomerAreaID));
+
                             if (area != null)
-                            {
                                 _list.CustomerArea = area.AreaName;
-                                FullAddress.Add(area.AreaName);
-                            }
                         }
                         else
                         {
@@ -8416,28 +8410,18 @@ namespace CamV4.Helper
                         if (list.CustomerId != 0)
                         {
                             var cust = getCustomerById(list.CustomerId);
+
                             if (cust != null)
                             {
                                 _list.Customer = cust.CustomerName;
-                                _list.custModel.CustomerName = cust.CustomerName;
+                                _list.CustomerFullAddress = cust.CustomerFullAddress;
+
                                 _list.custModel.CustomerId = cust.CustomerID;
-                                if (_list.custModel.CustomerAddress == "" || _list.custModel.CustomerAddress == null)
-                                {
-                                    _list.custModel.CustomerAddress = cust.CustomerAddress;
-                                    if (cust.CustomerAddress != null)
-                                    {
-                                        FullAddress.Add(cust.CustomerAddress);
-                                    }
-                                }
+                                _list.custModel.CustomerName = cust.CustomerName;
+                                _list.custModel.CustomerAddress = cust.CustomerAddress;
                                 _list.custModel.CustomerLogo = cust.CustomerLogo;
                                 _list.custModel.CustomerEmail = cust.CustomerEmail;
                                 _list.custModel.CustomerContactName = cust.CustomerContactName;
-                                _list.CustomerFullAddress = cust.CustomerFullAddress;                               
-                            }
-                            else 
-                            {
-                                CustomerFullAddress = string.Join(",", FullAddress);
-                                _list.CustomerFullAddress = CustomerFullAddress;
                             }
                         }
 
@@ -9112,6 +9096,57 @@ namespace CamV4.Helper
                 {
                     return null;
                 }
+            }
+        }
+
+        internal static CustomerLocationViewModel GetCustomerLocationDetails(long customerLocationId)
+        {
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                var d = db.CustomerLocations
+                          .FirstOrDefault(x => x.CustomerLocationID == customerLocationId);
+
+                if (d == null)
+                    return null;
+
+                CustomerLocationViewModel model = new CustomerLocationViewModel();
+
+                model.CustomerLocationID = d.CustomerLocationID;
+                model.CustomerID = d.CustomerId;
+                model.LocationName = d.LocationName;
+                model.CustomerAddress = d.CustomerAddress;
+                model.PinCode = d.Pincode;
+                model.Region = d.Region;
+
+                if (d.CityID != null)
+                {
+                    var city = getCitybyId(d.CityID);
+                    model.City = city?.CityName;
+                }
+
+                if (d.ProvinceID != null)
+                {
+                    var province = getProvincebyId(d.ProvinceID);
+                    model.Province = province?.ProvinceName;
+                }
+
+                if (d.CountryID != null)
+                {
+                    var country = getCountrybyId(d.CountryID);
+                    model.Country = country?.CountryName;
+                }
+
+                model.CustomerLocationFullAddress = string.Join(", ",
+                    new[]
+                    {
+                model.CustomerAddress,
+                model.City,
+                model.Province,
+                model.Country,
+                model.PinCode
+                    }.Where(x => !string.IsNullOrWhiteSpace(x)));
+
+                return model;
             }
         }
 
@@ -12286,8 +12321,8 @@ namespace CamV4.Helper
                     quoteObj.CustomerId = lCustomerId;
                     quoteObj.CustomerLocationId = lCustomerLocationId;
                     quoteObj.CustomerAreaID = lCustomerAreaID;
-
                     quoteObj.QuotationNotes = sQuotationNotes;
+                   
 
                     var objPreviousQuotation = db.Quotations.Where(y => y.InspectionId == inspectionId && (y.QuotationStatus == 5 || y.QuotationStatus == 6)).OrderByDescending(y => y.QuotationId).FirstOrDefault();
                     if (objPreviousQuotation != null)
@@ -12318,41 +12353,12 @@ namespace CamV4.Helper
                     }
                     else
                     {
-                        long? salesPersonId = null;
-                        string salesPersonName = "";
-                        // 2. If model SalesPersonId is null/0, get from Customer
-                        var customer = db.Customers.FirstOrDefault(x => x.CustomerId == lCustomerId);
-                        if (customer?.SalesRepresentativeId != null &&
-                            customer.SalesRepresentativeId != 0)
-                        {
-                            salesPersonId = customer.SalesRepresentativeId;
-                        }
-
-                        // 3. Get Employee using the final SalesPersonId
-                        if (salesPersonId.HasValue)
-                        {
-                            var empl = db.Employees
-                                .FirstOrDefault(x => x.EmployeeID == salesPersonId.Value);
-
-                            if (empl != null)
-                            {
-                                salesPersonName = empl.EmployeeName;
-                            }
-                            else
-                            {
-                                // Employee doesn't exist
-                                salesPersonId = null;
-                                salesPersonName = "";
-                            }
-                        }
-                        // 4. Save both values together
-                        quoteObj.QuotationSalesPersonId = salesPersonId;
-                        quoteObj.QuotationSalesPersonName = salesPersonName;
-
                         quoteObj.PaymentTerms = "NET 30";
                         quoteObj.ValidTo = sValidTo;
                         quoteObj.LabourUnitPrice = dLabour;
                         quoteObj.ShipmentMethod = "FOB";
+                        quoteObj.QuotationSurcharge = dSurcharge;
+                        quoteObj.QuotationMarkup = dMarkup;
                     }
 
                     quoteObj.QuotationNo = strQuotationNumber;
@@ -12371,6 +12377,37 @@ namespace CamV4.Helper
                     {
                         quoteObj.YourReference = objPreviousQuotation.YourReference;
                     }
+
+                    long? salesPersonId = null;
+                    string salesPersonName = "";
+                    // 2. If model SalesPersonId is null/0, get from Customer
+                    var customer = db.Customers.FirstOrDefault(x => x.CustomerId == lCustomerId);
+                    if (customer?.SalesRepresentativeId != null &&
+                        customer.SalesRepresentativeId != 0)
+                    {
+                        salesPersonId = customer.SalesRepresentativeId;
+                    }
+
+                    // 3. Get Employee using the final SalesPersonId
+                    if (salesPersonId.HasValue)
+                    {
+                        var empl = db.Employees
+                            .FirstOrDefault(x => x.EmployeeID == salesPersonId.Value);
+
+                        if (empl != null)
+                        {
+                            salesPersonName = empl.EmployeeName;
+                        }
+                        else
+                        {
+                            // Employee doesn't exist
+                            salesPersonId = null;
+                            salesPersonName = "";
+                        }
+                    }
+                    // 4. Save both values together
+                    quoteObj.QuotationSalesPersonId = salesPersonId;
+                    quoteObj.QuotationSalesPersonName = salesPersonName;
                     quoteObj.GSTPer = dGSTPer;
                     quoteObj.Subtotal = 0;
                     quoteObj.GSTValue = 0;
@@ -12530,7 +12567,8 @@ namespace CamV4.Helper
                 objUser = getUserEmployeeById(iEmployeeId);
 
                 strCCEmailslist.Add("b.trivedi@camindustrial.net");
-                strCCEmailslist2.Add("b.trivedi@camindustrial.net");
+                strCCEmailslist.Add("cam.automations@camindustrial.net");
+
 
                 //List<EmployeeViewModel> objPMList = new List<EmployeeViewModel>();
                 //objPMList = DatabaseHelper.GetAllProjectManager();
@@ -12663,7 +12701,7 @@ namespace CamV4.Helper
                 strMSGEmployee += "</body>";
                 strMSGEmployee += "</html>";
 
-                var tEmailToEmployee = new Thread(() => EmailHelper.SendEmail(toEmailEmployee, strCustomerName + "Deficiency Selections for Quotation", null, strMSGEmployee, strCCEmailslist, null));
+                var tEmailToEmployee = new Thread(() => EmailHelper.SendEmail(toEmailEmployee, strCustomerName + " Deficiency Selections for Quotation", null, strMSGEmployee, strCCEmailslist, null));
                 tEmailToEmployee.Start();
 
                 //strMSGEmployee = "<html>";
@@ -12730,9 +12768,9 @@ namespace CamV4.Helper
 
                 var contacts = GetCustomerLocationContacts(lCustomerLocationId, lCustomerFacilityID, lCustomerAreaID);
                 //GetCustomerLocationContacts(long ? customerLocationId, long ? customerFacilityId, long ? areaId)
-
+                                
                 strCCEmailslist2.Add("b.trivedi@camindustrial.net");
-
+                strCCEmailslist2.Add("cam.automations@camindustrial.net");
                 foreach (var contact in contacts)
                 {
                     if (!string.IsNullOrWhiteSpace(contact.ContactEmail))
@@ -12850,7 +12888,7 @@ namespace CamV4.Helper
                         //await EmailHelper.SendEmailAsync(toEmailCustomer, strCustomerName + " Deficiency Selection Confirmed for Quotation", null, strMSGEmployeeCustomer, strCCEmailslist);
 
                         //toEmailCustomer = "nirav.m@siliconinfo.com";
-                        var tEmailToCustomer = new Thread(() => EmailHelper.SendEmail(toEmailCustomer, strCustomerName + "Deficiency Selection Confirmed for Quotation", null, strMSGEmployeeCustomer, strCCEmailslist2, null));
+                        var tEmailToCustomer = new Thread(() => EmailHelper.SendEmail(toEmailCustomer, strCustomerName + " Deficiency Selection Confirmed for Quotation", null, strMSGEmployeeCustomer, strCCEmailslist2, null));
                         tEmailToCustomer.Start();
                         //var tEmailCustomer = new Thread(() => EmailHelper.SendEmail(toEmailCustomer, strCustomerName + " Deficiency Selection Confirmed for Quotation", null, strMSGEmployeeCustomer, strCCEmailslist, null));
                         //tEmailCustomer.Start();
@@ -17163,8 +17201,8 @@ namespace CamV4.Helper
                     iObjNotification.Userid_ReceiverID = objUser.UserID;
 
                     strCCEmailslist.Add(objUser.EmployeeEmail);
-                    //strCCEmailslist.Add("b.trivedi@camindustrial.net");
-                    strCCEmailslist.Add("nirav.m@siliconinfo.com");
+                    strCCEmailslist.Add("b.trivedi@camindustrial.net");
+                    //strCCEmailslist.Add("nirav.m@siliconinfo.com");
 
                     //List<EmployeeViewModel> objPMList = new List<EmployeeViewModel>();
                     //objPMList = DatabaseHelper.GetAllProjectManager();
@@ -19591,10 +19629,7 @@ namespace CamV4.Helper
             }
         }
 
-        public static CustDash_DashboardDataViewModel GetDashboardData(
-            int year,
-            long? locationId,
-            long? facilityId)
+        public static CustDash_DashboardDataViewModel GetDashboardData(int year,long? locationId,long? facilityId)
         {
             var userIdObj = HttpContext.Current.Session["LoggedInUserId"];
 
@@ -21011,8 +21046,7 @@ namespace CamV4.Helper
                 using (DatabaseEntities db = new DatabaseEntities())
                 {
                     // ImpSettings columns: ImpSettingID, Name, Value, ...
-                    var setting = db.ImpSettings
-                                    .FirstOrDefault(s => s.SettingType == settingName);
+                    var setting = db.ImpSettings.FirstOrDefault(s => s.SettingType == settingName);
 
                     if (setting == null) return fallback;
 
@@ -21233,6 +21267,86 @@ namespace CamV4.Helper
                     }
 
                     transaction.Commit();
+                    // ================= SEND EMAILS =================
+                    var customer = db.Customers.FirstOrDefault(x => x.CustomerId == custId);
+                    var loc = db.CustomerLocations.FirstOrDefault(x => x.CustomerLocationID == locationId);
+                    var fac = facilityId.HasValue
+                                ? db.CustomerFacilities.FirstOrDefault(x => x.CustomerFacilityID == facilityId.Value)
+                                : null;
+                    var ar = areaId.HasValue
+                                ? db.CustomerAreas.FirstOrDefault(x => x.AreaID == areaId.Value)
+                                : null;                   
+
+                    string locationName = loc?.LocationName ?? "";
+                    string region = loc?.Region ?? "";
+
+                    string fullAddress =
+                        (loc?.CustomerAddress ?? "") + ", " +
+                        (loc?.CityID.HasValue == true ? db.Cities.Where(x => x.CityID == loc.CityID).Select(x => x.CityName).FirstOrDefault() : "") + ", " +
+                        (loc?.ProvinceID.HasValue == true ? db.Provinces.Where(x => x.ProvinceID == loc.ProvinceID).Select(x => x.ProvinceName).FirstOrDefault() : "") + ", " +
+                        (loc?.CountryID.HasValue == true ? db.Countries.Where(x => x.CountryID == loc.CountryID).Select(x => x.CountryName).FirstOrDefault() : "") + " " +
+                        (loc?.Pincode ?? "").Trim();
+
+                    // Engineer review counts
+                    int severeQty = db.InternalInspectionDeficiencies.Count(x =>
+                        x.InternalInspectionID == inspection.InternalInspectionID &&
+                        x.IsEngineerReviewRequested == true &&
+                        x.InternalAssessment == "Severe" &&
+                        x.IsActive == true);
+
+                    int moderateQty = db.InternalInspectionDeficiencies.Count(x =>
+                        x.InternalInspectionID == inspection.InternalInspectionID &&
+                        x.IsEngineerReviewRequested == true &&
+                        x.InternalAssessment == "Moderate" &&
+                        x.IsActive == true);
+
+                    // First selected deficiency location
+                    var incident = db.InternalInspectionDeficiencies
+                        .Where(x => x.InternalInspectionID == inspection.InternalInspectionID
+                                 && x.IsEngineerReviewRequested == true
+                                 && x.IsActive == true)
+                        .FirstOrDefault();
+
+                    string incidentLocation = "";
+                    if (incident != null)
+                    {
+                        incidentLocation =
+                            "Area " + incident.Area +
+                            " / Row " + incident.Row +
+                            " / Aisle " + incident.Aisle +
+                            " / Bay " + incident.Bay +
+                            " / Level " + incident.BeamFrameLevel +
+                            " / Beam " + incident.BeamLocation +
+                            " / Frame Side " + incident.FrameSide;
+                    }
+
+                    // CAM Team & Sales Rep
+                    List<string> toEmails = new List<string>();
+                    List<string> ccEmails = new List<string>();
+
+                    toEmails.Add("b.trivedi@camindustrial.net");
+                    
+                    List<EmployeeSalesViewModel> objSalesList = new List<EmployeeSalesViewModel>();
+                    objSalesList = DatabaseHelper.GetAllSalesRep(Convert.ToInt32(custId));
+                    foreach (var sales in objSalesList)
+                    {
+                        var customerArray = sales.SalesCompanyListing?.Split(',');
+
+                        if (customerArray != null && customerArray.Contains(Convert.ToInt32(custId).ToString()))
+                        {
+                            if (!string.IsNullOrWhiteSpace(sales.EmployeeEmail))
+                            {
+                                toEmails.Add(sales.EmployeeEmail);
+                            }
+                        }
+                    }                   
+
+                    // Send only when engineer review is selected
+                    if ((severeQty + moderateQty) > 0 && customer != null)
+                    {                        
+                        EmailHelper.SendInternalInspectionCustomerEmail(customer.CustomerContactName,customer.CustomerName,region,loc.LocationName,fac != null ? fac.FacilityName : "",ar != null ? ar.AreaName : "",severeQty,dEngineerReview,moderateQty, dEngineerReview, customer.CustomerEmail);                                
+                        EmailHelper.SendInternalInspectionAdminEmail(customer.CustomerContactName,customer.CustomerName,region,loc.LocationName, fac != null ? fac.FacilityName : "",ar != null ? ar.AreaName : "",severeQty,dEngineerReview,moderateQty, dEngineerReview, toEmails, ccEmails);
+                    }
                     return inspection.InternalInspectionID.ToString();
                 }
                 catch (Exception ex)
@@ -21246,35 +21360,66 @@ namespace CamV4.Helper
         // ============================================================
         // GET LIST - session-resolved customer with optional filters
         // ============================================================
-        internal static List<InternalInspectionViewModel> GetInternalInspectionsByCurrentCustomer(
-            long? customerLocationId = null,
-            long? customerFacilityId = null,
-            long? customerAreaId = null,
-            string region = null)
+        public static List<InternalInspectionViewModel>GetInternalInspectionsByCurrentCustomer(long? customerLocationId = null,long? customerFacilityId = null,long? customerAreaId = null,string region = null,int? provinceId = null,    int? cityId = null)
         {
             using (DatabaseEntities db = new DatabaseEntities())
             {
-                long userId = Convert.ToInt64(HttpContext.Current.Session["LoggedInUserId"]);
-                var customer = db.Customers.FirstOrDefault(x => x.UserID == userId);
+                long userId = Convert.ToInt64(
+                    HttpContext.Current.Session["LoggedInUserId"]);
+
+                var customer = db.Customers
+                    .FirstOrDefault(x => x.UserID == userId);
+
                 if (customer == null)
                 {
-                    var contact = db.CustomerLocationContacts.FirstOrDefault(x => x.UserID == userId && x.IsActive == true);
-                    if (contact == null) return new List<InternalInspectionViewModel>();
+                    var contact = db.CustomerLocationContacts
+                        .FirstOrDefault(x =>
+                            x.UserID == userId &&
+                            x.IsActive == true);
+
+                    if (contact == null)
+                        return new List<InternalInspectionViewModel>();
+
                     customer = db.Customers.Find(contact.CustomerId);
                 }
-                if (customer == null) return new List<InternalInspectionViewModel>();
+
+                if (customer == null)
+                    return new List<InternalInspectionViewModel>();
 
                 var query = db.InternalInspections
-                    .Where(i => i.CustomerID == customer.CustomerId && i.IsActive == true);
+                    .Where(i =>
+                        i.CustomerID == customer.CustomerId &&
+                        i.IsActive == true);
 
                 if (customerLocationId.HasValue && customerLocationId > 0)
-                    query = query.Where(i => i.CustomerLocationID == customerLocationId.Value);
-                if (customerFacilityId.HasValue && customerFacilityId > 0)
-                    query = query.Where(i => i.CustomerFacilityID == customerFacilityId.Value);
-                if (customerAreaId.HasValue && customerAreaId > 0)
-                    query = query.Where(i => i.CustomerAreaID == customerAreaId.Value);
+                    query = query.Where(i =>
+                        i.CustomerLocationID == customerLocationId.Value);
 
-                return BuildInspectionList(db, query, region, customer.CustomerId);
+                if (customerFacilityId.HasValue && customerFacilityId > 0)
+                    query = query.Where(i =>
+                        i.CustomerFacilityID == customerFacilityId.Value);
+
+                if (customerAreaId.HasValue && customerAreaId > 0)
+                    query = query.Where(i =>
+                        i.CustomerAreaID == customerAreaId.Value);
+
+                if (provinceId.HasValue && provinceId > 0)
+                    query = query.Where(i =>
+                        db.CustomerLocations.Any(cl =>
+                            cl.CustomerLocationID == i.CustomerLocationID &&
+                            cl.ProvinceID == provinceId.Value));
+
+                if (cityId.HasValue && cityId > 0)
+                    query = query.Where(i =>
+                        db.CustomerLocations.Any(cl =>
+                            cl.CustomerLocationID == i.CustomerLocationID &&
+                            cl.CityID == cityId.Value));
+
+                return BuildInspectionList(
+                    db,
+                    query,
+                    region,
+                    customer.CustomerId);
             }
         }
 
@@ -21330,6 +21475,20 @@ namespace CamV4.Helper
             string region,
             long? customerId)
         {
+
+            decimal engineerReviewRate = 0;
+            var setting = db.ImpSettings
+                .FirstOrDefault(x => x.SettingType == "EngineerReview");
+
+            if (setting != null)
+            {
+                decimal.TryParse(setting.SettingValue, out engineerReviewRate);
+            }
+            else
+            {
+                engineerReviewRate = 20;
+            }
+
             var list = (from i in query
                         join cl in db.CustomerLocations on i.CustomerLocationID equals cl.CustomerLocationID
                         join c in db.Customers on i.CustomerID equals c.CustomerId
@@ -21381,7 +21540,7 @@ namespace CamV4.Helper
             {
                 item.InternalInspectionDateFormatted = item.InternalInspectionDate.HasValue
                     ? item.InternalInspectionDate.Value.ToString("MMMM dd, yyyy") : "";
-                item.EngineerReviewTotalCost = item.EngineerReviewCount * 20.00m;
+                item.EngineerReviewTotalCost = item.EngineerReviewCount * engineerReviewRate;
                 item.ReportedByName = II_ResolveUserName(db, item.ReportedBy);
                 item.CreatedByName = II_ResolveUserName(db, item.CreatedBy);
             }
@@ -21504,6 +21663,21 @@ namespace CamV4.Helper
             var model = GetInternalInspectionById(id);
             if (model == null) return "<p>Inspection not found.</p>";
 
+            decimal engineerReviewRate = 0;
+            using (DatabaseEntities db = new DatabaseEntities())
+            {
+                var setting = db.ImpSettings
+               .FirstOrDefault(x => x.SettingType == "EngineerReview");
+                if (setting != null)
+                {
+                    decimal.TryParse(setting.SettingValue, out engineerReviewRate);
+                }
+                else
+                {
+                    engineerReviewRate = 20;
+                }
+            }
+
             var sb = new System.Text.StringBuilder();
             sb.Append(@"<!DOCTYPE html>
                         <html>
@@ -21563,9 +21737,9 @@ namespace CamV4.Helper
             // Deficiency summary box
             sb.Append("<div class='summary-box'>");
             sb.Append("<table><tr><td colspan='3' style='font-weight:bold;font-size:9pt;'>Deficiency Summary &nbsp; Eng Review Cost</td></tr>");
-            sb.Append("<tr><td>Minor - " + model.MinorCount + "</td><td>x $20</td><td>= $" + (model.MinorCount * 20).ToString("0.00") + "</td></tr>");
-            sb.Append("<tr><td>Moderate - " + model.ModerateCount + "</td><td>x $20</td><td>= $" + (model.ModerateCount * 20).ToString("0.00") + "</td></tr>");
-            sb.Append("<tr><td>Severe - " + model.SevereCount + "</td><td>x $20</td><td>= $" + (model.SevereCount * 20).ToString("0.00") + "</td></tr>");
+            sb.Append("<tr><td>Minor - " + model.MinorCount + "</td><td>x $20</td><td>= $" + (model.MinorCount * engineerReviewRate).ToString("0.00") + "</td></tr>");
+            sb.Append("<tr><td>Moderate - " + model.ModerateCount + "</td><td>x $20</td><td>= $" + (model.ModerateCount * engineerReviewRate).ToString("0.00") + "</td></tr>");
+            sb.Append("<tr><td>Severe - " + model.SevereCount + "</td><td>x $20</td><td>= $" + (model.SevereCount * engineerReviewRate).ToString("0.00") + "</td></tr>");
             sb.Append("<tr><td colspan='2' style='font-weight:bold;'>Total</td><td style='font-weight:bold;'>$" + model.EngineerReviewTotalCost.ToString("0.00") + "</td></tr>");
             sb.Append("</table></div><div class='clearfix'></div>");
 
@@ -22708,8 +22882,8 @@ namespace CamV4.Helper
                         customer = db.Customers.FirstOrDefault(x => x.UserID == uid);
                     }
 
-                    //strToEmailslist.Add("b.trivedi@camindustrial.net");
-                    strToEmailslist.Add("nirav.m@siliconinfo.com");
+                    strToEmailslist.Add("b.trivedi@camindustrial.net");
+                    //strToEmailslist.Add("nirav.m@siliconinfo.com");
                     db.TrainingTechnicalTalks.Add(new TrainingTechnicalTalk
                     {
                         CustomerID = customer != null && customer.CustomerId > 0 ? customer.CustomerId : (long?)null,
@@ -22892,7 +23066,8 @@ namespace CamV4.Helper
                         }
                     }
                 }
-                strCCEmailslist.Add("nirav.m@siliconinfo.com");
+                //strCCEmailslist.Add("nirav.m@siliconinfo.com");
+                strCCEmailslist.Add("b.trivedi@camindustrial.net");
                 string strMSG = "";
                 strMSG = "<html>";
                 strMSG += "<head><style>p{margin:0px}</style></head>";
@@ -23280,6 +23455,10 @@ namespace CamV4.Helper
                         on i.EmployeeId equals emp.EmployeeID into empJoin
                     from emp in empJoin.DefaultIfEmpty()
 
+                    join cm in db.Customers 
+                        on i.CustomerId equals cm.CustomerId into cmJoin
+                    from cm in cmJoin.DefaultIfEmpty()
+
                     where i.IsActive == true &&
                             customerIds.Contains(i.CustomerId)
 
@@ -23291,15 +23470,15 @@ namespace CamV4.Helper
                         st,
                         cf,
                         ca,
-                        emp
+                        emp,
+                        cm
                     }).ToList();
 
                     var inspections = data.Select(x => new GetInspectionListing_Result
                     {
                         InspectionId = x.i.InspectionId,
                         InspectionDocumentNo = x.i.InspectionDocumentNo,
-                        InspectionDocumentNoRef = x.i.InspectionDocumentNoRef,
-
+                        InspectionDocumentNoRef = x.i.InspectionDocumentNoRef,                        
                         InspectionType = x.i.InspectionType,
                         InspectionTypeName = x.it?.InspectionTypeName,
 
@@ -23313,7 +23492,7 @@ namespace CamV4.Helper
                         InspectionEndOn = x.i.InspectionEndOn,
 
                         CustomerId = x.i.CustomerId,
-
+                        CustomerName = x.cm?.CustomerName,
                         CustomerLocationId = x.i.CustomerLocationId,
                         LocationName = x.cl.LocationName,
 

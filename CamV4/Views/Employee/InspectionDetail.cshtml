@@ -379,8 +379,14 @@
                                                         </div>
                                                         <div class="" style="padding-top: 50px;font-size: 26px;line-height: 40px;">
                                                             <div class="name">{{getInspectionDetailsForSheet.Customer}}</div>
-                                                            <div class="name" style="font-size: 14px;">{{getInspectionDetailsForSheet.CustomerArea}} {{getInspectionDetailsForSheet.CustomerLocation}}</div>
-                                                            <div class="name" style="font-size: 14px;">{{getInspectionDetailsForSheet.custModel.CustomerAddress}}</div>
+                                                            <div class="name" style="font-size: 14px;">
+                                                                {{getInspectionDetailsForSheet.CustomerArea}}
+                                                                <span ng-if="getInspectionDetailsForSheet.CustomerArea && (getInspectionDetailsForSheet.CustomerFacility || getInspectionDetailsForSheet.CustomerLocation)">,</span>
+                                                                {{getInspectionDetailsForSheet.CustomerFacility}}
+                                                                <span ng-if="getInspectionDetailsForSheet.CustomerFacility && getInspectionDetailsForSheet.CustomerLocation">,</span>
+                                                                {{getInspectionDetailsForSheet.CustomerLocation}}
+                                                            </div>
+                                                            <div class="name" style="font-size: 14px;">{{getInspectionDetailsForSheet.CustomerLocationFullAddress}}</div>
                                                             <div class="customer-logo"><img src="{{getInspectionDetailsForSheet.custModel.CustomerLogo}}" style="width: 200px;height: auto;"></div>
                                                         </div>
 
@@ -1167,7 +1173,7 @@
                                                                             <tr>
                                                                                 <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Location/ Address</td>
                                                                                 <td style="padding:2px;border-width: 1px;"> {{getInspectionDetailsForSheet.CustomerFullAddress}}</td>
-                                                                                <!--{{getInspectionDetailsForSheet.CustomerArea}}, {{getInspectionDetailsForSheet.CustomerLocation}}, {{getInspectionDetailsForSheet.custModel.CustomerAddress}}-->
+                                                                                <!--{{getInspectionDetailsForSheet.CustomerArea}}, {{getInspectionDetailsForSheet.CustomerLocation}}, {{getInspectionDetailsForSheet.CustomerLocationFullAddress}}-->
                                                                                 di
                                                                                 <td bgcolor="#ffffcc" style="padding:2px;border-width: 1px;">Date of Inspection</td>
                                                                                 <td style="padding:2px;border-width: 1px;">{{getInspectionDetailsForSheet.InspectionDate| date:'MMMM dd, yyyy'}}        </td>

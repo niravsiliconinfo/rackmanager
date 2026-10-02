@@ -55,16 +55,14 @@ app.controller('customerInventoryListingCtrl',
                             (err.data ? (err.data.Message || JSON.stringify(err.data))
                                 : err.statusText);
                     });
-            };
+            };                       
 
-            //  Sidebar filter broadcast 
-            //$scope.$on('inventoryFiltersApplied', function (e, filter) {
-            //    $scope.LoadFiles(filter);
-            //});
-            $scope.$on('internalInventoryFiltersUpdated',
+            $scope.$on('inventoryFiltersUpdated',
                 function (event, filters) {
-                    console.log('internalInventoryFiltersUpdated received', filters);
-                    $scope.LoadFiles(filters);  // Your load function
+
+                    console.log('inventoryFiltersUpdated received', filters);
+
+                    $scope.LoadFiles(filters);
                 });
 
             //  Export single file 

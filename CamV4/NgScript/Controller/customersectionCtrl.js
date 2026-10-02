@@ -66,6 +66,14 @@
 
         $scope.ShowAddCustomer = true;
         $scope.ShowAddCustLocation = false;
+        $scope.AddContactShow = true;
+        $scope.EditContactShow = false;
+        $scope.facilitiesForAdd = [];
+        $scope.areasForAdd = [];
+        $scope.facilitiesForEdit = [];
+        $scope.areasForEdit = [];
+        $scope.allFacilities = [];
+        $scope.allAreas = [];
 
         $http.get('/api/pageview/getAllCustomers').then(function (response) {
             $scope.getAllCustomers = response.data;
@@ -331,8 +339,11 @@
             }, function (response) {
                 $scope.waiting = false;
             });
+
+           
         }
 
+       
         if (window.location.pathname == "/Customer/ManageAllUserContacts") {
             $http.get('/api/pageview/getCustomerLocationByCustomerIdCustomer').then(function (response) {
                 $scope.getCustomerLocationByCustomerId = response.data;
@@ -341,6 +352,23 @@
                 else { $scope.getCustomerLocationByCustomerIdcount = 0; }
                 $scope.totalgetCustomerLocationByCustomerId = $scope.getCustomerLocationByCustomerIdcount;
             }, function (response) {
+                $scope.waiting = false;
+            });
+            $http.get('/api/pageview/getFacilityByCustomer').then(function (response) {
+
+                $scope.allFacilities = angular.copy(response.data);      // Master list
+                $scope.facilitiesForAdd = angular.copy(response.data);   // Display list
+
+            }, function () {
+                $scope.waiting = false;
+            });
+
+            $http.get('/api/pageview/getAreaByCustomer').then(function (response) {
+
+                $scope.allAreas = angular.copy(response.data);           // Master list
+                $scope.areasForAdd = angular.copy(response.data);        // Display list
+
+            }, function () {
                 $scope.waiting = false;
             });
         }
@@ -629,11 +657,199 @@
             $scope.checkedLocationIds = CustomerLocationID;
         }
 
-        $scope.AddContactShow = true;
-        $scope.EditContactShow = false;
+        $scope.GetCheckedFacilityIds = function () {
+
+            var ids = [];
+
+            angular.forEach($scope.facilitiesForAdd, function (f) {
+                if (f.selected) {
+                    ids.push(f.CustomerLocationID + '_' + f.CustomerFacilityID);
+                }
+            });
+
+            $scope.checkedFacilityIds = ids.join(',');
+        };
+
+        $scope.GetCheckedAreaIds = function () {
+
+            var ids = [];
+
+            angular.forEach($scope.areasForAdd, function (a) {
+                if (a.selected) {
+                    ids.push(
+                        a.CustomerLocationID + '_' +
+                        (a.CustomerFacilityID || 0) + '_' +
+                        a.AreaID
+                    );
+                }
+            });
+
+            $scope.checkedAreaIds = ids.join(',');
+        };
+        // ---- ADD form: location change ----
+        // ADD : Location changed
+        $scope.onLocationChangeAdd = function () {
+
+            var selectedLocIds = ($scope.getCustomerLocationByCustomerId || [])
+                .filter(function (l) { return l.selected; })
+                .map(function (l) { return l.CustomerLocationID; });
+
+            // Keep previously selected facilities
+            var existingFacilityIds = ($scope.facilitiesForAdd || [])
+                .filter(function (f) { return f.selected; })
+                .map(function (f) { return f.CustomerFacilityID; });
+
+            // Filter facilities
+            $scope.facilitiesForAdd = ($scope.allFacilities || [])
+                .filter(function (f) {
+                    return selectedLocIds.indexOf(f.CustomerLocationID) !== -1;
+                })
+                .map(function (f) {
+                    f.selected = existingFacilityIds.indexOf(f.CustomerFacilityID) !== -1;
+                    return f;
+                });
+
+            // Refresh area list based on remaining facilities
+            $scope.onFacilityChangeAdd();
+        };
+
+        // ADD : Facility changed
+        $scope.onFacilityChangeAdd = function () {
+
+            var selectedLocIds = ($scope.getCustomerLocationByCustomerId || [])
+                .filter(function (l) { return l.selected; })
+                .map(function (l) { return l.CustomerLocationID; });
+
+            var selectedFacIds = ($scope.facilitiesForAdd || [])
+                .filter(function (f) { return f.selected; })
+                .map(function (f) { return f.CustomerFacilityID; });
+
+            // Keep previously selected areas
+            var existingAreaIds = ($scope.areasForAdd || [])
+                .filter(function (a) { return a.selected; })
+                .map(function (a) {
+                    return a.CustomerLocationID + '_' +
+                        (a.CustomerFacilityID || 0) + '_' +
+                        a.AreaID;
+                });
+
+            $scope.areasForAdd = ($scope.allAreas || [])
+                .filter(function (a) {
+
+                    var locationMatch =
+                        selectedLocIds.indexOf(a.CustomerLocationID) !== -1;
+
+                    var facilityMatch =
+                        (a.CustomerFacilityID === 0 ||
+                            a.CustomerFacilityID == null ||
+                            selectedFacIds.indexOf(a.CustomerFacilityID) !== -1);
+
+                    return locationMatch && facilityMatch;
+                })
+                .map(function (a) {
+
+                    var key = a.CustomerLocationID + '_' +
+                        (a.CustomerFacilityID || 0) + '_' +
+                        a.AreaID;
+
+                    a.selected = existingAreaIds.indexOf(key) !== -1;
+                    return a;
+                });
+        };
+
+        // ---- EDIT form: location change ----
+        $scope.onLocationChangeEdit = function () {
+
+            var selectedLocIds = $scope.getCustomerLocationByCustomerId
+                .filter(x => x.selected)
+                .map(x => x.CustomerLocationID);
+
+            var selectedFacilities = $scope.facilitiesForAdd
+                .filter(x => x.selected)
+                .map(x => x.CustomerFacilityID);
+
+            $scope.facilitiesForAdd = angular.copy($scope.allFacilities)
+                .filter(x => selectedLocIds.indexOf(x.CustomerLocationID) > -1);
+
+            angular.forEach($scope.facilitiesForAdd, function (f) {
+                f.selected = selectedFacilities.indexOf(f.CustomerFacilityID) > -1;
+            });
+
+            $scope.onFacilityChangeEdit();
+        };
+
+        // ---- EDIT form: facility change ----
+        $scope.onFacilityChangeEdit = function () {
+
+            var selectedLocIds = $scope.getCustomerLocationByCustomerId
+                .filter(x => x.selected)
+                .map(x => x.CustomerLocationID);
+
+            var selectedFacilityIds = $scope.facilitiesForAdd
+                .filter(x => x.selected)
+                .map(x => x.CustomerFacilityID);
+
+            var selectedAreas = $scope.areasForAdd
+                .filter(x => x.selected)
+                .map(x => x.AreaID);
+
+            $scope.areasForAdd = angular.copy($scope.allAreas)
+                .filter(function (a) {
+                    return selectedLocIds.indexOf(a.CustomerLocationID) > -1 &&
+                        (a.CustomerFacilityID == null ||
+                            a.CustomerFacilityID === 0 ||
+                            selectedFacilityIds.indexOf(a.CustomerFacilityID) > -1);
+                });
+
+            angular.forEach($scope.areasForAdd, function (a) {
+                a.selected = selectedAreas.indexOf(a.AreaID) > -1;
+            });
+        };
+        $scope.GetCheckedFacilityIdsAdd = function () {
+            var ids = [];
+            angular.forEach(
+                $scope.facilitiesForAdd || [],
+                function (facility) {
+                    if (facility.selected) {
+                        ids.push(
+                            facility.CustomerLocationID +
+                            '_' +
+                            facility.CustomerFacilityID
+                        );
+                    }
+                }
+            );
+            $scope.checkedFacilityIds = ids.join(',');
+        };
+        $scope.GetCheckedAreaIdsAdd = function () {
+            var ids = [];
+            angular.forEach(
+                $scope.areasForAdd || [],
+                function (area) {
+                    if (area.selected) {
+                        ids.push(
+                            area.CustomerLocationID +
+                            '_' +
+                            (
+                                area.CustomerFacilityID ||
+                                0
+                            ) +
+                            '_' +
+                            area.AreaID
+                        );
+                    }
+                }
+            );
+            $scope.checkedAreaIds =ids.join(',');
+        };
+   
+        
 
         $scope.SaveLocationContact = function (id) {
             $scope.GetCheckedLocationIds();
+            $scope.GetCheckedFacilityIds();
+            $scope.GetCheckedAreaIds();
+            
             console.log('SaveLocationContact on customersectionCtrl');
             if ($scope.contactName == null) {
                 $scope.validationShow = "Enter Contact Name."
@@ -655,7 +871,10 @@
 
                 var config = {
                     CustomerId: id, ContactName: $scope.contactName, ContactEmail: $scope.contactEmail, ContactPhone: $scope.contactPhone,
-                    UserName: $scope.contactEmail, UserPassword: $scope.userPassword, LocationIds: $scope.checkedLocationIds
+                    UserName: $scope.contactEmail, UserPassword: $scope.userPassword, 
+                    LocationIds: $scope.checkedLocationIds,
+                    FacilityIds: $scope.checkedFacilityIds,
+                    AreaIds: $scope.checkedAreaIds
                 }
                 console.log('SaveContact', config);
                 return $http({
@@ -685,7 +904,9 @@
         $scope.EditContactClick = function (Id) {
             $scope.AddContactShow = false;
             $scope.EditContactShow = true;
+            $scope.IsEdit = true;
             $http.get('/api/pageview/getLocationContactUserDetailsById', { params: { id: Id } }).then(function (response) {
+                var d = response.data;
                 $scope.GetLocationContactDetailsById = response.data;
                 console.log('$scope.GetLocationContactDetailsById ----------------XXX', $scope.GetLocationContactDetailsById);
                 $scope.contactnameInEdit = $scope.GetLocationContactDetailsById.ContactName;
@@ -696,17 +917,53 @@
                 $scope.useridEdit = $scope.GetLocationContactDetailsById.UserID;
                 $scope.userPasswordInEdit = $scope.GetLocationContactDetailsById.UserPassword;
                 $scope.LinkedCustomerUserLocationIds = $scope.GetLocationContactDetailsById.LinkedCustomerUserLocationIds;
-                var Userlocations = $scope.GetLocationContactDetailsById.LinkedCustomerLocationIDs || [];
+                //$scope.LinkedCustomerUserLocationIds = d.LinkedCustomerUserLocationIds;
+                $scope.ContactIDInEditContact = d.LocationContactId;
 
-                console.log('$scope.LinkedCustomerUserLocationIds--------------', $scope.LinkedCustomerLocationIDs);
-                console.log('$scope.getCustomerLocationByCustomerId----------------Before---------------------', $scope.getCustomerLocationByCustomerId);
-                $scope.getCustomerLocationByCustomerId.forEach(function (f) {
-                    console.log('selected location id :', f.CustomerLocationID);
-                    f.selected = Userlocations.includes(f.CustomerLocationID);
+                var linkedLocIds = d.LinkedCustomerLocationIDs || [];
+                var linkedFacIds = d.LinkedFacilityIDs || [];
+                var linkedAreaIds = d.LinkedAreaIDs || [];
+                console.log(d.LinkedCustomerLocationIDs);
+                console.log(d.LinkedFacilityIDs);
+                console.log(d.LinkedAreaIDs);
+                // 1. Select locations
+                angular.forEach($scope.getCustomerLocationByCustomerId, function (l) {
+                    l.selected = linkedLocIds.indexOf(l.CustomerLocationID) > -1;
                 });
-                console.log('$scope.getCustomerLocationByCustomerId-------------AFter-----------------', $scope.getCustomerLocationByCustomerId);
-                $scope.ContactIDInEditContact = $scope.GetLocationContactDetailsById.LocationContactId;
-                console.log('GetLocationContactDetailsById--', $scope.GetLocationContactDetailsById);
+
+                // 2. Filter facilities into the SAME collection used by the view
+                $scope.facilitiesForAdd = angular.copy($scope.allFacilities).filter(function (f) {
+                    return linkedLocIds.indexOf(f.CustomerLocationID) > -1;
+                });
+
+                // 3. Check facilities
+                angular.forEach($scope.facilitiesForAdd, function (f) {
+                    f.selected = linkedFacIds.indexOf(f.CustomerFacilityID) > -1;
+                });
+
+                // 4. Filter areas into the SAME collection used by the view
+                $scope.areasForAdd = angular.copy($scope.allAreas).filter(function (a) {
+                    return linkedLocIds.indexOf(a.CustomerLocationID) > -1 &&
+                        (a.CustomerFacilityID == null ||
+                            a.CustomerFacilityID === 0 ||
+                            linkedFacIds.indexOf(a.CustomerFacilityID) > -1);
+                });
+
+                // 5. Check areas
+                angular.forEach($scope.areasForAdd, function (a) {
+                    a.selected = linkedAreaIds.indexOf(a.AreaID) > -1;
+                });
+                //var Userlocations = $scope.GetLocationContactDetailsById.LinkedCustomerLocationIDs || [];
+
+                //console.log('$scope.LinkedCustomerUserLocationIds--------------', $scope.LinkedCustomerLocationIDs);
+                //console.log('$scope.getCustomerLocationByCustomerId----------------Before---------------------', $scope.getCustomerLocationByCustomerId);
+                //$scope.getCustomerLocationByCustomerId.forEach(function (f) {
+                //    console.log('selected location id :', f.CustomerLocationID);
+                //    f.selected = Userlocations.includes(f.CustomerLocationID);
+                //});
+                //console.log('$scope.getCustomerLocationByCustomerId-------------AFter-----------------', $scope.getCustomerLocationByCustomerId);
+                //$scope.ContactIDInEditContact = $scope.GetLocationContactDetailsById.LocationContactId;
+                //console.log('GetLocationContactDetailsById--', $scope.GetLocationContactDetailsById);
             }, function (response) {
                 $scope.waiting = false;
             });
@@ -720,9 +977,10 @@
 
         $scope.EditLocationContact = function (Id) {
             console.log('edit Contact save--', Id);
-            $scope.validationShow = '';
+            $scope.validationShow = '';            
             $scope.GetCheckedLocationIds();
-
+            $scope.GetCheckedFacilityIds();
+            $scope.GetCheckedAreaIds();        
             if ($scope.contactnameInEdit == null) {
                 $scope.validationShow = "Enter Contact Name."
                 return "Enter Contact Name.";
@@ -738,7 +996,9 @@
             else {
                 var config = {
                     LocationContactId: Id, ContactName: $scope.contactnameInEdit, ContactEmail: $scope.contactEmailInEdit, ContactPhone: $scope.contactPhoneInEdit,
-                    LocationIds: $scope.checkedLocationIds, UserPassword: $scope.userPasswordInEdit, CustomerId: $scope.customerid, UserID: $scope.useridEdit, UserName: $scope.contactEmailInEdit
+                    LocationIds: $scope.checkedLocationIds, UserPassword: $scope.userPasswordInEdit, CustomerId: $scope.customerid, UserID: $scope.useridEdit, UserName: $scope.contactEmailInEdit,                    
+                    FacilityIds: $scope.checkedFacilityIds,
+                    AreaIds: $scope.checkedAreaIds
                 }
                 console.log('EditLocationContact', config);
 

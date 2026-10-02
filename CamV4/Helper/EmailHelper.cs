@@ -145,10 +145,10 @@ namespace CamV4.Helper
                     if (item != "")
                     {
                         message.To.Add(new MailAddress(item.ToString()));
-                    }                    
+                    }
                 }
             }
-            
+
             if (strCCEmails != null)
             {
                 foreach (var item in strCCEmails)
@@ -238,7 +238,7 @@ namespace CamV4.Helper
         //strMSG += "src='https://rack-manager.com/img/sigimg.png' alt='sig' data-image-whitelisted=''";
         //strMSG += "class='CToWUd' data-bit='iit' width='251' height='62' border='0'></span></p>";
 
-        public static string SendContactEmailWithPassword(CustomerLocationContactViewModel model,    List<CustomerLocationContactViewModelList> lstLocatioList)
+        public static string SendContactEmailWithPassword(CustomerLocationContactViewModel model, List<CustomerLocationContactViewModelList> lstLocatioList)
         {
             try
             {
@@ -258,7 +258,7 @@ namespace CamV4.Helper
                     List<string> strToEmailslist = new List<string>();
                     List<string> strCCEmailslist = new List<string>();
                     List<string> strBCCEmailslist = new List<string>();
-                    
+
                     strBCCEmailslist.Add("b.trivedi@camindustrial.net");
 
                     //var fac = model.CustomerFacilityID.HasValue ? db.CustomerFacilities.FirstOrDefault(x => x.CustomerFacilityID == model.CustomerFacilityID.Value) : null;
@@ -572,7 +572,7 @@ namespace CamV4.Helper
                     strMSG += "</td>";
                     strMSG += "</tr>";
                     strMSG += "</table>";
-                    
+
                     strMSG += "</div>";
                     strMSG += "</div>";
                     strMSG += "</div>";
@@ -594,13 +594,13 @@ namespace CamV4.Helper
         public static string sendPassword(int CustomerID)
         {
             string strReturn = "Ok";
-            
+
             var cust = DatabaseHelper.getCustomerById(CustomerID);
             if (cust != null)
             {
                 string strMSG = "";
                 List<string> strCustomerEmail = new List<string>();
-                string  strCustomerName = "", strUsername = "";
+                string strCustomerName = "", strUsername = "";
 
                 strCustomerName = cust.CustomerName;
                 strCustomerEmail.Add(cust.CustomerEmail);
@@ -722,6 +722,375 @@ namespace CamV4.Helper
                 }
             }
             return strReturn;
+        }
+
+
+        private static string GetEmailSignature()
+        {
+            return
+                "<table cellpadding='0' cellspacing='0' border='0' " +
+                "style='border-collapse:collapse;font-family:Verdana,sans-serif;'>" +
+
+                "<tr>" +
+                "<td style='padding:10px 0 10px 0;'>" +
+                "<span style='font-size:9pt;font-family:Verdana,sans-serif;" +
+                "color:#7b7b7b;font-weight:bold;'>Best regards,</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 1px 0;'>" +
+                "<span style='font-size:9pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;'>Bhavik Trivedi </span>" +
+
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;'>P.Eng, ing., M.Tech, PMP</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 18px 0;'>" +
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#7f7d7e;font-weight:bold;'>Engineering Manager</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 2px 0;'>" +
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;'>cam</span>" +
+
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#7f7d7e;font-weight:bold;'> | industrial</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 12px 0;'>" +
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;'>20 7095 64 Street SE | </span>" +
+
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#7f7d7e;font-weight:bold;'>Calgary, AB, T2C 5C3</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 2px 0;'>" +
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;'>E&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>" +
+
+                "<a href='mailto:b.trivedi@camindustrial.net' target='_blank' " +
+                "style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;text-decoration:underline;'>" +
+                "b.trivedi@camindustrial.net" +
+                "</a>" +
+
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 2px 0;'>" +
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;'>C&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>" +
+
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#7f7d7e;font-weight:bold;'>(403) 690-2976</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 2px 0;'>" +
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;'>D&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>" +
+
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#7f7d7e;font-weight:bold;'>(587) 355-1346</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0 0 10px 0;'>" +
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#005aab;font-weight:bold;'>F&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;</span>" +
+
+                "<span style='font-size:8pt;font-family:Verdana,sans-serif;" +
+                "color:#7f7d7e;font-weight:bold;'>(403) 720-7074</span>" +
+                "</td>" +
+                "</tr>" +
+
+                "<tr>" +
+                "<td style='padding:0;'>" +
+                "<img src='https://rack-manager.com/img/sigimg.png' " +
+                "alt='cam industrial' width='251' height='62' border='0' " +
+                "style='display:block;width:251px;height:62px;'>" +
+                "</td>" +
+                "</tr>" +
+
+                "</table>";
+        }
+
+        #endregion
+
+        #region "Internal Inspection Emails"
+        public static string SendInternalInspectionCustomerEmail(string customerName, string company, string region, string facility, string location, string area, int severeQty, decimal severeRate, int moderateQty, decimal moderateRate, string customerEmail)
+        {
+            try
+            {
+                string strMSG = "";
+                List<string> strToEmails = new List<string>();
+                List<string> strCCEmails = new List<string>();
+                List<string> strBCCEmails = new List<string>();
+
+                strToEmails.Add(customerEmail);
+                strBCCEmails.Add("b.trivedi@camindustrial.net");
+
+                decimal severeTotal = severeQty * severeRate;
+                decimal moderateTotal = moderateQty * moderateRate;
+
+                string subject = "Expert Review Request Received";
+
+                strMSG = "<html><head><style>p{margin:0px;} table{border-collapse:collapse;font-family:Verdana;font-size:13px;} td,th{border:1px solid #d9d9d9;padding:8px;}</style></head><body>";
+                strMSG += "<div style='width:100%;padding:10px;'>";
+
+                strMSG += "<p>Attention: " + customerName + " [" + company + "]</p>";
+                strMSG += "<br/><br/>";
+
+                strMSG += "<p>We have received your request for an expert review of the identified inspection deficiencies for below location. An expert engineer will be assigned to evaluate these items and will contact you to discuss the next steps.</p>";
+                                
+                strMSG += "<br/>";
+                strMSG += "<p>" + area + "," + facility + "," + location + ",  " + region + " </p><br/>";
+
+                strMSG += "<p>Please see below cost summary for the service have been initiated.</p>";
+                strMSG += "<br/>";
+                strMSG += "<table width='500'>";
+                strMSG += "<tr style='background:#f2f2f2;'><th>Severity</th><th>Qty</th><th>Rate</th><th>Total</th></tr>";
+                strMSG += "<tr><td>Severe</td><td align='center'>" + severeQty + "</td><td align='right'>$" + severeRate.ToString("0.00") + "</td><td align='right'>$" + severeTotal.ToString("0.00") + "</td></tr>";
+                strMSG += "<tr><td>Moderate</td><td align='center'>" + moderateQty + "</td><td align='right'>$" + moderateRate.ToString("0.00") + "</td><td align='right'>$" + moderateTotal.ToString("0.00") + "</td></tr>";
+                strMSG += "</table>";
+
+                strMSG += "<br/>";
+                strMSG += "<p>If you have any questions in the meantime, please feel free to reach out.</p>";
+                strMSG += "<br/><br/>";
+
+                // ===== Existing CAM Signature Block =====
+                strMSG += GetEmailSignature();
+                // ========================================
+
+                strMSG += "</div></body></html>";
+
+                var tEmail = new Thread(() =>
+                    EmailHelper.SendEmail(strToEmails, subject, null, strMSG, strCCEmails, strBCCEmails));
+                tEmail.Start();
+
+                return "Send";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+        public static string SendInternalInspectionAdminEmail(string customerName, string company, string region, string location, string facility, string area, int severeQty, decimal severeRate, int moderateQty, decimal moderateRate, List<string> toEmails, List<string> ccEmails)
+        {
+            try
+            {
+                string strMSG = "";
+                List<string> strBCCEmails = new List<string>();
+                strBCCEmails.Add("b.trivedi@camindustrial.net");
+
+                decimal severeTotal = severeQty * severeRate;
+                decimal moderateTotal = moderateQty * moderateRate;
+
+                string subject = "Action Required - Expert Review Requested";
+
+                strMSG = "<html><head><style>p{margin:0px;} table{border-collapse:collapse;font-family:Verdana;font-size:13px;} td,th{border:1px solid #d9d9d9;padding:8px;}</style></head><body>";
+                strMSG += "<div style='width:100%;padding:10px;'>";
+
+                strMSG += "<p>Attention CAM Team,</p>";
+                strMSG += "<br/><br/>";
+
+                strMSG += "<p>This is to inform you that the customer has finished internal rack inspection and seeking an expert review on the selected deficiency list. Please assign an expert engineer to review deficiencies based on these selections.</p>";
+                strMSG += "<br/>";
+
+                strMSG += "<p>Please see below cost summary for the service have been initiated.</p>";
+                strMSG += "<br/>";
+
+                strMSG += "<p><b>Customer:</b> " + customerName + "</p>";
+                strMSG += "<p><b>Company:</b> " + company + "</p>";
+                strMSG += "<p><b>Area:</b> " + area + "</p>";
+                strMSG += "<p><b>Facility:</b> " + facility + "</p>";                
+                strMSG += "<p><b>Location:</b> " + location + "</p>";
+                strMSG += "<p><b>Region:</b> " + region + "</p>";                
+                strMSG += "<br/>";
+
+                strMSG += "<table width='500'>";
+                strMSG += "<tr style='background:#f2f2f2;'><th>Severity</th><th>Qty</th><th>Rate</th><th>Total</th></tr>";
+                strMSG += "<tr><td>Severe</td><td align='center'>" + severeQty + "</td><td align='right'>$" + severeRate.ToString("0.00") + "</td><td align='right'>$" + severeTotal.ToString("0.00") + "</td></tr>";
+                strMSG += "<tr><td>Moderate</td><td align='center'>" + moderateQty + "</td><td align='right'>$" + moderateRate.ToString("0.00") + "</td><td align='right'>$" + moderateTotal.ToString("0.00") + "</td></tr>";
+                strMSG += "</table>";
+
+                strMSG += "<br/><br/>";
+
+                // Existing Signature
+                strMSG += GetEmailSignature();
+
+                strMSG += "</div></body></html>";
+
+                var tEmail = new Thread(() =>
+                    EmailHelper.SendEmail(toEmails, subject, null, strMSG, ccEmails, strBCCEmails));
+                tEmail.Start();
+
+                return "Send";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+        public static string SendInternalInspectionCompletedEmail(string customerName, string company, string region, string location,  List<string> areaList, string customerEmail)
+        {
+            try
+            {
+                string strMSG = "";
+                List<string> strToEmails = new List<string>();
+                List<string> strCCEmails = new List<string>();
+                List<string> strBCCEmails = new List<string>();
+
+                strToEmails.Add(customerEmail);
+                strBCCEmails.Add("b.trivedi@camindustrial.net");
+
+                string subject = "Internal Rack Inspection Completed - Report Available";
+
+                strMSG = "<html><head><style>p{margin:0px;} li{margin-bottom:5px;font-family:Verdana;font-size:13px;}</style></head><body>";
+                strMSG += "<div style='width:100%;padding:10px;'>";
+
+                strMSG += "<p>Attention: " + customerName + " [" + company + ", " + region + ", " + location + "]</p>";
+                strMSG += "<br/><br/>";
+
+                strMSG += "<p>You have successfully complete internal rack inspection and report can be access on <a href='https://rack-manager.com'>(rack-manager.com)</a> for below Area.</p>";
+                strMSG += "<br/>";
+
+                strMSG += "<ul>";
+                foreach (var area in areaList)
+                {
+                    strMSG += "<li>" + area + "</li>";
+                }
+                strMSG += "</ul>";
+
+                strMSG += "<br/>";
+
+                strMSG += "<p>You will find the outcome of the inspection, and the detailed findings are now documented in the report.</p>";
+                strMSG += "<br/>";
+
+                strMSG += "<p>Additionally, you can access the deficiency list and select red and/or yellow deficiencies that you would like us to provide repair/replace quotation.</p>";
+
+                strMSG += "<br/><br/>";
+
+                // Existing Signature
+                strMSG += GetEmailSignature();
+
+                strMSG += "</div></body></html>";
+
+                var tEmail = new Thread(() =>
+                    EmailHelper.SendEmail(strToEmails, subject, null, strMSG, strCCEmails, strBCCEmails));
+                tEmail.Start();
+
+                return "Send";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+        public static string SendRepairQuotationCustomerEmail(string customerName, string company, string region, string location, string customerEmail)
+        {
+            try
+            {
+                string strMSG = "";
+                List<string> strToEmails = new List<string>();
+                List<string> strCCEmails = new List<string>();
+                List<string> strBCCEmails = new List<string>();
+
+                strToEmails.Add(customerEmail);
+                strBCCEmails.Add("b.trivedi@camindustrial.net");
+
+                string subject = "Repair Quotation Request Received";
+
+                strMSG = "<html><head><style>p{margin:0px;}</style></head><body>";
+                strMSG += "<div style='width:100%;padding:10px;'>";
+
+                strMSG += "<p>Attention: " + customerName + " [" + company + ", " + region + ", " + location + "]</p>";
+                strMSG += "<br/><br/>";
+
+                strMSG += "<p>This confirms that you have successfully contacted the CAM Industrial team to request a repair quotation.</p>";
+                strMSG += "<br/>";
+
+                strMSG += "<p>Our team will be gathering the necessary information, and you will be notified as soon as the quotation is available for review on the Rack Manager portal.</p>";
+                strMSG += "<br/>";
+
+                strMSG += "<p>If you have any questions in the meantime, please feel free to reach out.</p>";
+
+                strMSG += "<br/><br/>";
+
+                // Existing Signature
+                strMSG += GetEmailSignature();
+
+                strMSG += "</div></body></html>";
+
+                var tEmail = new Thread(() =>
+                    EmailHelper.SendEmail(strToEmails, subject, null, strMSG, strCCEmails, strBCCEmails));
+                tEmail.Start();
+
+                return "Send";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+        public static string SendRepairQuotationAdminEmail(string customerName, string company, string region, string location, string area, string facility  ,List<string> toEmails, List<string> ccEmails)
+        {
+            try
+            {
+                string strMSG = "";
+                List<string> strBCCEmails = new List<string>();
+                strBCCEmails.Add("b.trivedi@camindustrial.net");
+
+                string subject = "Action Required - Repair Quotation Requested";
+
+                strMSG = "<html><head><style>p{margin:0px;}</style></head><body>";
+                strMSG += "<div style='width:100%;padding:10px;'>";
+
+                strMSG += "<p>Attention CAM Team,</p>";
+                strMSG += "<br/><br/>";
+
+                strMSG += "<p>This is to inform you that the customer has reviewed the deficiency list and selected the red and/or yellow deficiencies. Please proceed with preparing the quotation based on these selections.</p>";
+                strMSG += "<br/>";
+
+                strMSG += "<p><b>Customer:</b> " + customerName + "</p>";
+                strMSG += "<p><b>Company:</b> " + company + "</p>";
+                strMSG += "<p><b>Area:</b> " + area + "</p>";
+                strMSG += "<p><b>Facility:</b> " + facility + "</p>";
+                strMSG += "<p><b>Location:</b> " + location + "</p>";
+                strMSG += "<p><b>Region:</b> " + region + "</p>";
+
+                strMSG += "<br/><br/>";
+
+                // Existing Signature
+                strMSG += GetEmailSignature();
+
+                strMSG += "</div></body></html>";
+
+                var tEmail = new Thread(() =>
+                    EmailHelper.SendEmail(toEmails, subject, null, strMSG, ccEmails, strBCCEmails));
+                tEmail.Start();
+
+                return "Send";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
         #endregion
 

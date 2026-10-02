@@ -63,22 +63,12 @@
         //$scope.filterIncident = {};
         //$scope.filterInternal = {};
 
-        $scope.filterSchedule = {
-            InspectionTypeId: '',
-            SelectedStatusIds: [],
-            Region: '',
-            ProvinceId: null,
-            CityId: null,
-            CustomerLocationId: null,
-            CustomerFacilityId: null,
-            CustomerAreaId: null
-        };
+
         // Loading indicator flag
         $scope.loadingMaster = false;
 
-        $scope.filterStatus = {
-            InspectionTypeId: '',
-            SelectedStatusIds: [],
+        $scope.filterIncident = {
+            IncidentType: '',
             Region: '',
             ProvinceId: null,
             CityId: null,
@@ -87,21 +77,15 @@
             CustomerAreaId: null
         };
 
-
-        //$scope.filterDocs = {
-        //    Region: '',
-        //    ProvinceId: null,
-        //    CityId: null,
-        //    CustomerLocationId: null,
-        //    CustomerFacilityId: null,
-        //    CustomerAreaId: null,
-
-        //    IncludeInspectionDocuments: true,
-        //    IncludeHistoricalDocuments: true,
-
-        //    InspectionCategories: [],
-        //    HistoricalCategories: []
-        //};
+        $scope.filterInternal = {
+            Status: '',
+            Region: '',
+            ProvinceId: null,
+            CityId: null,
+            CustomerLocationId: null,
+            CustomerFacilityId: null,
+            CustomerAreaId: null
+        };       
 
         $scope.filterDocs = {
             Region: "",
@@ -503,6 +487,37 @@
             }
         };
 
+        $scope.applyInspectionFilters = function () {
+
+            var filters = {
+                InspectionTypeId:
+                    $scope.filterInspection.InspectionTypeId || '',
+
+                SelectedStatusIds:
+                    $scope.filterInspection.SelectedStatusIds || [],
+
+                Region:
+                    ($scope.filterInspection.Region || '').trim(),
+
+                ProvinceId:
+                    parseInt($scope.filterInspection.province || 0, 10),
+
+                CityId:
+                    parseInt($scope.filterInspection.city || 0, 10),
+
+                CustomerLocationId:
+                    parseInt($scope.filterInspection.location || 0, 10),
+
+                CustomerFacilityId:
+                    parseInt($scope.filterInspection.facility || 0, 10),
+
+                CustomerAreaId:
+                    parseInt($scope.filterInspection.area || 0, 10)
+            };
+
+            sharedFilterService.setInspectionFilters(filters);
+        };
+
         // ---- Apply filters ----
         $scope.applyScheduleFilters = function () {
             sharedFilterService.setScheduleFilter($scope.filterSchedule);
@@ -553,62 +568,154 @@
 
         $scope.applyDocumentFilters = function () {
 
-            $scope.filterDocs.Province = parseInt($scope.filterDocs.province || 0);
-            $scope.filterDocs.City = parseInt($scope.filterDocs.city || 0);
-            $scope.filterDocs.CustomerLocationId = parseInt($scope.filterDocs.location || 0);
-            $scope.filterDocs.CustomerFacilityId = parseInt($scope.filterDocs.facility || 0);
-            $scope.filterDocs.CustomerAreaId = parseInt($scope.filterDocs.area || 0);
+            var filters = {
+                Region:
+                    ($scope.filterDocs.Region || '').trim(),
 
-            $scope.filterDocs.DocumentTypeList = [];
+                ProvinceId:
+                    parseInt($scope.filterDocs.province || 0, 10),
 
-            if ($scope.filterDocs.InspectionDocs) {
-                angular.forEach($scope.documenttypelistingInspection, function (d) {
-                    if (d.selected)
-                        $scope.filterDocs.DocumentTypeList.push(d.documenttype);
-                });
-            }
+                CityId:
+                    parseInt($scope.filterDocs.city || 0, 10),
 
-            if ($scope.filterDocs.HistoricalDocs) {
-                angular.forEach($scope.documenttypelistingHistory, function (d) {
-                    if (d.selected)
-                        $scope.filterDocs.DocumentTypeList.push(d.documenttype);
-                });
-            }
+                CustomerLocationId:
+                    parseInt($scope.filterDocs.location || 0, 10),
 
-            sharedFilterService.setDocumentFilters(angular.copy($scope.filterDocs));
+                CustomerFacilityId:
+                    parseInt($scope.filterDocs.facility || 0, 10),
+
+                CustomerAreaId:
+                    parseInt($scope.filterDocs.area || 0, 10),
+
+                IncludeInspectionDocuments:
+                    !!$scope.filterDocs.InspectionDocs,
+
+                IncludeHistoricalDocuments:
+                    !!$scope.filterDocs.HistoricalDocs,
+
+                InspectionCategories:
+                    ($scope.documenttypelistingInspection || [])
+                        .filter(function (x) {
+                            return x.selected;
+                        })
+                        .map(function (x) {
+                            return x.documenttype;
+                        }),
+
+                HistoricalCategories:
+                    ($scope.documenttypelistingHistory || [])
+                        .filter(function (x) {
+                            return x.selected;
+                        })
+                        .map(function (x) {
+                            return x.documenttype;
+                        })
+            };
+
+            sharedFilterService.setDocumentFilters(filters);
         };
 
         $scope.applyIncidentFilters = function () {
 
-            $scope.filterIncident.Province = parseInt($scope.filterIncident.province || 0);
-            $scope.filterIncident.City = parseInt($scope.filterIncident.city || 0);
-            $scope.filterIncident.CustomerLocationId = parseInt($scope.filterIncident.location || 0);
-            $scope.filterIncident.CustomerFacilityId = parseInt($scope.filterIncident.facility || 0);
-            $scope.filterIncident.CustomerAreaId = parseInt($scope.filterIncident.area || 0);
+            var filters = {
+                IncidentType:
+                    $scope.filterIncident.IncidentType || '',
 
-            sharedFilterService.setIncidentFilters(angular.copy($scope.filterIncident));
+                Region:
+                    ($scope.filterIncident.Region || '').trim(),
+
+                ProvinceId:
+                    parseInt($scope.filterIncident.province || 0, 10),
+
+                CityId:
+                    parseInt($scope.filterIncident.city || 0, 10),
+
+                CustomerLocationId:
+                    parseInt($scope.filterIncident.location || 0, 10),
+
+                CustomerFacilityId:
+                    parseInt($scope.filterIncident.facility || 0, 10),
+
+                CustomerAreaId:
+                    parseInt($scope.filterIncident.area || 0, 10)
+            };
+
+            console.log('Incident filters:', filters);
+
+            sharedFilterService.setIncidentFilters(filters);
         };
 
         $scope.applyInternalFilters = function () {
 
-            $scope.filterInternal.Province = parseInt($scope.filterInternal.province || 0);
-            $scope.filterInternal.City = parseInt($scope.filterInternal.city || 0);
-            $scope.filterInternal.CustomerLocationId = parseInt($scope.filterInternal.location || 0);
-            $scope.filterInternal.CustomerFacilityId = parseInt($scope.filterInternal.facility || 0);
-            $scope.filterInternal.CustomerAreaId = parseInt($scope.filterInternal.area || 0);
+            var filters = {
+                Status: $scope.filterInternal.Status || '',
+                Region: $scope.filterInternal.Region || '',
 
-            sharedFilterService.setInternalInspectionFilters(angular.copy($scope.filterInternal));
+                ProvinceId: parseInt(
+                    $scope.filterInternal.province || 0,
+                    10
+                ),
+
+                CityId: parseInt(
+                    $scope.filterInternal.city || 0,
+                    10
+                ),
+
+                CustomerLocationId: parseInt(
+                    $scope.filterInternal.location || 0,
+                    10
+                ),
+
+                CustomerFacilityId: parseInt(
+                    $scope.filterInternal.facility || 0,
+                    10
+                ),
+
+                CustomerAreaId: parseInt(
+                    $scope.filterInternal.area || 0,
+                    10
+                )
+            };
+
+            console.log(
+                'Applying Internal Inspection filters:',
+                filters
+            );
+
+            sharedFilterService.setInternalInspectionFilters(filters);
         };
-
+        
         $scope.applyInventoryFilters = function () {
 
-            $scope.filterInventory.Province = parseInt($scope.filterInventory.province || 0);
-            $scope.filterInventory.City = parseInt($scope.filterInventory.city || 0);
-            $scope.filterInventory.CustomerLocationId = parseInt($scope.filterInventory.location || 0);
-            $scope.filterInventory.CustomerFacilityId = parseInt($scope.filterInventory.facility || 0);
-            $scope.filterInventory.CustomerAreaId = parseInt($scope.filterInventory.area || 0);
+            var filters = {
+                Region:
+                    ($scope.filterInventory.Region || '').trim(),
 
-            sharedFilterService.setInventoryFilters(angular.copy($scope.filterInventory));
+                ProvinceId:
+                    parseInt($scope.filterInventory.province || 0, 10),
+
+                CityId:
+                    parseInt($scope.filterInventory.city || 0, 10),
+
+                CustomerLocationId:
+                    parseInt($scope.filterInventory.location || 0, 10),
+
+                CustomerFacilityId:
+                    parseInt($scope.filterInventory.facility || 0, 10),
+
+                CustomerAreaId:
+                    parseInt($scope.filterInventory.area || 0, 10),
+
+                Status:
+                    $scope.filterInventory.Status || '',
+
+                Search:
+                    $scope.filterInventory.Search || ''
+            };
+
+            console.log('Inventory filters:', filters);
+
+            sharedFilterService.setInventoryFilters(filters);
         };
 
         $scope.applySalesStatusFilters = function () {

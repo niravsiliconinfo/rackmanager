@@ -1731,7 +1731,27 @@ namespace CamV4.Controllers
                 strVar += "<div style='font-size: 35px;text-decoration: underline;text-transform: uppercase;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "</div></div> ";
                 strVar += "<div class='' style='height:150px;padding-top: 50px;font-size: 24px;line-height:35px;position: relative;'> ";
                 //strVar += "<div>" + iDetails.Customer + "</div> <div style='font-size:14px;'>" + iDetails.CustomerArea + " " + iDetails.CustomerLocation + "</div><div style='font-size:14px;'>" + iDetails.custModel.CustomerAddress + "</div><div class='customer-logo'><img src='" + iDetails.custModel.CustomerLogo + "' style='width:150px;height:auto;' /></div></div> ";
-                strVar += "<div>" + iDetails.Customer + "</div> <div style='font-size:14px;'>" + iDetails.CustomerFullAddress + "</div><div class='customer-logo'><img src='" + iDetails.custModel.CustomerLogo + "' style='width:150px;height:auto;' /></div></div> ";
+                //strVar += "<div>" + iDetails.Customer + "</div> <div style='font-size:14px;'>" + iDetails.CustomerLocationFullAddress + "</div><div class='customer-logo'><img src='" + iDetails.custModel.CustomerLogo + "' style='width:150px;height:auto;' /></div></div> ";
+                strVar += "<div>" + iDetails.Customer + "</div>" +
+                  "<div style='font-size:14px;'>" +
+                      (iDetails.CustomerArea ?? "") +
+                      (!string.IsNullOrEmpty(iDetails.CustomerArea) &&
+                       (!string.IsNullOrEmpty(iDetails.CustomerFacility) ||
+                        !string.IsNullOrEmpty(iDetails.CustomerLocation))
+                          ? ", " : "") +
+                      (iDetails.CustomerFacility ?? "") +
+                      (!string.IsNullOrEmpty(iDetails.CustomerFacility) &&
+                       !string.IsNullOrEmpty(iDetails.CustomerLocation)
+                          ? ", " : "") +
+                      (iDetails.CustomerLocation ?? "") +
+                  "</div>" +
+                  "<div style='font-size:14px;'>" +
+                      (iDetails.CustomerLocationFullAddress ?? "") +
+                  "</div>" +
+                  "<div class='customer-logo'>" +
+                      "<img src='" + iDetails.custModel.CustomerLogo +
+                      "' style='width:150px;height:auto;' />" +
+                  "</div></div> ";
                 strVar += "<div><img src='" + host + "Content/V2/images/mid-logo.jpg' style='width: 250px;margin:50px 0px 50px 0px;' /></div> <div class=''> ";
                 strVar += "<div style='float:left;text-align:left;color:#005aab;font-weight:bold;line-height:30px;'><p style='margin: 0px;'>Inspection & Report By,</p> <p style='margin: 0px;'>" + iDetails.Employee + ", " + iDetails.empModel.TitleDegrees + "</p> ";
                 strVar += "<p style='margin: 0px;'>" + iDetails.empModel.EmployeeEmail + "</p> <p style='color: #999;margin: 0px;'>" + iDetails.empModel.MobileNo + "</p> </div> ";
@@ -3317,11 +3337,29 @@ namespace CamV4.Controllers
                             strVar += "                <div style='font-size: 16px; line-height: 22px; padding-top: 5px;font-family: Arial, Helvetica, sans-serif;'>" + Convert.ToDateTime(iDetails.objQuotation.QuotationDate).ToString("dd MMM yyyy") + "<br>Page " + Convert.ToString(i) + "/" + Convert.ToString(objQuotationItemsInner.Count) + "</div>";
                             strVar += "            </td>";
                             strVar += "        </tr>";
+                            //strVar += "        <tr>";
+                            //strVar += "            <td align='left' valign='top' style='padding: 10px 20px;font-family: Arial, Helvetica, sans-serif;'>";
+                            //strVar += "                <div style='width: 40%; float: left; line-height: 22px;font-size: 16px;'>" + iDetails.Customer + "<br>" + iDetails.CustomerArea + "<br>" + iDetails.CustomerLocation + "</div>";
+                            //strVar += "                <div style='width: 40%; float: left; line-height: 22px;font-size: 16px;'><b>Ship to:</b><br>" + iDetails.Customer + "<br>" + iDetails.CustomerFullAddress + "</div>";
+                            //strVar += "                <div style='width: 20%; float: left; text-align: right;font-size: 16px;'></div>";
+                            //strVar += "            </td>";
+                            //strVar += "        </tr>";
                             strVar += "        <tr>";
-                            strVar += "            <td align='left' valign='top' style='padding: 10px 20px;font-family: Arial, Helvetica, sans-serif;'>";
-                            strVar += "                <div style='width: 40%; float: left; line-height: 22px;font-size: 16px;'>" + iDetails.Customer + "<br>" + iDetails.CustomerArea + "<br>" + iDetails.CustomerLocation + "</div>";
-                            strVar += "                <div style='width: 40%; float: left; line-height: 22px;font-size: 16px;'><b>Ship to:</b><br>" + iDetails.Customer + "<br>" + iDetails.CustomerFullAddress + "</div>";
-                            strVar += "                <div style='width: 20%; float: left; text-align: right;font-size: 16px;'></div>";
+                            strVar += "            <td align='left' valign='top' style='padding: 20px 100px;'>";
+                            strVar += "                <div style='width: 45%;float: left;line-height: 22px'><b>&nbsp;</b><br>" +
+                                      iDetails.Customer + "<br>" +
+                                      iDetails.CustomerFullAddress +
+                                      "</div>";
+                            strVar += "                <div style='width: 45%;float: left;line-height: 22px'>" +
+                                      "<b>Ship to: </b><br>" +
+                                      iDetails.Customer + "<br>" +
+                                      (iDetails.CustomerArea ?? "") +
+                                      (!string.IsNullOrEmpty(iDetails.CustomerArea) && (!string.IsNullOrEmpty(iDetails.CustomerFacility) || !string.IsNullOrEmpty(iDetails.CustomerLocation)) ? ",": "") + (iDetails.CustomerFacility ?? "") +
+                                      (!string.IsNullOrEmpty(iDetails.CustomerFacility) && !string.IsNullOrEmpty(iDetails.CustomerLocation) ? "," : "") +
+                                      (iDetails.CustomerLocation ?? "") + "<br />" +                                      
+                                      (iDetails.CustomerLocationFullAddress ?? "") +
+                                      "</div>";
+                            strVar += "                <div style='width: 10%;float: left;text-align: right'></div>";
                             strVar += "            </td>";
                             strVar += "        </tr>";
                             strVar += "        <tr>";
@@ -3605,7 +3643,27 @@ namespace CamV4.Controllers
                 strVar += "<div style='font-size: 35px;text-decoration: underline;text-transform: uppercase;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "</div></div> ";
                 strVar += "<div class='' style='height:150px;padding-top: 50px;font-size: 24px;line-height:35px;position: relative;'> ";
                 //strVar += "<div>" + iDetails.Customer + "</div> <div style='font-size:14px;'>" + iDetails.CustomerArea + " " + iDetails.CustomerLocation + "</div><div style='font-size:14px;'>" + iDetails.custModel.CustomerAddress + "</div><div class='customer-logo'><img src='" + iDetails.custModel.CustomerLogo + "' style='width:150px;height:auto;' /></div></div> ";
-                strVar += "<div>" + iDetails.Customer + "</div> <div style='font-size:14px;'>" + iDetails.CustomerFullAddress + "</div><div class='customer-logo'><img src='" + iDetails.custModel.CustomerLogo + "' style='width:150px;height:auto;' /></div></div> ";
+                //strVar += "<div>" + iDetails.Customer + "</div> <div style='font-size:14px;'>" + iDetails.CustomerFullAddress + "</div><div class='customer-logo'><img src='" + iDetails.custModel.CustomerLogo + "' style='width:150px;height:auto;' /></div></div> ";
+                strVar += "<div>" + iDetails.Customer + "</div>" +
+                  "<div style='font-size:14px;'>" +
+                      (iDetails.CustomerArea ?? "") +
+                      (!string.IsNullOrEmpty(iDetails.CustomerArea) &&
+                       (!string.IsNullOrEmpty(iDetails.CustomerFacility) ||
+                        !string.IsNullOrEmpty(iDetails.CustomerLocation))
+                          ? ", " : "") +
+                      (iDetails.CustomerFacility ?? "") +
+                      (!string.IsNullOrEmpty(iDetails.CustomerFacility) &&
+                       !string.IsNullOrEmpty(iDetails.CustomerLocation)
+                          ? ", " : "") +
+                      (iDetails.CustomerLocation ?? "") +
+                  "</div>" +
+                  "<div style='font-size:14px;'>" +
+                      (iDetails.CustomerLocationFullAddress ?? "") +
+                  "</div>" +
+                  "<div class='customer-logo'>" +
+                      "<img src='" + iDetails.custModel.CustomerLogo +
+                      "' style='width:150px;height:auto;' />" +
+                  "</div></div> ";
                 strVar += "<div><img src='" + host + "Content/V2/images/mid-logo.jpg' style='width: 250px;margin:50px 0px 50px 0px;' /></div> <div class=''> ";
                 strVar += "<div style='float:left;text-align:left;color:#005aab;font-weight:bold;line-height:30px;'><p style='margin: 0px;'>Inspection & Report By,</p> <p style='margin: 0px;'>" + iDetails.Employee + ", " + iDetails.empModel.TitleDegrees + "</p> ";
                 strVar += "<p style='margin: 0px;'>" + iDetails.empModel.EmployeeEmail + "</p> <p style='color: #999;margin: 0px;'>" + iDetails.empModel.MobileNo + "</p> </div> ";
@@ -3928,9 +3986,9 @@ namespace CamV4.Controllers
                 strVar += " or the entire frame if it is a welded type.";
                 strVar += "</p> ";
                 strVar += "<p style='text-align: center;'> ";
-                strVar += "	<img src='" + host + "Content/V2/images/Farme-img.png' width='520' /> ";                
+                strVar += "	<img src='" + host + "Content/V2/images/Farme-img.png' width='520' /> ";
                 strVar += "</p> ";
-                strVar += "<div style='font-size: 15px;line-height: 24px;margin: 10px 0px;text-align: center;font-family: Arial, Helvetica, sans-serif;'>Figure 1: Measurement method of damages to the frame components</div> ";                
+                strVar += "<div style='font-size: 15px;line-height: 24px;margin: 10px 0px;text-align: center;font-family: Arial, Helvetica, sans-serif;'>Figure 1: Measurement method of damages to the frame components</div> ";
                 strVar += " <div style='margin: 0px 0px 18px 0px; position: absolute; bottom: 0px; width: 95%;'> ";
                 strVar += "<div style='width: 28%;float: left;font-size: 10px;font-weight: bold;'>" + (iDetails.InspectionTypeCode == "MI" ? "MATERIAL INSPECTION REPORT" : "RACKING INSPECTION REPORT") + "<span> - " + iDetails.Customer + "</span></div> ";
                 strVar += "<div style='text-align: center;float: left;width: 65%;'><img src='" + host + "Content/V2/images/footer-logo.jpg' style='width: 70%;'></div> ";
@@ -5294,11 +5352,29 @@ namespace CamV4.Controllers
                             strVar += "                <div style='font-size: 16px; line-height: 22px; padding-top: 5px;font-family: Arial, Helvetica, sans-serif;'>" + Convert.ToDateTime(iDetails.objQuotation.QuotationDate).ToString("dd MMM yyyy") + "<br>Page " + Convert.ToString(i) + "/" + Convert.ToString(objQuotationItemsInner.Count) + "</div>";
                             strVar += "            </td>";
                             strVar += "        </tr>";
+                            //strVar += "        <tr>";
+                            //strVar += "            <td align='left' valign='top' style='padding: 10px 20px;font-family: Arial, Helvetica, sans-serif;'>";
+                            //strVar += "                <div style='width: 40%; float: left; line-height: 22px;font-size: 16px;'>" + iDetails.Customer + "<br>" + iDetails.CustomerArea + "<br>" + iDetails.CustomerLocation + "</div>";
+                            //strVar += "                <div style='width: 40%; float: left; line-height: 22px;font-size: 16px;'><b>Ship to:</b><br>" + iDetails.Customer + "<br>" + iDetails.CustomerFullAddress + "</div>";
+                            //strVar += "                <div style='width: 20%; float: left; text-align: right;font-size: 16px;'></div>";
+                            //strVar += "            </td>";
+                            //strVar += "        </tr>";
                             strVar += "        <tr>";
-                            strVar += "            <td align='left' valign='top' style='padding: 10px 20px;font-family: Arial, Helvetica, sans-serif;'>";
-                            strVar += "                <div style='width: 40%; float: left; line-height: 22px;font-size: 16px;'>" + iDetails.Customer + "<br>" + iDetails.CustomerArea + "<br>" + iDetails.CustomerLocation + "</div>";
-                            strVar += "                <div style='width: 40%; float: left; line-height: 22px;font-size: 16px;'><b>Ship to:</b><br>" + iDetails.Customer + "<br>" + iDetails.CustomerFullAddress + "</div>";
-                            strVar += "                <div style='width: 20%; float: left; text-align: right;font-size: 16px;'></div>";
+                            strVar += "            <td align='left' valign='top' style='padding: 20px 100px;'>";
+                            strVar += "                <div style='width: 45%;float: left;line-height: 22px'><b>&nbsp;</b><br>" +
+                                      iDetails.Customer + "<br>" +
+                                      iDetails.CustomerFullAddress +
+                                      "</div>";
+                            strVar += "                <div style='width: 45%;float: left;line-height: 22px'>" +
+                                      "<b>Ship to: </b><br>" +
+                                      iDetails.Customer + "<br>" +
+                                      (iDetails.CustomerArea ?? "") +
+                                      (!string.IsNullOrEmpty(iDetails.CustomerArea) && (!string.IsNullOrEmpty(iDetails.CustomerFacility) || !string.IsNullOrEmpty(iDetails.CustomerLocation)) ? "," : "") + (iDetails.CustomerFacility ?? "") +
+                                      (!string.IsNullOrEmpty(iDetails.CustomerFacility) && !string.IsNullOrEmpty(iDetails.CustomerLocation) ? "," : "") +
+                                      (iDetails.CustomerLocation ?? "") + "<br />" +
+                                      (iDetails.CustomerLocationFullAddress ?? "") +
+                                      "</div>";
+                            strVar += "                <div style='width: 10%;float: left;text-align: right'></div>";
                             strVar += "            </td>";
                             strVar += "        </tr>";
                             strVar += "        <tr>";
